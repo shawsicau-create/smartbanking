@@ -248,5 +248,69 @@ git push -u origin main
 
 ---
 
+## CNB 与 GitHub 命令对比
+
+CNB（CodeNotebook）的基础 Git 命令与 GitHub **完全相同**，因为它们都基于 Git 版本控制系统。
+
+### 1. 基础 Git 命令（完全相同）
+
+| 操作 | Git 命令 | CNB 中使用 |
+|------|----------|------------|
+| 克隆仓库 | `git clone <url>` | ✅ 相同 |
+| 添加文件 | `git add <file>` | ✅ 相同 |
+| 提交 | `git commit -m "message"` | ✅ 相同 |
+| 推送 | `git push origin main` | ✅ 相同 |
+| 拉取 | `git pull origin main` | ✅ 相同 |
+| 分支管理 | `git branch`, `git checkout` | ✅ 相同 |
+
+### 2. CNB 专属 CLI 命令（额外功能）
+
+CNB 提供了 `cnb` 命令行工具来管理平台资源：
+
+```bash
+# 登录/登出
+cnb login
+cnb logout
+
+# 组织管理
+cnb organizations list-top-groups
+cnb organizations create-organization
+
+# 仓库管理
+cnb repositories list-repos
+cnb repositories create-repo
+
+# Issue 和 PR 管理
+cnb issues list-issues
+cnb pulls list-pulls
+
+# AI 功能
+cnb ai summarize-pr
+```
+
+### 3. 仓库地址格式（略有不同）
+
+**GitHub**:
+```
+https://github.com/用户名/仓库名.git
+git@github.com:用户名/仓库名.git
+```
+
+**CNB**:
+```
+https://cnb.cool/组织名/仓库名.git
+https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
+```
+
+### 总结
+
+- **Git 核心命令**：完全一致，您可以使用熟悉的 Git 命令进行代码管理
+- **平台管理命令**：CNB 提供额外的 `cnb` CLI 来管理组织、仓库、Issue 等
+- **认证方式**：CNB 使用访问令牌（Token）进行认证
+
+如果您熟悉 GitHub 的使用，切换到 CNB 几乎没有学习成本！
+
+---
+
 **完成时间**：2026-06-02  
 **CNB 仓库**：https://cnb.cool/xiaosicau/smartbanking
