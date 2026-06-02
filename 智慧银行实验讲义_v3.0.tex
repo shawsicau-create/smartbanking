@@ -1,0 +1,2528 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\PassOptionsToPackage{space}{xeCJK}
+\documentclass[
+  american,
+  chinese,
+]{ctexart}
+\usepackage{xcolor}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-1}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Times New Roman}
+  \ifXeTeX
+    \usepackage{xeCJK}
+    \setCJKmainfont[]{SimSun}
+  \fi
+  \ifLuaTeX
+    \usepackage[]{luatexja-fontspec}
+    \setmainjfont[]{SimSun}
+  \fi
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \subsubsection or \paragraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\usepackage{float}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\ifLuaTeX
+  \usepackage{luacolor}
+  \usepackage[soul]{lua-ul}
+\else
+  \usepackage{soul}
+  \ifXeTeX
+    % soul's \st doesn't work for CJK:
+    \usepackage{xeCJKfntef}
+    \renewcommand{\st}[1]{\sout{#1}}
+  \fi
+\fi
+% Override \ul to a no-op wrapper to avoid soul/ulem issues with CJK + \foreignlanguage
+\renewcommand{\ul}[1]{#1}
+\ifLuaTeX
+\usepackage[bidi=basic,shorthands=off,provide=*]{babel}
+\else
+\usepackage[bidi=default,shorthands=off,provide=*]{babel}
+\fi
+\ifPDFTeX
+\else
+\babelfont{rm}[]{Times New Roman}
+\fi
+\ifLuaTeX
+  \usepackage{selnolig} % disable illegal ligatures
+\fi
+\setlength{\emergencystretch}{8em} % prevent overfull lines
+\sloppy
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdflang={ZH-CN},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{智慧银行实验讲义 v3.0}
+\author{肖诗顺}
+\date{2026 春季学期}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+
+
+\clearpage
+
+\section{\texorpdfstring{{第}\foreignlanguage{american}{ 0 }{章}{ }{课程总{览}}\foreignlanguage{american}{}}{第 0 章 课程总览}}\label{ux7b2c-0-ux7ae0-ux8bfeux7a0bux603bux89c8}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{0.1 }{课程主线}\foreignlanguage{american}{}}{0.1 课程主线}}\label{ux8bfeux7a0bux4e3bux7ebf}
+
+{实验}\foreignlanguage{american}{1 (TRAE){~~~~~~~
+}── }{教会学生用}\foreignlanguage{american}{ IDE }{与}\foreignlanguage{american}{ AI }{协作}\foreignlanguage{american}{{~~~~~~~ }}
+
+{实验}\foreignlanguage{american}{2 (MCP 4 }{关}\foreignlanguage{american}{){~~~~ }── }{让}\foreignlanguage{american}{ Agent }{能拿数据、动浏览器、操作}\foreignlanguage{american}{ Office{~~~~~~~ }}{实验}\foreignlanguage{american}{3
+(Skill){~~~~~~~
+}── }{让}\foreignlanguage{american}{ Agent }{拥有专业能力}\foreignlanguage{american}{{~~~~~~ }}
+
+\foreignlanguage{american}{实验}\foreignlanguage{american}{4 (BMAD + {CRM){~~ }}── }\foreignlanguage{american}{把}\foreignlanguage{american}{ IDE + MCP + Skill }{\foreignlanguage{american}{编排为银行}}\foreignlanguage{american}{ CRM }{\foreignlanguage{american}{系统}}\foreignlanguage{american}{ }
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{0.2 }{\foreignlanguage{american}{学时与权重}}}{0.2 学时与权重}}\label{ux5b66ux65f6ux4e0eux6743ux91cd}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{实验}} & {\foreignlanguage{american}{主题}} & {\foreignlanguage{american}{学时}} & {\foreignlanguage{american}{权重}} & {\foreignlanguage{american}{关键交付}} \\
+{\foreignlanguage{american}{实验一}} & \foreignlanguage{american}{TRAE IDE }\foreignlanguage{american}{入门（}\foreignlanguage{american}{1A + 1B}\foreignlanguage{american}{）} & \foreignlanguage{american}{4h} & \foreignlanguage{american}{15\%} & {\foreignlanguage{american}{贪吃蛇}}\foreignlanguage{american}{ + AI }{\foreignlanguage{american}{论文解读智能体}}\foreignlanguage{american}{ + Excel }{\foreignlanguage{american}{整合}} \\
+{\foreignlanguage{american}{实验二}} & \foreignlanguage{american}{MCP }{\foreignlanguage{american}{由浅入深}}\foreignlanguage{american}{ 4 }\foreignlanguage{american}{关} & \foreignlanguage{american}{4h} & \foreignlanguage{american}{20\%} & \foreignlanguage{american}{4 }{{关录屏}}\foreignlanguage{american}{ + MCP }{调用流程图}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{实验三}} & \foreignlanguage{american}{Skill }{\foreignlanguage{american}{体系（用}\foreignlanguage{american}{→}\foreignlanguage{american}{写}\foreignlanguage{american}{→}\foreignlanguage{american}{审}}\foreignlanguage{american}{）} & \foreignlanguage{american}{4h} & \foreignlanguage{american}{25\%} & {\foreignlanguage{american}{客户回访}}\foreignlanguage{american}{ docx + }{\foreignlanguage{american}{自写}}\foreignlanguage{american}{ bank-greeting + }{\foreignlanguage{american}{审计报告}} \\
+{\foreignlanguage{american}{实验四}} & \foreignlanguage{american}{BMAD }{\foreignlanguage{american}{驱动银行}}\foreignlanguage{american}{ CRM} & \foreignlanguage{american}{4h} & \foreignlanguage{american}{40\%} & \foreignlanguage{american}{BMAD }{\foreignlanguage{american}{五份产物}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{银行}}\foreignlanguage{american}{ CRM }{\foreignlanguage{american}{系统}} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{0.3 }{\foreignlanguage{american}{能力地图}}}{0.3 能力地图}}\label{ux80fdux529bux5730ux56fe}
+
+{完成}\foreignlanguage{american}{ 4 }{次实验后，每位学生应当能够：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}{\textbf{\foreignlanguage{american}{会用}}}\textbf{\foreignlanguage{american}{ AI {IDE{：在}}}}\foreignlanguage{american}{ TRAE / {Qoder} }{\foreignlanguage{american}{内自如切换}}\foreignlanguage{american}{ Chat / Builder / SOLO }{\foreignlanguage{american}{模式}}\foreignlanguage{american}{。}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}\textbf{{会用}\foreignlanguage{american}{ MCP}}{：理解「}\foreignlanguage{american}{MCP }{是}\foreignlanguage{american}{ AI }{的手脚」，能配置并组合调用本机}\foreignlanguage{american}{ 8 }{{个}}\foreignlanguage{american}{ MCP}{。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{\textbf{\foreignlanguage{american}{会用}}}\textbf{\foreignlanguage{american}{ {Skill{：理解「}{Skill}}}}\foreignlanguage{american}{ }\foreignlanguage{american}{是}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{的专业脑}}\foreignlanguage{american}{」，{能调用现成}}\foreignlanguage{american}{ Skill }{\foreignlanguage{american}{并写一个迷你}}\foreignlanguage{american}{ Skill}\foreignlanguage{american}{。}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}\textbf{{会用}\foreignlanguage{american}{ BMAD}}{：能用}\foreignlanguage{american}{ 5 }{阶段方法论把{模糊业务}想法转成可运行的产品原型。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{5{~~~~~~~~
+}}}\textbf{{会做银行业务系统}}{：组合上述能力，完成一个{本地可}运行的银行}\foreignlanguage{american}{ CRM }{原型。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{0.4 }{每次实验报告的评分细则}\foreignlanguage{american}{}}{0.4 每次实验报告的评分细则}}\label{ux6bcfux6b21ux5b9eux9a8cux62a5ux544aux7684ux8bc4ux5206ux7ec6ux5219}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{维度}} & {\foreignlanguage{american}{权重}} & {\foreignlanguage{american}{关键观察点}} \\
+{\foreignlanguage{american}{完整性}} & \foreignlanguage{american}{30\%} & {所有要求的交付物是否齐全}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{正确性}} & \foreignlanguage{american}{30\%} & {功能是否能跑、报告结论是否站得住}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{规范性}} & \foreignlanguage{american}{20\%} & {\foreignlanguage{american}{文件命名、目录结构、}\foreignlanguage{american}{Markdown}}\foreignlanguage{american}{ }{\foreignlanguage{american}{格式}} \\
+{\foreignlanguage{american}{创新性反思}} & \foreignlanguage{american}{20\%} & {是否有自主发现}\foreignlanguage{american}{ + AI }{出错案例反思（}\foreignlanguage{american}{≥ 200 }{字）}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{📌 }{\textbf{\foreignlanguage{american}{提交方式}}\foreignlanguage{american}{：最后一次课后，通过统一链接提交：}\foreignlanguage{american}{\url{https://send2me.cn/gC9Z1s7w/SSuYQaOQEsj6BQ}}}
+
+\bigskip
+
+\noindent\textbf{扫码加入交流群}（QQ 实验群用于课程通知与答疑，IMA 知识库用于资料共享）：
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \includegraphics[width=0.75\linewidth,keepaspectratio]{images/qq-qun.png}\\[2pt]
+  {\small QQ 群：智慧银行实验群\\群号 493263215}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \includegraphics[width=0.75\linewidth,keepaspectratio]{images/ima-zhishiku.png}\\[2pt]
+  {\small IMA 知识库：AI 编程工具\\（扫码加入）}
+\end{minipage}
+\end{figure}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\clearpage
+
+\section{\texorpdfstring{{第}\foreignlanguage{american}{ 1 }{章}{ }{实验{一}：}\foreignlanguage{american}{TRAE IDE + AI }{协作}\foreignlanguage{american}{}}{第 1 章 实验一：TRAE IDE + AI 协作}}\label{ux7b2c-1-ux7ae0-ux5b9eux9a8cux4e00trae-ide-ai-ux534fux4f5c}
+
+\textbf{{学时}}\foreignlanguage{american}{ 4h}{（}\foreignlanguage{american}{240 min}{）}{ \foreignlanguage{american}{· }}\textbf{{权重}}\foreignlanguage{american}{ 15\% · }\textbf{{主题}}{ }{跑通}\foreignlanguage{american}{"}{提问}\foreignlanguage{american}{→}{生成}\foreignlanguage{american}{→}{运行}\foreignlanguage{american}{→}{修正}\foreignlanguage{american}{"}{最小}\foreignlanguage{american}{ AI }{协作闭环}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{1.1 }{学习目标}\foreignlanguage{american}{}}{1.1 学习目标}}\label{ux5b66ux4e60ux76eeux6807}
+
+{完成本实验后，学生应当能够：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}{\foreignlanguage{american}{独立安装}}\foreignlanguage{american}{ \textbf{TRAE {IDE{（或}}} {Qoder} / }{\foreignlanguage{american}{CodeBuddy}}\foreignlanguage{american}{/}\foreignlanguage{american}{Cursor}\foreignlanguage{american}{），{完成中文界面、登录、{主题配置}}{；}}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}\foreignlanguage{american}{用}\foreignlanguage{american}{ \textbf{Anaconda} }{\foreignlanguage{american}{或系统}}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{搭好}}\foreignlanguage{american}{ ≥ 3.10 }\foreignlanguage{american}{的}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{环境，验证}}\foreignlanguage{american}{ pip / node / git }{{\foreignlanguage{american}{三件套}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{\foreignlanguage{american}{区分}}\foreignlanguage{american}{ TRAE }\foreignlanguage{american}{的}\foreignlanguage{american}{ \textbf{IDE / Chat / Builder / SOLO} }{{\foreignlanguage{american}{四种模式并熟练切换}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}\foreignlanguage{american}{用}\foreignlanguage{american}{ Builder }{\foreignlanguage{american}{模式}}\foreignlanguage{american}{ }{\textbf{\foreignlanguage{american}{一句话生成贪吃蛇网页}}\foreignlanguage{american}{，验证}}\foreignlanguage{american}{ IDE-AI }{{\foreignlanguage{american}{闭环}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{5{~~~~~~~~
+}}}{在}\foreignlanguage{american}{ TRAE }{中创建}{ \textbf{\foreignlanguage{american}{AI }}}\textbf{{论文解读智能体}}{ }{并解读}\foreignlanguage{american}{ PDF}{；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{6{~~~~~~~~
+}}}\foreignlanguage{american}{用}\foreignlanguage{american}{ TRAE }{\foreignlanguage{american}{完成}}\foreignlanguage{american}{ \textbf{Excel} }{\textbf{\foreignlanguage{american}{多文件合并}}}\foreignlanguage{american}{ }\foreignlanguage{american}{与}\foreignlanguage{american}{ }{\textbf{\foreignlanguage{american}{业绩预测}}\foreignlanguage{american}{（}\foreignlanguage{american}{SARIMA}}\foreignlanguage{american}{ / LSTM}\foreignlanguage{american}{）。}
+
+\textbf{{实验时间}}{\textbf{\foreignlanguage{american}{分配}}}\foreignlanguage{american}{：}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{时段}} & {\foreignlanguage{american}{内容}} & {\foreignlanguage{american}{产出}} \\
+\foreignlanguage{american}{0--100 min} & \foreignlanguage{american}{1A}\foreignlanguage{american}{：}\foreignlanguage{american}{TRAE }{\foreignlanguage{american}{安装}}\foreignlanguage{american}{ / Python }{\foreignlanguage{american}{环境}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{四种模式}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{贪吃蛇}} & {\foreignlanguage{american}{环境检测报告}}\foreignlanguage{american}{ } \\
+\foreignlanguage{american}{100--230 min} & \foreignlanguage{american}{1B}\foreignlanguage{american}{：{论文智能体}}\foreignlanguage{american}{ / Excel }{\foreignlanguage{american}{合并}}\foreignlanguage{american}{ / SARIMA+LSTM }{\foreignlanguage{american}{预测}} & {\foreignlanguage{american}{智能体}}\foreignlanguage{american}{ + merged.xlsx + }{\foreignlanguage{american}{预测报告}} \\
+\foreignlanguage{american}{230--240 min} & {\foreignlanguage{american}{总结}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{答疑}} & \foreignlanguage{american}{---} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{1.2 }{实验{一}}\foreignlanguage{american}{ A}{：}\foreignlanguage{american}{TRAE }{环境搭建与贪吃蛇}\foreignlanguage{american}{}}{1.2 实验一 A：TRAE 环境搭建与贪吃蛇}}\label{ux5b9eux9a8cux4e00-atrae-ux73afux5883ux642dux5efaux4e0eux8d2aux5403ux86c7}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.1 }{\foreignlanguage{american}{安装}}\foreignlanguage{american}{ TRAE}}{1.2.1 安装 TRAE}}\label{ux5b89ux88c5-trae}
+
+\begin{itemize}
+\tightlist
+\item
+  {\foreignlanguage{american}{官网：}\foreignlanguage{american}{\url{https://www.trae.cn}}}\foreignlanguage{american}{ → }{\foreignlanguage{american}{下载对应平台版本（}\foreignlanguage{american}{Windows}}\foreignlanguage{american}{ x64 / macOS / Linux}\foreignlanguage{american}{）。}
+\item
+  {首次启动选择主题、\textbf{简体中文}、用手机号或稀土掘金账号登录。}\foreignlanguage{american}{}
+\item
+  {也可改用}{ }\foreignlanguage{american}{\href{https://qoder.com}{{Qoder}}}{（}{ }{阿里出品，需要付费。}{\foreignlanguage{american}{Codebudy}}\foreignlanguage{american}{{~ }}{有试用积分，积分使用完后需要付费}{ }{。}\foreignlanguage{american}{Trae}{目前还处于免费阶段，高峰时期可能需要排队，如遇排队请耐心等待或在非高峰时段使用）。如需要调用国际版本，可以访问}\foreignlanguage{american}{\href{https://www.trae.ai/}{{https://www.trae.ai/}}}{下载其国际版本（需要拥有国际网络访问权限，一般不推荐安装，安装国内版本即可）}\foreignlanguage{american}{}
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.2 }{配置}\foreignlanguage{american}{ Python}{（多种方式可选）}\foreignlanguage{american}{}}{1.2.2 配置 Python（多种方式可选）}}\label{ux914dux7f6e-pythonux591aux79cdux65b9ux5f0fux53efux9009}
+
+{根据你的需求和电脑环境，以下提供四种配置方案：}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{\foreignlanguage{american}{方案一：}\foreignlanguage{american}{Anaconda}\foreignlanguage{american}{（推荐数据科学方向}}\foreignlanguage{american}{）}}{方案一：Anaconda（推荐数据科学方向）}}\label{ux65b9ux6848ux4e00anacondaux63a8ux8350ux6570ux636eux79d1ux5b66ux65b9ux5411}
+
+{\foreignlanguage{american}{下载}}\foreignlanguage{american}{ \href{https://www.anaconda.com/download/}{Anaconda}}\foreignlanguage{american}{，安装时\textbf{勾选}}\foreignlanguage{american}{ "Add Anaconda to PATH"}\foreignlanguage{american}{。{安装后在}}\foreignlanguage{american}{ TRAE }{\foreignlanguage{american}{终端验证}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{python
+-\/-version\# ≥ 3.10 node -\/-version\# ≥ v20 git -\/-version}
+
+{\textbf{\foreignlanguage{american}{优点}}\foreignlanguage{american}{：预装}}\foreignlanguage{american}{ {pandas{、}numpy{、}scikit-learn}
+}{\foreignlanguage{american}{等科学计算库；可视化环境管理界面}}\foreignlanguage{american}{。}\foreignlanguage{american}{\hfill\break
+}{\textbf{\foreignlanguage{american}{缺点}}\foreignlanguage{american}{：安装包较大（约}}\foreignlanguage{american}{ 800MB}\foreignlanguage{american}{），{部分包更新略慢于}}\foreignlanguage{american}{ pip}\foreignlanguage{american}{。}
+
+\paragraph{\texorpdfstring{{\foreignlanguage{american}{方案二：}\foreignlanguage{american}{Miniconda}\foreignlanguage{american}{（轻量推荐}}\foreignlanguage{american}{）}}{方案二：Miniconda（轻量推荐）}}\label{ux65b9ux6848ux4e8cminicondaux8f7bux91cfux63a8ux8350}
+
+{\foreignlanguage{american}{如果不需要完整}}\foreignlanguage{american}{ Anaconda }{\foreignlanguage{american}{的庞大库，可选}}\foreignlanguage{american}{ \href{https://docs.conda.io/en/latest/miniconda.html}{Miniconda}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{安装后创建课程专用环境}}\foreignlanguage{american}{ }
+
+{\foreignlanguage{american}{conda}}\foreignlanguage{american}{ create -n }{\foreignlanguage{american}{智慧银行}}\foreignlanguage{american}{ python=3.11 {conda}
+activate }{\foreignlanguage{american}{智慧银行}}\foreignlanguage{american}{{~ }}
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{安装常用依赖}}\foreignlanguage{american}{ {conda} install
+pandas {numpy} {openpyxl} pip
+install {pypdf} flask scikit-learn}
+
+\textbf{{优点}}{：最小化安装（约}\foreignlanguage{american}{ 50MB}{），灵活创建多环境。}\foreignlanguage{american}{\hfill\break
+}\textbf{{缺点}}{：仍需额外安装部分}\foreignlanguage{american}{ Python }{包。}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{方案三：}{\foreignlanguage{american}{venv}}{（}\foreignlanguage{american}{Python }{内置，简单轻量）}\foreignlanguage{american}{}}{方案三：venv（Python 内置，简单轻量）}}\label{ux65b9ux6848ux4e09venvpython-ux5185ux7f6eux7b80ux5355ux8f7bux91cf}
+
+{\foreignlanguage{american}{如果只想用标准}}\foreignlanguage{american}{ {Python{，可用}}
+Windows }{\foreignlanguage{american}{官方安装器后创建虚拟环境}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{官方下载：}\foreignlanguage{american}{https}}\foreignlanguage{american}{://www.python.org/downloads/\# }{\textbf{\foreignlanguage{american}{安装时勾选}}}\textbf{\foreignlanguage{american}{ "Add Python to PATH}}\foreignlanguage{american}{"}
+
+\foreignlanguage{american}{\# }{创建虚拟环境（推荐命名}\foreignlanguage{american}{ .{venv}}{）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{python -m {{venv}}{ .{venv}} }
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{激活环境}}\foreignlanguage{american}{ .{venv}\textbackslash Scripts\textbackslash Activate.ps1{~~ }}
+
+\foreignlanguage{american}{\# PowerShell\# }\foreignlanguage{american}{或}\foreignlanguage{american}{ .{venv}\textbackslash Scripts\textbackslash activate.bat
+\# CMD}
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{安装课程所需依赖}}\foreignlanguage{american}{ }
+
+\foreignlanguage{american}{pip install
+pandas {openpyxl} {pypdf} flask
+scikit-learn}
+
+\textbf{{优点}}{：无需额外安装，}\foreignlanguage{american}{Python 3.3+ }{内置；轻量简单。}\foreignlanguage{american}{\hfill\break
+}{\textbf{\foreignlanguage{american}{缺点}}\foreignlanguage{american}{：不能管理多个}}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{版本，需先安装目标版本}}\foreignlanguage{american}{ Python}\foreignlanguage{american}{。}
+
+\paragraph{\texorpdfstring{{\foreignlanguage{american}{方案四：}\foreignlanguage{american}{pyenv}}\foreignlanguage{american}{ + {venv{（多版本管理，推荐进阶用户}}}\foreignlanguage{american}{）}}{方案四：pyenv + venv（多版本管理，推荐进阶用户）}}\label{ux65b9ux6848ux56dbpyenv-venvux591aux7248ux672cux7ba1ux7406ux63a8ux8350ux8fdbux9636ux7528ux6237}
+
+\textbf{\foreignlanguage{american}{macOS/Linux }}{\textbf{\foreignlanguage{american}{下}}\foreignlanguage{american}{可用}}\foreignlanguage{american}{ {pyenv} }{\foreignlanguage{american}{管理多个}}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{版本}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{\# macOS }{\foreignlanguage{american}{安装}}\foreignlanguage{american}{ }
+
+\foreignlanguage{american}{brew install {pyenv}{~ }}
+
+\foreignlanguage{american}{\# Linux }{\foreignlanguage{american}{安装}}\foreignlanguage{american}{ }
+
+\foreignlanguage{american}{curl
+https://pyenv.run \textbar{} bash{~ }}
+
+\foreignlanguage{american}{\# }{\foreignlanguage{american}{配置}}\foreignlanguage{american}{ \textasciitilde{}}
+
+{\foreignlanguage{american}{/.{bashrc}}}\foreignlanguage{american}{ }\foreignlanguage{american}{或}\foreignlanguage{american}{ \textasciitilde{}{/.{zshrcexport}} PYENV\_ROOT="\$HOME{/.{pyenv}}{"export}
+PATH="\$PYENV\_ROOT/{bin:\$}{PATH"eval}"\$({pyenv} {init} -\/-path)"\# }{\foreignlanguage{american}{安装多个}}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{版本}}\foreignlanguage{american}{ {pyenv} install
+3.10.12 {pyenv} install 3.11.{8{~ }\#} }{\foreignlanguage{american}{项目本地指定版本}\foreignlanguage{american}{cd}}\foreignlanguage{american}{ }{\foreignlanguage{american}{你的项目目录}}\foreignlanguage{american}{ {pyenv} local
+3.11.8 python -m {{venv}}{ .{venv}} {source .{venv}}/bin/activate }
+
+\textbf{{优点}}{：完美支持多版本}\foreignlanguage{american}{ Python }{共存；项目级自动切换。}\foreignlanguage{american}{\hfill\break
+}\textbf{{缺点}}{：需要配置}\foreignlanguage{american}{ shell}{；仅管理}\foreignlanguage{american}{ Python }{本身。}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{环境验证（通用）}\foreignlanguage{american}{}}{环境验证（通用）}}\label{ux73afux5883ux9a8cux8bc1ux901aux7528}
+
+{无论选择哪种方式，安装完成后在}\foreignlanguage{american}{ TRAE }{终端验证：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{python
+-\/-version\# ≥ 3.10 node -\/-version\# ≥ v20 git -\/-version pip -\/-version}
+
+{\textbf{\foreignlanguage{american}{选型建议}}}\foreignlanguage{american}{：}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{场景}} & {\foreignlanguage{american}{推荐方案}} \\
+{\foreignlanguage{american}{初学者}}\foreignlanguage{american}{/}{\foreignlanguage{american}{快速上手}} & \foreignlanguage{american}{Anaconda} \\
+{\foreignlanguage{american}{磁盘空间有限}}\foreignlanguage{american}{/}{\foreignlanguage{american}{多项目}} & {\foreignlanguage{american}{Miniconda}} \\
+{简单项目}\foreignlanguage{american}{/}{不想额外装软件}\foreignlanguage{american}{} & {\foreignlanguage{american}{venv}} \\
+{\foreignlanguage{american}{多版本}}\foreignlanguage{american}{ Python }{\foreignlanguage{american}{开发}} & {\foreignlanguage{american}{pyenv}}\foreignlanguage{american}{ + {venv}} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.3 AI }{\foreignlanguage{american}{智能环境检测}}}{1.2.3 AI 智能环境检测}}\label{ai-ux667aux80fdux73afux5883ux68c0ux6d4b}
+
+\foreignlanguage{american}{在}\foreignlanguage{american}{ Builder }{\foreignlanguage{american}{模式（}\foreignlanguage{american}{Ctrl}}\foreignlanguage{american}{ + {U{）输入}}}{下列提示词}\foreignlanguage{american}{：}
+
+{\foreignlanguage{american}{请检测当前开发环境是否满足课程要求，输出表格}}\foreignlanguage{american}{：}\foreignlanguage{american}{ }{\foreignlanguage{american}{检测项}}\foreignlanguage{american}{ \textbar{} }{\foreignlanguage{american}{要求版本}}\foreignlanguage{american}{ \textbar{} }{\foreignlanguage{american}{当前状态}}\foreignlanguage{american}{ \textbar{} }{\foreignlanguage{american}{修复建议}}\foreignlanguage{american}{ }{\foreignlanguage{american}{检测项至少包含：}{\foreignlanguage{american}{Python}}}{\foreignlanguage{american}{(}}\foreignlanguage{american}{≥3.10) / pip / Node.js(≥v20)
+/ {npm} / Git / Flask / pandas / {openpyxl}
+/ {pypdf}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }{有{缺失请}给出}\foreignlanguage{american}{ Windows }{一键安装命令。}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\paragraph{\texorpdfstring{{下面是上述提示{词运行}后的部分结果演示}\foreignlanguage{american}{}}{下面是上述提示词运行后的部分结果演示}}\label{ux4e0bux9762ux662fux4e0aux8ff0ux63d0ux793aux8bcdux8fd0ux884cux540eux7684ux90e8ux5206ux7ed3ux679cux6f14ux793a}
+
+{智慧银行实验课程}{ \foreignlanguage{american}{--- }}{开发环境检测报告}\foreignlanguage{american}{}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{检测项}} & {\foreignlanguage{american}{要求版本}} & {\foreignlanguage{american}{当前状态}} & {\foreignlanguage{american}{修复建议}} \\
+\textbf{\foreignlanguage{american}{Python}} & \foreignlanguage{american}{≥ 3.10} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{3.14.4}} & {无需修复（远超要求）}\foreignlanguage{american}{} \\
+\textbf{\foreignlanguage{american}{pip}} & {\foreignlanguage{american}{最新即可}} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{26.1}} & {\foreignlanguage{american}{无需修复；如需升级}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{python -m pip install -\/-upgrade pip} \\
+\textbf{\foreignlanguage{american}{Node.js}} & \foreignlanguage{american}{≥ v20} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{v24.13.0}} & {无需修复（远超要求）}\foreignlanguage{american}{} \\
+{\textbf{\foreignlanguage{american}{npm}}} & {\foreignlanguage{american}{最新即可}} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{11.6.2}} & {\foreignlanguage{american}{无需修复；如需升级}}\foreignlanguage{american}{：}
+
+{\foreignlanguage{american}{npm}}\foreignlanguage{american}{ install -g {npm@latest}} \\
+\textbf{\foreignlanguage{american}{Git}} & \foreignlanguage{american}{---} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{2.54.{0.windows}.1}} & {\foreignlanguage{american}{无需修复}} \\
+\textbf{\foreignlanguage{american}{Flask}} & \foreignlanguage{american}{≥ 2.0} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{3.1.3}} & {\foreignlanguage{american}{无需修复}} \\
+\textbf{\foreignlanguage{american}{pandas}} & \foreignlanguage{american}{≥ 2.0} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{3.0.2}} & {\foreignlanguage{american}{无需修复}} \\
+{\textbf{\foreignlanguage{american}{openpyxl}}} & \foreignlanguage{american}{≥ 3.0} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{3.1.5}} & {\foreignlanguage{american}{无需修复}} \\
+{\textbf{\foreignlanguage{american}{pypdf}}} & \foreignlanguage{american}{≥ 4.0} & \foreignlanguage{american}{✅}\textbf{\foreignlanguage{american}{6.12.1}} & \begin{minipage}[t]{\linewidth}\raggedright
+{\foreignlanguage{american}{无需修复}}
+
+\foreignlanguage{american}{\hfill\break
+\hfill\break
+}\strut
+\end{minipage} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\paragraph{\texorpdfstring{{\foreignlanguage{american}{如有缺失对应工具，可在}}\foreignlanguage{american}{ {PowerShell{（管理员}}}\foreignlanguage{american}{）}\foreignlanguage{american}{ }{\foreignlanguage{american}{中执行}}\foreignlanguage{american}{：}}{如有缺失对应工具，可在 PowerShell（管理员） 中执行：}}\label{ux5982ux6709ux7f3aux5931ux5bf9ux5e94ux5de5ux5177ux53efux5728-powershellux7ba1ux7406ux5458-ux4e2dux6267ux884c}
+
+\foreignlanguage{american}{1) }{\foreignlanguage{american}{基础运行时（}\foreignlanguage{american}{winget}\foreignlanguage{american}{，}\foreignlanguage{american}{Windows}}\foreignlanguage{american}{ 10/11 }{\foreignlanguage{american}{自带}}\foreignlanguage{american}{）}
+
+{\foreignlanguage{american}{winget}}\foreignlanguage{american}{ install -\/-id Python.Python.3.12 -e -\/-source {winget}
+{winget} install -\/-id {OpenJS.NodeJS.LTS}
+-e -\/-source {winget} {winget}
+install -\/-id {Git.Git} -e -\/-source {winget}}
+
+\foreignlanguage{american}{2) }{\foreignlanguage{american}{升级}}\foreignlanguage{american}{ pip / {npm} }{\foreignlanguage{american}{到最新}}
+
+\foreignlanguage{american}{python -m pip install -\/-upgrade pip {npm} install -g {npm@latest}}
+
+\foreignlanguage{american}{3) Python }{\foreignlanguage{american}{三件套}}\foreignlanguage{american}{ + {Flask{（实验一}}/}\foreignlanguage{american}{三}\foreignlanguage{american}{/}{\foreignlanguage{american}{四必装}}\foreignlanguage{american}{）}
+
+\foreignlanguage{american}{pip install flask pandas {openpyxl} {pypdf} -{i} https://pypi.tuna.tsinghua.edu.cn/simple}
+
+\foreignlanguage{american}{4) MCP }{\foreignlanguage{american}{工具链（实验二必装}}\foreignlanguage{american}{ ------ word/ppt/fetch/{stata-mcp} }{\foreignlanguage{american}{都用}}\foreignlanguage{american}{ {uvx}}\foreignlanguage{american}{）}
+
+\foreignlanguage{american}{pip install {uv} -{i} https://pypi.tuna.tsinghua.edu.cn/simple}
+
+\foreignlanguage{american}{5) }{\foreignlanguage{american}{验证安装}}
+
+\foreignlanguage{american}{python -\/-version; node -\/-version; git
+-\/-version python {-c} "import flask, pandas, {openpyxl}, {pypdf}; {print(}\textquotesingle ALL OK\textquotesingle)"}
+
+{\foreignlanguage{american}{相关提醒}}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{提醒项}} & {\foreignlanguage{american}{说明}} \\
+\textbf{\foreignlanguage{american}{Python
+3.14 }}{\textbf{\foreignlanguage{american}{较新}}} & {部分老三方库（如老版}{ }{\foreignlanguage{american}{tensorflow}\foreignlanguage{american}{）尚未发}}\foreignlanguage{american}{ cp314 {wheel{。如实验一}}
+SARIMA+LSTM }{\foreignlanguage{american}{报错，可用}}\foreignlanguage{american}{ {conda} }{\foreignlanguage{american}{另建}}\foreignlanguage{american}{ 3.11/3.12 }{\foreignlanguage{american}{虚拟环境}} \\
+{\textbf{\foreignlanguage{american}{pandas}}}\textbf{\foreignlanguage{american}{ 3.0}} & {\foreignlanguage{american}{已升至}}\foreignlanguage{american}{ 3.x}\foreignlanguage{american}{，}\foreignlanguage{american}{}{部分接口有变更} \\
+\textbf{\foreignlanguage{american}{Flask
+\_\_version\_\_}} & {在}\foreignlanguage{american}{ Flask 3.2 }{将被弃用}\foreignlanguage{american}{} \\
+{\textbf{\foreignlanguage{american}{uv}}}\textbf{\foreignlanguage{american}{ / {uvx}}{（实验二关键）}}\foreignlanguage{american}{} & {\foreignlanguage{american}{实验二}}\foreignlanguage{american}{ MCP }{\foreignlanguage{american}{章节的}\foreignlanguage{american}{mcp}}{服务如} \foreignlanguage{american}{fetch}{、}\foreignlanguage{american}{word / ppt / {stata-mcp{通过}}}\foreignlanguage{american}{ {{uvx}} }{\foreignlanguage{american}{启动，\textbf{必须先装}}}\textbf{\foreignlanguage{american}{ {uv}}} \\
+\textbf{\foreignlanguage{american}{Stata}{（实验二}\foreignlanguage{american}{ L4 }{关）}}\foreignlanguage{american}{} & {\foreignlanguage{american}{如未安装}\foreignlanguage{american}{stata}\foreignlanguage{american}{，{可参考新增的}}}{\foreignlanguage{american}{{[}}}{\foreignlanguage{american}{附录}}\foreignlanguage{american}{ C Stata }{\foreignlanguage{american}{下载与安装指南，或在实验报告中注明用}}\foreignlanguage{american}{ Python {statsmodels} }{\foreignlanguage{american}{替代}} \\
+\end{longtable}
+}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.4 TRAE }{\foreignlanguage{american}{四种模式}}}{1.2.4 TRAE 四种模式}}\label{trae-ux56dbux79cdux6a21ux5f0f}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{模式}} & {\foreignlanguage{american}{能力}} & {\foreignlanguage{american}{典型场景}} \\
+\foreignlanguage{american}{IDE} & {\foreignlanguage{american}{传统编辑器}} & {\foreignlanguage{american}{写代码、调试}} \\
+\foreignlanguage{american}{Chat} & {提问、解释、生成片段（\textbf{只回话不动手}）}\foreignlanguage{american}{} & \foreignlanguage{american}{"}{\foreignlanguage{american}{这段代码什么意思}}\foreignlanguage{american}{？}\foreignlanguage{american}{"} \\
+\foreignlanguage{american}{Builder} & {直接操作电脑：建文件、跑命令、改代码}\foreignlanguage{american}{} & \foreignlanguage{american}{"}{\foreignlanguage{american}{做一个贪吃蛇网页}}\foreignlanguage{american}{"} \\
+\foreignlanguage{american}{SOLO} & {\foreignlanguage{american}{三栏布局，}\foreignlanguage{american}{AI}}\foreignlanguage{american}{ }{\foreignlanguage{american}{全自主开发，}\foreignlanguage{american}{Plan}}\foreignlanguage{american}{ }{\foreignlanguage{american}{模式}}\foreignlanguage{american}{ + Sub Agent} & {快速原型、零代码描述需求}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.5 }{贪吃蛇网页实验}\foreignlanguage{american}{}}{1.2.5 贪吃蛇网页实验}}\label{ux8d2aux5403ux86c7ux7f51ux9875ux5b9eux9a8c}
+
+{按}\foreignlanguage{american}{ Ctrl + U }{切换到}\foreignlanguage{american}{ Builder }{模式，输入下列提示词：}\foreignlanguage{american}{}
+
+{做一个}\foreignlanguage{american}{ HTML }{贪吃蛇游戏{单文件}}\foreignlanguage{american}{ index.html}{，}{ }{要求：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{纯}\foreignlanguage{american}{ HTML+CSS+}{原生}\foreignlanguage{american}{ JS}{，不引入第三方库；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{2. }{画布}\foreignlanguage{american}{ 600×600}{，蛇头蓝、身体绿、食物红；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{3. }{方向键控制方向，吃到食物分数}\foreignlanguage{american}{ +1}{；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{4. }{撞墙}\foreignlanguage{american}{/}{{撞身体}}{游戏结束，弹}\foreignlanguage{american}{"}{再来一局}\foreignlanguage{american}{"}{按钮；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{5. }{顶部显示当前分数与最高分（}{\foreignlanguage{american}{localStorage}}{）。}{ \foreignlanguage{american}{}}
+
+{做完后双击}\foreignlanguage{american}{ index.html }{验证。}{ }\foreignlanguage{american}{}
+
+{观察}\foreignlanguage{american}{ AI }{的工作流：\textbf{分析}}\textbf{{ \foreignlanguage{american}{→ }}{生成代码}{ \foreignlanguage{american}{→ }}{浏览器预览}{ \foreignlanguage{american}{→ }}{反馈调试}}{。这就是后续所有实验的}\foreignlanguage{american}{"AI }{工位}\foreignlanguage{american}{"}{基础。}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.2.6 1A }{\foreignlanguage{american}{验收清单}}}{1.2.6 1A 验收清单}}\label{a-ux9a8cux6536ux6e05ux5355}
+
+\begin{itemize}
+\item
+  \foreignlanguage{american}{}
+
+  ~
+\item
+  \foreignlanguage{american}{python ≥ 3.10 }\foreignlanguage{american}{且}\foreignlanguage{american}{ node ≥ v20}
+\end{itemize}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{1.3 }{实验{一}}\foreignlanguage{american}{ B}{：智能体与}\foreignlanguage{american}{ Excel }{处理}\foreignlanguage{american}{}}{1.3 实验一 B：智能体与 Excel 处理}}\label{ux5b9eux9a8cux4e00-bux667aux80fdux4f53ux4e0e-excel-ux5904ux7406}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.3.1 }{创建}\foreignlanguage{american}{ AI }{论文解读智能体}\foreignlanguage{american}{}}{1.3.1 创建 AI 论文解读智能体}}\label{ux521bux5efa-ai-ux8bbaux6587ux89e3ux8bfbux667aux80fdux4f53}
+
+{{聊天框右上角}}{ \foreignlanguage{american}{→ }}\textbf{{设置}{ \foreignlanguage{american}{→ }}{智能体}{ \foreignlanguage{american}{→ }}{创建}}{：}\foreignlanguage{american}{}
+
+\begin{itemize}
+\tightlist
+\item
+  {名称：}\foreignlanguage{american}{AI }{论文解读助手}\foreignlanguage{american}{}
+\item
+  {工具：{勾选文件}读取、代码执行、网络访问}\foreignlanguage{american}{}
+\item
+  {\foreignlanguage{american}{系统提示词}}\foreignlanguage{american}{：}
+\end{itemize}
+
+{你是资深的银行业}\foreignlanguage{american}{ / }{金融科技领域学术论文解读助手。}{ \foreignlanguage{american}{}}
+
+{用户拖入}\foreignlanguage{american}{ PDF }{后，按下列结构输出}\foreignlanguage{american}{ Markdown }{报告：}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{一、论文基本信息（标题}\foreignlanguage{american}{/}{作者}\foreignlanguage{american}{/}{期刊}\foreignlanguage{american}{/}{年份}\foreignlanguage{american}{/DOI}{）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{二、研究问题与背景（}\foreignlanguage{american}{≤200 }{字）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{三、方法论（数据集}\foreignlanguage{american}{/}{模型}\foreignlanguage{american}{/}{实验设计）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{四、核心发现（}\foreignlanguage{american}{≤5 }{条）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{五、术语速查表（}\foreignlanguage{american}{5--10 }{{个}}{英文术语}\foreignlanguage{american}{ + }{中文解释）}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{{~}}{六、可复现性评估（数据}\foreignlanguage{american}{/}{代码}\foreignlanguage{american}{/}{难度}\foreignlanguage{american}{ 1--5}{）}\foreignlanguage{american}{{~ }}
+
+\foreignlanguage{american}{{~}}{注意：英文论文关键概念中英对照；不得编造数据；首次运行如缺}\foreignlanguage{american}{ {pypdf} }{等}\foreignlanguage{american}{pdf}{处理工具请提示用户并为用户自动安装}\foreignlanguage{american}{}
+
+\textbf{{生成上述智能体后的使用}}{：{从知网下载}论文（也可在图书馆英文文献库}\foreignlanguage{american}{\href{https://lib.sicau.edu.cn/LibSicau/LanMu/MuLu.asp?id=19}{\foreignlanguage{american}{\foreignlanguage{american}{外文数据库}}{-}\foreignlanguage{american}{\foreignlanguage{american}{图书馆}}}}{下载感兴趣的英文论文）}{ \foreignlanguage{american}{→ PDF }}{拖入对话框}{ \foreignlanguage{american}{→ }}{选中本智能体}{ \foreignlanguage{american}{→ }}{输入}\foreignlanguage{american}{"}{解读一下}\foreignlanguage{american}{"}{。}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.3.2 Excel }{多文件合并}\foreignlanguage{american}{}}{1.3.2 Excel 多文件合并}}\label{excel-ux591aux6587ux4ef6ux5408ux5e76}
+
+{第一步（数据准备提示词）：}\foreignlanguage{american}{}
+
+{请为后续}\foreignlanguage{american}{ Excel }{整合任务做准备：}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{1. }{检查}\foreignlanguage{american}{"}{原始数据}\foreignlanguage{american}{"}{文件夹是否存在；不存在则自动创建一组}\foreignlanguage{american}{ ≥5 }{张表的模拟数据}\foreignlanguage{american}{{~~~ }}{（每张}\foreignlanguage{american}{ ≥50 }{行，列名故意}\foreignlanguage{american}{ 1--2 }{处不一致便于练手）；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{2. }{列出所有文件的编码}\foreignlanguage{american}{ / }{列名}\foreignlanguage{american}{ / }{样例}\foreignlanguage{american}{ / }{数据类型；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{3. }{输出准备报告，明确合并可行性与最佳方案。}{ }{本步骤只做准备，不做合并。}{ }\foreignlanguage{american}{}
+
+{第二步（执行合并提示词）：}\foreignlanguage{american}{}
+
+{基于上一步的准备报告：}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{1{. {用}
+pandas {{读入}"{原始数据}"{中所有}}
+.xlsx/.csv{；}}
+}
+
+\foreignlanguage{american}{2. }{\foreignlanguage{american}{列名归一化（大小写统一、去空格、中英文映射}}{\foreignlanguage{american}{）；}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}3. {concat} }{\foreignlanguage{american}{后基于}\foreignlanguage{american}{"}\foreignlanguage{american}{客户}\foreignlanguage{american}{ID}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{交易日期}\foreignlanguage{american}{"}{\foreignlanguage{american}{去重}}}{\foreignlanguage{american}{；}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}4. }{\foreignlanguage{american}{输出到}}\foreignlanguage{american}{ }{\foreignlanguage{american}{整合数据}}\foreignlanguage{american}{/merged\_\{}{\foreignlanguage{american}{时间戳}}\foreignlanguage{american}{\}.{xlsx{，并生成}}
+merge\_log.md}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{1.3.3 }{业绩数据预测（}\foreignlanguage{american}{SARIMA + LSTM}{）}\foreignlanguage{american}{}}{1.3.3 业绩数据预测（SARIMA + LSTM）}}\label{ux4e1aux7ee9ux6570ux636eux9884ux6d4bsarima-lstm}
+
+{\foreignlanguage{american}{请基于}}\foreignlanguage{american}{ data/{credit\_card\_daily.xlsx{（如不存在请先按下列规则模拟生成}}}\foreignlanguage{american}{）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }}{时间}\foreignlanguage{american}{ 2022-01-01 }{至}\foreignlanguage{american}{ 2024-12-31}{，每日一行；}\foreignlanguage{american}{ - }{列：日期}\foreignlanguage{american}{/}{消费额}\foreignlanguage{american}{(}{万元}\foreignlanguage{american}{)/}{是否节日}\foreignlanguage{american}{/}{节日名称}\foreignlanguage{american}{/}{星期几；}\foreignlanguage{american}{ - }{节日}\foreignlanguage{american}{ ±1 }{天放大}\foreignlanguage{american}{
+1.5--2.2 }{{倍}}{；故意造}\foreignlanguage{american}{ 5\% }{缺失}\foreignlanguage{american}{ + 1\% }{异常值。}\foreignlanguage{american}{{~ }}
+
+{完成业绩预测：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}1. }{{缺失值}}{用前后}\foreignlanguage{american}{ 7 }{日均值填补，}\foreignlanguage{american}{IQR }{异常值标注但不{删}；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{2. }\foreignlanguage{american}{EDA }{\foreignlanguage{american}{三图（日时序}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{月度均值柱状}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{节日}}\foreignlanguage{american}{ vs }{\foreignlanguage{american}{非节日箱线}}\foreignlanguage{american}{）}\foreignlanguage{american}{→ reports/{eda}/}\foreignlanguage{american}{；}\foreignlanguage{american}{ 3. {SARIMA(}1,1,{1)(}1,1,1,7) }{\foreignlanguage{american}{预测未来}}\foreignlanguage{american}{ 30 }\foreignlanguage{american}{天}\foreignlanguage{american}{ + 95\% }{{\foreignlanguage{american}{置信区间}}}{\foreignlanguage{american}{；}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}4. {LSTM(}}{\foreignlanguage{american}{窗口}}\foreignlanguage{american}{=14, }{\foreignlanguage{american}{隐层}}\foreignlanguage{american}{=64, epoch=20) }{{\foreignlanguage{american}{对比}}}{\foreignlanguage{american}{；}}\foreignlanguage{american}{ }
+
+\foreignlanguage{american}{5. }{用}\foreignlanguage{american}{ RMSE / MAPE }{比较，画对比折线图；}{ \foreignlanguage{american}{}}
+
+\foreignlanguage{american}{6. }{\foreignlanguage{american}{生成}}\foreignlanguage{american}{ reports/{forecast\_report.md{（含模型选择理由}}
++ ≥3 }{\foreignlanguage{american}{条业务建议}}\foreignlanguage{american}{）。}\foreignlanguage{american}{ }\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{1.4 }{实验{一}}{ }{实验报告要求}\foreignlanguage{american}{}}{1.4 实验一 实验报告要求}}\label{ux5b9eux9a8cux4e00-ux5b9eux9a8cux62a5ux544aux8981ux6c42}
+
+{实验{一}}\foreignlanguage{american}{ A + B }{提交一份报告，必含：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}{\foreignlanguage{american}{环境信息表（}\foreignlanguage{american}{OS}}\foreignlanguage{american}{ / TRAE }{\foreignlanguage{american}{版本}}\foreignlanguage{american}{ / Python }{\foreignlanguage{american}{版本}}\foreignlanguage{american}{ / Node }{\foreignlanguage{american}{版本}}{\foreignlanguage{american}{）；}}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}\foreignlanguage{american}{TRAE }{安装配置过程截图；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{贪吃{蛇运行截}图}\foreignlanguage{american}{ + }{关键提示词自评；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}{智能体提示词}\foreignlanguage{american}{ + }{论文}{ }{文献条目}\foreignlanguage{american}{ + }{解读节选；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{5{~~~~~~~~
+}}}\foreignlanguage{american}{Excel }{合并日志}\foreignlanguage{american}{ + }{业绩预测报告；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{6{~~~~~~~~
+}}}\textbf{{实验心得}}{（}\foreignlanguage{american}{≥ 200 }{字）：列出至少}\foreignlanguage{american}{ 1 }{次}\foreignlanguage{american}{ AI }{出错案例与你如何修正。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\clearpage
+
+\section{\texorpdfstring{{第}\foreignlanguage{american}{ 2 }{章}{ }{实验二：}\foreignlanguage{american}{MCP }{由浅入深}\foreignlanguage{american}{ 4 }{关}\foreignlanguage{american}{}}{第 2 章 实验二：MCP 由浅入深 4 关}}\label{ux7b2c-2-ux7ae0-ux5b9eux9a8cux4e8cmcp-ux7531ux6d45ux5165ux6df1-4-ux5173}
+
+\textbf{{学时}}\foreignlanguage{american}{ 4h}{（}\foreignlanguage{american}{240 min}{）}{ \foreignlanguage{american}{· }}\textbf{{权重}}\foreignlanguage{american}{ 20\% · }\textbf{{主题}}{ }{让}\foreignlanguage{american}{ AI }{长出}\foreignlanguage{american}{"}{手脚}\foreignlanguage{american}{"}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.1 }{\foreignlanguage{american}{什么是}}\foreignlanguage{american}{ MCP}\foreignlanguage{american}{（}\foreignlanguage{american}{10 min }{\foreignlanguage{american}{概念}}\foreignlanguage{american}{）}}{2.1 什么是 MCP（10 min 概念）}}\label{ux4ec0ux4e48ux662f-mcp10-min-ux6982ux5ff5}
+
+{\textbf{\foreignlanguage{american}{MCP}\foreignlanguage{american}{（}\foreignlanguage{american}{Model}}}\textbf{\foreignlanguage{american}{ Context Protocol}\foreignlanguage{american}{）}}\foreignlanguage{american}{ }\foreignlanguage{american}{是}\foreignlanguage{american}{ Anthropic 2024 }{\foreignlanguage{american}{年提出的}\foreignlanguage{american}{"AI}}\foreignlanguage{american}{ }{\foreignlanguage{american}{与外部工具}}\foreignlanguage{american}{/}{\foreignlanguage{american}{数据源}\foreignlanguage{american}{"}\foreignlanguage{american}{通信标准}}\foreignlanguage{american}{。}
+
+\foreignlanguage{american}{MCP Client
+(TRAE/{{Qoder}}{){~ }←→{~ }MCP} Server (}{{\foreignlanguage{american}{工具方进程}}}{\foreignlanguage{american}{){~ }←→{~ }}{\foreignlanguage{american}{真实工具}}}\foreignlanguage{american}{ (}{\foreignlanguage{american}{浏览器}}\foreignlanguage{american}{/Excel/Word/...){~~~~~~~~~~~~~~~~
+}JSON-RPC over {stdio} }\foreignlanguage{american}{或}\foreignlanguage{american}{ SSE }
+
+\textbf{\foreignlanguage{american}{与}\foreignlanguage{american}{ Skill }}{\textbf{\foreignlanguage{american}{的关系（黄金口诀}}}\textbf{\foreignlanguage{american}{）}}\foreignlanguage{american}{：「}\textbf{\foreignlanguage{american}{MCP }}{\textbf{\foreignlanguage{american}{给能力，}\foreignlanguage{american}{Skill}}}\textbf{\foreignlanguage{american}{ }}{\textbf{\foreignlanguage{american}{给方法}}}\foreignlanguage{american}{」。}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{{~~ }}\foreignlanguage{american}{支持}{\foreignlanguage{american}{mcp}}\foreignlanguage{american}{的主流平台：}}{~~ 支持mcp的主流平台：}}\label{ux652fux6301mcpux7684ux4e3bux6d41ux5e73ux53f0}
+
+{截至}\foreignlanguage{american}{ 2025 }{年}\foreignlanguage{american}{ 2 }{月，已有}{ }{超过}\foreignlanguage{american}{ 1000 }{{个}}{开源}\foreignlanguage{american}{ MCP }{连接器。主流支持平台包括：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{Anthropic}{：}\foreignlanguage{american}{Claude Desktop}{、}\foreignlanguage{american}{Claude Code}
+
+\foreignlanguage{american}{OpenAI}{：}\foreignlanguage{american}{ChatGPT}{、}\foreignlanguage{american}{Agents SDK}{、}\foreignlanguage{american}{Responses API}
+
+\foreignlanguage{american}{Google}{：}\foreignlanguage{american}{Gemini SDK}
+
+\foreignlanguage{american}{Microsoft}{：}\foreignlanguage{american}{Azure AI Services}
+
+{开发工具：}\foreignlanguage{american}{Zed}{、}{\foreignlanguage{american}{Replit}}{、}{\foreignlanguage{american}{Codeium}}{、}{\foreignlanguage{american}{Sourcegraph}}\foreignlanguage{american}{}
+
+{国产}\foreignlanguage{american}{ IDE}{：{腾讯}}\foreignlanguage{american}{ {CodeBuddy}}{、通义灵码、字节}\foreignlanguage{american}{ {TraeCN}}{、百度}\foreignlanguage{american}{ Comate }{等均已支持}\foreignlanguage{american}{ MCP }{协议}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{常见的}\foreignlanguage{american}{ MCP }\foreignlanguage{american}{市场（}\foreignlanguage{american}{Registry / Marketplace}\foreignlanguage{american}{）}\foreignlanguage{american}{}}{常见的 MCP 市场（Registry / Marketplace）}}\label{ux5e38ux89c1ux7684-mcp-ux5e02ux573aregistry-marketplace}
+
+\foreignlanguage{american}{MCP}{（}\foreignlanguage{american}{Model Context Protocol}{）市场是用于发现、安装和分发}\foreignlanguage{american}{
+MCP }{服务器的目录。下表汇总了当前主流的国内外}\foreignlanguage{american}{
+MCP }{市场。}\foreignlanguage{american}{}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+{市场}\foreignlanguage{american}{}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+{网址}\foreignlanguage{american}{}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+{说明}\foreignlanguage{american}{}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{官方注册表}\foreignlanguage{american}{} & \foreignlanguage{american}{\url{https://github.com/modelcontextprotocol/servers}}
+
+\foreignlanguage{american}{}
+
+~ & \foreignlanguage{american}{MCP
+}{协议作者维护的}\foreignlanguage{american}{
+reference servers + community servers }{列表}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Smithery} & \foreignlanguage{american}{\url{https://smithery.ai}}
+
+\foreignlanguage{american}{}
+
+~ & {当下最活跃的第三方}\foreignlanguage{american}{
+MCP }{市场，支持一键}{ }{\foreignlanguage{american}{npx}}\foreignlanguage{american}{
+@smithery/cli install}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{MCP.so} & \foreignlanguage{american}{\url{https://mcp.so}}
+
+\foreignlanguage{american}{}
+
+~ & {中文友好的聚合站，按场景（数据库}\foreignlanguage{american}{
+/ }{浏览器}\foreignlanguage{american}{
+/ }{搜索等）分类}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{PulseMCP}}\foreignlanguage{american}{} & \foreignlanguage{american}{\url{https://www.pulsemcp.com}}
+
+\foreignlanguage{american}{}
+
+~ & {{含使用}}{人数、更新频率排行}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Glama
+MCP Directory} & \foreignlanguage{american}{\url{https://glama.ai/mcp/servers}}
+
+\foreignlanguage{american}{}
+
+~ & {服务器}\foreignlanguage{american}{
++ }{客户端两个目录，有评分}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Awesome
+MCP Servers} & \foreignlanguage{american}{\url{https://github.com/punkpeye/awesome-mcp-servers}}
+
+\foreignlanguage{american}{}
+
+~ & \foreignlanguage{american}{GitHub
+}{收集向}{ \foreignlanguage{american}{list}}{，社区贡献}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Cline
+Marketplace} & \foreignlanguage{american}{Cline
+}{插件内置}\foreignlanguage{american}{} & {\foreignlanguage{american}{VSCode}}\foreignlanguage{american}{
+/ Cursor }{扩展端的市场入口}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{Qoder}}\foreignlanguage{american}{
+/ Cursor / Claude /TRAE }{客户端内置}\foreignlanguage{american}{} & {各自}\foreignlanguage{american}{
+IDE }{的}\foreignlanguage{american}{ MCP }{设置面}\foreignlanguage{american}{}
+
+{板}\foreignlanguage{american}{} & {直接图形化安装}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+{在}{\foreignlanguage{american}{trae}}{或其他}\foreignlanguage{american}{ai-ide}{中，一般在文件}\foreignlanguage{american}{-}{首选项}\foreignlanguage{american}{-}{设置中找到}{\foreignlanguage{american}{mcp}}{的有关设置，具体如下图。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+% 注释掉不存在的图片引用，改用占位文字
+% \foreignlanguage{american}{\includegraphics[width=6in,height=4.29167in,alt={图形用户界面, 文本, 应用程序, 电子邮件 AI 生成的内容可能不正确。}]{figures/image002.jpg}}\foreignlanguage{american}{}
+
+{【图片占位：TRAE 中 MCP 设置界面截图】}
+
+\foreignlanguage{american}{TRAE}{中的内置}{\foreignlanguage{american}{mcp}}{市场}% \foreignlanguage{american}{\includegraphics[width=5.89583in,height=4.42708in,alt={图形用户界面, 应用程序 AI 生成的内容可能不正确。}]{figures/image004.jpg}}\foreignlanguage{american}{}
+
+{【图片占位：TRAE 内置 MCP 市场截图】}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.2 }{实验使用的部分}\foreignlanguage{american}{ MCP }{全景}\foreignlanguage{american}{{~ }}}{2.2 实验使用的部分 MCP 全景~ }}\label{ux5b9eux9a8cux4f7fux7528ux7684ux90e8ux5206-mcp-ux5168ux666f}
+
+{如全部}{\foreignlanguage{american}{mcp}}{已经配置完整情况下，}{\foreignlanguage{american}{打开}}\foreignlanguage{american}{ TRAE CN }\foreignlanguage{american}{的}\foreignlanguage{american}{ MCP }{\foreignlanguage{american}{配置文件}}\foreignlanguage{american}{ \%APPDATA\%\textbackslash Trae CN\textbackslash User\textbackslash{}{mcp.json{，可见如下}} 8 }{\foreignlanguage{american}{组\textbf{已启用}}}\foreignlanguage{american}{ MCP}\foreignlanguage{american}{：}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{组别}} & \foreignlanguage{american}{MCP }{\foreignlanguage{american}{名称}} & {\foreignlanguage{american}{启动方式}} & {\foreignlanguage{american}{主要能力}} \\
+{\foreignlanguage{american}{浏览器组}} & \foreignlanguage{american}{playwright} & {\foreignlanguage{american}{npx}}\foreignlanguage{american}{ @playwright/mcp@latest} & {\foreignlanguage{american}{操作}}\foreignlanguage{american}{ Chromium / Firefox / WebKit} \\
+{\foreignlanguage{american}{浏览器组}} & \foreignlanguage{american}{chrome-{devtools}} & {\foreignlanguage{american}{npx}}\foreignlanguage{american}{ -y {chrome-devtools-mcp@latest}} & {\foreignlanguage{american}{调用}}\foreignlanguage{american}{ Chrome {DevTools{（}Lighthouse}
+}\foreignlanguage{american}{等）} \\
+{\foreignlanguage{american}{浏览器组}} & \foreignlanguage{american}{fetch} & {\foreignlanguage{american}{uvx}}\foreignlanguage{american}{ {mcp}-server-fetch} & {\foreignlanguage{american}{直接抓网页}}\foreignlanguage{american}{/JSON API} \\
+\foreignlanguage{american}{Office }\foreignlanguage{american}{组} & \foreignlanguage{american}{excel} & {\foreignlanguage{american}{npx}}\foreignlanguage{american}{ -\/-{yes
+@}negokaz/excel-mcp-server} & \foreignlanguage{american}{Excel }{\foreignlanguage{american}{读写、表格、格式、截图}} \\
+\foreignlanguage{american}{Office }\foreignlanguage{american}{组} & \foreignlanguage{american}{word} & {\foreignlanguage{american}{uvx}}\foreignlanguage{american}{ -\/-from office-word-{mcp}-server {word\_mcp\_server}} & \foreignlanguage{american}{Word }{读写、样式、目录、页码}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Office }\foreignlanguage{american}{组} & \foreignlanguage{american}{ppt} & {\foreignlanguage{american}{uvx}}\foreignlanguage{american}{ -\/-from office-{powerpoint}-{mcp}-server {ppt\_mcp\_server}} & \foreignlanguage{american}{PPT }{\foreignlanguage{american}{生成、模板、批量改稿}} \\
+{\foreignlanguage{american}{系统组}} & \foreignlanguage{american}{WindowsMCP.Net} & \foreignlanguage{american}{Windows-MCP.Net.exe} & \foreignlanguage{american}{Windows }{\foreignlanguage{american}{原生}}\foreignlanguage{american}{ UI }{\foreignlanguage{american}{操作（窗口}}\foreignlanguage{american}{/}{\foreignlanguage{american}{键鼠}}\foreignlanguage{american}{）} \\
+{\foreignlanguage{american}{数据分析组}} & {\foreignlanguage{american}{stata-mcp}} & {\foreignlanguage{american}{uvx}}\foreignlanguage{american}{ {stata-mcp}} & {\foreignlanguage{american}{调用本机}}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{跑计量回归}} \\
+\end{longtable}
+}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.3 MCP }{配置实操（详细）}\foreignlanguage{american}{}}{2.3 MCP 配置实操（详细）}}\label{mcp-ux914dux7f6eux5b9eux64cdux8be6ux7ec6}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.3.1 }{\foreignlanguage{american}{找到配置文件}}}{2.3.1 找到配置文件}}\label{ux627eux5230ux914dux7f6eux6587ux4ef6}
+
+\foreignlanguage{american}{按}\foreignlanguage{american}{ Win + {R{，输入}}
+\%APPDATA\%\textbackslash Trae CN\textbackslash{}{User{，找到}}
+{{mcp.json}}}\foreignlanguage{american}{。}
+
+{\foreignlanguage{american}{完整路径：}\foreignlanguage{american}{C}}\foreignlanguage{american}{:\textbackslash Users\textbackslash\textless{}}{\foreignlanguage{american}{你的用户名}}\foreignlanguage{american}{\textgreater\textbackslash{}{AppData}\textbackslash Roaming\textbackslash Trae CN\textbackslash User\textbackslash{}{mcp.json} }
+
+{\foreignlanguage{american}{Qoder}}\foreignlanguage{american}{ }{\foreignlanguage{american}{对应路径}}\foreignlanguage{american}{：}\foreignlanguage{american}{\%APPDATA\%\textbackslash{}{Qoder}\textbackslash{}{SharedClientCache}\textbackslash extension\textbackslash local\textbackslash{}{mcp.json}}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.3.2 }{课程标准配置（直接覆盖即可）}\foreignlanguage{american}{}}{2.3.2 课程标准配置（直接覆盖即可）}}\label{ux8bfeux7a0bux6807ux51c6ux914dux7f6eux76f4ux63a5ux8986ux76d6ux5373ux53ef}
+
+{把}\foreignlanguage{american}{ {mcp.json}
+}{内容替换为下列}\foreignlanguage{american}{ JSON}{（与本机{讲师机}一致，已剔除被禁用的项）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}\# MCP }{服务器配置说明}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{\#\# }{配置文件结构}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\{}
+
+\foreignlanguage{american}{{~ }"{mcpServers}{": \{}}
+
+\foreignlanguage{american}{{~~~ }"fetch{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{uvx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"{mcp}-server-fetch"{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~
+}"playwright{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{npx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"@playwright/{mcp@latest}"{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~ }"{chrome}-{devtools}": \{}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{npx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"-y", "{chrome-devtools-mcp@latest}"{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~ }"excel{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{npx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"-\/-yes"{, "@}{negokaz}/excel-{mcp}-server"{]},}
+
+\foreignlanguage{american}{{~~~~~
+}"env{": \{}}
+
+\foreignlanguage{american}{{~~~~~~~
+}"EXCEL\_MCP\_PAGING\_CELLS\_LIMIT": "10000"}
+
+\foreignlanguage{american}{{~~~~~ }\}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~ }"word{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{uvx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"-\/-from",
+"office-word-{mcp}-server", "{word\_mcp\_server}"{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~ }"ppt{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{uvx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"-\/-from",
+"office-{powerpoint}-{mcp}-server",
+"{ppt\_mcp\_server}"{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~
+}"WindowsMCP.Net{": \{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "C:\textbackslash\textbackslash Users\textbackslash\textbackslash\textless{}}{用户名}\foreignlanguage{american}{\textgreater\textbackslash\textbackslash.dotnet\textbackslash\textbackslash tools\textbackslash\textbackslash Windows-MCP.Net.exe",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}{]}}
+
+\foreignlanguage{american}{{~~~ }\},}
+
+\foreignlanguage{american}{{~~~ }"{{stata}-mcp}{":
+\{}}
+
+\foreignlanguage{american}{{~~~~~
+}"command": "{uvx}",}
+
+\foreignlanguage{american}{{~~~~~
+}"{args}": {[}"{stata-mcp}"{]},}
+
+\foreignlanguage{american}{{~~~~~
+}"env{": \{}}
+
+\foreignlanguage{american}{{~~~~~~~
+}"STATA\_PATH": "C:\textbackslash\textbackslash Program
+Files\textbackslash\textbackslash Stata18\textbackslash\textbackslash StataMP-64.exe",}
+
+\foreignlanguage{american}{{~~~~~~~
+}"MCP\_STATA\_LOGLEVEL": "INFO"}
+
+\foreignlanguage{american}{{~~~~~ }\}}
+
+\foreignlanguage{american}{{~~~ }\}}
+
+\foreignlanguage{american}{{~ }\}}
+
+\foreignlanguage{american}{\}}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{{~}}\foreignlanguage{american}{2.3.3 }{\foreignlanguage{american}{字段含义}}}{~2.3.3 字段含义}}\label{ux5b57ux6bb5ux542bux4e49}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{字段}} & {\foreignlanguage{american}{含义}} \\
+{\foreignlanguage{american}{mcpServers}} & {顶层对象，键}\foreignlanguage{american}{ = MCP }{名称（自定义），值}\foreignlanguage{american}{ = }{启动配置}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{command} & {实际启动二进制（}{\foreignlanguage{american}{npx}}\foreignlanguage{american}{ / {{uvx}} / {.exe} }{绝对路径）}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{args}} & {命令行参数，}\foreignlanguage{american}{TRAE }{启动时按数组顺序拼接}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{env} & {环境变量；放}\foreignlanguage{american}{ API Key}{、路径、限制参数}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{disabled} & \foreignlanguage{american}{true}\foreignlanguage{american}{ }{\foreignlanguage{american}{时不加载该}}\foreignlanguage{american}{ MCP} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.3.4 }\foreignlanguage{american}{{~}MCP }{服务运行条件准备提示词}\foreignlanguage{american}{}}{2.3.4 ~MCP 服务运行条件准备提示词}}\label{mcp-ux670dux52a1ux8fd0ux884cux6761ux4ef6ux51c6ux5907ux63d0ux793aux8bcd}
+
+{在}\foreignlanguage{american}{ TRAE IDE }{的}\foreignlanguage{american}{ **Builder }{模式}\foreignlanguage{american}{**}{（}{\foreignlanguage{american}{Ctrl+U}}{）中输入以下内容：}\foreignlanguage{american}{}
+
+{请为我准备智慧银行课程所需的所有}\foreignlanguage{american}{ MCP }{服务运行条件：}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{1}{】安装核心依赖}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{安装}\foreignlanguage{american}{ {uv}}{：}\foreignlanguage{american}{pip install {uv}}
+
+\foreignlanguage{american}{2. }{安装}\foreignlanguage{american}{ Windows-MCP.Net}{：}\foreignlanguage{american}{dotnet tool
+install -g Windows-MCP.Net}
+
+\foreignlanguage{american}{3. }{确认}\foreignlanguage{american}{ Node.js }{≥}\foreignlanguage{american}{ v20}{、}\foreignlanguage{american}{Python }{≥}\foreignlanguage{american}{ 3.10}
+
+{【}\foreignlanguage{american}{2}{】配置环境变量}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{设置}\textbf{\foreignlanguage{american}{ STATA\_PATH=C:\textbackslash Program Files\textbackslash Stata18\textbackslash StataMP-64.exe
+}{设置前需要检查本机}}{\textbf{\foreignlanguage{american}{stata}}}\textbf{{是否安装}{ }{本路径是否存在}{ }{否则提升用户安装}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{设置}\foreignlanguage{american}{ EXCEL\_MCP\_PAGING\_CELLS\_LIMIT=10000}
+
+\foreignlanguage{american}{3. }{设置}\foreignlanguage{american}{ MCP\_STATA\_LOGLEVEL=INFO}
+
+{【}\foreignlanguage{american}{3}{】配置}\foreignlanguage{american}{ MCP }{服务器}\foreignlanguage{american}{}
+
+{创建配置文件内容如下，请替换}\foreignlanguage{american}{ \textless{}}{用户名}\foreignlanguage{american}{\textgreater{} }{为实际用户名：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\{}
+
+\foreignlanguage{american}{{~ }"{mcpServers}{": \{}}
+
+\foreignlanguage{american}{{~~~ }"fetch{": \{}"command"{:"}{uvx}","{args}{":{[}}"{mcp}-server-fetch{"{]}\}},}
+
+\foreignlanguage{american}{{~~~
+}"playwright{":\{}"command":"npx","args{":{[}}"@playwright/mcp@latest"{]}\},}
+
+\foreignlanguage{american}{{~~~ }"{chrome}-devtools{":\{}"command":"npx","args{":{[}}"-y","chrome-devtools-mcp@latest"{]}\},}
+
+\foreignlanguage{american}{{~~~ }"excel{":\{}"command":"{npx}","{args}{":{[}}"-\/-yes"{,"@}negokaz/excel-mcp-server"{]},}
+
+\foreignlanguage{american}{{~~~~~~~ }"env{":\{}"EXCEL\_MCP\_PAGING\_CELLS\_LIMIT":"{10000"\}\}},}
+
+\foreignlanguage{american}{{~~~ }"word{":\{}"command":"{uvx}","{args}{":{[}}"-\/-{from","office}-word-{mcp}-server","{word\_mcp\_server}{"{]}\}},}
+
+\foreignlanguage{american}{{~~~ }"ppt{":\{}"command":"{uvx}","{args}{":{[}}"-\/-from","{office-pow}erpoint-mcp-server","ppt\_mcp\_server{"{]}\}},}
+
+\foreignlanguage{american}{{~~~
+}"WindowsMCP.Net":\{"command":"C:\textbackslash\textbackslash Users\textbackslash\textbackslash\textless{}}{用户名}\foreignlanguage{american}{\textgreater\textbackslash\textbackslash.dotnet\textbackslash\textbackslash tools\textbackslash\textbackslash Windows-MCP.Net.exe","{args}":{[}{]}\},}
+
+\foreignlanguage{american}{{~~~ }"{stata}-mcp{":\{}"command":"uvx","args{":{[}}"stata-mcp"{]},"env{":\{}"STATA\_PATH":"C:\textbackslash\textbackslash Program
+Files\textbackslash\textbackslash Stata18\textbackslash\textbackslash StataMP-64.exe","MCP\_STATA\_LOGLEVEL":"INFO"\}\}}
+
+\foreignlanguage{american}{{~ }\}}
+
+\foreignlanguage{american}{\}}
+
+{【}\foreignlanguage{american}{4}{】验证所有服务}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{测试}\foreignlanguage{american}{ fetch }{服务能否正常获取网页}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{测试}\foreignlanguage{american}{ excel }{服务能否创建表格}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{测试}\foreignlanguage{american}{ playwright }{服务能否启动浏览器}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{输出完整的配置报告和服务状态}\foreignlanguage{american}{}
+
+{请按步骤执行并输出详细的执行日志。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }}{预期输出}\foreignlanguage{american}{}
+
+{执行完成后，您将看到：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{=== MCP }{服务运行条件准备完成}\foreignlanguage{american}{ ===}
+
+{【依赖安装状态】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ {uv} }{已安装}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{
+Windows-MCP.Net }{已安装}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ Node.js
+v20.x.x }{已就绪}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ Python
+3.11.x }{已就绪}\foreignlanguage{american}{}
+
+{【环境变量配置】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{
+STATA\_PATH=C:\textbackslash Program Files\textbackslash Stata18\textbackslash StataMP-64.exe}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{
+EXCEL\_MCP\_PAGING\_CELLS\_LIMIT=10000}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{
+MCP\_STATA\_LOGLEVEL=INFO}
+
+{【}\foreignlanguage{american}{MCP }{服务器配置】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ fetch }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ playwright }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ chrome-{devtools} }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ excel }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ word }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ ppt }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{
+WindowsMCP.Net }{服务已配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ {stata-mcp} }{服务已配置}\foreignlanguage{american}{}
+
+{【服务验证结果】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ fetch }{服务测试通过}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ excel }{服务测试通过}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{✓}\foreignlanguage{american}{ playwright }{服务测试通过}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【下一步】}\foreignlanguage{american}{}
+
+{所有}\foreignlanguage{american}{ MCP }{服务已就绪，可以开始实验！}\foreignlanguage{american}{}
+
+{如果遇到问题，请尝试：}\foreignlanguage{american}{}
+
+{请诊断当前}\foreignlanguage{american}{ MCP }{配置问题：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{检查所有依赖是否已安装}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{验证环境变量是否正确设置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{测试各服务连接状态}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{输出详细的错误信息和解决方案}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.3.5 }{重启验证}\foreignlanguage{american}{}}{2.3.5 重启验证}}\label{ux91cdux542fux9a8cux8bc1}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}\textbf{{完全退出}\foreignlanguage{american}{ TRAE}}{（任务栏右键}{ \foreignlanguage{american}{→ }}{退出）；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}{\foreignlanguage{american}{重新打开}}\foreignlanguage{american}{ {TRAE{；}}}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}\foreignlanguage{american}{在}\foreignlanguage{american}{ Builder }{\foreignlanguage{american}{模式输入：请用}}\foreignlanguage{american}{ playwright }{{\foreignlanguage{american}{打开百度首页并截图}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}\foreignlanguage{american}{AI }{自动调用}\foreignlanguage{american}{ MCP → }{浏览器弹出}{ \foreignlanguage{american}{→ }}{截图回传}\foreignlanguage{american}{ = }{配置成功。}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.3.6 }{\foreignlanguage{american}{配置常见问题}}}{2.3.6 配置常见问题}}\label{ux914dux7f6eux5e38ux89c1ux95eeux9898}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{现象}} & {\foreignlanguage{american}{原因}} & {\foreignlanguage{american}{解决}} \\
+{\foreignlanguage{american}{找不到}}\foreignlanguage{american}{ {npx}} & \foreignlanguage{american}{Node.js }{\foreignlanguage{american}{未装或未加入}}\foreignlanguage{american}{ PATH} & {\foreignlanguage{american}{重装}}\foreignlanguage{american}{ {Node.js{，勾选}}
+Add to PATH} \\
+{\foreignlanguage{american}{找不到}}\foreignlanguage{american}{ {uvx}} & {\foreignlanguage{american}{未装}}\foreignlanguage{american}{ {uv}} & \foreignlanguage{american}{pip install {uv}}
+
+\foreignlanguage{american}{{~}}\foreignlanguage{american}{或}\foreignlanguage{american}{ {winget}
+}{\foreignlanguage{american}{安装}} \\
+\foreignlanguage{american}{MCP }{\foreignlanguage{american}{工具不出现}} & {\foreignlanguage{american}{mcp.json}}\foreignlanguage{american}{ }{语法错误}\foreignlanguage{american}{} & {把整段}\foreignlanguage{american}{ JSON }{贴给}\foreignlanguage{american}{ AI}{，让它检查格式}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{playwright }{\foreignlanguage{american}{报错}} & {首次运行需下载浏览器内核}\foreignlanguage{american}{} & \foreignlanguage{american}{AI }{\foreignlanguage{american}{会执行}}\foreignlanguage{american}{ }
+
+{\foreignlanguage{american}{npx}}\foreignlanguage{american}{ playwright install}
+
+\foreignlanguage{american}{，{等待}} \\
+{\foreignlanguage{american}{stata-mcp}}\foreignlanguage{american}{ }{\foreignlanguage{american}{报错}} & \foreignlanguage{american}{STATA\_PATH}
+
+\foreignlanguage{american}{{~}}{\foreignlanguage{american}{不正确}} & {改为本机}\foreignlanguage{american}{ Stata }{实际安装路径}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.4 }{课堂时间安排（}\foreignlanguage{american}{240 min · 4 }{学时）}\foreignlanguage{american}{}}{2.4 课堂时间安排（240 min · 4 学时）}}\label{ux8bfeux5802ux65f6ux95f4ux5b89ux6392240-min-4-ux5b66ux65f6}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{时段}} & {\foreignlanguage{american}{内容}} & {\foreignlanguage{american}{交付物}} \\
+\foreignlanguage{american}{0--25 min} & \foreignlanguage{american}{MCP }{\foreignlanguage{american}{概念}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{本机}}\foreignlanguage{american}{ 8 }\foreignlanguage{american}{个}\foreignlanguage{american}{ MCP }{\foreignlanguage{american}{全景}}\foreignlanguage{american}{ + {{mcp.json}} }{\foreignlanguage{american}{字段讲解}} & \foreignlanguage{american}{---} \\
+\foreignlanguage{american}{25--80 min} & \textbf{\foreignlanguage{american}{L1
+}}{\textbf{\foreignlanguage{american}{浏览器组}}}
+
+\foreignlanguage{american}{：}\foreignlanguage{american}{playwright + chrome-{devtools} + fetch} & {\foreignlanguage{american}{银行官网截图}}\foreignlanguage{american}{ + lighthouse }{\foreignlanguage{american}{报告}} \\
+\foreignlanguage{american}{80--135 min} & \textbf{\foreignlanguage{american}{L2
+Office }}{\textbf{\foreignlanguage{american}{表格}}}
+
+\foreignlanguage{american}{：}\foreignlanguage{american}{excel MCP }{\foreignlanguage{american}{客户分群}} & {客户分群报表}\foreignlanguage{american}{ xlsx + }{截图}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{135--195 min} & \textbf{\foreignlanguage{american}{L3 }{文档生成}}\foreignlanguage{american}{}
+
+{：}\foreignlanguage{american}{word + ppt }{生成银行简报}\foreignlanguage{american}{} & {银行简报}\foreignlanguage{american}{.docx}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}+ }
+
+{银行简报}\foreignlanguage{american}{.pptx}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{195--230 min} & \textbf{\foreignlanguage{american}{L4
+}}{\textbf{\foreignlanguage{american}{数据分析}}}
+
+\foreignlanguage{american}{：}{\foreignlanguage{american}{stata-mcp}}\foreignlanguage{american}{ }{\foreignlanguage{american}{跑回归}} & \foreignlanguage{american}{Stata }{\foreignlanguage{american}{回归输出}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{解读}} \\
+\foreignlanguage{american}{230--240 min} & {总结}\foreignlanguage{american}{ + }{学生}\foreignlanguage{american}{ demo }{互看}\foreignlanguage{american}{} & \foreignlanguage{american}{---} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.5 }{\foreignlanguage{american}{四关教案}}}{2.5 四关教案}}\label{ux56dbux5173ux6559ux6848}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎚️ L1 }{浏览器组（}\foreignlanguage{american}{★}{）}\foreignlanguage{american}{------ }{让}\foreignlanguage{american}{ AI }{操作浏览器}\foreignlanguage{american}{}}{🎚️ L1 浏览器组（★）------ 让 AI 操作浏览器}}\label{l1-ux6d4fux89c8ux5668ux7ec4-ux8ba9-ai-ux64cdux4f5cux6d4fux89c8ux5668}
+
+{\textbf{\foreignlanguage{american}{用到}}\foreignlanguage{american}{：}\foreignlanguage{american}{playwright}\foreignlanguage{american}{、}\foreignlanguage{american}{chrome-devtools}\foreignlanguage{american}{、}\foreignlanguage{american}{fetch}}
+
+{\textbf{\foreignlanguage{american}{示范提示词}}}\foreignlanguage{american}{：}
+
+{\foreignlanguage{american}{请用}}\foreignlanguage{american}{ chrome-{devtools} MCP }{\foreignlanguage{american}{完成}}\foreignlanguage{american}{：}\foreignlanguage{american}{ 1. }{\foreignlanguage{american}{打开}}\foreignlanguage{american}{ https://www.cmbchina.com}\foreignlanguage{american}{（招商银行官网）；}\foreignlanguage{american}{ 2. }{\foreignlanguage{american}{截图保存为}}\foreignlanguage{american}{ figures/cmb\_home.png}\foreignlanguage{american}{；}\foreignlanguage{american}{ 3. }{\foreignlanguage{american}{对该页面跑}}\foreignlanguage{american}{ {lighthouse\_audit{，输出}"{性能}}/}{\foreignlanguage{american}{可访问性}}\foreignlanguage{american}{/}{\foreignlanguage{american}{最佳实践}}\foreignlanguage{american}{/{SEO"{四项分数}}}\foreignlanguage{american}{；}\foreignlanguage{american}{ 4. }\foreignlanguage{american}{用}\foreignlanguage{american}{ 100 }{\foreignlanguage{american}{字中文总结这家银行官网的优缺点}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\textbf{{学生练习}}{：选择\textbf{家乡的{一家城商行}}}\textbf{\foreignlanguage{american}{/}{农商行}}{官网，重复上述}\foreignlanguage{american}{ 4 }{步。}{ }\textbf{{进阶}}{：用}\foreignlanguage{american}{ fetch MCP }{抓取该行最新公告页}\foreignlanguage{american}{ JSON}{，解析{出最近}}\foreignlanguage{american}{ 5 }{条公告标题。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{}
+
+~
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎚️ L2 Office }{\foreignlanguage{american}{表格组}}\foreignlanguage{american}{（}\foreignlanguage{american}{★★}\foreignlanguage{american}{）}\foreignlanguage{american}{------
+}\foreignlanguage{american}{让}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{操作}}\foreignlanguage{american}{ Excel}}{🎚️ L2 Office 表格组（★★）------ 让 AI 操作 Excel}}\label{l2-office-ux8868ux683cux7ec4-ux8ba9-ai-ux64cdux4f5c-excel}
+
+\paragraph{\texorpdfstring{{任务提示词}\foreignlanguage{american}{}}{任务提示词}}\label{ux4efbux52a1ux63d0ux793aux8bcd}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{🎯}\foreignlanguage{american}{ }{任务：让}\foreignlanguage{american}{ AI }{操作}\foreignlanguage{american}{ Excel }{完成数据处理}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{1}{】数据准备}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{在当前目录创建}\foreignlanguage{american}{"}{销售数据}\foreignlanguage{american}{"}{文件夹}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{创建包含以下内容的}\foreignlanguage{american}{ Excel }{文件}\foreignlanguage{american}{"}{销售记录}\foreignlanguage{american}{.xlsx"}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- Sheet1 }{命名为}\foreignlanguage{american}{"}{销售数据}\foreignlanguage{american}{"}
+
+\foreignlanguage{american}{{~~ }- }{表头：日期、产品名称、销售额、数量、客户类型}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{至少包含}\foreignlanguage{american}{ 10 }{条模拟销售数据（}\foreignlanguage{american}{2024}{年}\foreignlanguage{american}{1}{月数据）}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{2}{】}\foreignlanguage{american}{Excel }{操作任务}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{读取}\foreignlanguage{american}{"}{销售记录}\foreignlanguage{american}{.xlsx"}{文件}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{添加}\foreignlanguage{american}{"}{单价}\foreignlanguage{american}{"}{列（销售额}\foreignlanguage{american}{/}{数量）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{添加}\foreignlanguage{american}{"}{利润率}\foreignlanguage{american}{"}{列（假设利润率}\foreignlanguage{american}{=30\%}{，计算利润额）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{按客户类型分组汇总销售额}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{5. }{筛选出销售额大于}\foreignlanguage{american}{ 1000 }{的记录}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{6. }{创建新}\foreignlanguage{american}{ Sheet"}{汇总报表}\foreignlanguage{american}{"}{，包含：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{各产品总销售额}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{各客户类型销售占比}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{平均单价}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{3}{】数据可视化}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{在}\foreignlanguage{american}{"}{汇总报表}\foreignlanguage{american}{"Sheet }{中创建柱状图展示各产品销售额}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{{创建饼图展示}}{客户类型占比}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{4}{】保存与输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{另存为}\foreignlanguage{american}{"}{销售分析报告}\foreignlanguage{american}{.xlsx"}
+
+\foreignlanguage{american}{2. }{输出分析报告摘要（}\foreignlanguage{american}{Markdown }{格式）}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{5}{】验证与清理}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{验证文件是否生成成功}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{输出文件大小和路径信息}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{清理临时文件（如有）}\foreignlanguage{american}{}
+
+{要求：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{使用}\foreignlanguage{american}{ Excel MCP }{服务完成所有操作}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{操作过程中输出详细日志}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{确保数据计算准确}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{最终输出清晰的分析报告}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{使用方法}\foreignlanguage{american}{}}{使用方法}}\label{ux4f7fux7528ux65b9ux6cd5}
+
+{步骤}\foreignlanguage{american}{ 1}{：切换到}\foreignlanguage{american}{ Builder }{模式}\foreignlanguage{american}{}
+
+{按}\foreignlanguage{american}{ Ctrl + U** }{切换到}\foreignlanguage{american}{ Builder }{模式}\foreignlanguage{american}{}
+
+{步骤}\foreignlanguage{american}{ 2}{：输入提示词}\foreignlanguage{american}{}
+
+{将上方的提示词粘贴到输入框中}\foreignlanguage{american}{}
+
+{步骤}\foreignlanguage{american}{ 3}{：执行}\foreignlanguage{american}{}
+
+{点击发送按钮，}\foreignlanguage{american}{AI }{将自动执行所有操作}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{{~}}{故障排除}\foreignlanguage{american}{}}{~故障排除}}\label{ux6545ux969cux6392ux9664}
+
+{如果遇到问题，可使用以下诊断提示词：}\foreignlanguage{american}{}
+
+{请诊断}\foreignlanguage{american}{ Excel MCP }{服务问题：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{检查}\foreignlanguage{american}{ Excel MCP }{服务是否已启动}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{测试基本读取功能}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{检查环境变量配置}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{输出详细错误信息}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎚️ L3 }{文档生成组（}\foreignlanguage{american}{★★★}{）}\foreignlanguage{american}{------ word + ppt }{生成银行简报}\foreignlanguage{american}{}}{🎚️ L3 文档生成组（★★★）------ word + ppt 生成银行简报}}\label{l3-ux6587ux6863ux751fux6210ux7ec4-word-ppt-ux751fux6210ux94f6ux884cux7b80ux62a5}
+
+{\textbf{\foreignlanguage{american}{用到}}\foreignlanguage{american}{：}\foreignlanguage{american}{word}\foreignlanguage{american}{、}\foreignlanguage{american}{ppt}}
+
+\paragraph{\texorpdfstring{{示范提示词：}\foreignlanguage{american}{}}{示范提示词：}}\label{ux793aux8303ux63d0ux793aux8bcd}
+
+{任务：工商银行}\foreignlanguage{american}{ 2025 }{年报速读简报}\foreignlanguage{american}{}
+
+{请使用}\foreignlanguage{american}{ fetch + word + ppt }{三个}\foreignlanguage{american}{ MCP }{服务协同完成以下任务：}\foreignlanguage{american}{}
+
+{【第}\foreignlanguage{american}{ 1 }{步】抓取年报数据}\foreignlanguage{american}{}
+
+{使用}\foreignlanguage{american}{ fetch MCP }{获取工商银行}\foreignlanguage{american}{ 2025 }{年报摘要信息：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{搜索并访问工商银行}\foreignlanguage{american}{ 2025 }{年报官方页面}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{获取以下关键数据：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{年度营收}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{净利润}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{不良贷款率}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{净资产收益率（}\foreignlanguage{american}{ROE}{）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{主要业务亮点（≥}\foreignlanguage{american}{ 3 }{条）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{主要风险提示（≥}\foreignlanguage{american}{ 2 }{条）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{将获取的数据整理为结构化信息}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{【第}\foreignlanguage{american}{ 2 }{\foreignlanguage{american}{步】生成}}\foreignlanguage{american}{ Word }{\foreignlanguage{american}{文档}}\foreignlanguage{american}{}
+
+{\foreignlanguage{american}{使用}}\foreignlanguage{american}{ word MCP }\foreignlanguage{american}{在}\foreignlanguage{american}{ reports/ }{\foreignlanguage{american}{目录生成}}\foreignlanguage{american}{ icbc\_brief.docx}\foreignlanguage{american}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{\foreignlanguage{american}{封面页}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{\foreignlanguage{american}{主标题：工商银行}}\foreignlanguage{american}{ 2025 }{\foreignlanguage{american}{年报速读}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }}\foreignlanguage{american}{- }{副标题：内部参考}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{制作人：}\foreignlanguage{american}{{[}}{你的姓名}\foreignlanguage{american}{{]}}
+
+\foreignlanguage{american}{{~~ }- }{日期：}\foreignlanguage{american}{2025 }{年}\foreignlanguage{american}{ XX }{月}\foreignlanguage{american}{ XX }{日}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{目录页}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{自动生成目录}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{包含三个章节}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{第}\foreignlanguage{american}{ 1 }{节}{ }{关键财务指标}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }}{创建表格，包含以下指标：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{指标}\foreignlanguage{american}{ \textbar{} }{数值}\foreignlanguage{american}{ \textbar{} }{同比变化}\foreignlanguage{american}{ \textbar{}}
+
+\foreignlanguage{american}{{~~
+}\textbar-\/-\/-\/-\/-\/-\textbar-\/-\/-\/-\/-\/-\textbar-\/-\/-\/-\/-\/-\/-\/-\/-\textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{营业收入}\foreignlanguage{american}{ \textbar{} XX}{万亿元}\foreignlanguage{american}{ \textbar{} +X\% \textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{净利润}\foreignlanguage{american}{ \textbar{} XX}{亿元}\foreignlanguage{american}{ \textbar{} +X\% \textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{不良贷款率}\foreignlanguage{american}{ \textbar{} X.XX\% \textbar{} }{±}{\foreignlanguage{american}{Xbp}}\foreignlanguage{american}{ \textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{净资产收益率}\foreignlanguage{american}{(ROE) \textbar{}
+XX.XX\% \textbar{} }{±}\foreignlanguage{american}{X\% \textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{总资产}\foreignlanguage{american}{ \textbar{} XX}{万亿元}\foreignlanguage{american}{ \textbar{} +X\% \textbar{}}
+
+\foreignlanguage{american}{{~~ }\textbar{} }{存贷款余额}\foreignlanguage{american}{ \textbar{} XX}{万亿元}\foreignlanguage{american}{ \textbar{} +X\% \textbar{}}
+
+\foreignlanguage{american}{4. }{第}\foreignlanguage{american}{ 2 }{节}{ }{业务亮点}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }}{列出}{ }{≥}\foreignlanguage{american}{ 3 }{{条业务}}{亮点，例如：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{普惠金融贷款增长}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{数字化转型成效}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{国际化业务布局}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{绿色信贷发展}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{零售业务转型}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{5. }{第}\foreignlanguage{american}{ 3 }{节}{ }{风险提示}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }}{列出}{ }{≥}\foreignlanguage{american}{ 2 }{{条风险}}{提示，例如：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{资产质量压力}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{净息差收窄}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{房地产风险}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{地方债务风险}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{6. }{格式要求}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{页眉：}\foreignlanguage{american}{"}{内部参考}\foreignlanguage{american}{"}
+
+\foreignlanguage{american}{{~~ }- }{页脚：页码（居中）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{字体：正文宋体小四，标题黑体三号}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{段落：首行缩进}\foreignlanguage{american}{ 2 }{字符，}\foreignlanguage{american}{1.5 }{{倍}}{行距}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{【第}\foreignlanguage{american}{ 3 }{\foreignlanguage{american}{步】生成}}\foreignlanguage{american}{ PPT }{\foreignlanguage{american}{演示文稿}}\foreignlanguage{american}{}
+
+{\foreignlanguage{american}{使用}}\foreignlanguage{american}{ ppt MCP }\foreignlanguage{american}{把}\foreignlanguage{american}{ docx }{\foreignlanguage{american}{内容转换为}}\foreignlanguage{american}{ 5 }\foreignlanguage{american}{页}\foreignlanguage{american}{ {PPT{，保存为}}
+reports/icbc\_brief.pptx}\foreignlanguage{american}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. P1 }{\foreignlanguage{american}{封面页}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{\foreignlanguage{american}{标题：工商银行}}\foreignlanguage{american}{ 2025 }{\foreignlanguage{american}{年报速读}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }}\foreignlanguage{american}{- }{副标题：内部参考}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{制作人：}\foreignlanguage{american}{{[}}{你的姓名}\foreignlanguage{american}{{]}}
+
+\foreignlanguage{american}{{~~ }- }{日期：}\foreignlanguage{american}{2025 }{年}\foreignlanguage{american}{ XX }{月}\foreignlanguage{american}{ XX }{日}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{风格：商务蓝底白字}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. P2 }{关键财务指标}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{标题：关键财务指标}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{内容：用图表或卡片展示}\foreignlanguage{american}{ 6 }{大指标}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{使用深蓝色主题}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. P3 }{业务亮点}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{标题：业务亮点}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{列出}\foreignlanguage{american}{ 3-5 }{条主要业务亮点}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{使用图标或编号列表}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. P4 }{风险提示}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{标题：风险提示}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{列出}\foreignlanguage{american}{ 2-3 }{条主要风险}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{使用黄色}\foreignlanguage{american}{/}{橙色警示色调}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{5. P5 }{总结页}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{标题：总结与展望}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{简要总结年报核心信息}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{展望下一年发展方向}\foreignlanguage{american}{}
+
+{【第}\foreignlanguage{american}{ 4 }{步】质量检查与输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{\foreignlanguage{american}{确认}}\foreignlanguage{american}{ reports/ }{\foreignlanguage{american}{目录存在（如不存在则创建}}\foreignlanguage{american}{）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{\foreignlanguage{american}{确认}}\foreignlanguage{american}{ icbc\_brief.docx }{\foreignlanguage{american}{文件生成成功}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{\foreignlanguage{american}{确认}}\foreignlanguage{american}{ icbc\_brief.pptx }{\foreignlanguage{american}{文件生成成功}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{\foreignlanguage{american}{输出文件信息}}\foreignlanguage{american}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{\foreignlanguage{american}{文件路径}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{\foreignlanguage{american}{文件大小}}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{\foreignlanguage{american}{内容验证摘要}}\foreignlanguage{american}{}
+
+{【整体要求】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{风格：商务蓝色主题}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{\foreignlanguage{american}{配色方案}}\foreignlanguage{american}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }* }{\foreignlanguage{american}{主色}}\foreignlanguage{american}{：}\foreignlanguage{american}{\#1a365d}\foreignlanguage{american}{（深蓝）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }* }{\foreignlanguage{american}{辅色}}\foreignlanguage{american}{：}\foreignlanguage{american}{\#2b6cb0}\foreignlanguage{american}{（中蓝）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }* }{\foreignlanguage{american}{强调色}}\foreignlanguage{american}{：}\foreignlanguage{american}{\#ed8936}\foreignlanguage{american}{（橙色，用于警示）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }}\foreignlanguage{american}{* }{背景：}\foreignlanguage{american}{\#ffffff }{或浅灰}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{语言：简体中文}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{数据：如无法获取真实数据，请使用合理估算数据并标注}\foreignlanguage{american}{"}{估算数据}\foreignlanguage{american}{"}
+
+\foreignlanguage{american}{}
+
+~
+
+\paragraph{\texorpdfstring{{使用方法}\foreignlanguage{american}{}}{使用方法}}\label{ux4f7fux7528ux65b9ux6cd5-1}
+
+\foreignlanguage{american}{\#\#\# }{步骤}\foreignlanguage{american}{ 1}{：前置检查}\foreignlanguage{american}{}
+
+{确保已配置以下}\foreignlanguage{american}{ MCP }{服务：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }\foreignlanguage{american}{✅}\foreignlanguage{american}{
+fetch MCP}
+
+\foreignlanguage{american}{- }\foreignlanguage{american}{✅}\foreignlanguage{american}{
+word MCP}
+
+\foreignlanguage{american}{- }\foreignlanguage{american}{✅}\foreignlanguage{american}{
+ppt MCP}
+
+{步骤}\foreignlanguage{american}{ 2}{：切换到}\foreignlanguage{american}{ Builder }{模式}\foreignlanguage{american}{}
+
+{按}\foreignlanguage{american}{ **Ctrl + U** }{切换到}\foreignlanguage{american}{ Builder }{模式}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\#\#\# }{步骤}\foreignlanguage{american}{ 3}{：输入提示词}\foreignlanguage{american}{}
+
+{将上方完整提示词粘贴到输入框中}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{\#\#\# }{步骤}\foreignlanguage{american}{ 4}{：执行任务}\foreignlanguage{american}{}
+
+{点击发送，}\foreignlanguage{american}{AI }{将自动：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{抓取工行年报数据}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{生成}\foreignlanguage{american}{ Word }{文档（含封面、目录、指标表格、业务亮点、风险提示）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{转换为}\foreignlanguage{american}{ PPT }{演示文稿}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{输出文件信息}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{基础任务完成后，可尝试：}\foreignlanguage{american}{}}{基础任务完成后，可尝试：}}\label{ux57faux7840ux4efbux52a1ux5b8cux6210ux540eux53efux5c1dux8bd5}
+
+{【扩展任务】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{在}\foreignlanguage{american}{ PPT }{中添加数据图表（柱状图、折线图）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{在}\foreignlanguage{american}{ Word }{中添加财务指标趋势图}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{添加执行摘要（}\foreignlanguage{american}{1 }{页}\foreignlanguage{american}{ PDF}{）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{创建对比分析（与}\foreignlanguage{american}{ 2024 }{年报对比）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{5. }{导出}\foreignlanguage{american}{ PDF }{格式}\foreignlanguage{american}{}
+
+\textbf{{学生练习}}{：每组随机抽一家上市银行，重复流程产出\textbf{自己的}银行简报。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{💡 }\textbf{{意义}}{：这一关把}\foreignlanguage{american}{ AI }{从}\foreignlanguage{american}{"}{会查}\foreignlanguage{american}{"}{升级到}\foreignlanguage{american}{"}{会写}\foreignlanguage{american}{"------}{能直接产出可交付的银行业务文档。}\foreignlanguage{american}{}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎚️ L4 }{\foreignlanguage{american}{数据分析组}}\foreignlanguage{american}{（}\foreignlanguage{american}{★★★★}\foreignlanguage{american}{）}\foreignlanguage{american}{------
+{stata-mcp} }{\foreignlanguage{american}{跑计量回归}}}{🎚️ L4 数据分析组（★★★★）------ stata-mcp 跑计量回归}}\label{l4-ux6570ux636eux5206ux6790ux7ec4-stata-mcp-ux8dd1ux8ba1ux91cfux56deux5f52}
+
+\textbf{\foreignlanguage{american}{用到}}\foreignlanguage{american}{：}\foreignlanguage{american}{stata-mcp}\foreignlanguage{american}{（}\foreignlanguage{american}{4 }{\foreignlanguage{american}{个工具：}\foreignlanguage{american}{stata\_do}}\foreignlanguage{american}{ / {get\_data\_info}
+/ {read\_log} / {ado\_package\_install}}\foreignlanguage{american}{）}
+
+\paragraph{\texorpdfstring{{示范提示词：}\foreignlanguage{american}{}}{示范提示词：}}\label{ux793aux8303ux63d0ux793aux8bcd-1}
+
+\foreignlanguage{american}{📊}\foreignlanguage{american}{ }{任务：商业银行盈利能力影响因素回归分析}\foreignlanguage{american}{}
+
+{请使用}\foreignlanguage{american}{ {stata-mcp} }{服务完成以下计量分析任务：}\foreignlanguage{american}{}
+
+{【数据来源（任选其一）】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1.{~ }}{公开数据集：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- 620}{家商业银行财务数据（}\foreignlanguage{american}{2007-2024}{）：}\foreignlanguage{american}{https://bbs.pinggu.org/thread-16354307-1-1.html}
+
+\foreignlanguage{american}{{~~ }- 300+}{变量商业银行面板数据（}\foreignlanguage{american}{2009-2025}{）：}\foreignlanguage{american}{https://bbs.pinggu.org/thread-16630453-1-1.html}
+
+\foreignlanguage{american}{{~~ }- A}{股}\foreignlanguage{american}{42}{家上市银行财务数据（}\foreignlanguage{american}{2012-2024}{）：}\foreignlanguage{american}{https://bbs.pinggu.org/thread-16445916-1-1.html}
+
+\foreignlanguage{american}{2. }{手动构建：如无外部数据，使用}\foreignlanguage{american}{ Stata }{生成模拟面板数据}\foreignlanguage{american}{}
+
+{【第}\foreignlanguage{american}{ 1 }{步】数据准备与探索}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{尝试读入}\foreignlanguage{american}{ data/{bank\_panel.dta}}{；如不存在则使用}\foreignlanguage{american}{ {webuse} {grunfeld}}{（企业投资面板数据）或生成模拟数据}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{如使用外部数据，先下载并保存到}\foreignlanguage{american}{ data/ }{目录}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{使用}\foreignlanguage{american}{ {get\_data\_info} }{获取数据{集基本}信息（变量数、观测数、变量类型）}\foreignlanguage{american}{}
+
+{【第}\foreignlanguage{american}{ 2 }{步】描述统计分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{执行}\foreignlanguage{american}{ describe }{命令查看数据结构}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{执行}\foreignlanguage{american}{ summarize }{命令对关键变量进行描述统计：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{被解释变量：}\foreignlanguage{american}{roe}{（净资产收益率）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{解释变量：}{\foreignlanguage{american}{npl\_ratio}}{（不良贷款率）、}\foreignlanguage{american}{car}{（资本充足率）、}{\foreignlanguage{american}{loan\_growth}}{（贷款增长率）、}{\foreignlanguage{american}{log\_asset}}{（资产对数）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{执行}\foreignlanguage{american}{ tabulate }{命令查看分类变量分布（如银行类型、年度分布）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{生成相关系数矩阵：}\foreignlanguage{american}{correlate roe
+{npl\_ratio} car {loan\_growth} {log\_asset}}
+
+{【第}\foreignlanguage{american}{ 3 }{步】回归分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{基础}\foreignlanguage{american}{ OLS }{回归：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }reg roe {npl\_ratio} car {loan\_growth}
+log(asset), robust}
+
+\foreignlanguage{american}{{~~ }}
+
+\foreignlanguage{american}{2. }{添加控制变量：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }reg roe {npl\_ratio} car {loan\_growth}
+log(asset) {{i.year}}, robust}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{3. }{固定效应模型（使用}\foreignlanguage{american}{ {reghdfe}}{）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }{reghdfe}
+roe {npl\_ratio} car {loan\_growth},
+{absorb(}{bank\_id} year) robust}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 4 }{步】结果输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{使用}\foreignlanguage{american}{ {esttab} }{命令输出三列回归结果到}\foreignlanguage{american}{
+reports/exp2\_l4\_reg.txt}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{第}\foreignlanguage{american}{1}{列：基础}\foreignlanguage{american}{ OLS}
+
+\foreignlanguage{american}{{~~ }- }{第}\foreignlanguage{american}{2}{列：}\foreignlanguage{american}{OLS + }{年度虚拟变量}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{第}\foreignlanguage{american}{3}{列：固定效应模型}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{表格格式要求：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{显示变量名、系数、标准误、显著性星号}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{底部显示}\foreignlanguage{american}{ N}{、}\foreignlanguage{american}{R}{²}\foreignlanguage{american}{/F }{值}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 5 }{步】结果解读与结论}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{读取回归日志确认运行状态}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{撰写}\foreignlanguage{american}{ 200-300 }{字分析结论：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{哪些解释变量对}\foreignlanguage{american}{ ROE }{有显著影响？}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{影响方向和程度如何？}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{不同模型设定{下结果}是否稳健？}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 6 }{步】拓展}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{替换被解释变量为}\foreignlanguage{american}{ nim}{（净息差）重新跑回归}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{或替换为}\foreignlanguage{american}{ {cir}}{（成本收入比）重新跑回归}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{对比不同被解释变量的回归结果差异}\foreignlanguage{american}{}
+
+{【工具使用说明】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- {stata\_do}}{：执行}\foreignlanguage{american}{ Stata }{命令}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- {get\_data\_info}}{：获取数据集信息}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- {read\_log}}{：读取运行日志}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- {ado\_package\_install}}{：如需安装}\foreignlanguage{american}{ {reghdfe}}{、}{\foreignlanguage{american}{esttab}}\foreignlanguage{american}{ }{等模块}\foreignlanguage{american}{}
+
+{【输出要求】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. reports/exp2\_l4\_reg.txt - }{回归结果表格}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. reports/exp2\_l4\_summary.txt - }{描述统计结果}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. reports/exp2\_l4\_conclusion.txt - }{分析结论}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{完整的执行日志输出}\foreignlanguage{american}{}
+
+{【注意事项】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{如本地无}\foreignlanguage{american}{ Stata}{，可改用}\foreignlanguage{american}{ Python}{（}{\foreignlanguage{american}{statsmodels}}{）}\foreignlanguage{american}{+ excel MCP }{替代}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{确保}\foreignlanguage{american}{ {reghdfe}}{、}{\foreignlanguage{american}{esttab}}\foreignlanguage{american}{ }{等模块已安装}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{输出结果保持清晰可读}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+\foreignlanguage{american}{🔬}\foreignlanguage{american}{ }{进阶任务：商业银行绩效影响因素综合分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 1 }{步】多重模型对比}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{分别以}\foreignlanguage{american}{ roe}{、}\foreignlanguage{american}{nim}{、}{\foreignlanguage{american}{cir}}\foreignlanguage{american}{ }{作为被解释变量}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{对每个被解释变量运行三种模型：}\foreignlanguage{american}{OLS}{、}\foreignlanguage{american}{FE}{、}\foreignlanguage{american}{RE}
+
+\foreignlanguage{american}{3. }{比较不同模型设定下{各解释}变量的显著性变化}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 2 }{步】中介效应分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{检验}\foreignlanguage{american}{ {npl\_ratio} }{→}\foreignlanguage{american}{ {loan\_growth} }{→}\foreignlanguage{american}{ roe }{的中介效应}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{使用逐步回归法或}\foreignlanguage{american}{ Sobel }{检验}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 3 }{步】异质性分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{按银行规模分组回归（大型银行}\foreignlanguage{american}{ vs }{中小银行）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{按区域分组回归（东部}\foreignlanguage{american}{ vs }{中西部）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 4 }{步】稳健性检验}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{使用滞后一期解释变量作为工具变量}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{更换核心解释变量的衡量方式}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{剔除异常值后重新回归}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【输出要求】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. reports/exp2\_l4\_advanced.txt - }{综合回归结果}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. reports/exp2\_l4\_mediation.txt - }{中介效应检验结果}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. reports/exp2\_l4\_heterogeneity.txt - }{异质性分析结果}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{完整的分析报告}\foreignlanguage{american}{}
+
+{如无}\foreignlanguage{american}{ Stata }{环境，可使用以下提示词：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{🐍}\foreignlanguage{american}{ }{任务：使用}\foreignlanguage{american}{ Python + {statsmodels} }{完成商业银行回归分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 1 }{步】数据准备}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{使用}\foreignlanguage{american}{ excel MCP }{读取}\foreignlanguage{american}{ bank\_panel.xlsx }{或生成模拟面板数据}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{数据预处理：计算对数资产、处理缺失值}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 2 }{步】描述统计}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{计算均值、标准差、最小值、最大值}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{绘制相关系数热力图}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 3 }{步】回归分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. OLS }{回归：使用}\foreignlanguage{american}{ {statsmodels.OLS}}
+
+\foreignlanguage{american}{2. }{固定效应模型：使用}\foreignlanguage{american}{ {linearmodels.PanelOLS}}
+
+\foreignlanguage{american}{3. }{随机效应模型：使用}{ {\foreignlanguage{american}{linearmodels.RandomEffects}}\foreignlanguage{american}{}}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 4 }{步】结果输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{输出回归表格到}\foreignlanguage{american}{
+reports/exp2\_l4\_python\_reg.txt}
+
+\foreignlanguage{american}{2. }{输出系数对比图}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+{【第}\foreignlanguage{american}{ 5 }{步】结论分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{解读回归结果}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{撰写分析报告}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{{学生练习：替换被解释变量为}\foreignlanguage{american}{ nim}{（净息差）或}\foreignlanguage{american}{ {cir}}{（成本收入比）重新跑一次。}\foreignlanguage{american}{}}{学生练习：替换被解释变量为 nim（净息差）或 cir（成本收入比）重新跑一次。}}\label{ux5b66ux751fux7ec3ux4e60ux66ffux6362ux88abux89e3ux91caux53d8ux91cfux4e3a-nimux51c0ux606fux5deeux6216-cirux6210ux672cux6536ux5165ux6bd4ux91cdux65b0ux8dd1ux4e00ux6b21}
+
+\foreignlanguage{american}{💡 }\textbf{{意义}}{：把}\foreignlanguage{american}{"AI + }{计量}\foreignlanguage{american}{"}{打通}\foreignlanguage{american}{------AI }{不仅能写代码，还能直接调起}\foreignlanguage{american}{ Stata }{{内核跑}}{模型。}\foreignlanguage{american}{无}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{的同学可改用}}\foreignlanguage{american}{ {Python{（}statsmodels}}\foreignlanguage{american}{）}\foreignlanguage{american}{+ excel MCP }{\foreignlanguage{american}{替代}}\foreignlanguage{american}{。}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.6 }{\foreignlanguage{american}{学生}}{实验报告中应包含的部分实验内容}}{2.6 学生实验报告中应包含的部分实验内容}}\label{ux5b66ux751fux5b9eux9a8cux62a5ux544aux4e2dux5e94ux5305ux542bux7684ux90e8ux5206ux5b9eux9a8cux5185ux5bb9}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\foreignlanguage{american}{\#} & {\foreignlanguage{american}{交付物}} & {\foreignlanguage{american}{形式}} \\
+\foreignlanguage{american}{1} & \foreignlanguage{american}{4 }{关每关一段录屏}\foreignlanguage{american}{ GIF}{（}\foreignlanguage{american}{≤10 s}{）}\foreignlanguage{american}{} & \foreignlanguage{american}{gif/exp2\_L1.gif \ldots{} exp2\_L4.gif} \\
+\foreignlanguage{american}{2} & \foreignlanguage{american}{L1 lighthouse }{\foreignlanguage{american}{报告}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{银行截图}} & \foreignlanguage{american}{reports/exp2\_l1.md} \\
+\foreignlanguage{american}{3} & \foreignlanguage{american}{L2 }{\foreignlanguage{american}{客户分群报表}} & \foreignlanguage{american}{reports/exp2\_l2.xlsx + }{\foreignlanguage{american}{截图}} \\
+\foreignlanguage{american}{4} & \foreignlanguage{american}{L3 }{\foreignlanguage{american}{银行简报}} & \foreignlanguage{american}{reports/icbc\_brief.docx + .pptx} \\
+\foreignlanguage{american}{5} & \foreignlanguage{american}{L4
+Stata }{回归结果}\foreignlanguage{american}{ + }{结论}\foreignlanguage{american}{} & \foreignlanguage{american}{reports/exp2\_l4\_reg.txt + }{\foreignlanguage{american}{结论}} \\
+\foreignlanguage{american}{6} & {\foreignlanguage{american}{自画}}\foreignlanguage{american}{ MCP }{\foreignlanguage{american}{调用流程图（}\foreignlanguage{american}{mermaid}}\foreignlanguage{american}{）} & \foreignlanguage{american}{figures/exp2\_mcp\_flow.mmd} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{2.7 }{\foreignlanguage{american}{重点与难点}}}{2.7 重点与难点}}\label{ux91cdux70b9ux4e0eux96beux70b9}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{{重点}}{：理解}\foreignlanguage{american}{ MCP }{协议、读懂}\foreignlanguage{american}{ {mcp.json}
+  }{字段、}\foreignlanguage{american}{4 }{关}\foreignlanguage{american}{ MCP }{实操；学会让}\foreignlanguage{american}{ AI }{自查}\foreignlanguage{american}{ MCP }{工具}\foreignlanguage{american}{ schema }{再写提示词。}\foreignlanguage{american}{}
+\item
+  {\textbf{\foreignlanguage{american}{难点}}}\foreignlanguage{american}{：}\foreignlanguage{american}{① {uvx} }{\foreignlanguage{american}{依赖}}\foreignlanguage{american}{ {uv} }{\foreignlanguage{american}{命令，未装的同学第一关就卡住}}\foreignlanguage{american}{；}\foreignlanguage{american}{② {stata-mcp} }{\foreignlanguage{american}{必须配置正确的}}\foreignlanguage{american}{ STATA\_PATH}\foreignlanguage{american}{；}\foreignlanguage{american}{③ word/ppt MCP }{\foreignlanguage{american}{首次启动较慢（}\foreignlanguage{american}{uvx}}\foreignlanguage{american}{ }{\foreignlanguage{american}{需联网下载}}\foreignlanguage{american}{ wheel}\foreignlanguage{american}{）。}
+\end{itemize}
+
+\foreignlanguage{american}{\hfill\break
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\begin{itemize}
+\item
+  \foreignlanguage{american}{}
+
+  ~
+\end{itemize}
+
+\clearpage
+
+\section{\texorpdfstring{{第}\foreignlanguage{american}{ 3 }{章}{ }{实验三：}\foreignlanguage{american}{Skill }{体系（用}\foreignlanguage{american}{→}{写}\foreignlanguage{american}{→}{审）}\foreignlanguage{american}{}}{第 3 章 实验三：Skill 体系（用→写→审）}}\label{ux7b2c-3-ux7ae0-ux5b9eux9a8cux4e09skill-ux4f53ux7cfb}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{3.}\foreignlanguage{american}{1}\foreignlanguage{american}{环境准备}}{3.1环境准备}}\label{ux73afux5883ux51c6ux5907}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}\foreignlanguage{american}{TRAE / {Qoder}
+}{{\foreignlanguage{american}{已更新到最新版本}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}{\foreignlanguage{american}{实验二}}\foreignlanguage{american}{ MCP }{{\foreignlanguage{american}{已配通}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{\foreignlanguage{american}{在对话框输入}}\foreignlanguage{american}{ }{\foreignlanguage{american}{请用}}\foreignlanguage{american}{ mermaid-diagram skill }{\foreignlanguage{american}{画一个简单流程图：开始}\foreignlanguage{american}{→}\foreignlanguage{american}{处理}\foreignlanguage{american}{→}\foreignlanguage{american}{结束}}\foreignlanguage{american}{ }{\foreignlanguage{american}{验证}}\foreignlanguage{american}{ Skill }{\foreignlanguage{american}{可用}}\foreignlanguage{american}{。}
+
+\foreignlanguage{american}{Skill }{\foreignlanguage{american}{存放位置（了解即可}}\foreignlanguage{american}{）：}{\foreignlanguage{american}{Qoder}}\foreignlanguage{american}{ = \%APPDATA\%\textbackslash{}{Qoder}\textbackslash skills\textbackslash{}}\foreignlanguage{american}{；}\foreignlanguage{american}{TRAE }{\foreignlanguage{american}{内置无需手动管理}}\foreignlanguage{american}{。}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{3.2}{任务}\foreignlanguage{american}{ 1}{：用}\foreignlanguage{american}{ docx Skill }{写《客户电话回访报告》}\foreignlanguage{american}{}}{3.2任务 1：用 docx Skill 写《客户电话回访报告》}}\label{ux4efbux52a1-1ux7528-docx-skill-ux5199ux5ba2ux6237ux7535ux8bddux56deux8bbfux62a5ux544a}
+
+\foreignlanguage{american}{{~}}{请执行以下操作以完成客户电话回访报告的生成：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~}1. }{安装}\foreignlanguage{american}{docx}{技能环境：}\foreignlanguage{american}{ - }{前往热门技能市场搜索并安装}\foreignlanguage{american}{"docx"}{技能包}\foreignlanguage{american}{ - }{通过}{\foreignlanguage{american}{npm}}{全局安装}\foreignlanguage{american}{docx-{js}}{工具：执行命令}\foreignlanguage{american}{"{npm} install -g docx" - }{验证}{\foreignlanguage{american}{pandoc}}{与}\foreignlanguage{american}{LibreOffice}{软件是否已正确安装（用于后续}\foreignlanguage{american}{PDF}{格式校验）}\foreignlanguage{american}{ - }{完成安装后回复确认信息：}\foreignlanguage{american}{"docx
+skill }{已就绪}\foreignlanguage{american}{" }
+
+\foreignlanguage{american}{2. }{使用已安装的}\foreignlanguage{american}{docx}{技能为客户}\foreignlanguage{american}{C00001}{（张}\foreignlanguage{american}{**}{）生成《客户电话回访报告》：}\foreignlanguage{american}{ - }{创建结构完整的}\foreignlanguage{american}{Word}{文档，包含以下}\foreignlanguage{american}{5}{个标准章节：}\foreignlanguage{american}{ * }{客户基本信息（需包含客户编号}\foreignlanguage{american}{C00001}{及姓名等核心信息）}\foreignlanguage{american}{ * }{回访目的（明确本次电话回访的具体目标与背景）}\foreignlanguage{american}{ * }{沟通要点（详细记录电话沟通中的关键内容与讨论事项）}\foreignlanguage{american}{ * }{客户反馈（准确呈现客户提出的意见、需求及满意度情况）}\foreignlanguage{american}{ * }{跟进建议（基于回访结果提出具体的后续行动计划）}\foreignlanguage{american}{ - }{文档格式要求：}\foreignlanguage{american}{ * }{添加正式封面，包含报告标题}\foreignlanguage{american}{"}{客户电话回访报告}\foreignlanguage{american}{"}{及相关标识}\foreignlanguage{american}{ * }{生成自动更新的目录，列出所有章节标题}\foreignlanguage{american}{ * }{添加规范的页码，确保从正文开始连续编号}\foreignlanguage{american}{ - }{保存路径与命名：将文档保存至}\foreignlanguage{american}{"reports/}{客户回访报告}\foreignlanguage{american}{\_C00001.docx"
+3. }{完成后请确认文档已成功生成并符合上述所有要求。}\foreignlanguage{american}{}
+
+\textbf{\emph{\ul{{如果需要使用}}}}{\textbf{\emph{\ul{\foreignlanguage{american}{libreoffice}}}}}\textbf{\emph{\ul{{执行任务，可以执行下列提示词：}}}\emph{\ul{\foreignlanguage{american}{}}}}
+
+{请帮我检查本机是否安装了}\foreignlanguage{american}{ LibreOffice}{。当前系统为}\foreignlanguage{american}{ Windows}{，}\foreignlanguage{american}{shell }{为}\foreignlanguage{american}{ PowerShell}{，请按以下流程执行：}\foreignlanguage{american}{}
+
+{【第一步：探测安装状态】}\foreignlanguage{american}{}
+
+{依次执行下列检测，任{一}命中即视为}\foreignlanguage{american}{"}{已安装}\foreignlanguage{american}{"}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{检测默认安装目录是否存在}\foreignlanguage{american}{ soffice.exe}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }Test-Path "C:\textbackslash Program
+Files\textbackslash LibreOffice\textbackslash program\textbackslash soffice.com"}
+
+\foreignlanguage{american}{{~~ }Test-Path "C:\textbackslash Program Files
+(x{86)\textbackslash LibreOffice\textbackslash program\textbackslash soffice.com}"}
+
+\foreignlanguage{american}{2. }{检测}\foreignlanguage{american}{ PATH }{中是否有}\foreignlanguage{american}{ {soffice}}{：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }Get-Command {soffice}
+-{ErrorAction} {SilentlyContinue}}
+
+\foreignlanguage{american}{3. }{检测注册表卸载项：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }Get-{ItemProperty}
+HKLM:\textbackslash Software\textbackslash Microsoft\textbackslash Windows\textbackslash CurrentVersion\textbackslash Uninstall\textbackslash* `}
+
+\foreignlanguage{american}{{~~~~ }\textbar{} Where-Object {\{ \$\_.DisplayName} -like "*LibreOffice*{"
+\}} `}
+
+\foreignlanguage{american}{{~~~~ }\textbar{} Select-Object
+DisplayName, {DisplayVersion}, {InstallLocation}}
+
+\foreignlanguage{american}{4. }{若以上任{一}命中，运行}\foreignlanguage{american}{ `\& "\textless{}{soffice}}{路径}\foreignlanguage{american}{\textgreater" -\/-version` }{输出版本号，然后结束流程并报告}\foreignlanguage{american}{"}{已安装}\foreignlanguage{american}{ + }{版本}\foreignlanguage{american}{ + }{安装路径}\foreignlanguage{american}{"}{。}\foreignlanguage{american}{}
+
+{【第二步：未安装则自动下载并静默安装】}\foreignlanguage{american}{}
+
+{如果上述检测全部未命中，按以下步骤安装（优先级从高到低，任{一}成功即可停止）：}\foreignlanguage{american}{}
+
+{方案}\foreignlanguage{american}{ A}{（首选，}{\foreignlanguage{american}{winget}}{）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }{winget} install
+-\/-id {TheDocumentFoundation.LibreOffice} -e -\/-silent
+-\/-accept-source-agreements -\/-accept-package-agreements}
+
+{方案}\foreignlanguage{american}{ B}{（备选，}\foreignlanguage{american}{Chocolatey}{，已装}\foreignlanguage{american}{ {choco} }{时）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }{choco} install {libreoffice}-fresh -y}
+
+{方案}\foreignlanguage{american}{ C}{（兜底，官方}\foreignlanguage{american}{ MSI }{直链下载并静默安装）：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~ }\${url} =
+"https://download.documentfoundation.org/libreoffice/stable/24.8.4/win/x86\_64/LibreOffice\_24.8.4\_Win\_x86-64.msi"}
+
+\foreignlanguage{american}{{~ }\${msi} = "\${{env:TEMP}}{\textbackslash LibreOffice\_x64.msi}"}
+
+\foreignlanguage{american}{{~ }Invoke-{WebRequest}
+-Uri \${url} -{OutFile} \${msi} -{UseBasicParsing}}
+
+\foreignlanguage{american}{{~ }Start-Process msiexec.exe -{ArgumentList} "/{i} `"\${msi}`" /qn /{norestart}
+ALLUSERS=1" -Wait}
+
+\foreignlanguage{american}{{~ }Remove-Item \${msi}
+-Force}
+
+{【第三步：安装后验证】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{重新检测}\foreignlanguage{american}{ "C:\textbackslash Program
+Files\textbackslash LibreOffice\textbackslash program\textbackslash soffice.com" }{是否存在；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{执行}\foreignlanguage{american}{ `\& "C:\textbackslash Program
+Files\textbackslash LibreOffice\textbackslash program\textbackslash soffice.com" -\/-version` }{打印版本；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{提示用户：如需在}\foreignlanguage{american}{ PowerShell }{中直{接使用}}\foreignlanguage{american}{ {soffice}
+}{命令，可将}\foreignlanguage{american}{ `C:\textbackslash Program
+Files\textbackslash LibreOffice\textbackslash program` }{加入用户}\foreignlanguage{american}{ PATH}{。}\foreignlanguage{american}{}
+
+{【约束】}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{整个过程不要使用}\foreignlanguage{american}{ cd }{切换目录，全部使用绝对路径；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{静默安装命令出错时，按}\foreignlanguage{american}{ A}{→}\foreignlanguage{american}{B}{→}\foreignlanguage{american}{C }{顺序自动降级，不要中途询问；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{- }{安装结束后给出简明结果汇总：是否已安装}\foreignlanguage{american}{ / }{版本}\foreignlanguage{american}{ / }{安装路径}\foreignlanguage{american}{ / }{是否需要将}\foreignlanguage{american}{ {soffice}
+}{加入}\foreignlanguage{american}{ PATH}{。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
+\clearpage
+
+\section{\texorpdfstring{{第}\foreignlanguage{american}{ 4 }{章}{ }{实验四：}\foreignlanguage{american}{BMAD }{驱动银行}\foreignlanguage{american}{ CRM}}{第 4 章 实验四：BMAD 驱动银行 CRM}}\label{ux7b2c-4-ux7ae0-ux5b9eux9a8cux56dbbmad-ux9a71ux52a8ux94f6ux884c-crm}
+
+\textbf{{学时}}\foreignlanguage{american}{ 4h}{（}\foreignlanguage{american}{240 min}{）}{ \foreignlanguage{american}{· }}\textbf{{权重}}\foreignlanguage{american}{ 40\% · }\textbf{{难度}}{ }{入门级（{本地可}运行即可，不强制部署公网）}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.1 BMAD }{\foreignlanguage{american}{是什么}}}{4.1 BMAD 是什么}}\label{bmad-ux662fux4ec0ux4e48}
+
+{\foreignlanguage{american}{BMAD}\foreignlanguage{american}{（}\foreignlanguage{american}{Breakthrough}}\foreignlanguage{american}{ Method of Agile AI-Driven {Development{）是}} AI }{\foreignlanguage{american}{驱动的敏捷开发方法论，让}}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{扮演不同角色完成专业工作}}\foreignlanguage{american}{：}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{字母}} & {\foreignlanguage{american}{阶段}} & {\foreignlanguage{american}{角色}} & {\foreignlanguage{american}{产出}} \\
+\textbf{\foreignlanguage{american}{B}} & {\foreignlanguage{american}{Brainstorm}\foreignlanguage{american}{（脑暴}}\foreignlanguage{american}{）} & \foreignlanguage{american}{Analyst} & {\foreignlanguage{american}{功能清单}} \\
+\textbf{\foreignlanguage{american}{M}} & {\foreignlanguage{american}{Model}\foreignlanguage{american}{（建模}}\foreignlanguage{american}{）} & \foreignlanguage{american}{PM} & {\foreignlanguage{american}{需求文档}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{数据模型}} \\
+\textbf{\foreignlanguage{american}{A}} & {\foreignlanguage{american}{Architect}\foreignlanguage{american}{（架构}}\foreignlanguage{american}{）} & \foreignlanguage{american}{Architect} & {\foreignlanguage{american}{技术方案}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{架构图}} \\
+\textbf{\foreignlanguage{american}{D}} & {\foreignlanguage{american}{Develop}\foreignlanguage{american}{（开发}}\foreignlanguage{american}{）} & \foreignlanguage{american}{Developer} & {\foreignlanguage{american}{可运行代码}} \\
+\textbf{\foreignlanguage{american}{V}} & {\foreignlanguage{american}{Verify}\foreignlanguage{american}{（验证}}\foreignlanguage{american}{）} & \foreignlanguage{american}{QA} & {\foreignlanguage{american}{测试报告}} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{📌 }\textbf{{核心价值}}{：不用自己写所有代码，而是学会\textbf{指挥}}\textbf{\foreignlanguage{american}{ AI }{团队}}{完成工作。}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{{\foreignlanguage{american}{4.2{~
+}}{\foreignlanguage{american}{课堂节奏}}}{\foreignlanguage{american}{（五幕式}}\foreignlanguage{american}{）}}{4.2~ 课堂节奏（五幕式）}}\label{ux8bfeux5802ux8282ux594fux4e94ux5e55ux5f0f}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{时段}} & \foreignlanguage{american}{幕} & {\foreignlanguage{american}{学生动作}} & {\foreignlanguage{american}{产出}} \\
+\foreignlanguage{american}{0--20 min} & {\foreignlanguage{american}{序幕}} & \foreignlanguage{american}{BMAD }{\foreignlanguage{american}{概念}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{分组}} & \foreignlanguage{american}{---} \\
+\foreignlanguage{american}{20--65 min} & \textbf{\foreignlanguage{american}{B }}{\textbf{\foreignlanguage{american}{脑暴}}} & \foreignlanguage{american}{用}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{生成}}\foreignlanguage{american}{ CRM }{\foreignlanguage{american}{功能清单}} & \foreignlanguage{american}{features.md} \\
+\foreignlanguage{american}{65--110 min} & \textbf{\foreignlanguage{american}{M }}{\textbf{\foreignlanguage{american}{建模}}} & {\foreignlanguage{american}{写需求}}\foreignlanguage{american}{ + }\foreignlanguage{american}{画}\foreignlanguage{american}{ ER }\foreignlanguage{american}{图} & \foreignlanguage{american}{requirements.md + {er.mmd}} \\
+\foreignlanguage{american}{110--155 min} & \textbf{\foreignlanguage{american}{A }}{\textbf{\foreignlanguage{american}{架构}}} & {\foreignlanguage{american}{选技术栈}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{画架构图}} & \foreignlanguage{american}{design.md} \\
+\foreignlanguage{american}{155--215 min} & \textbf{\foreignlanguage{american}{D }}{\textbf{\foreignlanguage{american}{开发}}} & {\foreignlanguage{american}{生成可运行代码}} & \foreignlanguage{american}{web/index.html + }{\foreignlanguage{american}{数据文件}} \\
+\foreignlanguage{american}{215--235 min} & \textbf{\foreignlanguage{american}{V }}{\textbf{\foreignlanguage{american}{验证}}} & {\foreignlanguage{american}{测试功能}} & \foreignlanguage{american}{reports/test\_report.md} \\
+\foreignlanguage{american}{235--240 min} & {\foreignlanguage{american}{总结展示}} & \foreignlanguage{american}{---} & \foreignlanguage{american}{---} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.3 }{\foreignlanguage{american}{五幕教案}}}{4.3 五幕教案}}\label{ux4e94ux5e55ux6559ux6848}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎬 }{\foreignlanguage{american}{第一幕}}\foreignlanguage{american}{ B
+Brainstorm}\foreignlanguage{american}{（}\foreignlanguage{american}{45 min}\foreignlanguage{american}{）}}{🎬 第一幕 B Brainstorm（45 min）}}\label{ux7b2cux4e00ux5e55-b-brainstorm45-min}
+
+{请帮我做一个面向中小银行客户经理的简单}\foreignlanguage{american}{ CRM }{功能规划：}{ }{约束：用户}\foreignlanguage{american}{=}{一线客户经理；核心数据}\foreignlanguage{american}{=}{客户信息}\foreignlanguage{american}{+}{产品持有；功能简单实用。}{ }{\foreignlanguage{american}{输出}}\foreignlanguage{american}{：}\foreignlanguage{american}{① }{\foreignlanguage{american}{必备功能}}\foreignlanguage{american}{（}\foreignlanguage{american}{≥3}\foreignlanguage{american}{）}\foreignlanguage{american}{② }{\foreignlanguage{american}{可选功能}}\foreignlanguage{american}{（}\foreignlanguage{american}{≥2}\foreignlanguage{american}{）}\foreignlanguage{american}{③ }{\foreignlanguage{american}{不做的功能}}\foreignlanguage{american}{（}\foreignlanguage{american}{≥1}\foreignlanguage{american}{），{保存到}}\foreignlanguage{american}{ features.md}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎬 }{\foreignlanguage{american}{第二幕}}\foreignlanguage{american}{ M Model}\foreignlanguage{american}{（}\foreignlanguage{american}{45 min}\foreignlanguage{american}{）}}{🎬 第二幕 M Model（45 min）}}\label{ux7b2cux4e8cux5e55-m-model45-min}
+
+\textbf{\foreignlanguage{american}{Step
+1 }}{\textbf{\foreignlanguage{american}{写需求}}}\foreignlanguage{american}{：}
+
+{\foreignlanguage{american}{基于}}\foreignlanguage{american}{ features.md }{\foreignlanguage{american}{写需求文档：每条用}}\foreignlanguage{american}{ R-001 / R-002 }{\foreignlanguage{american}{编号，至少}}\foreignlanguage{american}{ 4 }{\foreignlanguage{american}{条，保存到}}\foreignlanguage{american}{ requirements.md}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\textbf{\foreignlanguage{american}{Step
+2 }\foreignlanguage{american}{画}\foreignlanguage{american}{ ER }\foreignlanguage{american}{图}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{用}\foreignlanguage{american}{ mermaid-diagram skill }\foreignlanguage{american}{画}\foreignlanguage{american}{ CRM }\foreignlanguage{american}{的}\foreignlanguage{american}{ ER }{\foreignlanguage{american}{图：至少含客户表与产品持有表，标主外键关系，保存到}}\foreignlanguage{american}{ figures/{crm\_er.mmd}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎬 }{\foreignlanguage{american}{第三幕}}\foreignlanguage{american}{ {A} Architect}\foreignlanguage{american}{（}\foreignlanguage{american}{45 min}\foreignlanguage{american}{）}}{🎬 第三幕 A Architect（45 min）}}\label{ux7b2cux4e09ux5e55-a-architect45-min}
+
+{\foreignlanguage{american}{设计简单的银行}}\foreignlanguage{american}{ CRM }{\foreignlanguage{american}{技术方案}}\foreignlanguage{american}{：}\foreignlanguage{american}{ - }{\foreignlanguage{american}{前端}}\foreignlanguage{american}{ HTML + JS + Tailwind CSS}\foreignlanguage{american}{（}\foreignlanguage{american}{CDN}\foreignlanguage{american}{）}\foreignlanguage{american}{ - }{\foreignlanguage{american}{数据用本地}}\foreignlanguage{american}{ JSON }{\foreignlanguage{american}{文件}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{浏览器}}\foreignlanguage{american}{ {localStorage{（无服务端}}}\foreignlanguage{american}{）}\foreignlanguage{american}{ }{\foreignlanguage{american}{输出}}\foreignlanguage{american}{ design.md}\foreignlanguage{american}{：}\foreignlanguage{american}{① }{\foreignlanguage{american}{技术选型表}}\foreignlanguage{american}{ ② }{\foreignlanguage{american}{架构图（}\foreignlanguage{american}{mermaid}}\foreignlanguage{american}{）}\foreignlanguage{american}{③ }{\foreignlanguage{american}{页面结构说明}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎬 }{\foreignlanguage{american}{第四幕}}\foreignlanguage{american}{ D Develop}\foreignlanguage{american}{（}\foreignlanguage{american}{60 min}\foreignlanguage{american}{）}}{🎬 第四幕 D Develop（60 min）}}\label{ux7b2cux56dbux5e55-d-develop60-min}
+
+{\foreignlanguage{american}{请根据}}\foreignlanguage{american}{ design.md }{\foreignlanguage{american}{生成完整}}\foreignlanguage{american}{ CRM }{\foreignlanguage{american}{代码}}\foreignlanguage{american}{：}\foreignlanguage{american}{ 1. }{\foreignlanguage{american}{单文件}}\foreignlanguage{american}{ {HTML{（}web}/{index.html{）含所有}}
+CSS/JS}\foreignlanguage{american}{；}\foreignlanguage{american}{ 2. Tailwind CSS CDN}\foreignlanguage{american}{；}\foreignlanguage{american}{ 3. }{\foreignlanguage{american}{模拟数据}}\foreignlanguage{american}{ ≥5 }{\foreignlanguage{american}{条客户记录}}\foreignlanguage{american}{；}\foreignlanguage{american}{ 4. }{\foreignlanguage{american}{功能：客户列表}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{客户详情}}\foreignlanguage{american}{ / }{\foreignlanguage{american}{新增客户}}\foreignlanguage{american}{；}\foreignlanguage{american}{ 5. {localStorage} }{\foreignlanguage{american}{持久化}}\foreignlanguage{american}{；}\foreignlanguage{american}{ 6. }{\foreignlanguage{american}{界面美观大方}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }{\foreignlanguage{american}{完成后用}}\foreignlanguage{american}{ Live Server }{\foreignlanguage{american}{打开预览}}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
+
+{\textbf{\foreignlanguage{american}{学生练习}}\foreignlanguage{american}{：测试系统，发现}}\foreignlanguage{american}{ bug }\foreignlanguage{american}{让}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{修复}}\foreignlanguage{american}{。}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{🎬 }{\foreignlanguage{american}{第五幕}}\foreignlanguage{american}{ V Verify}\foreignlanguage{american}{（}\foreignlanguage{american}{20 min}\foreignlanguage{american}{）}}{🎬 第五幕 V Verify（20 min）}}\label{ux7b2cux4e94ux5e55-v-verify20-min}
+
+{请测试}\foreignlanguage{american}{ CRM }{系统：}\foreignlanguage{american}{ 1. }{打开页面能看到客户列表}\foreignlanguage{american}{ 2. }{点击客户能查看详情}\foreignlanguage{american}{ 3. }{能新增客户}\foreignlanguage{american}{ 4. }{刷新页面后数据不丢失}{ }{输出}\foreignlanguage{american}{
+reports/test\_report.md}{，含测试结果与截图。}{ }\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.4 }{\foreignlanguage{american}{学生交付清单}}}{4.4 学生交付清单}}\label{ux5b66ux751fux4ea4ux4ed8ux6e05ux5355}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\foreignlanguage{american}{\#} & {\foreignlanguage{american}{交付物}} & {\foreignlanguage{american}{形式}} & {\foreignlanguage{american}{说明}} \\
+\foreignlanguage{american}{1} & {\foreignlanguage{american}{功能清单}} & \foreignlanguage{american}{features.md} & \foreignlanguage{american}{≥ 5 }\foreignlanguage{american}{项} \\
+\foreignlanguage{american}{2} & {\foreignlanguage{american}{需求文档}} & \foreignlanguage{american}{requirements.md} & \foreignlanguage{american}{≥ 4 }\foreignlanguage{american}{条}\foreignlanguage{american}{ R-}{\foreignlanguage{american}{编号}} \\
+\foreignlanguage{american}{3} & \foreignlanguage{american}{ER }\foreignlanguage{american}{图} & \foreignlanguage{american}{figures/{crm\_er.mmd}} & \foreignlanguage{american}{mermaid} \\
+\foreignlanguage{american}{4} & {\foreignlanguage{american}{设计文档}} & \foreignlanguage{american}{design.md} & {\foreignlanguage{american}{技术选型}}\foreignlanguage{american}{ + }{\foreignlanguage{american}{架构图}} \\
+\foreignlanguage{american}{5} & {\foreignlanguage{american}{前端代码}} & \foreignlanguage{american}{web/index.html} & {\foreignlanguage{american}{单文件可运行}} \\
+\foreignlanguage{american}{6} & {\foreignlanguage{american}{测试报告}} & \foreignlanguage{american}{reports/test\_report.md} & {\foreignlanguage{american}{测试结果}} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{✅ }\textbf{{验收标准}}{：}\foreignlanguage{american}{index.html }{能在浏览器中打开，能完成}\foreignlanguage{american}{"}{客户列表查看}\foreignlanguage{american}{ + }{新增}\foreignlanguage{american}{"}{。}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.5 BMAD }{实践反思}\foreignlanguage{american}{}}{4.5 BMAD 实践反思}}\label{bmad-ux5b9eux8df5ux53cdux601d}
+
+{完成实验后请回答：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}\foreignlanguage{american}{BMAD }{五个阶段中哪个{最}关键？为什么？}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}\foreignlanguage{american}{AI }{在每个阶段分别扮演什么角色？}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{如果再做一次，你会在哪个阶段花更多时间？}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.6 }{\foreignlanguage{american}{参考资源}}}{4.6 参考资源}}\label{ux53c2ux8003ux8d44ux6e90}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{资源}} & {\foreignlanguage{american}{链接}} \\
+\foreignlanguage{american}{BMAD Method }{\foreignlanguage{american}{官网}} & \foreignlanguage{american}{https://bmadcodes.com/} \\
+{\foreignlanguage{american}{BMad}}\foreignlanguage{american}{ GitHub} & \foreignlanguage{american}{https://github.com/bmad-code-org/BMAD-METHOD} \\
+\foreignlanguage{american}{Mermaid }{\foreignlanguage{american}{教程}} & \foreignlanguage{american}{https://mermaid.js.org/} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{4.7 }{\foreignlanguage{american}{重点与难点}}}{4.7 重点与难点}}\label{ux91cdux70b9ux4e0eux96beux70b9-1}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{{重点}}{：理解}\foreignlanguage{american}{ BMAD }{五阶段流程，学会用自然语言指挥}\foreignlanguage{american}{ AI }{完成各阶段。}\foreignlanguage{american}{}
+\item
+  \textbf{{难点}}{：}\foreignlanguage{american}{① }{功能范围控制}\foreignlanguage{american}{------}{别贪多，先做核心；}\foreignlanguage{american}{② }{提示词要明确具体。}\foreignlanguage{american}{}
+\end{itemize}
+
+\appendix
+
+\clearpage
+
+\section{\texorpdfstring{{附录}\foreignlanguage{american}{ A IMA }{知识库导读}\foreignlanguage{american}{}}{附录 A IMA 知识库导读}}\label{ux9644ux5f55-a-ima-ux77e5ux8bc6ux5e93ux5bfcux8bfb}
+
+{IMA（Information Mutual Assistance）知识库是课程配套的学术资源平台，提供金融科技、银行数字化转型、AI应用等领域的论文与报告。}\foreignlanguage{american}{}
+
+{请访问课程知识库主页获取最新资源。}\foreignlanguage{american}{}
+
+\clearpage
+
+\section{\texorpdfstring{{附录}\foreignlanguage{american}{ B }{常见问题排查}\foreignlanguage{american}{}}{附录 B 常见问题排查}}\label{ux9644ux5f55-b-ux5e38ux89c1ux95eeux9898ux6392ux67e5}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{B.1 TRAE }{安装}\foreignlanguage{american}{/}{登录}\foreignlanguage{american}{}}{B.1 TRAE 安装/登录}}\label{b.1-trae-ux5b89ux88c5ux767bux5f55}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{现象}} & {\foreignlanguage{american}{原因}} & {\foreignlanguage{american}{解决}} \\
+{\foreignlanguage{american}{启动闪退}} & {\foreignlanguage{american}{显卡驱动}}\foreignlanguage{american}{ / VC++ }{\foreignlanguage{american}{缺失}} & \foreignlanguage{american}{装}\foreignlanguage{american}{ NVIDIA/Intel }{\foreignlanguage{american}{驱动；装}}
+
+\foreignlanguage{american}{\href{https://aka.ms/vs/17/release/vc_redist.x64.exe}{VC++ Redist}} \\
+{\foreignlanguage{american}{登录转圈}} & {防火墙}\foreignlanguage{american}{/}{代理拦截}{ \foreignlanguage{american}{}}
+
+{\foreignlanguage{american}{*.trae.cn}}\foreignlanguage{american}{} & {系统代理放行}{ \foreignlanguage{american}{}}
+
+{\foreignlanguage{american}{*.trae.cn}}\foreignlanguage{american}{}
+
+{；或切{手机热点}}\foreignlanguage{american}{} \\
+\foreignlanguage{american}{Builder }{\foreignlanguage{american}{不能建文件}} & {\foreignlanguage{american}{未授权}} & {文件}{ \foreignlanguage{american}{→ }}{信任当前工作区}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{B.2 Python / Node }{\foreignlanguage{american}{环境}}}{B.2 Python / Node 环境}}\label{b.2-python-node-ux73afux5883}
+
+\begin{itemize}
+\tightlist
+\item
+  {\textbf{\foreignlanguage{american}{多版本}}}\textbf{\foreignlanguage{american}{ Python }}{\textbf{\foreignlanguage{american}{冲突}}\foreignlanguage{american}{：优先}}\foreignlanguage{american}{ {Anaconda{；}where}
+  python }{\foreignlanguage{american}{看路径，环境变量上移}}\foreignlanguage{american}{ Anaconda}\foreignlanguage{american}{。}
+\item
+  \textbf{\foreignlanguage{american}{pip install SSL }}{\textbf{\foreignlanguage{american}{错误}}\foreignlanguage{american}{：}\foreignlanguage{american}{pip}}\foreignlanguage{american}{ config set {{global.index}-url}
+  https://pypi.tuna.tsinghua.edu.cn/simple}\foreignlanguage{american}{。}
+\item
+  {\textbf{\foreignlanguage{american}{npm}}}\textbf{\foreignlanguage{american}{ install }}{\textbf{\foreignlanguage{american}{慢}}\foreignlanguage{american}{：}\foreignlanguage{american}{npm}}\foreignlanguage{american}{ config set registry https://registry.npmmirror.com}\foreignlanguage{american}{。}
+\item
+  \textbf{\foreignlanguage{american}{TensorFlow }}{\textbf{\foreignlanguage{american}{装不上}}\foreignlanguage{american}{：业绩预测有}}\foreignlanguage{american}{ SARIMA }{\foreignlanguage{american}{即可得分，}\foreignlanguage{american}{LSTM}}\foreignlanguage{american}{ }{\foreignlanguage{american}{可选}}\foreignlanguage{american}{。}
+\end{itemize}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{B.3 MCP }{类（实验二重点）}\foreignlanguage{american}{}}{B.3 MCP 类（实验二重点）}}\label{b.3-mcp-ux7c7bux5b9eux9a8cux4e8cux91cdux70b9}
+
+\begin{itemize}
+\tightlist
+\item
+  {\textbf{\foreignlanguage{american}{找不到}}}\textbf{\foreignlanguage{american}{ {npx}
+  / uvx}}\foreignlanguage{american}{：}\foreignlanguage{american}{Node.js }\foreignlanguage{american}{与}\foreignlanguage{american}{ {uv} }{\foreignlanguage{american}{都得装，且加入}}\foreignlanguage{american}{ {PATH{。}pip}
+  install {uv} }\foreignlanguage{american}{装}\foreignlanguage{american}{ {uv}}\foreignlanguage{american}{。}
+\item
+  \textbf{\foreignlanguage{american}{\%APPDATA\%\textbackslash Trae
+  CN\textbackslash User\textbackslash{}{mcp.json} }}{\textbf{\foreignlanguage{american}{改完没生效}}\foreignlanguage{american}{：必须\textbf{完全退出}}}\textbf{\foreignlanguage{american}{ TRAE}}\foreignlanguage{american}{ }{\foreignlanguage{american}{再重启（任务栏右键退出，不只是关窗口}}\foreignlanguage{american}{）。}
+\item
+  \textbf{\foreignlanguage{american}{playwright }\foreignlanguage{american}{报}\foreignlanguage{american}{ {EPERM{：不要装在}}}}\foreignlanguage{american}{ C:\textbackslash Program Files\textbackslash{} }{\foreignlanguage{american}{下；改用户目录}}\foreignlanguage{american}{。}
+\item
+  {\textbf{\foreignlanguage{american}{stata-mcp}}}\textbf{\foreignlanguage{american}{ }}{\textbf{\foreignlanguage{american}{找不到}}}\textbf{\foreignlanguage{american}{ {Stata{：在}}}}\foreignlanguage{american}{ {{env.STATA}\_PATH}
+  }{\foreignlanguage{american}{填本机}}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{实际路径，如}}\foreignlanguage{american}{ C:\textbackslash Program Files\textbackslash Stata18\textbackslash StataMP-64.exe}\foreignlanguage{american}{。}
+\item
+  \textbf{\foreignlanguage{american}{word/ppt MCP }}{\textbf{\foreignlanguage{american}{启动慢}}\foreignlanguage{american}{：首次}}\foreignlanguage{american}{ {uvx} }{\foreignlanguage{american}{需联网下载，等}}\foreignlanguage{american}{ 1--3 }{\foreignlanguage{american}{分钟}}\foreignlanguage{american}{。}
+\end{itemize}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{B.4 Skill }{\foreignlanguage{american}{类（实验三}}\foreignlanguage{american}{）}}{B.4 Skill 类（实验三）}}\label{b.4-skill-ux7c7bux5b9eux9a8cux4e09}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{\foreignlanguage{american}{AI }}{\textbf{\foreignlanguage{american}{不识别}}}\textbf{\foreignlanguage{american}{ Skill}}\foreignlanguage{american}{：}\foreignlanguage{american}{① }{\foreignlanguage{american}{升级}}\foreignlanguage{american}{ IDE}\foreignlanguage{american}{；}\foreignlanguage{american}{② }{使用}\foreignlanguage{american}{skill finder }{重新安装需要的技能}\foreignlanguage{american}{）；}\foreignlanguage{american}{③
+  }{\foreignlanguage{american}{检查}}\foreignlanguage{american}{ description }{\foreignlanguage{american}{是否含明确触发词}}\foreignlanguage{american}{。}
+\item
+  {\textbf{\foreignlanguage{american}{自写}}}\textbf{\foreignlanguage{american}{ Skill }}{\textbf{\foreignlanguage{american}{不激活}}\foreignlanguage{american}{：}\foreignlanguage{american}{description}}\foreignlanguage{american}{ }{\foreignlanguage{american}{写得太宽泛，}\foreignlanguage{american}{AI}}\foreignlanguage{american}{ }{\foreignlanguage{american}{不知何时调用}}\foreignlanguage{american}{------}{\foreignlanguage{american}{把场景写具体（如}\foreignlanguage{american}{"}\foreignlanguage{american}{当用户提到}}\foreignlanguage{american}{ X }\foreignlanguage{american}{或}\foreignlanguage{american}{ Y }{\foreignlanguage{american}{时使用}}\foreignlanguage{american}{"}\foreignlanguage{american}{）。}
+\end{itemize}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{B.5 }{\foreignlanguage{american}{提交与评分}}}{B.5 提交与评分}}\label{b.5-ux63d0ux4ea4ux4e0eux8bc4ux5206}
+
+\begin{itemize}
+\item
+  \textbf{{谁收}}{：课程左右统一提交地址坚果云收件箱}{ }\foreignlanguage{american}{\href{https://send2me.cn/gC9Z1s7w/SSuYQaOQEsj6BQ}{{https://send2me.cn/gC9Z1s7w/SSuYQaOQEsj6BQ}}}\foreignlanguage{american}{}
+\item
+  \foreignlanguage{american}{}
+
+  ~
+\end{itemize}
+
+\clearpage
+
+\section{\texorpdfstring{{附录}\foreignlanguage{american}{ C Stata }{下载与安装指南}\foreignlanguage{american}{}}{附录 C Stata 下载与安装指南}}\label{ux9644ux5f55-c-stata-ux4e0bux8f7dux4e0eux5b89ux88c5ux6307ux5357}
+
+\foreignlanguage{american}{🎯 }\textbf{{适用场景}}{：实验二}\foreignlanguage{american}{ L4 }{关「数据分析组」使用}\foreignlanguage{american}{ {stata-mcp}
+}{跑计量回归时需要本机已安装}\foreignlanguage{american}{ Stata}{。无}\foreignlanguage{american}{ Stata }{的同学可改用}\foreignlanguage{american}{ Python}{（}{\foreignlanguage{american}{statsmodels}}{）替代，但\textbf{强烈建议安装}以获得完整体验。}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.1 Stata }{软件介绍}\foreignlanguage{american}{}}{C.1 Stata 软件介绍}}\label{c.1-stata-ux8f6fux4ef6ux4ecbux7ecd}
+
+\foreignlanguage{american}{Stata }{是一款强大的统计分析软件，广泛应用于经济学、金融学、社会学等领域的实证研究。}{\foreignlanguage{american}{本课程实验中使用}}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{进行计量经济学分析和数据处理，配合}}\foreignlanguage{american}{ {stata-mcp} }{\foreignlanguage{american}{可让}}\foreignlanguage{american}{ AI }{\foreignlanguage{american}{直接调起}}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{内核跑}}\foreignlanguage{american}{ OLS / {reghdfe} / {esttab}
+}{\foreignlanguage{american}{等命令}}\foreignlanguage{american}{。}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.2 }{\foreignlanguage{american}{下载信息}}}{C.2 下载信息}}\label{c.2-ux4e0bux8f7dux4fe1ux606f}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{项目}} & {\foreignlanguage{american}{内容}} \\
+{\textbf{\foreignlanguage{american}{网盘链接}}} & \foreignlanguage{american}{\url{https://pan.baidu.com/s/1ciuS1G_6LtnZIuzRX9zzdg?pwd=vjji}}
+
+\foreignlanguage{american}{}
+
+~ \\
+{\textbf{\foreignlanguage{american}{提取码}}} & {\foreignlanguage{american}{vjji}} \\
+{\textbf{\foreignlanguage{american}{文件名称}}} & {\foreignlanguage{american}{stata}} \\
+{\textbf{\foreignlanguage{american}{版本说明}}} & \foreignlanguage{american}{2024 }{\foreignlanguage{american}{年有效版本}} \\
+{\textbf{\foreignlanguage{american}{来源}}} & {人大经济论坛提供（仅供课程学习使用，正式研究请购买正版授权）}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\foreignlanguage{american}{⚠️
+}\textbf{{版权声明}}{：{网盘资源}仅用于本课程教学演示，\textbf{禁止用于商业用途}。课题组、论文发表等正式场合必须使用}\foreignlanguage{american}{ Stata }{官方授权版本（}\foreignlanguage{american}{https://www.stata.com}{）。}\foreignlanguage{american}{}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.3 }{安装步骤}\foreignlanguage{american}{}}{C.3 安装步骤}}\label{c.3-ux5b89ux88c5ux6b65ux9aa4}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{Step 1 }{下载与解压}\foreignlanguage{american}{}}{Step 1 下载与解压}}\label{step-1-ux4e0bux8f7dux4e0eux89e3ux538b}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}{点击上述百度{网盘链接}；}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}{\foreignlanguage{american}{输入提取码}}\foreignlanguage{american}{ {{vjji}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{\foreignlanguage{american}{下载完整的}}\foreignlanguage{american}{ Stata }{\foreignlanguage{american}{安装包到本地（建议放在}}\foreignlanguage{american}{ D:\textbackslash Software\textbackslash{} }{\foreignlanguage{american}{等非中文路径}}{\foreignlanguage{american}{）；}}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}{\foreignlanguage{american}{解压下载的压缩包（推荐用}}\foreignlanguage{american}{ 7-Zip / WinRAR}\foreignlanguage{american}{）。}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{Step 2 }{\foreignlanguage{american}{运行安装}}}{Step 2 运行安装}}\label{step-2-ux8fd0ux884cux5b89ux88c5}
+
+\foreignlanguage{american}{{1{~~~~~~~~
+}}}{\foreignlanguage{american}{进入解压后的目录，找到}}\foreignlanguage{american}{ {Setup.exe{（或}}
+SetupStata18.exe}\foreignlanguage{american}{），{\textbf{右键}}}\textbf{\foreignlanguage{american}{ → }}{{\textbf{\foreignlanguage{american}{以管理员身份运行}}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{2{~~~~~~~~
+}}}{\foreignlanguage{american}{安装路径建议保持默认：}\foreignlanguage{american}{C}}\foreignlanguage{american}{:\textbackslash Program Files{\textbackslash Stata18\textbackslash{}{；}}}
+
+\foreignlanguage{american}{{3{~~~~~~~~
+}}}{\foreignlanguage{american}{安装类型选择}}\foreignlanguage{american}{ {\textbf{StataMP}{（多核版，性能最佳）或}}
+{{\textbf{StataSE}}}}{\foreignlanguage{american}{；}}
+
+\foreignlanguage{american}{{4{~~~~~~~~
+}}}{\foreignlanguage{american}{一路}}\foreignlanguage{american}{ Next }{\foreignlanguage{american}{完成安装}}\foreignlanguage{american}{。}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{Step 3 }{\foreignlanguage{american}{激活授权}}}{Step 3 激活授权}}\label{step-3-ux6fc0ux6d3bux6388ux6743}
+
+{\foreignlanguage{american}{按网盘内附带的}}\foreignlanguage{american}{ }\foreignlanguage{american}{安装说明}\foreignlanguage{american}{.txt / Readme.pdf }{\foreignlanguage{american}{完成激活（通常需要拷贝授权文件}}\foreignlanguage{american}{ {stata.lic} }{\foreignlanguage{american}{到安装目录}}\foreignlanguage{american}{）。}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{Step 4 }{\foreignlanguage{american}{验证安装}}}{Step 4 验证安装}}\label{step-4-ux9a8cux8bc1ux5b89ux88c5}
+
+{\foreignlanguage{american}{打开}}\foreignlanguage{american}{ PowerShell }{\foreignlanguage{american}{执行}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{\&
+"C:\textbackslash Program Files\textbackslash Stata18\textbackslash StataMP-64.exe"-h}
+
+{或直接双击桌面}\foreignlanguage{american}{ Stata }{图标，命令窗口输入：}\foreignlanguage{american}{}
+
+{\foreignlanguage{american}{sysuse}}\foreignlanguage{american}{ auto, {clearsummarize}}
+
+{\foreignlanguage{american}{能看到}}\foreignlanguage{american}{ 74 }{\foreignlanguage{american}{条汽车数据的描述统计}}\foreignlanguage{american}{ = }{\foreignlanguage{american}{安装成功}}\foreignlanguage{american}{。}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.4 }\foreignlanguage{american}{与}\foreignlanguage{american}{ {stata-mcp} }{\foreignlanguage{american}{联动配置}}}{C.4 与 stata-mcp 联动配置}}\label{c.4-ux4e0e-stata-mcp-ux8054ux52a8ux914dux7f6e}
+
+{\foreignlanguage{american}{安装完成后，确认}}\foreignlanguage{american}{ \%APPDATA\%\textbackslash Trae CN\textbackslash User\textbackslash{}{mcp.json} }\foreignlanguage{american}{中}\foreignlanguage{american}{ {stata-mcp} }\foreignlanguage{american}{的}\foreignlanguage{american}{ STATA\_PATH }{\foreignlanguage{american}{与本机实际路径一致}}\foreignlanguage{american}{：}
+
+\foreignlanguage{american}{"{stata}-mcp{":\{}"command":"uvx","args{":{[}}"stata-mcp"{]},"env{":\{}"STATA\_PATH":"C:\textbackslash\textbackslash Program
+Files\textbackslash\textbackslash Stata18\textbackslash\textbackslash StataMP-64.exe","MCP\_STATA\_LOGLEVEL":"INFO"\}\}}
+
+\foreignlanguage{american}{💡 }{\foreignlanguage{american}{如安装的是}}\foreignlanguage{american}{ SE }{\foreignlanguage{american}{版本，把}}\foreignlanguage{american}{ StataMP-64.exe }{\foreignlanguage{american}{改为}}\foreignlanguage{american}{ StataSE-64.exe}\foreignlanguage{american}{；如安装路径不同，整段绝对路径也要相应修改。\textbf{注意}}\textbf{\foreignlanguage{american}{ JSON }}{\textbf{\foreignlanguage{american}{中反斜杠必须写成}}}\textbf{\foreignlanguage{american}{ \textbackslash\textbackslash{}}\foreignlanguage{american}{。}}
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.5 }{\foreignlanguage{american}{常见问题}}}{C.5 常见问题}}\label{c.5-ux5e38ux89c1ux95eeux9898}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{现象}} & {\foreignlanguage{american}{原因}} & {\foreignlanguage{american}{解决}} \\
+{安装时提示「}\foreignlanguage{american}{Windows }{{已保护}}{您的电脑」}\foreignlanguage{american}{} & \foreignlanguage{american}{SmartScreen }{\foreignlanguage{american}{误报}} & {点击「更多信息」}\foreignlanguage{american}{→}{「仍要运行」}\foreignlanguage{american}{} \\
+{\foreignlanguage{american}{启动报「}\foreignlanguage{american}{License}}\foreignlanguage{american}{ not found}\foreignlanguage{american}{」} & {\foreignlanguage{american}{授权文件未正确放置}} & \foreignlanguage{american}{把}\foreignlanguage{american}{ {{stata.lic}} }{\foreignlanguage{american}{拷贝到}}\foreignlanguage{american}{ {C:\textbackslash Program
+Files\textbackslash Stata18\textbackslash{}} }{\foreignlanguage{american}{根目录}} \\
+{\foreignlanguage{american}{stata-mcp}}\foreignlanguage{american}{ }{\foreignlanguage{american}{报「}\foreignlanguage{american}{Stata}}\foreignlanguage{american}{ not found}\foreignlanguage{american}{」} & \foreignlanguage{american}{STATA\_PATH}
+
+\foreignlanguage{american}{{~}}{\foreignlanguage{american}{路径写错或转义错}} & \foreignlanguage{american}{用}\foreignlanguage{american}{ PowerShell {Test-Path
+"C:\textbackslash Program Files\textbackslash Stata18\textbackslash StataMP-64.exe"} }{\foreignlanguage{american}{验证}} \\
+{\foreignlanguage{american}{中文路径乱码}} & {\foreignlanguage{american}{安装在中文目录下}} & {\foreignlanguage{american}{卸载后重装到}}\foreignlanguage{american}{ {C:\textbackslash Program
+Files\textbackslash{}} }{\foreignlanguage{american}{等纯英文路径}} \\
+{\foreignlanguage{american}{网盘下载限速}} & {{百度网盘未}}{登录或非会员}\foreignlanguage{american}{} & {登录后下载}\foreignlanguage{american}{} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{}
+
+~
+
+\subsection{\texorpdfstring{\foreignlanguage{american}{C.6 }{\foreignlanguage{american}{替代方案（无法安装}}\foreignlanguage{american}{ Stata }\foreignlanguage{american}{时）}}{C.6 替代方案（无法安装 Stata 时）}}\label{c.6-ux66ffux4ee3ux65b9ux6848ux65e0ux6cd5ux5b89ux88c5-stata-ux65f6}
+
+{若实在无法安装}\foreignlanguage{american}{ Stata}{，可在实验二}\foreignlanguage{american}{ L4 }{关用}\foreignlanguage{american}{ Python }{替代：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{import pandas
+as pd import {statsmodels.formula.api} as {{smf}}{{~ }{df}} = {{pd.read}\_stata}("data/{bank\_panel.dta}{"){~ }\#} }\foreignlanguage{american}{或}\foreignlanguage{american}{ {{pd.read}\_excel}
+model = {{smf.ols}}{(}"roe \textasciitilde{} {npl\_ratio} + car + {loan\_growth} + np.log(asset)", data={df}{).fit({~ }}{~~~}{cov\_type}="cluster",
+{cov\_kwds}{=\{}"groups":
+{df}{[}"{bank\_id}"{]}{\} )} print({{model.summary}}())
+}
+
+{\foreignlanguage{american}{并在实验报告中注明「采用}}\foreignlanguage{american}{ Python {statsmodels} }{\foreignlanguage{american}{替代}}\foreignlanguage{american}{ {Stata{」即可获得同等分数}}}\foreignlanguage{american}{。}
+
+\end{document}
