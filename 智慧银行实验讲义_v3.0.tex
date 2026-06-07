@@ -715,6 +715,91 @@ merge\_log.md}\foreignlanguage{american}{。}\foreignlanguage{american}{ }
 
 \textbf{\foreignlanguage{american}{与}\foreignlanguage{american}{ Skill }}{\textbf{\foreignlanguage{american}{的关系（黄金口诀}}}\textbf{\foreignlanguage{american}{）}}\foreignlanguage{american}{：「}\textbf{\foreignlanguage{american}{MCP }}{\textbf{\foreignlanguage{american}{给能力，}\foreignlanguage{american}{Skill}}}\textbf{\foreignlanguage{american}{ }}{\textbf{\foreignlanguage{american}{给方法}}}\foreignlanguage{american}{」。}\foreignlanguage{american}{}
 
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.1.1 MCP }{协议三层架构}}{2.1.1 MCP 协议三层架构}}\label{mcp-three-layer-architecture}
+
+{下图展示了}\foreignlanguage{american}{ MCP }{协议的三层架构：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│  第1层：MCP Client（宿主 IDE）                              │
+│  TRAE / Qoder / Cursor / Claude Desktop                    │
+│  职责：接收用户意图 → 决定调用哪个 MCP 工具                │
+├─────────────────────────────────────────────────────────────┤
+│  第2层：MCP Server（工具方进程）                            │
+│  如 mcp-server-fetch / @playwright/mcp / stata-mcp         │
+│  职责：暴露 tools 列表 → 接收调用请求 → 返回结果           │
+├─────────────────────────────────────────────────────────────┤
+│  第3层：真实工具 / 外部系统                                 │
+│  浏览器 / Excel / Word / Stata / 数据库 / Web API          │
+│  职责：实际执行操作（打开页面、写入文件、跑回归等）        │
+└─────────────────────────────────────────────────────────────┘
+         ↕ JSON-RPC over stdio / SSE
+\end{verbatim}
+
+\foreignlanguage{american}{}
+
+\textbf{{核心设计思想}}{：}\foreignlanguage{american}{}
+
+\begin{itemize}
+\tightlist
+\item
+  {\textbf{\foreignlanguage{american}{解耦}}}{：}\foreignlanguage{american}{Client }{不需要知道工具如何实现，只需知道工具的}\foreignlanguage{american}{ schema}{（输入}{/}{输出格式）；}\foreignlanguage{american}{}
+\item
+  {\textbf{\foreignlanguage{american}{可插拔}}}{：}\foreignlanguage{american}{}{新增一个}\foreignlanguage{american}{ MCP Server }{只需在}\foreignlanguage{american}{ mcp.json }{中加一段配置，无需修改}\foreignlanguage{american}{ IDE }{代码；}\foreignlanguage{american}{}
+\item
+  {\textbf{\foreignlanguage{american}{标准化}}}{：所有}\foreignlanguage{american}{ Server }{都用相同的}\foreignlanguage{american}{ JSON-RPC }{协议通信，}\foreignlanguage{american}{AI }{模型学会一种调用方式即可操作所有工具。}\foreignlanguage{american}{}
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\foreignlanguage{american}{2.1.2 }{一次}\foreignlanguage{american}{ MCP }{调用的完整生命周期}}{2.1.2 一次 MCP 调用的完整生命周期}}\label{mcp-call-lifecycle}
+
+{当你在}\foreignlanguage{american}{ TRAE }{中输入「请用}\foreignlanguage{american}{ playwright }{打开百度并截图」时，背后发生了什么？}\foreignlanguage{american}{}
+
+\begin{verbatim}
+用户输入 → AI 大模型推理
+  ↓
+① AI 识别意图，决定调用 playwright MCP 的 screenshot 工具
+  ↓
+② Client 向 Server 发送 JSON-RPC 请求：
+   {"jsonrpc": "2.0", "method": "tools/call",
+    "params": {"name": "browser_screenshot",
+               "arguments": {"url": "https://baidu.com"}},
+    "id": 1}
+  ↓
+③ Server 接收请求 → 调用 Chromium 浏览器打开网页 → 截图
+  ↓
+④ Server 返回 JSON-RPC 响应：
+   {"jsonrpc": "2.0", "result": {"content": [{"type": "image",
+    "data": "base64..."}]}, "id": 1}
+  ↓
+⑤ Client 将截图展示给用户，AI 继续生成文字回复
+\end{verbatim}
+
+\textbf{{关键概念}}{：}\foreignlanguage{american}{}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+{\foreignlanguage{american}{概念}} & {\foreignlanguage{american}{说明}} \\
+\foreignlanguage{american}{Tool Schema} & {每个}\foreignlanguage{american}{ MCP Server }{启动时向}\foreignlanguage{american}{ Client }{声明自己有哪些工具（名称、参数、描述），}\foreignlanguage{american}{AI }{据此决定何时调用} \\
+\foreignlanguage{american}{JSON-RPC 2.0} & {轻量远程过程调用协议，}\foreignlanguage{american}{MCP }{固定使用此格式；一个请求}{=}{一个}\foreignlanguage{american}{ method + params + id} \\
+\foreignlanguage{american}{stdio / SSE} & {传输层：本地}\foreignlanguage{american}{ MCP }{用标准输入输出（}\foreignlanguage{american}{stdio}{），远程}\foreignlanguage{american}{ MCP }{用}\foreignlanguage{american}{ Server-Sent Events}{（}\foreignlanguage{american}{SSE}{）} \\
+{工具发现} & \foreignlanguage{american}{Client }{启动时向每个}\foreignlanguage{american}{ Server }{发}\foreignlanguage{american}{ tools/list }{请求，获取可用工具清单} \\
+\end{longtable}
+}
+
+\foreignlanguage{american}{💡 }\textbf{{教学提示}}{：建议在讲完概念后，让学生在}\foreignlanguage{american}{ TRAE }{中故意输入一个错误的}\foreignlanguage{american}{ MCP }{工具名，观察}\foreignlanguage{american}{ AI }{如何报错------加深对}\foreignlanguage{american}{ Tool Schema }{发现机制的理解。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
+
 \subsection{\texorpdfstring{\foreignlanguage{american}{{~~ }}\foreignlanguage{american}{支持}{\foreignlanguage{american}{mcp}}\foreignlanguage{american}{的主流平台：}}{~~ 支持mcp的主流平台：}}\label{ux652fux6301mcpux7684ux4e3bux6d41ux5e73ux53f0}
 
 {截至}\foreignlanguage{american}{ 2025 }{年}\foreignlanguage{american}{ 2 }{月，已有}{ }{超过}\foreignlanguage{american}{ 1000 }{{个}}{开源}\foreignlanguage{american}{ MCP }{连接器。主流支持平台包括：}\foreignlanguage{american}{}
@@ -1304,6 +1389,56 @@ Office }}{\textbf{\foreignlanguage{american}{表格}}}
 
 \textbf{{学生练习}}{：选择\textbf{家乡的{一家城商行}}}\textbf{\foreignlanguage{american}{/}{农商行}}{官网，重复上述}\foreignlanguage{american}{ 4 }{步。}{ }\textbf{{进阶}}{：用}\foreignlanguage{american}{ fetch MCP }{抓取该行最新公告页}\foreignlanguage{american}{ JSON}{，解析{出最近}}\foreignlanguage{american}{ 5 }{条公告标题。}\foreignlanguage{american}{}
 
+\paragraph{\texorpdfstring{\foreignlanguage{american}{L1 }{拓展任务A：银行理财产品数据采集}}{L1 拓展任务A：银行理财产品数据采集}}\label{l1-ext-a-wealth}
+
+\foreignlanguage{american}{🏦 }{任务：使用}\foreignlanguage{american}{ playwright MCP }{爬取银行理财产品列表并保存}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{用}\foreignlanguage{american}{ playwright }{打开招商银行理财产品页面}\foreignlanguage{american}{（}\foreignlanguage{american}{https://www.cmbchina.com/cfweb/personal/}{）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{等待页面加载完成后截图保存为}\foreignlanguage{american}{ figures/cmb\_wealth.png}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{提取页面中的理财产品名称、预期收益率、期限、起购金额}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{将提取的数据整理为}\foreignlanguage{american}{ CSV }{格式，保存为}\foreignlanguage{american}{ data/cmb\_wealth\_products.csv}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{5. }{用}\foreignlanguage{american}{ 100 }{字总结该行理财产品的特点（期限结构、收益水平、风险等级分布）}\foreignlanguage{american}{}
+
+\textbf{{学习目标}}{：掌握}\foreignlanguage{american}{ playwright }{{动态页面}}{的数据提取能力，理解}\foreignlanguage{american}{ AI }{{如何处理}}{需要等待加载的}\foreignlanguage{american}{ JavaScript }{渲染页面。}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{L1 }{拓展任务B：实时汇率}\foreignlanguage{american}{/}{利率数据获取}}{L1 拓展任务B：实时汇率/利率数据获取}}\label{l1-ext-b-rate}
+
+\foreignlanguage{american}{💱 }{任务：使用}\foreignlanguage{american}{ fetch MCP }{调用银行公开}\foreignlanguage{american}{ API }{获取实时金融数据}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{使用}\foreignlanguage{american}{ fetch MCP }{访问中国银行外汇牌价页面}\foreignlanguage{american}{（}\foreignlanguage{american}{https://www.boc.cn/sourcedb/whpj/}{），提取当日主要货币（美元、欧元、日元、英镑）的买入}{/}{卖出汇率}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{使用}\foreignlanguage{american}{ fetch MCP }{获取}\foreignlanguage{american}{ LPR }{{贷款市场}}{报价利率：访问中国人民银行官网或第三方}\foreignlanguage{american}{ API }{获取}\foreignlanguage{american}{ 1 }{年期和}\foreignlanguage{american}{ 5 }{年期}\foreignlanguage{american}{ LPR }{最新报价}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{将汇率数据和利率数据整理为}\foreignlanguage{american}{ Markdown }{表格输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{撰写}\foreignlanguage{american}{ 50 }{{字简评}}{：当前汇率走势对银行外汇业务的影响}\foreignlanguage{american}{}
+
+\textbf{{学习目标}}{：理解}\foreignlanguage{american}{ fetch MCP }{{与}\foreignlanguage{american}{ playwright }}{的区别------}\foreignlanguage{american}{fetch }{适合结构化}\foreignlanguage{american}{API/}{静态页面，}\foreignlanguage{american}{playwright }{适合需要}\foreignlanguage{american}{ JS }{渲染的动态页面。}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{L1 }{拓展任务C：手机端}\foreignlanguage{american}{ vs PC }{端对比审计}}{L1 拓展任务C：手机端 vs PC 端对比审计}}\label{l1-ext-c-compare}
+
+\foreignlanguage{american}{📱 }{任务：对比同一银行官网在不同设备上的表现}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{用}\foreignlanguage{american}{ playwright }{以默认}\foreignlanguage{american}{ PC }{视口（}\foreignlanguage{american}{1920×1080}{）打开建设银行官网，截图保存为}\foreignlanguage{american}{ figures/ccb\_pc.png}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{用}\foreignlanguage{american}{ playwright }{设置}\foreignlanguage{american}{ iPhone 14 }{视口（}\foreignlanguage{american}{390×844}{）重新打开同一页面，截图保存为}\foreignlanguage{american}{ figures/ccb\_mobile.png}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{分别对两个视口跑}\foreignlanguage{american}{ lighthouse }{审计，对比性能分数差异}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{撰写}\foreignlanguage{american}{ 150 }{字分析报告：该银行响应式设计的优劣势、移动端体验改进建议}\foreignlanguage{american}{}
+
+\textbf{{学习目标}}{：理解}\foreignlanguage{american}{ playwright }{的设备模拟能力，学会用}\foreignlanguage{american}{ AI }{做系统化的}\foreignlanguage{american}{ UX }{审计。}\foreignlanguage{american}{}
+
 \foreignlanguage{american}{\hfill\break
 }
 
@@ -1417,6 +1552,106 @@ Office }}{\textbf{\foreignlanguage{american}{表格}}}
 \foreignlanguage{american}{3. }{检查环境变量配置}\foreignlanguage{american}{}
 
 \foreignlanguage{american}{4. }{输出详细错误信息}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{L2 }{拓展任务A：银行客户信用评分分群}}{L2 拓展任务A：银行客户信用评分分群}}\label{l2-ext-a-credit}
+
+\foreignlanguage{american}{\textbf{🏦 }}{任务：用}\foreignlanguage{american}{ Excel MCP }{构建银行客户信用评分分群模型}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{1}{】数据准备}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{在当前目录创建}\foreignlanguage{american}{"}{银行客户数据}\foreignlanguage{american}{"}{文件夹}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{创建}\foreignlanguage{american}{ credit\_scoring.xlsx}{ }{包含以下字段：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{客户}\foreignlanguage{american}{ID}{、姓名、年龄、月收入（万元）、负债比率}\foreignlanguage{american}{(\%)}
+
+\foreignlanguage{american}{{~~ }- }{信用卡额度使用率}\foreignlanguage{american}{(\%)}{、逾期次数（近}\foreignlanguage{american}{12}{月）、贷款笔数、存款余额（万元）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{至少}\foreignlanguage{american}{ 30 }{条模拟客户数据（覆盖高/中/低风险各}\foreignlanguage{american}{ 10 }{条）}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{2}{】信用评分计算}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{新增}{"}{信用评分}{"}{列，评分规则：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{月收入权重}\foreignlanguage{american}{ 20\%}{、负债比率权重}\foreignlanguage{american}{ -25\%}{、额度使用率权重}\foreignlanguage{american}{ -20\%}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{逾期次数权重}\foreignlanguage{american}{ -30\%}{、存款余额权重}\foreignlanguage{american}{ 5\%}{（基准分}\foreignlanguage{american}{ 600 }{分，满分}\foreignlanguage{american}{ 900 }{分）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{新增}{"}{风险等级}{"}{列：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{≥}\foreignlanguage{american}{ 750 }{分：低风险（}\foreignlanguage{american}{A }{级）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- 600--749 }{分：中风险（}\foreignlanguage{american}{B }{级）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- < 600 }{分：高风险（}\foreignlanguage{american}{C }{级）}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{3}{】分群分析}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{按风险等级分组，计算各组平均收入、平均负债比率、平均逾期次数}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{计算各等级客户占比}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{创建新}\foreignlanguage{american}{ Sheet"}{风险分析仪表盘}{"}{，汇总关键指标}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{4}{】可视化}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{饼图：客户风险等级分布}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{柱状图：各风险等级的平均信用评分}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{散点图：月收入}\foreignlanguage{american}{ vs }{信用评分的关系}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{5}{】输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{另存为}{"}{客户信用分群报告}\foreignlanguage{american}{.xlsx"}
+
+\foreignlanguage{american}{2. }{输出}\foreignlanguage{american}{ Markdown }{格式的风控建议（针对}\foreignlanguage{american}{ C }{级客户的贷后管理策略）}\foreignlanguage{american}{}
+
+\textbf{{学习目标}}{：用}\foreignlanguage{american}{ Excel MCP }{完成银行信用风险管理中的客户分群，理解信用评分卡的基本逻辑。}\foreignlanguage{american}{}
+
+\paragraph{\texorpdfstring{\foreignlanguage{american}{L2 }{拓展任务B：银行网点绩效}\foreignlanguage{american}{ KPI }{仪表盘}}{L2 拓展任务B：银行网点绩效 KPI 仪表盘}}\label{l2-ext-b-kpi}
+
+\foreignlanguage{american}{\textbf{📊 }}{任务：构建银行网点绩效}\foreignlanguage{american}{ KPI }{仪表盘}\foreignlanguage{american}{}
+
+{请按以下步骤完成：}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{1}{】数据准备}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{创建}\foreignlanguage{american}{ branch\_kpi.xlsx}{ }{包含以下字段：}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{网点名称、所在城市、员工人数、月存款新增（亿元）、月贷款新增（亿元）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{中间业务收入（万元）、客户投诉数、新开户数、理财销售额（万元）}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{{~~ }- }{至少}\foreignlanguage{american}{ 15 }{个网点数据（覆盖一线/二线/三线城市各}\foreignlanguage{american}{ 5 }{家）}\foreignlanguage{american}{}
+
+{【}\foreignlanguage{american}{2}{】}\foreignlanguage{american}{KPI }{计算}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{人均存款新增}\foreignlanguage{american}{ = }{月存款新增}\foreignlanguage{american}{ / }{员工人数}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{人均创收}\foreignlanguage{american}{ = }{中间业务收入}\foreignlanguage{american}{ / }{员工人数}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{3. }{综合得分}\foreignlanguage{american}{ = }{存款权重}\foreignlanguage{american}{30\% + }{贷款权重}\foreignlanguage{american}{25\% + }{中收权重}\foreignlanguage{american}{20\% + }{新客权重}\foreignlanguage{american}{15\% + }{满意度权重}\foreignlanguage{american}{10\%}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{按综合得分排名，标注}\foreignlanguage{american}{"}{优秀}\foreignlanguage{american}{" / "}{达标}\foreignlanguage{american}{" / "}{待改进}\foreignlanguage{american}{"}
+
+{【}\foreignlanguage{american}{3}{】仪表盘输出}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{1. }{新建}{"}{网点排名}{"} \foreignlanguage{american}{Sheet}{ }{：}\foreignlanguage{american}{}{按综合得分从高到低排列}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{2. }{新建}{"}{城市对比}\foreignlanguage{american}{" Sheet}{：按城市级别汇总平均}\foreignlanguage{american}{ KPI}
+
+\foreignlanguage{american}{3. }{柱状图：}\foreignlanguage{american}{Top 5 }{网点综合得分对比}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{4. }{撰写}\foreignlanguage{american}{ 100 }{字管理建议：哪些网点需重点关注、改进方向}\foreignlanguage{american}{}
+
+\textbf{{学习目标}}{：用}\foreignlanguage{american}{ Excel MCP }{完成银行运营管理中的绩效分析，掌握}\foreignlanguage{american}{ KPI }{加权评分和排名方法。}\foreignlanguage{american}{}
+
+\foreignlanguage{american}{}
+
+~
 
 \subsubsection{\texorpdfstring{\foreignlanguage{american}{🎚️ L3 }{文档生成组（}\foreignlanguage{american}{★★★}{）}\foreignlanguage{american}{------ word + ppt }{生成银行简报}\foreignlanguage{american}{}}{🎚️ L3 文档生成组（★★★）------ word + ppt 生成银行简报}}\label{l3-ux6587ux6863ux751fux6210ux7ec4-word-ppt-ux751fux6210ux94f6ux884cux7b80ux62a5}
 
