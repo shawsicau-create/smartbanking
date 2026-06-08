@@ -1,3 +1,16 @@
-*.lock
+# 系统文件
 .DS_Store
 Thumbs.db
+.~lock.*
+
+# LaTeX 编译中间文件
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# 依赖锁定
+*.lock
