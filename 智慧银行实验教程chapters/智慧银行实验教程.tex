@@ -200,9 +200,10 @@
 \ctexset{
   chapter = {
     format = \huge\bfseries\centerline,
-    nameformat = {},
+    name = {},
+    number = {},
     titleformat = {},
-    aftername = \par\nobreak\vspace{-0.5em}\rule{\textwidth}{0.8pt}\vspace{0.5em},
+    aftername = {},
     aftertitle = \par\vspace{-0.3em}\rule{\textwidth}{0.4pt}\vspace{1em},
     beforeskip = 1ex,
     afterskip = 2ex,
@@ -257,33 +258,33 @@
 % ---------- 前言部分 ----------
 \frontmatter
 \maketitle
-\input{chapters/preface}    % 前言
+\input{preface}    % 前言
 \tableofcontents
 
 % ---------- 正文部分 ----------
 \mainmatter
 
 \part{基础模块}
-\input{chapters/ch01}  % 第1章 绪论
-\input{chapters/ch02}  % 第2章 环境搭建
-\input{chapters/ch03}  % 第3章 MCP协议
-\input{chapters/ch04}  % 第4章 Skill体系
+\input{ch01}  % 第1章 绪论
+\input{ch02}  % 第2章 环境搭建
+\input{ch03}  % 第3章 MCP协议
+\input{ch04}  % 第4章 Skill体系
 
 \part{进阶模块}
-\input{chapters/ch05}  % 第5章 零售业务
-\input{chapters/ch06}  % 第6章 公司业务与风控
-\input{chapters/ch07}  % 第7章 数据分析
-\input{chapters/ch08}  % 第8章 舆情与投研
+\input{ch05}  % 第5章 零售业务
+\input{ch06}  % 第6章 公司业务与风控
+\input{ch07}  % 第7章 数据分析
+\input{ch08}  % 第8章 舆情与投研
 
 \part{综合模块}
-\input{chapters/ch09}  % 第9章 BMAD方法论
-\input{chapters/ch10}  % 第10章 CRM全栈开发
-\input{chapters/ch11}  % 第11章 智能客服
-\input{chapters/ch12}  % 第12章 综合项目
+\input{ch09}  % 第9章 BMAD方法论
+\input{ch10}  % 第10章 CRM全栈开发
+\input{ch11}  % 第11章 智能客服
+\input{ch12}  % 第12章 综合项目
 
 % ---------- 附录部分 ----------
 \appendix
-\input{chapters/appendix}  % 附录A-H
+\input{appendix}  % 附录A-H
 
 % ---------- 后记部分 ----------
 \backmatter
