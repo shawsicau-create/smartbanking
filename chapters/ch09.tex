@@ -1,0 +1,903 @@
+% 第9章 BMAD方法论与AI驱动开发
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+\chapter{BMAD方法论与AI驱动开发}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 深入理解BMAD方法论的理论基础
+  \item 掌握需求分析与功能规划（B阶段）
+  \item 掌握数据建模与ER设计（M阶段）
+  \item 掌握技术架构设计（A阶段）
+  \item 掌握AI辅助编码（D阶段）
+  \item 掌握测试与验证（V阶段）
+  \item 完成BMAD五阶段银行CRM原型开发
+\end{enumerate}
+}
+
+\keyterms{BMAD方法论、AI驱动开发、需求工程、用户故事、MoSCoW优先级、ER图、范式化、技术架构、提示词工程、测试金字塔、增量迭代}
+
+% ============================================================
+\section{BMAD理论框架}
+% ============================================================
+
+\subsection{软件工程方法论的演进}
+
+软件开发方法论经历了数十年的演进，每一次变革都深刻影响了程序员的工作方式和团队协作模式。理解这段历史，有助于我们把握BMAD方法论在其中的定位与价值。
+
+\textbf{瀑布模型（Waterfall，1970s--1990s）}。瀑布模型是软件工程最早的方法论，由Winston Royce于1970年提出。它将软件开发严格分为需求分析、系统设计、编码实现、测试验证、部署维护五个串行阶段，每个阶段必须完成后才能进入下一阶段。瀑布模型的优势在于\textbf{流程清晰、文档完整}，适用于需求稳定、变更成本高的大型项目（如银行核心系统升级）。其致命缺陷是\textbf{无法应对需求变更}——一旦进入编码阶段，回头修改需求的代价极大。
+
+\textbf{敏捷开发（Agile，2001--2015）}。2001年，17位软件开发者共同签署了《敏捷宣言》，标志着软件工程进入敏捷时代。敏捷的核心思想是\textbf{拥抱变化、快速交付}——通过短周期迭代（通常2--4周一个Sprint），在每个迭代结束时交付可运行的软件增量。Scrum和Kanban是两种最流行的敏捷框架。敏捷开发的突破在于：将"需求变更"从风险转化为竞争优势，让客户能够在开发过程中持续反馈和调整。
+
+\textbf{DevOps（2015--2022）}。DevOps是敏捷理念在运维领域的延伸，强调开发（Development）与运维（Operations）的深度协作。通过持续集成（CI）、持续交付（CD）、基础设施即代码（IaC）等实践，DevOps将软件从"代码提交"到"生产部署"的周期从数月缩短到数分钟。DevOps的本质是\textbf{流程自动化}——用工具链消除人工瓶颈，实现软件交付的流水线化。
+
+\textbf{AI驱动开发（AI-Driven Development，2023至今）}。大语言模型（LLM）的突破催生了全新的开发范式——AI驱动开发。与传统方法论的根本区别在于：AI不再只是辅助工具，而是\textbf{承担了团队中专业角色的工作}。程序员的角色从"逐行编写代码"转变为"描述需求、审核产出、协调AI团队"。BMAD方法论正是这一范式变革的系统性实践框架。
+
+\begin{theorybox}[方法论演进的核心逻辑]
+回顾四种方法论，可以发现一条清晰的演进逻辑：
+\begin{itemize}[leftmargin=2em]
+  \item 瀑布→敏捷：从\textbf{抗拒变化}到\textbf{拥抱变化}
+  \item 敏捷→DevOps：从\textbf{手动协作}到\textbf{自动化流水线}
+  \item DevOps→AI驱动：从\textbf{人做所有事}到\textbf{人指挥AI做事}
+\end{itemize}
+每一次演进都不是对前者的否定，而是在前者基础上的能力扩展。BMAD并不排斥敏捷和DevOps，而是在它们的理念上叠加了AI协作的新维度。
+\end{theorybox}
+
+\subsection{BMAD的核心理念}
+
+BMAD（Breakthrough Method of Agile AI-Driven Development）是一种AI驱动的敏捷开发方法论，其核心理念可以概括为一句话：\textbf{让AI扮演不同角色完成专业工作，人类负责决策与审核}。
+
+BMAD将软件开发的完整流程拆解为五个阶段，每个阶段由AI扮演一个专业角色：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cllll}
+\toprule
+\textbf{字母} & \textbf{阶段} & \textbf{角色} & \textbf{AI身份} & \textbf{产出} \\
+\midrule
+\textbf{B} & Brainstorm（脑暴） & 业务分析师 & AI as Analyst & 功能清单 \\
+\textbf{M} & Model（建模） & 产品经理 & AI as PM & 需求文档 + 数据模型 \\
+\textbf{A} & Architect（架构） & 技术架构师 & AI as Architect & 技术方案 + 架构图 \\
+\textbf{D} & Develop（开发） & 开发者 & AI as Developer & 可运行代码 \\
+\textbf{V} & Verify（验证） & 测试工程师 & AI as QA & 测试报告 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD五阶段总览}
+\end{table}
+
+\textbf{核心价值}：不用自己写所有代码，而是学会\textbf{指挥AI团队}完成工作。在传统开发中，一个人可能需要同时扮演分析师、产品经理、架构师、开发者和测试工程师；而在BMAD中，你只需要扮演"项目经理"——明确目标、分配任务、审核产出。
+
+\subsection{BMAD与传统敏捷开发的区别}
+
+BMAD与Scrum等传统敏捷方法的关键区别在于\textbf{AI的角色定位}：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{维度} & \textbf{传统敏捷（Scrum）} & \textbf{BMAD} \\
+\midrule
+团队规模 & 5--9人跨职能团队 & 1人+AI \\
+角色分工 & Product Owner / Scrum Master / Dev Team & 人类=项目经理，AI=所有执行角色 \\
+迭代周期 & 2--4周Sprint & 按阶段顺序推进（小时级） \\
+需求文档 & 用户故事+验收标准 & AI生成功能清单+需求文档 \\
+代码实现 & 开发者手动编码 & AI生成+人类审核 \\
+质量保证 & 测试团队+自动化测试 & AI辅助测试+手动验证 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD与传统敏捷开发对比}
+\end{table}
+
+BMAD的独特优势在于\textbf{极致的效率}——一个人加AI可以在数小时内完成传统团队数天甚至数周的工作。但这种效率是有边界的，它最适合\textbf{中小型项目的原型开发与MVP验证}。
+
+\subsection{五阶段的角色分工详解}
+
+BMAD的每个阶段都有明确的角色定位和交互模式，理解这些角色分工是有效运用BMAD的前提。
+
+\textbf{B阶段——AI as Analyst（业务分析师）}。在这一阶段，你向AI描述业务背景和目标用户，AI扮演业务分析师的角色，帮你梳理功能需求、确定功能优先级、输出功能清单。你的任务是\textbf{提供足够清晰的业务上下文}——用户是谁、核心数据是什么、业务场景有哪些。AI的产出是结构化的功能规划文档。
+
+\textbf{M阶段——AI as PM（产品经理）}。AI将功能清单转化为正式的需求文档，每条需求有唯一编号（如R-001），并设计数据模型（ER图）。PM角色关注的是\textbf{需求的完整性和数据结构的合理性}。你需要审核AI产出的需求文档，确保没有遗漏关键需求，同时验证数据模型是否符合业务逻辑。
+
+\textbf{A阶段——AI as Architect（技术架构师）}。AI根据需求文档和ER图，选择技术栈、设计系统架构、规划页面结构。架构师角色关注的是\textbf{技术方案的可行性和简洁性}。你需要评估AI选型的合理性，确保技术方案符合项目约束（如本课程要求纯前端、无服务端）。
+
+\textbf{D阶段——AI as Developer（开发者）}。这是最核心的阶段——AI根据设计文档生成可运行代码。开发者角色关注的是\textbf{代码的正确性和可用性}。你需要运行AI生成的代码，检查功能是否正常，发现问题后描述给AI修复。注意：这个阶段的效率高度依赖前面B/M/A阶段产出的质量。
+
+\textbf{V阶段——AI as QA（测试工程师）}。AI生成测试用例，你执行测试并记录结果。QA角色关注的是\textbf{功能覆盖度和缺陷发现率}。你需要仔细执行每条测试用例，如实记录结果，发现bug后描述给AI修复，然后回归测试。
+
+\begin{theorybox}[BMAD方法论的适用边界]
+BMAD方法论并非万能的，它有明确的适用场景和局限：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{适合}：中小型项目原型开发、MVP验证、教学实验、个人项目快速迭代、技术方案可行性验证
+  \item \textbf{不适合}：高安全要求的核心银行系统（需严格审计）、大型团队协作项目（需成熟的项目管理流程）、对可靠性要求极高的生产系统（如交易系统、支付系统）
+\end{itemize}
+BMAD的核心价值在于\textbf{快速验证想法}——用最短的时间和最少的人力，验证一个产品概念是否可行。至于生产级系统的开发，仍需传统软件工程的严谨流程。
+\end{theorybox}
+
+\subsection{BMAD与其他AI开发框架对比}
+
+除BMAD外，当前主流的AI开发辅助框架还有多种，它们各有侧重：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{3cm}p{3.5cm}p{3.5cm}}
+\toprule
+\textbf{框架} & \textbf{核心理念} & \textbf{优势} & \textbf{局限} \\
+\midrule
+\textbf{BMAD} & AI扮演团队角色，五阶段流程 & 流程清晰、角色明确、产出规范 & 阶段间衔接依赖人工审核 \\
+Cursor Rules & 项目级上下文规则约束AI行为 & 保持代码风格一致、减少重复说明 & 侧重编码阶段，缺少全流程 \\
+Claude Projects & 上传项目文档建立AI上下文 & 上下文持久化、多会话共享 & 需要手动维护项目文档 \\
+Copilot Workspace & 从Issue到PR的AI工作流 & 与GitHub生态深度集成 & 功能有限、自定义程度低 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD与其他AI开发框架对比}
+\end{table}
+
+BMAD的独特之处在于它提供了\textbf{从需求到交付的完整流程框架}，而不仅仅是编码辅助。它将AI协作从"写代码时的补全工具"提升为"全流程的虚拟团队"。
+
+% ============================================================
+\section{需求分析与功能规划——B阶段}
+% ============================================================
+
+\subsection{需求工程基础}
+
+需求工程是软件开发的起点，也是最容易被忽视的环节。据统计，超过50\%的软件项目失败源于需求问题——要么需求不完整，要么需求理解有误，要么需求频繁变更。
+
+需求分为两大类：
+
+\textbf{功能需求（Functional Requirements）}：描述系统"做什么"，即可观察到的行为。例如："系统能够按VIP等级筛选客户列表"就是一个功能需求。功能需求是用户直接感知到的系统行为。功能需求通常用用户故事来表达，每个用户故事描述一个具体的用户交互场景。
+
+\textbf{非功能需求（Non-Functional Requirements）}：描述系统"做得怎么样"，即质量属性。例如："页面加载时间不超过3秒""系统支持1000条客户数据"就是非功能需求。常见的非功能需求包括性能、安全性、可用性、可维护性等。
+
+\begin{theorybox}[银行软件的非功能需求]
+在银行业，非功能需求的重要性远超其他行业，因为银行系统直接涉及客户的资金安全。以下是银行软件最关注的非功能需求：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{安全性}：客户数据的加密存储与传输、用户身份认证、操作审计追踪
+  \item \textbf{可用性}：7×24小时不间断服务，年度停机时间不超过0.01\%
+  \item \textbf{性能}：交易响应时间<200ms，报表生成时间<5s
+  \item \textbf{合规性}：符合银保监会监管要求、反洗钱法规、个人信息保护法
+\end{itemize}
+我们的教学原型简化了这些要求，但你需要了解：真实银行项目中的非功能需求是功能需求的\textbf{前置约束}——如果安全性不达标，功能再多也不能上线。\end{theorybox}
+
+\begin{notebox}[非功能需求的重要性]
+在原型开发阶段，非功能需求往往被忽略。但在真实项目中，非功能需求决定了系统是否可用。例如，一个功能完美的CRM系统，如果页面加载需要10秒，客户经理根本不会使用。BMAD的B阶段应同时关注功能需求和非功能需求。
+\end{notebox}
+
+\subsection{用户故事编写方法}
+
+用户故事（User Story）是敏捷开发中表达需求的标准格式，它用自然语言描述"谁需要什么功能，为什么需要"。标准格式为：
+
+\begin{center}
+\textbf{As a} [角色], \textbf{I want} [功能], \textbf{so that} [价值]
+\end{center}
+
+\textbf{银行场景示例}：
+
+\begin{itemize}[leftmargin=2em]
+  \item As a 客户经理, I want 按VIP等级筛选客户列表, so that 我能优先服务高价值客户
+  \item As a 客户经理, I want 查看客户持有的所有产品, so that 我能了解客户的全面资产状况
+  \item As a 客户经理, I want 系统自动推荐适合客户的产品, so that 我能提高交叉销售成功率
+  \item As a 客户经理, I want 一键新增客户信息, so that 我能在首次面谈后快速录入
+  \item As a 客户经理, I want 查看客户AUM分布图, so that 我能了解整体客户资产结构
+\end{itemize}
+
+编写用户故事有三个原则（3C原则）：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Card（卡片）}：每个用户故事写一张卡片，简明扼要
+  \item \textbf{Conversation（对话）}：用户故事是对话的起点，不是完整的规格说明
+  \item \textbf{Confirmation（确认）}：每个用户故事需要明确的验收标准
+\end{itemize}
+
+\subsection{功能优先级矩阵：MoSCoW方法}
+
+并非所有功能都同等重要。MoSCoW方法将功能按优先级分为四类：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clp{7cm}}
+\toprule
+\textbf{类别} & \textbf{含义} & \textbf{说明} \\
+\midrule
+\textbf{M}ust have & 必备 & 没有这些功能系统不可用，如客户列表、客户详情 \\
+\textbf{S}hould have & 应有 & 有了更好，没有也不影响核心流程，如搜索筛选 \\
+\textbf{C}ould have & 可有 & 锦上添花的功能，如数据导出、深色模式 \\
+\textbf{W}on't have & 不做 & 本版本明确排除的功能，如多人协作、实时通信 \\
+\bottomrule
+\end{tabular}
+\caption{MoSCoW优先级矩阵}
+\end{table}
+
+MoSCoW的核心价值在于\textbf{约束范围}——在有限时间内，确保"必备"功能全部完成，再逐步实现"应有"和"可有"功能，避免因贪多导致核心功能不完整。
+
+\subsection{验收标准定义}
+
+每条用户故事需要配套验收标准（Definition of Done，DoD），用于判断该功能是否完成。验收标准应该是\textbf{可测试、可验证}的具体条件：
+
+\textbf{示例}——用户故事"查看客户列表"的验收标准：
+\begin{enumerate}[leftmargin=2em]
+  \item 打开页面后默认显示所有客户，按AUM降序排列
+  \item 每页显示10条记录，支持翻页
+  \item 列表包含：姓名、VIP等级、AUM、手机号
+  \item 点击某行可跳转到客户详情页
+  \item 加载时间不超过2秒（100条数据以内）
+\end{enumerate}
+
+\begin{practicebox}[用AI做CRM功能规划]
+\textbf{任务}：使用AI完成银行CRM系统的B阶段——功能规划。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请帮我做一个面向中小银行客户经理的简单 CRM 功能规划：
+约束：用户 = 一线客户经理；核心数据 = 客户信息 + 产品持有；功能简单实用。
+输出：① 必备功能（>=3）② 可选功能（>=2）③ 不做的功能（>=1），保存到 features.md。
+\end{lstlisting}
+
+\textbf{输出格式参考}（features.md）：
+
+\begin{lstlisting}[style=markdown]
+# 银行CRM功能规划
+
+## 必备功能（Must Have）
+- F-001 客户列表：查看所有客户，支持分页
+- F-002 客户详情：查看客户基本信息、资产、持有产品
+- F-003 新增客户：录入新客户信息
+- F-004 产品推荐：基于客户画像推荐银行产品
+
+## 可选功能（Should/Could Have）
+- F-005 搜索筛选：按姓名/VIP/手机号搜索
+- F-006 数据看板：客户AUM分布、VIP等级占比
+- F-007 编辑客户：修改已有客户信息
+
+## 不做的功能（Won't Have）
+- F-008 多用户协作：本版本不支持多人同时操作
+- F-009 实时通信：不实现客户经理间的消息功能
+- F-010 后端服务：本版本使用本地存储，无需后端
+\end{lstlisting}
+
+\textbf{审核要点}：检查AI产出的功能清单是否符合MoSCoW分类原则，"必备"功能是否覆盖了核心业务流程，"不做"功能的排除理由是否合理。
+\end{practicebox}
+
+% ============================================================
+\section{数据建模与ER设计——M阶段}
+% ============================================================
+
+\subsection{数据建模理论}
+
+数据建模是将现实世界的业务概念转化为结构化数据模型的过程。按照抽象程度从高到低，数据建模分为三个层次：
+
+\textbf{概念模型（Conceptual Model）}：最高层次的抽象，描述业务中的核心实体及其关系，不涉及具体的数据类型和存储细节。例如：银行CRM的概念模型包含"客户""产品""交易"三个核心实体。
+
+\textbf{逻辑模型（Logical Model）}：在概念模型基础上，细化实体的属性和关系类型，但仍独立于具体的数据库技术。例如：客户实体有姓名、手机号、VIP等级等属性，客户与产品之间是多对多关系。
+
+\textbf{物理模型（Physical Model）}：在逻辑模型基础上，指定具体的数据类型、主键、外键、索引等存储细节，直接对应数据库表结构。例如：客户表的手机号字段类型为VARCHAR(11)，主键为客户ID。
+
+三个层次的建模是一个\textbf{逐步细化}的过程——从业务视角到技术视角，从模糊到精确。BMAD的M阶段要求至少完成逻辑模型，物理模型可以在A阶段根据技术选型进一步细化。
+
+\subsection{ER图基本元素}
+
+实体关系图（Entity-Relationship Diagram，ER图）是数据建模的标准可视化工具，包含三个核心元素：
+
+\textbf{实体（Entity）}：现实世界中可区分的对象，用矩形表示。在银行CRM中，典型实体包括客户（Customer）、产品（Product）、交易记录（Transaction）等。
+
+\textbf{属性（Attribute）}：实体的特征，用椭圆表示。例如客户实体有客户ID、姓名、手机号、VIP等级等属性。其中\textbf{主键（Primary Key）}用下划线标注——如客户ID是客户表的主键，用于唯一标识一条客户记录。
+
+\textbf{关系（Relationship）}：实体之间的关联，用菱形表示。关系有三种基本类型：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{1:1（一对一）}：如每个客户有且仅有一个风险评级
+  \item \textbf{1:N（一对多）}：如一个客户可以有多笔交易记录
+  \item \textbf{M:N（多对多）}：如一个客户可以持有多款产品，一款产品也可以被多个客户持有
+\end{itemize}
+
+\subsection{范式化理论简述}
+
+范式化（Normalization）是数据建模中消除冗余、减少异常的理论方法。常用的三种范式：
+
+\textbf{第一范式（1NF）}：每个属性都是原子的（不可再分）。违反1NF的典型例子是"地址"字段中同时包含省、市、区——应拆分为独立字段。
+
+\textbf{第二范式（2NF）}：在1NF基础上，非主属性完全依赖于主键（消除部分依赖）。例如，如果订单表中同时包含客户姓名（依赖于客户ID而非订单ID），则违反2NF——应将客户姓名移到客户表。
+
+\textbf{第三范式（3NF）}：在2NF基础上，非主属性不传递依赖于主键（消除传递依赖）。例如，如果客户表中同时包含“客户经理姓名”（依赖于客户经理ID，而客户经理ID又依赖于客户ID），则违反3NF——应将客户经理信息移到单独的表。\par\n\n实际建模中，范式的遵循需要权衡。对于银行CRM的教学项目，3NF是基本要求——它能帮助你理解数据之间的逻辑关系，避免在后续开发中出现数据不一致的问题。而在高并发、大数据量的生产系统中，为了查询性能，有时会故意保留适度的冗余（即反范式化），这是数据库优化的常见手段。
+
+\begin{notebox}[范式化的实践取舍]
+在实际项目中，并非一定要严格遵循3NF。有时为了查询性能，会故意保留适度的冗余（即反范式化）。但在教学实验中，建议至少达到3NF，因为它能帮助你理解数据之间的逻辑关系，避免在后续开发中出现数据不一致的问题。
+\end{notebox}
+
+\begin{practicebox}[用AI设计CRM数据模型]
+\textbf{任务}：使用AI完成银行CRM系统的M阶段——需求文档与数据建模。
+
+\textbf{Step 1 编写需求文档}：
+
+基于 features.md 写需求文档：每条用 R-001 / R-002 编号，至少 4 条，保存到 requirements.md。
+
+\textbf{Step 2 设计ER图}：
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请为银行CRM系统设计数据模型，要求：
+1. 至少4张表：客户表(customers)、产品表(products)、持有关系表(holdings)、交易记录表(transactions)
+2. 每张表标注：主键(PK)、外键(FK)、索引(IDX)、字段类型
+3. 用mermaid语法画ER图
+4. 客户表字段：customer_id, name, phone, id_card, address, branch, account_no, vip_level, manager_id, aum, risk_level
+5. 产品表字段：product_id, product_name, category, risk_level, min_amount, annual_rate
+6. 持有关系表：holding_id, customer_id(FK), product_id(FK), amount, purchase_date
+7. 交易记录表：transaction_id, customer_id(FK), product_id(FK), type, amount, date
+保存到 figures/crm_er.mmd
+\end{lstlisting}
+
+\textbf{输出参考}（Mermaid ER图）：
+
+\begin{lstlisting}
+erDiagram
+    CUSTOMERS ||--o{ HOLDINGS : holds
+    CUSTOMERS ||--o{ TRANSACTIONS : makes
+    PRODUCTS ||--o{ HOLDINGS : held_by
+    PRODUCTS ||--o{ TRANSACTIONS : traded_in
+
+    CUSTOMERS {
+        int customer_id PK
+        string name
+        string phone
+        string id_card
+        string address
+        string branch
+        string account_no
+        string vip_level
+        int manager_id
+        float aum
+        string risk_level
+    }
+    PRODUCTS {
+        int product_id PK
+        string product_name
+        string category
+        string risk_level
+        float min_amount
+        float annual_rate
+    }
+    HOLDINGS {
+        int holding_id PK
+        int customer_id FK
+        int product_id FK
+        float amount
+        date purchase_date
+    }
+    TRANSACTIONS {
+        int transaction_id PK
+        int customer_id FK
+        int product_id FK
+        string type
+        float amount
+        date date
+    }
+\end{lstlisting}
+
+\textbf{审核要点}：检查ER图中每张表是否有主键、外键关系是否正确、是否满足3NF、字段类型是否合理。
+\end{practicebox}
+
+\begin{theorybox}[银行核心系统的数据架构特点]
+银行核心系统的数据架构远比我们的CRM原型复杂，它有以下几个显著特点：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{双记账体系}：每笔交易同时记录借方和贷方，确保账务平衡
+  \item \textbf{历史数据不可变}：已入账的交易记录不允许修改，只能通过冲正交易纠正
+  \item \textbf{多币种支持}：同一客户可能持有多种货币的账户
+  \item \textbf{分库分表}：海量交易数据按时间或客户ID分片存储
+  \item \textbf{审计追踪}：每条记录都有创建时间、修改时间、操作人员等审计字段
+\end{itemize}
+我们的CRM原型简化了这些复杂度，但在实际银行系统中，这些是不可或缺的架构约束。
+\end{theorybox}
+
+% ============================================================
+\section{技术架构设计——A阶段}
+% ============================================================
+
+\subsection{架构设计原则}
+
+技术架构是将需求文档和数据模型转化为可实现的系统方案。好的架构设计遵循三个核心原则：
+
+\textbf{简单性（Simplicity）}：选择最简单的技术方案来实现需求。不要为了"看起来专业"而引入不必要的复杂度。例如，如果只需要本地存储5条客户记录，就不需要搭建数据库服务器。
+
+\textbf{松耦合（Loose Coupling）}：模块之间通过明确定义的接口交互，降低相互依赖。松耦合使得修改一个模块时不需要改动其他模块。在前端应用中，这体现为数据层与视图层的分离。
+
+\textbf{可扩展性（Scalability）}：架构设计应预留扩展空间，但不提前实现。例如，本课程使用localStorage存储数据，但数据操作封装在统一的函数中，将来替换为后端API时只需修改数据层，不影响界面逻辑。
+
+\begin{notebox}[YAGNI原则]
+YAGNI（You Aren't Gonna Need It）是极限编程中的核心原则：\textbf{不要实现当前不需要的功能}。很多初学者喜欢在架构设计时预留大量"将来可能用到"的接口和模块，结果增加了当前的开发复杂度，而这些预留的功能往往永远不会被用到。先做好当前的，等真正需要时再扩展。
+\end{notebox}
+
+\subsection{技术选型}
+
+本课程的技术选型以\textbf{最小依赖、最易上手}为原则，所有技术均可在浏览器中直接运行：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{层次} & \textbf{技术选型} & \textbf{选型理由} \\
+\midrule
+前端框架 & HTML5 + JavaScript & 原生技术，零学习成本，无需构建工具 \\
+样式方案 & Tailwind CSS（CDN） & 实用类优先，快速构建美观界面，无需写CSS文件 \\
+数据存储 & 本地JSON + localStorage & 无需后端服务器，浏览器原生支持，适合原型验证 \\
+图表库 & Chart.js（CDN） & 轻量级，API简洁，支持常见图表类型 \\
+开发工具 & VS Code + Live Server & 实时预览，零配置 \\
+\bottomrule
+\end{tabular}
+\caption{银行CRM技术选型}
+\end{table}
+
+\subsection{系统架构设计}
+
+基于上述技术选型，银行CRM的系统架构如下：
+
+\begin{lstlisting}
+graph TB
+    subgraph 浏览器端
+        UI[页面层: HTML + Tailwind CSS]
+        JS[逻辑层: JavaScript]
+        STORE[数据层: localStorage + JSON]
+    end
+    UI --> JS
+    JS --> STORE
+    JS --> CHART[Chart.js 图表渲染]
+\end{lstlisting}
+
+架构的核心思路是\textbf{三层分离}：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{页面层}：负责页面结构和视觉呈现，使用HTML定义骨架，Tailwind CSS控制样式
+  \item \textbf{逻辑层}：负责业务逻辑和交互处理，使用JavaScript实现CRUD操作、推荐算法、数据聚合
+  \item \textbf{数据层}：负责数据持久化，使用localStorage存储客户数据，初始数据从内嵌JSON加载
+\end{itemize}
+
+\subsection{页面结构规划}
+
+银行CRM的页面采用经典的\textbf{侧边栏布局}，包含以下区域：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{导航栏}（顶部）：Logo + 系统名称 + 用户信息
+  \item \textbf{侧边栏}（左侧）：功能模块菜单（客户管理/产品推荐/报表分析/工作台）
+  \item \textbf{主内容区}（中间）：根据侧边栏选择动态切换（列表/详情/表单）
+  \item \textbf{底部栏}（底部）：版权信息
+\end{itemize}
+
+\begin{practicebox}[用AI生成设计文档]
+\textbf{任务}：使用AI完成银行CRM系统的A阶段——技术架构设计。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请基于 features.md 和 requirements.md 设计银行CRM的技术方案：
+技术约束：
+- 前端：HTML + JS + Tailwind CSS（CDN引入）
+- 数据：本地 JSON 文件 + 浏览器 localStorage（无服务端）
+- 图表：Chart.js（CDN引入）
+- 单文件架构：所有代码在 web/index.html 中
+
+输出 design.md，包含：
+1. 技术选型表（含版本号和CDN地址）
+2. 系统架构图（mermaid语法）
+3. 页面结构说明（导航栏+侧边栏+主内容区+底部栏）
+4. 数据流设计（初始加载→用户操作→数据持久化）
+5. 文件结构（单文件内各模块的组织方式）
+\end{lstlisting}
+
+\textbf{审核要点}：技术选型是否满足约束条件？架构图是否清晰表达了三层关系？页面结构是否合理？数据流是否完整？
+\end{practicebox}
+
+\begin{notebox}[为什么本课程不用数据库]
+本课程选择localStorage而非传统数据库，基于以下教学考量：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{聚焦AI协作}：课程核心是学习如何指挥AI完成开发，而非数据库技术本身
+  \item \textbf{零配置门槛}：localStorage无需安装和配置数据库服务器，降低了环境搭建的复杂度
+  \item \textbf{即时反馈}：修改代码后刷新浏览器即可看到效果，无需重启服务
+\end{itemize}
+\textbf{进阶路径}：学完本课程后，如果你想将CRM扩展为真实项目，可以：
+\begin{enumerate}[leftmargin=2em]
+  \item 用Flask搭建后端API
+  \item 用SQLite或PostgreSQL替代localStorage
+  \item 用Fetch API替代直接的localStorage操作
+\end{enumerate}
+由于数据层与逻辑层是分离的，这个扩展只需修改数据层的实现，不影响界面和业务逻辑。
+\end{notebox}
+
+% ============================================================
+\section{AI辅助编码——D阶段}
+% ============================================================
+
+\subsection{AI编码的最佳实践}
+
+D阶段是BMAD中最核心也最容易出问题的阶段。以下三条原则可以显著提升AI编码的成功率：
+
+\textbf{原则一：分模块生成，不要一次性生成全部代码}。虽然AI理论上可以一次生成完整的应用程序，但一次性生成的代码往往存在以下问题：代码量过大难以审查、模块间接口不一致、局部错误难以定位。正确做法是按模块逐步生成——先生成数据层和页面骨架，再生成客户列表，再生成新增表单，最后生成推荐和图表。
+
+\textbf{原则二：明确约束条件}。AI生成代码的质量高度依赖于约束条件的清晰程度。约束条件包括：技术栈（HTML+JS+Tailwind CSS）、文件结构（单文件index.html）、命名规范（驼峰式变量名）、数据格式（JSON对象数组）、UI风格（银行蓝色系）。约束越明确，AI的产出越符合预期。
+
+\textbf{原则三：增量迭代}。每次只让AI做一件事，做完后验证，再继续。典型的工作流是：生成基础代码→运行验证→发现问题→描述给AI修复→再验证→继续下一个功能。这种"小步快跑"的方式比"大步跨越"要可靠得多。\par
+
+\textbf{推荐生成顺序}：对于银行CRM项目，建议按以下顺序分模块生成代码：
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{页面骨架}：先生成导航栏+侧边栏+主内容区的HTML结构，确认布局正确
+  \item \textbf{模拟数据}：在JS中定义5--10条模拟客户数据的JSON数组
+  \item \textbf{客户列表}：实现列表渲染功能，确认数据显示正确
+  \item \textbf{客户详情}：点击列表行跳转到详情页，确认信息完整
+  \item \textbf{新增客户}：实现表单和验证，确认数据可写入localStorage
+  \item \textbf{搜索筛选}：实现关键词搜索和下拉筛选功能
+  \item \textbf{产品推荐}：实现推荐算法和结果展示
+  \item \textbf{数据看板}：实现图表渲染和KPI卡片
+\end{enumerate}
+每完成一步，都在浏览器中验证功能正常后再继续。这样做的好处是：当出现bug时，你能准确定位是哪一步的代码出了问题。
+
+\subsection{提示词工程进阶}
+
+\textbf{上下文提供技巧}。AI的输出质量直接取决于你提供的上下文质量。以下是三种常用的上下文提供方式：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{引用前序产出}：在D阶段的提示词中，直接引用B/M/A阶段的产出文件（features.md、requirements.md、design.md），让AI理解完整的上下文
+  \item \textbf{提供代码片段}：如果你已经写了一部分代码，把它作为上下文提供给AI，让AI在此基础上扩展，而不是从零开始
+  \item \textbf{指定输出格式}：明确告诉AI你期望的代码结构，如"将CSS写在\texttt{<style>}标签内，将JS写在\texttt{<script>}标签内"
+\end{itemize}
+
+\textbf{代码审查与修复循环}。AI生成的代码不可能100\%正确，你需要掌握高效的审查和修复方法：
+\begin{enumerate}[leftmargin=2em]
+  \item 运行代码，观察页面效果
+  \item 打开浏览器开发者工具（F12），查看Console面板是否有报错
+  \item 如果有报错，将\textbf{完整的错误信息}复制给AI
+  \item 如果没有报错但行为异常，描述\textbf{期望行为}和\textbf{实际行为}的差异
+  \item AI修复后重新验证
+\end{enumerate}
+
+\textbf{"让AI修bug"的正确方式}。很多人只是说"代码有bug"，这对AI几乎没有帮助。有效的bug描述应包含：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{复现步骤}：你怎么触发了这个bug
+  \item \textbf{期望行为}：你期望发生什么
+  \item \textbf{实际行为}：实际发生了什么
+  \item \textbf{错误信息}：浏览器Console中的报错（如果有）
+\end{itemize}
+
+\subsection{BMAD课堂节奏}
+
+在课堂教学中，BMAD五阶段按以下节奏推进：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{时段} & \textbf{阶段} & \textbf{学生动作} & \textbf{产出} \\
+\midrule
+0--20 min & 序幕 & BMAD概念 + 分组 & --- \\
+20--65 min & \textbf{B 脑暴} & 用AI生成CRM功能清单 & features.md \\
+65--110 min & \textbf{M 建模} & 写需求 + 画ER图 & requirements.md + er.mmd \\
+110--155 min & \textbf{A 架构} & 选技术栈 + 画架构图 & design.md \\
+155--215 min & \textbf{D 开发} & 生成可运行代码 & web/index.html + 数据文件 \\
+215--235 min & \textbf{V 验证} & 测试功能 & reports/test\_report.md \\
+235--240 min & 总结展示 & --- & --- \\
+\bottomrule
+\end{tabular}
+\caption{BMAD课堂节奏（五幕式，240分钟）}
+\end{table}
+
+\begin{practicebox}[用AI生成CRM前端代码]
+\textbf{任务}：使用AI完成银行CRM系统的D阶段——代码生成。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请根据 design.md 生成完整 CRM 代码：
+1. 单文件 HTML（web/index.html）含所有 CSS/JS；
+2. Tailwind CSS CDN；
+3. 模拟数据 >=5 条客户记录；
+4. 功能：客户列表 / 客户详情 / 新增客户；
+5. localStorage 持久化；
+6. 界面美观大方。
+完成后用 Live Server 打开预览。
+\end{lstlisting}
+
+\textbf{代码结构说明}：
+
+生成的HTML文件内部结构如下：
+
+\begin{lstlisting}[style=html]
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <!-- 侧边栏 -->
+  <!-- 主内容区 -->
+
+  <script>
+    // 1. 模拟数据（JSON数组）
+    // 2. localStorage 初始化
+    // 3. 页面渲染函数
+    // 4. CRUD操作函数
+    // 5. 推荐算法
+    // 6. 图表渲染
+    // 7. 事件绑定
+  </script>
+</body>
+</html>
+\end{lstlisting}
+
+\textbf{学生练习}：测试系统，发现bug让AI修复。每个bug都按照"复现步骤+期望行为+实际行为+错误信息"的格式描述。
+\end{practicebox}
+
+\begin{warningbox}[AI生成代码的常见问题]
+在使用AI生成代码时，你需要特别警惕以下常见问题：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{不一致的变量命名}：AI可能在同一段代码中混用驼峰式（customerList）和下划线式（customer\_list），导致引用错误。检查变量名是否前后一致。
+  \item \textbf{缺少错误处理}：AI生成的代码通常只考虑正常路径，忽略了边界情况。例如：用户提交空表单、localStorage存储空间不足、数据格式异常等。在关键操作处添加try-catch。
+  \item \textbf{过度复杂的实现}：AI有时会用复杂的算法实现简单功能。例如用递归遍历实现一个简单的数组过滤。检查是否有更简单的替代方案。
+  \item \textbf{硬编码的数据}：AI可能将颜色值、字体大小等直接写在HTML中，而非使用CSS类。检查样式是否通过Tailwind类控制。
+  \item \textbf{事件监听器泄漏}：在动态渲染的列表中，AI可能每次渲染都添加新的事件监听器，导致内存泄漏。确保在重新渲染前移除旧的监听器。
+\end{itemize}
+\end{warningbox}
+
+% ============================================================
+\section{测试与验证——V阶段}
+% ============================================================
+
+\subsection{测试金字塔}
+
+软件测试的经典理论是Mike Cohn提出的“测试金字塔”，它将测试分为三个层次：\par
+
+在真实的软件项目中，测试金字塔从底到顶分为三层：\textbf{单元测试}（Unit Test）在最底层，数量最多、速度最快、成本最低；\textbf{集成测试}（Integration Test）在中间，测试多个模块协同工作；\textbf{端到端测试}（E2E Test）在顶层，模拟真实用户的完整操作流程。理想情况下，单元测试占70\%、集成测试占20\%、E2E测试占10\%。\par
+
+为什么要有这个金字塔？因为\textbf{测试的投入产出比不同}：单元测试写起来简单、跑起来快、定位问题精准；E2E测试写起来复杂、跑起来慢、失败原因难以定位。如果E2E测试太多，维护成本会显著偏高。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3.5cm}p{3.5cm}p{3cm}}
+\toprule
+\textbf{层次} & \textbf{类型} & \textbf{特点} & \textbf{本课程实现} \\
+\midrule
+底层 & 单元测试 & 测试单个函数，速度快，数量多 & AI辅助生成 \\
+中层 & 集成测试 & 测试模块间交互，速度中等 & 手动测试 \\
+顶层 & E2E测试 & 测试完整用户流程，速度慢 & 手动功能测试 \\
+\bottomrule
+\end{tabular}
+\caption{测试金字塔与课程实现}
+\end{table}
+
+在真实的软件项目中，单元测试应该占绝大多数（70\%以上），集成测试次之（20\%），E2E测试最少（10\%）。但在本课程的教学场景中，我们采用\textbf{简化版}——以手动功能测试为主，AI辅助生成测试用例和测试报告。
+
+\subsection{测试用例设计}
+
+好的测试用例应覆盖三种情况：
+
+\textbf{正向测试}：验证功能在正常输入下的正确行为。例如：输入完整的客户信息，点击"新增"，客户成功添加到列表中。
+
+\textbf{反向测试}：验证功能在异常输入下的容错行为。例如：姓名为空时提交表单，系统应提示"请输入客户姓名"而非崩溃。
+
+\textbf{边界测试}：验证功能在边界条件下的行为。例如：AUM为0、AUM为负数、AUM超过千万；VIP等级为非法值等。
+
+\subsection{测试清单模板}
+
+以下是一个标准化的测试清单模板，可用于任何Web应用的测试：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{cllll}
+\toprule
+\textbf{编号} & \textbf{测试项} & \textbf{类型} & \textbf{预期结果} & \textbf{实际结果} \\
+\midrule
+T-001 & 打开页面显示客户列表 & 正向 & 显示>=5条客户记录 & \\
+T-002 & 点击客户查看详情 & 正向 & 显示完整客户信息 & \\
+T-003 & 新增客户成功 & 正向 & 列表中出现新客户 & \\
+T-004 & 姓名为空提交表单 & 反向 & 提示"请输入姓名" & \\
+T-005 & 手机号格式错误 & 反向 & 提示"手机号格式不正确" & \\
+T-006 & AUM输入为负数 & 边界 & 提示"AUM不能为负" & \\
+T-007 & 刷新后数据不丢失 & 正向 & 数据与刷新前一致 & \\
+T-008 & 搜索功能正常 & 正向 & 返回匹配的客户 & \\
+\bottomrule
+\end{tabular}
+\caption{银行CRM测试清单模板}
+\end{table}
+
+\begin{practicebox}[用AI生成测试报告]
+\textbf{任务}：使用AI完成银行CRM系统的V阶段——测试与验证。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请测试 CRM 系统：
+1. 打开页面能看到客户列表
+2. 点击客户能查看详情
+3. 能新增客户
+4. 刷新页面后数据不丢失
+5. 搜索功能是否正常
+6. 表单验证是否生效（空值、格式错误）
+输出 reports/test_report.md，含测试结果与截图。
+\end{lstlisting}
+
+\textbf{测试报告模板}（test\_report.md）：
+
+\begin{lstlisting}[style=markdown]
+# 银行CRM测试报告
+
+## 测试环境
+- 浏览器：Chrome 126
+- 测试时间：2026-06-08
+- 测试数据：5条模拟客户
+
+## 测试结果汇总
+| 结果 | 数量 |
+|------|------|
+| 通过 | 7    |
+| 失败 | 1    |
+| 阻塞 | 0    |
+
+## 详细测试记录
+
+### T-001 打开页面显示客户列表
+- 类型：正向测试
+- 预期：显示>=5条客户记录
+- 实际：显示5条客户记录 ✓ 通过
+
+### T-002 点击客户查看详情
+- 类型：正向测试
+- 预期：显示完整客户信息
+- 实际：点击后跳转到详情页，信息完整 ✓ 通过
+
+## 发现的问题
+### BUG-001 编辑功能未实现
+- 严重程度：中
+- 复现步骤：点击编辑按钮无响应
+- 修复建议：实现编辑客户功能
+\end{lstlisting}
+
+\textbf{持续改进流程}：发现bug → 在测试报告中记录 → 用"复现步骤+期望+实际+错误信息"格式描述给AI → AI修复 → 回归测试 → 更新测试报告。
+\end{practicebox}
+
+% ============================================================
+\section{BMAD实践反思与总结}
+% ============================================================
+
+\subsection{反思问题}
+
+完成BMAD五阶段实验后，请认真思考以下问题：
+
+\begin{enumerate}[leftmargin=2em]
+  \item BMAD五个阶段中哪个最关键？为什么？
+  \item AI在每个阶段分别扮演什么角色？你如何审核AI的产出？
+  \item 如果再做一次，你会在哪个阶段花更多时间？
+  \item BMAD与传统"写代码"的方式相比，你的效率提升有多大？
+  \item AI生成的代码中，你发现过哪些"隐蔽的bug"？你是如何发现的？
+\end{enumerate}
+
+\subsection{BMAD方法论的局限性}
+
+BMAD方法论虽然高效，但也有明显的局限：
+
+\textbf{依赖提示词质量}。BMAD的每个阶段都依赖AI的输出，而AI的输出质量取决于提示词的质量。如果B阶段的业务描述不够清晰，后续所有阶段的产出都会偏离预期。这就像一个真实团队中，如果需求文档写得不好，设计、开发、测试都会出问题。
+
+\textbf{缺乏团队协作机制}。BMAD适合个人或2--3人的小团队，但不支持多人并行开发。在真实项目中，多人协作需要版本控制、代码审查、持续集成等机制，这些BMAD没有涉及。
+
+\textbf{AI的"幻觉"风险}。AI可能生成看起来正确但实际有问题的代码——例如，调用了不存在的API、使用了错误的库版本、实现了存在安全漏洞的逻辑。你需要具备基本的代码审查能力来识别这些问题。
+
+\textbf{不适合复杂业务逻辑}。当业务规则非常复杂（如银行信贷审批流程涉及数十条规则和例外情况），AI往往难以一次性正确实现所有逻辑，需要反复迭代修复。
+
+\subsection{学生常见困难与应对策略}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{常见困难} & \textbf{原因分析} & \textbf{应对策略} \\
+\midrule
+功能范围控制不住 & MoSCoW分类不严格，什么都想做 & B阶段严格定义Won't Have，后续不增加 \\
+提示词太模糊 & 只说"做一个CRM"，缺少具体约束 & 参考本章模板，每次至少包含：角色+数据+功能+格式 \\
+AI生成代码跑不起来 & 一次生成太多代码，问题难以定位 & 分模块生成，每生成一个模块就验证 \\
+改了一个bug出三个 & 修改代码时影响了其他模块 & 修改前先理解代码结构，修改后全量回归测试 \\
+不知道怎么描述bug & 只说"不work"，缺少具体信息 & 用"复现步骤+期望+实际+错误信息"格式 \\
+\bottomrule
+\end{tabular}
+\caption{常见困难与应对策略}
+\end{table}
+
+\subsection{从BMAD到实际项目：差距与过渡}
+
+BMAD教学实验与真实项目之间存在显著差距，理解这些差距有助于你在未来将BMAD经验转化为实际工作能力：\par
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{数据持久化}：从localStorage到真实数据库（SQLite/MySQL/PostgreSQL），需要学习SQL和后端开发
+  \item \textbf{用户认证}：从无登录到基于JWT/OAuth的认证系统，需要理解安全机制
+  \item \textbf{部署运维}：从Live Server本地预览到云服务器部署（Docker+Nginx），需要学习DevOps技能
+  \item \textbf{团队协作}：从个人+AI到多人团队，需要学习Git工作流、代码审查、项目管理
+  \item \textbf{质量保障}：从手动测试到自动化测试（单元测试+集成测试+E2E测试），需要学习测试框架
+\end{itemize}\par
+
+\begin{casebox}[从BMAD原型到生产系统的演进路线]
+假设你想将课堂上的CRM原型升级为一个真实的银行应用，可以参考以下演进路线：\par
+
+\textbf{阶段一：原型验证}（本课程）。纯前端架构，localStorage存储，模拟数据。目标是验证功能可行性和用户体验。\par
+
+\textbf{阶段二：前后端分离}。用Flask搭建后端API，用SQLite存储数据，前端通过Fetch API与后端通信。这是从原型到产品的关键一步。\par
+
+\textbf{阶段三：生产级架构}。用PostgreSQL替代SQLite，用Docker容器化部署，用Nginx做反向代理，用JWT实现用户认证，用Jest+Playwright做自动化测试。\par
+
+\textbf{阶段四：企业级架构}。引入微服务、消息队列、缓存层、监控告警等企业级基础设施。这一步通常需要专业团队协作。\par
+
+每个阶段都可以独立运行，不需要一次性跳到最高阶段。渐进式演进降低了风险，也符合敏捷开发"小步快跑"的理念。\end{casebox}
+
+BMAD的价值在于帮你快速建立\textbf{全栈思维}——理解从需求到交付的完整链路。具体的实现技术会随项目而变，但方法论是通用的。
+
+% ============================================================
+\section{本章小结}
+% ============================================================
+
+本章系统介绍了BMAD方法论——一种AI驱动的敏捷开发框架，并通过银行CRM原型的完整开发流程，演示了B/M/A/D/V五个阶段的实践方法：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{B阶段}：需求分析与功能规划，核心产出是功能清单（features.md）
+  \item \textbf{M阶段}：数据建模与ER设计，核心产出是需求文档和ER图（requirements.md + er.mmd）
+  \item \textbf{A阶段}：技术架构设计，核心产出是设计文档（design.md）
+  \item \textbf{D阶段}：AI辅助编码，核心产出是可运行代码（web/index.html）
+  \item \textbf{V阶段}：测试与验证，核心产出是测试报告（reports/test\_report.md）
+\end{enumerate}
+
+BMAD的精髓不在于五个阶段的名称，而在于\textbf{让AI扮演专业角色、人类负责决策审核}的协作模式。这种模式将程序员的定位从"代码编写者"提升为"AI团队管理者"。
+
+% ============================================================
+\section{关键术语}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{术语} & \textbf{定义} \\
+\midrule
+BMAD & Breakthrough Method of Agile AI-Driven Development，AI驱动敏捷开发方法论 \\
+用户故事 & 用"As a [角色], I want [功能], so that [价值]"格式表达需求 \\
+MoSCoW & 功能优先级分类法：Must/Should/Could/Won't \\
+ER图 & 实体关系图，用于可视化数据模型 \\
+范式化 & 消除数据冗余和异常的理论方法（1NF/2NF/3NF） \\
+localStorage & 浏览器本地存储API，用于客户端数据持久化 \\
+测试金字塔 & 单元测试→集成测试→E2E测试的分层测试策略 \\
+DoD & Definition of Done，验收标准，判断功能是否完成的条件 \\
+YAGNI & You Aren't Gonna Need It，不要实现当前不需要的功能 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{思考题}
+% ============================================================
+
+\begin{exercisebox}[思考与讨论]
+\begin{enumerate}[leftmargin=2em]
+  \item 如果将BMAD应用于一个你熟悉的非软件项目（如组织一次学术会议），五个阶段分别对应什么工作？AI可以扮演哪些角色？
+  \item BMAD的D阶段依赖前序B/M/A阶段的产出质量。如果B阶段的功能规划有误，会如何影响后续阶段？你有什么机制来尽早发现问题？
+  \item 比较BMAD和传统Scrum：在什么场景下BMAD更有优势？在什么场景下Scrum更合适？
+  \item AI生成的代码可能存在安全漏洞（如XSS攻击、敏感信息泄露）。在BMAD的V阶段，你应该如何测试安全性？
+  \item 如果你要将本章的CRM原型扩展为一个真实的银行系统，需要增加哪些BMAD中没有涵盖的环节？
+\end{enumerate}
+\end{exercisebox}
+
+% ============================================================
+\section{参考资源}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{资源} & \textbf{链接} \\
+\midrule
+BMAD Method 官网 & \url{https://bmadcodes.com/} \\
+BMAD GitHub & \url{https://github.com/bmad-code-org/BMAD-METHOD} \\
+Mermaid 教程 & \url{https://mermaid.js.org/} \\
+Tailwind CSS 文档 & \url{https://tailwindcss.com/docs} \\
+Chart.js 文档 & \url{https://www.chartjs.org/docs/} \\
+MoSCoW 方法 & \url{https://en.wikipedia.org/wiki/MoSCoW_method} \\
+\bottomrule
+\end{tabular}
+\caption{第9章参考资源}
+\end{table}

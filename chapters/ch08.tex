@@ -1,0 +1,946 @@
+% 第8章 金融舆情分析与智能投研
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+\chapter{金融舆情分析与智能投研}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 理解金融文本挖掘的基本方法
+  \item 掌握舆情数据采集与情绪评分技术
+  \item 学会用AI进行银行业竞争格局分析
+  \item 能自动生成智能投研报告
+  \item 了解监管政策解读与合规预警方法
+\end{enumerate}
+}
+
+% ============================================================
+\section{金融文本挖掘理论}
+% ============================================================
+
+金融文本挖掘是将非结构化文本数据转化为可量化分析的结构化信息的过程。在金融领域，大量关键信息以文本形式存在——央行政策声明、银行年报、分析师研报、财经新闻——如何高效地从这些文本中提取有价值的信息，是智能投研的基础能力。
+
+\subsection{NLP在金融领域的应用全景}
+
+自然语言处理（Natural Language Processing, NLP）在金融领域的应用已形成完整的价值链：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{5cm}}
+\toprule
+\textbf{应用层级} & \textbf{典型任务} & \textbf{业务价值} \\
+\midrule
+信息抽取 & 实体识别、关系抽取、事件抽取 & 自动化信息整合 \\
+情感分析 & 新闻情绪评分、公告态度判别 & 市场情绪监测 \\
+文本分类 & 行业归类、风险等级标注 & 信息过滤与路由 \\
+文本摘要 & 长文精简、关键信息提炼 & 研报速读 \\
+知识图谱 & 实体关系网络构建 & 关联风险传导分析 \\
+对话系统 & 智能客服、投资顾问 & 提升客户体验 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+金融领域的NLP应用具有三个独特需求：\textbf{数字敏感性}（对数值、比率、变化幅度的精确提取）、\textbf{时效性}（市场信息瞬息万变）、\textbf{专业性}（金融术语的准确理解）。
+
+\subsection{金融文本的特殊性}
+
+与一般文本相比，金融文本具有以下特殊性：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{专业术语密集}：如"逆回购""MLF""拨备覆盖率""LPR加点"等术语，通用NLP模型难以准确理解
+  \item \textbf{数字高度敏感}：一个基点的利率变化、0.1\%的不良贷款率波动都可能传递重要信号，数值提取的精度要求极高
+  \item \textbf{隐含语义丰富}：央行措辞的微妙变化（"合理充裕"vs"适度充裕"）往往暗示政策方向调整
+  \item \textbf{时效性极强}：新闻到市场反应的时间窗口可能只有秒级，延迟分析毫无价值
+  \item \textbf{多语言交织}：中国金融文本常中英文混用（如"QFII额度""IPO注册制"），增加处理难度
+\end{enumerate}
+
+\subsection{文本分析方法演进}
+
+金融文本分析方法经历了从规则驱动到数据驱动再到知识驱动的三代演进：
+
+\subsubsection{词袋模型与TF-IDF}
+
+词袋模型（Bag of Words）将文本表示为词频向量，忽略词序信息。TF-IDF（Term Frequency-Inverse Document Frequency）在词频基础上引入逆文档频率，降低常见词权重、提升区分性词权重：
+
+\[
+\text{TF-IDF}(t,d) = \text{TF}(t,d) \times \log\frac{N}{\text{DF}(t)}
+\]
+
+其中$\text{TF}(t,d)$为词$t$在文档$d$中的频率，$N$为文档总数，$\text{DF}(t)$为包含词$t$的文档数。
+
+TF-IDF的优点是简单高效，缺点是完全忽略语义信息——"银行利率上升"和"利率上调"在词袋模型中毫无关联。
+
+\subsubsection{Word2Vec词向量}
+
+Word2Vec（Mikolov et al., 2013）通过神经网络将词映射为稠密向量，使语义相近的词在向量空间中距离接近：
+
+\[
+\text{similarity}(\text{银行}, \text{农行}) > \text{similarity}(\text{银行}, \text{苹果})
+\]
+
+Word2Vec有两种训练方式：CBOW（由上下文预测中心词）和Skip-gram（由中心词预测上下文）。其核心洞见是"分布式假设"：出现在相似上下文中的词具有相似语义。
+
+\subsubsection{BERT预训练语言模型}
+
+BERT（Bidirectional Encoder Representations from Transformers, Devlin et al., 2019）通过双向Transformer编码器捕获上下文感知的词表示，解决了多义词问题：
+
+\begin{itemize}[leftmargin=2em]
+  \item "央行\textbf{降准}"——"降准"意为降低存款准备金率
+  \item "银行\textbf{降准}门槛"——"降准"可能指降低准入标准
+\end{itemize}
+
+金融领域衍生出专用BERT模型，如FinBERT（基于金融语料微调），在金融情感分析任务上显著优于通用BERT。
+
+\subsubsection{大语言模型（LLM）}
+
+以GPT-4、Claude等为代表的大语言模型，通过海量语料预训练+指令微调，具备强大的金融文本理解与生成能力。与传统方法相比，LLM的核心突破在于：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{零样本学习}：无需标注数据即可完成新任务
+  \item \textbf{上下文推理}：理解文本的深层逻辑和隐含信息
+  \item \textbf{多任务统一}：抽取、分类、摘要、生成用同一模型完成
+\end{itemize}
+
+\begin{lstlisting}[style=python]
+# LLM 金融情感分析示例
+import openai
+
+def sentiment_analysis(news_text):
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "你是金融情感分析专家。"},
+            {"role": "user", "content": f"""
+请对以下金融新闻进行情感分析，输出JSON格式：
+{news_text}
+
+输出格式：
+{{
+  "sentiment": "positive/neutral/negative",
+  "confidence": 0.0-1.0,
+  "key_entities": ["实体1", "实体2"],
+  "impact_severity": "high/medium/low",
+  "reasoning": "判断依据（50字以内）"
+}}"""}
+        ]
+    )
+    return response.choices[0].message.content
+\end{lstlisting}
+
+\subsection{金融情感词典}
+
+金融情感分析的基础工具之一是领域专用情感词典。最权威的英文金融情感词典是Loughran-McDonald词典（Loughran \& McDonald, 2011），该词典基于10-K年报构建，包含六个词表：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{词表} & \textbf{词数} & \textbf{典型示例} \\
+\midrule
+正面词（Positive） & 354 & profit, efficient, stable \\
+负面词（Negative） & 2,329 & loss, risk, default, crisis \\
+不确定词（Uncertainty） & 297 & may, uncertain, approximately \\
+强语气词（Strong Modal） & 19 & will, shall, must \\
+弱语气词（Weak Modal） & 27 & could, might, possibly \\
+诉讼词（Litigious） & 911 & lawsuit, litigation, plaintiff \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{重要提示}：通用情感词典（如VADER、SentiWordNet）在金融文本上表现很差。例如，"liability"在通用语境中可能是中性词，但在金融语境中是明确的负面信号；"crude"在通用语境可能是"粗鲁的"，但在金融语境中是"原油"。因此，金融情感分析\textbf{必须}使用领域专用词典或基于金融语料微调的模型。
+
+\begin{theorybox}[大语言模型在金融文本分析中的优势与局限]
+\textbf{优势}：
+\begin{itemize}[leftmargin=2em]
+  \item 无需标注数据即可完成情感分析、实体抽取、事件分类等任务
+  \item 理解金融语境中的隐含语义（如央行措辞微妙变化）
+  \item 可同时处理多语言混用的中国金融文本
+  \item 输出结构化结果，便于下游分析
+\end{itemize}
+
+\textbf{局限}：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{幻觉问题}：可能"编造"不存在的数据或事件，在金融领域这是致命缺陷
+  \item \textbf{时效性限制}：训练数据截止后的事件无法获知，需配合检索增强（RAG）
+  \item \textbf{数值精度不足}：对利率、比率等精确数值的提取可能出错
+  \item \textbf{可解释性弱}：难以追踪判断依据，不利于合规审查
+  \item \textbf{成本问题}：大规模实时分析时API调用成本较高
+\end{itemize}
+
+\textbf{最佳实践}：LLM + 规则引擎的混合方案。LLM负责语义理解和复杂推理，规则引擎负责数值精确提取和合规边界约束。
+\end{theorybox}
+
+% ============================================================
+\section{舆情数据采集与情绪评分}
+% ============================================================
+
+舆情分析的前提是数据采集。本节介绍金融舆情的主要数据来源、采集方法和情绪评分技术。
+
+\subsection{金融舆情数据源}
+
+金融舆情数据可按信息源权威性和传播路径分为三大类：
+
+\subsubsection{官方发布}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{中国人民银行}：货币政策执行报告、MLF/逆回购操作公告、LPR报价
+  \item \textbf{金融监管总局}：行政处罚信息、监管法规征求意见稿、监管通报
+  \item \textbf{证券交易所}：上市公司公告（业绩预告/快报、重大事项、管理层变动）
+  \item \textbf{国家统计局}：GDP/CPI/PMI等宏观经济数据发布
+\end{itemize}
+
+官方信息的特征是\textbf{权威性高、格式规范}，但发布频率低、信息量有限。
+
+\subsubsection{媒体报道}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{第一财经}：深度政策解读和行业分析
+  \item \textbf{证券时报}：上市公司新闻和市场动态
+  \item \textbf{21世纪经济报道}：宏观经济和产业深度报道
+  \item \textbf{财新网}：独家调查和深度分析
+  \item \textbf{上海证券报}：权威政策发布和市场解读
+\end{itemize}
+
+媒体报道的覆盖面广、分析深度强，但存在\textbf{主观偏见}和\textbf{时效滞后}的问题。
+
+\subsubsection{社交媒体}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{微博}：大众舆情和情绪风向标，传播速度快
+  \item \textbf{雪球}：投资者社区，讨论质量较高
+  \item \textbf{东方财富股吧}：散户情绪的风向标，噪声较大
+  \item \textbf{知乎}：长文深度分析，传播速度慢
+\end{itemize}
+
+社交媒体的\textbf{时效性最强}，但噪声大、虚假信息多，需要更强的过滤和验证能力。
+
+\subsection{情绪评分方法}
+
+情绪评分是将文本映射到情绪维度的过程，主要有三种方法：
+
+\subsubsection{基于词典的方法}
+
+基于预定义的正面词和负面词列表，统计文本中两类词的出现频率，计算情绪得分：
+
+\[
+\text{Sentiment Score} = \frac{N_{\text{positive}} - N_{\text{negative}}}{N_{\text{positive}} + N_{\text{negative}}}
+\]
+
+优点：简单可解释、计算快速、无需训练数据。缺点：无法处理否定、讽刺、语境依赖的情感表达。
+
+\subsubsection{基于机器学习的分类}
+
+使用标注数据训练分类模型（SVM、随机森林、BERT微调等），将文本分类为正面/中性/负面。以FinBERT为例：
+
+\begin{lstlisting}[style=python]
+# FinBERT 金融情感分类
+from transformers import pipeline
+
+nlp = pipeline("sentiment-analysis",
+               model="ProsusAI/finbert",
+               tokenizer="ProsusAI/finbert")
+
+result = nlp("央行决定下调MLF利率10个基点，市场流动性充裕")
+print(result)
+# [{'label': 'positive', 'score': 0.89}]
+\end{lstlisting}
+
+优点：考虑上下文、分类精度高。缺点：需要标注数据、计算成本较高。
+
+\subsubsection{基于LLM的零样本情感分析}
+
+利用大语言模型无需微调即可进行情感分析的能力，通过精心设计的提示词实现：
+
+\begin{lstlisting}[style=python]
+# LLM 零样本金融情感分析
+def analyze_sentiment_llm(news_list):
+    """批量分析金融新闻情绪"""
+    results = []
+    for news in news_list:
+        prompt = f"""
+你是资深金融分析师。请对以下新闻进行情绪评分：
+
+标题：{news['title']}
+内容摘要：{news['summary'][:200]}
+
+请输出以下JSON格式：
+{{
+  "sentiment": "positive/neutral/negative",
+  "score": 1~5（1=极度悲观，5=极度乐观）,
+  "affected_sectors": ["银行", "房地产", ...],
+  "key_risk": "主要风险点（如有），否则null",
+  "confidence": 0.0-1.0
+}}"""
+        # 调用 LLM API
+        result = call_llm(prompt)
+        results.append(result)
+    return results
+\end{lstlisting}
+
+优点：灵活、适应性强、可同时提取多维信息。缺点：成本较高、存在幻觉风险。
+
+\begin{practicebox}[实操：用fetch MCP + AI进行舆情采集与评分]
+\textbf{任务}：采集近一周银行业相关新闻，进行结构化情绪评分。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：银行业周度舆情采集与情绪评分
+
+请使用 fetch MCP 和 AI 完成以下任务：
+
+【第1步】新闻采集
+使用 fetch MCP 搜索近一周中国银行业相关重大新闻，来源包括：
+- 央行/金融监管总局政策发布
+- 上市银行公告（业绩快报、高管变动、处罚信息）
+- 主流财经媒体报道（第一财经、证券时报、21世纪经济报道）
+
+每条新闻记录：标题、来源、日期、URL、摘要（100字以内）
+目标采集 10-15 条新闻
+
+【第2步】情绪评分
+对每条新闻进行结构化评分，输出表格：
+
+| 序号 | 新闻标题 | 来源 | 日期 | 情绪 | 得分(1-5) | 影响行业 | 关键风险 | 置信度 |
+|------|----------|------|------|------|-----------|----------|----------|--------|
+| 1    | ...      | ...  | ...  | +/0/-| 1-5       | 银行/... | ...      | 0-1    |
+
+情绪分类标准：
+- positive(+): 降准降息、业绩超预期、政策利好
+- neutral(0): 人事变动、数据符合预期、常规公告
+- negative(-): 监管处罚、不良上升、违约事件、利差收窄
+
+【第3步】舆情汇总
+1. 计算本周情绪均值和分布
+2. 识别情绪最负面和最正面的新闻各1条，说明原因
+3. 提取本周 TOP 3 关键风险信号
+
+保存评分表到 reports/bank_sentiment_scores.csv
+保存汇总到 reports/bank_sentiment_weekly.md
+\end{lstlisting}
+
+\textbf{预期产出}：结构化评分表（CSV） + 舆情周报（Markdown）。
+\end{practicebox}
+
+% ============================================================
+\section{银行业竞争格局分析}
+% ============================================================
+
+竞争格局分析是银行业战略规划和投研分析的核心工具。波特五力模型提供了系统化的分析框架。
+
+\subsection{波特五力模型在银行业的应用}
+
+波特五力模型（Porter's Five Forces）由迈克尔·波特于1979年提出，从五个维度分析行业竞争态势。将五力模型应用于中国银行业，可以清晰把握行业竞争格局与演变趋势。
+
+\subsubsection{现有竞争者：四梯队格局}
+
+中国银行业呈现明显的四梯队结构：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{梯队} & \textbf{代表机构} & \textbf{竞争特征} \\
+\midrule
+第一梯队 & 工农中建交+邮储 & 资产规模占全行业40\%+，享有"大而不倒"的隐性担保 \\
+第二梯队 & 招商/兴业/中信/浦发等12家 & 差异化竞争，零售转型走在前列 \\
+第三梯队 & 城商行（北京/上海/江苏等） & 区域深耕，地方关系紧密 \\
+第四梯队 & 农商行/农信社 & 数量最多（2000+），单体规模小，竞争能力弱 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+梯队间的竞争主要体现在存款利率定价、贷款客户争夺和中间业务创新三个方面。AI时代，大行的科技投入优势进一步拉开梯队差距——2024年六大行科技投入合计超1600亿元。
+
+\subsubsection{潜在进入者：跨界冲击}
+
+银行业的进入壁垒极高（牌照管制），但两类"新玩家"正在重塑竞争格局：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{互联网银行}：微众银行、网商银行、新网银行等，依托互联网平台和大数据风控，在消费贷和小微贷领域快速扩张
+  \item \textbf{金融科技公司}：蚂蚁集团、京东数科等，虽无银行牌照，但通过"助贷"模式深度参与信贷价值链
+\end{enumerate}
+
+\subsubsection{替代品威胁：支付与去中介化}
+
+银行的传统中介功能正面临多维度替代：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{支付宝/微信支付}：在支付结算领域形成双寡头，银行沦为"资金管道"
+  \item \textbf{数字人民币}：央行数字货币的推广可能绕开商业银行的清算职能
+  \item \textbf{直接融资}：注册制改革推动股权融资发展，分流银行信贷需求
+  \item \textbf{供应链金融平台}：核心企业自建金融平台，减少对银行供应链金融的依赖
+\end{itemize}
+
+\subsubsection{供应商议价力：科技依赖加深}
+
+银行的"供应商"正在从传统的储户和同业，扩展为科技和数据供应商：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{科技供应商}：华为、阿里云等云服务商，以及金融科技服务商，银行数字化转型中对其依赖度持续加深
+  \item \textbf{数据供应商}：征信机构（央行征信、百行征信）、第三方数据服务商，银行风控模型对外部数据的依赖度上升
+  \item \textbf{储户}：利率市场化后，储户选择增多，存款成本存在上行压力
+\end{itemize}
+
+\subsubsection{客户议价力：分化明显}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{零售客户}：议价力较弱，但财富管理转型使得高净值客户议价力上升
+  \item \textbf{对公客户}：大型国企和优质民企议价力强，可跨行比价；中小微企业议价力弱
+\end{itemize}
+
+\begin{practicebox}[实操：用consulting-frameworks Skill做五力分析]
+\textbf{任务}：使用consulting-frameworks技能，用波特五力模型分析中国银行业在AI时代面临的竞争格局变化。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+请使用 consulting-frameworks 技能，用波特五力模型分析
+中国银行业在 AI 时代面临的竞争格局变化：
+
+1. 现有竞争者（国有大行 vs 股份行 vs 城农商行）
+2. 潜在进入者（互联网银行、金融科技公司）
+3. 替代品威胁（支付宝/微信支付、数字人民币）
+4. 供应商议价力（科技供应商、数据供应商）
+5. 客户议价力（零售客户、对公客户）
+
+要求：
+- 每个力量至少分析 3 个要点
+- 结合 2025-2026 年的实际政策与市场变化
+- 最后给出：中小银行应如何利用 AI 建立差异化竞争优势？
+- 输出 Markdown 报告 + 五力模型的 mermaid 图
+
+保存到 reports/porter_five_forces_banking.md
+\end{lstlisting}
+
+\textbf{技能安装}（如尚未安装）：
+
+\begin{lstlisting}[style=shell]
+npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
+\end{lstlisting}
+
+\textbf{预期产出}：波特五力分析报告（Markdown） + 五力模型图（Mermaid）。
+\end{practicebox}
+
+% ============================================================
+\section{智能投研报告自动生成}
+% ============================================================
+
+投资研究报告（简称"投研报告"）是证券公司和投资机构的核心产出物，其撰写过程涉及大量数据收集、指标计算和文字组织工作。AI可显著提升投研报告的生产效率，但合规性和专业判断仍需人工把关。
+
+\subsection{投研报告标准结构}
+
+一份完整的投研报告通常包含以下模块：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{模块} & \textbf{内容} & \textbf{AI可替代程度} \\
+\midrule
+摘要 & 核心观点与投资建议 & 中 \\
+行业分析 & 行业趋势、政策环境、竞争格局 & 高 \\
+公司分析 & 业务模式、财务表现、管理团队 & 高 \\
+估值分析 & DCF/可比公司/分部估值 & 高 \\
+风险提示 & 主要风险因素与应对建议 & 中 \\
+结论 & 投资评级与目标价 & 低 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{AI辅助投研的工作流}
+
+AI辅助投研的核心是\textbf{工具链编排}——将数据获取、分析计算、报告撰写和演示制作四个环节串联为自动化流水线。
+
+\subsubsection{数据收集：fetch MCP获取财务数据}
+
+使用fetch MCP从公开数据源获取银行财务数据、行业统计数据和宏观经济指标。fetch MCP支持网页内容抓取和API调用，是投研数据收集的基础工具。
+
+\begin{lstlisting}
+请使用 fetch MCP 获取以下银行财务数据：
+1. 访问工商银行2025年年报页面
+2. 提取关键财务指标：
+   - 营业收入、净利润、ROE、ROA
+   - 不良贷款率、拨备覆盖率、资本充足率
+   - 净息差、成本收入比
+3. 将数据整理为结构化JSON格式
+\end{lstlisting}
+
+\subsubsection{分析生成：finance-expert Skill计算指标}
+
+finance-expert Skill内置金融分析专业知识，可自动完成财务指标计算、行业对比和估值建模。
+
+\begin{lstlisting}[style=shell]
+# 安装 finance-expert Skill
+npx skills add personamanagmentlayer/pcl@finance-expert -y
+\end{lstlisting}
+
+\begin{lstlisting}
+请使用 finance-expert 技能完成以下分析：
+1. 根据获取的财务数据，计算杜邦分解三因子
+2. 与同业（建设银行、农业银行、中国银行）进行横向对比
+3. 计算P/B、P/E、股息率等估值指标
+4. 给出初步估值区间
+\end{lstlisting}
+
+\subsubsection{报告撰写：Word MCP输出格式化报告}
+
+使用Word MCP将分析结果输出为格式规范的Word文档，包含标题层级、表格和图表。
+
+\begin{lstlisting}
+请使用 Word MCP 生成投研报告，格式要求：
+1. 标题：XX银行投资研究报告
+2. 日期和分析师信息
+3. 各章节标题和正文（行业分析、公司分析、估值、风险）
+4. 财务数据表格（booktabs风格）
+5. 关键指标走势图
+
+保存到 reports/XX_bank_research.docx
+\end{lstlisting}
+
+\subsubsection{演示制作：PPT MCP生成演示文稿}
+
+使用PPT MCP将报告核心内容浓缩为演示文稿，用于路演或内部汇报。
+
+\begin{lstlisting}
+请使用 PPT MCP 生成投研简报演示文稿：
+1. 封面：银行名称 + 评级 + 日期
+2. 核心观点（1页）
+3. 财务亮点（1页，含关键指标表）
+4. 估值分析（1页，含估值区间图）
+5. 风险提示（1页）
+6. 免责声明（1页）
+
+保存到 reports/XX_bank_presentation.pptx
+\end{lstlisting}
+
+\begin{practicebox}[实操：生成某上市银行投研简报]
+\textbf{任务}：完整走通"数据采集→分析→Word报告→PPT演示"的投研自动化流水线。
+
+\textbf{完整提示词链}：
+
+\begin{lstlisting}
+任务：招商银行投资研究简报——完整流水线
+
+【Step 1：数据采集】（使用 fetch MCP）
+请获取招商银行最新年度以下数据：
+- 核心财务指标：营收、净利润、ROE、ROA、NIM
+- 资产质量指标：不良贷款率、拨备覆盖率、关注类贷款率
+- 资本充足率：核心一级资本充足率、资本充足率
+- 成长性指标：营收增速、净利润增速、贷款增速
+将数据保存为 JSON 格式
+
+【Step 2：财务分析】（使用 finance-expert Skill）
+基于获取的数据完成：
+1. 杜邦分解：ROE = 净利率 × 资产周转率 × 权益乘数
+2. 同业对比：与平安银行、兴业银行进行横向比较
+3. 趋势分析：近5年核心指标变化趋势
+4. 估值分析：P/B、P/E、DDM估值
+
+【Step 3：生成Word报告】（使用 Word MCP）
+按投研报告标准格式输出Word文档：
+- 标题页 + 目录
+- 执行摘要（200字）
+- 行业分析（银行业数字化转型趋势）
+- 公司分析（招商银行"轻型银行"战略）
+- 财务分析（Step 2的分析结果）
+- 估值与投资建议
+- 风险提示
+保存到 reports/cmb_research_report.docx
+
+【Step 4：生成PPT演示】（使用 PPT MCP）
+将报告浓缩为6页演示文稿：
+1. 封面
+2. 核心观点
+3. 财务亮点
+4. 同业对比
+5. 估值与建议
+6. 风险与免责
+保存到 reports/cmb_presentation.pptx
+\end{lstlisting}
+
+\textbf{预期产出}：结构化财务数据（JSON） + 投研报告（docx） + 演示文稿（pptx）。
+\end{practicebox}
+
+\begin{warningbox}[投研报告的合规要求]
+使用AI生成投研报告时，必须遵守以下合规要求：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{证券从业资格}：根据《证券法》和《证券投资咨询管理暂行办法》，向公众提供证券投资分析意见需具备证券投资咨询执业资格。AI生成的报告不能替代持牌分析师的专业判断和签字确认。
+
+  \item \textbf{免责声明}：所有AI辅助生成的投研报告必须包含明确的免责声明，说明"本报告由AI辅助生成，仅供参考，不构成投资建议"。
+
+  \item \textbf{数据真实性}：AI可能产生幻觉，编造不存在的财务数据。所有关键数据必须经过人工核实，标注数据来源。
+
+  \item \textbf{利益冲突披露}：如果AI训练数据中包含特定机构的研报，可能存在隐性偏见。需披露AI工具的潜在利益冲突。
+
+  \item \textbf{保留审计痕迹}：保存AI生成报告的完整对话记录，以备合规审查。
+\end{enumerate}
+\end{warningbox}
+
+% ============================================================
+\section{监管政策解读与合规预警}
+% ============================================================
+
+银行业是高度监管的行业，监管政策的变化直接影响银行经营策略和合规成本。AI可在政策解读和合规预警中发挥重要作用，但必须在合规框架内使用。
+
+\subsection{银行业监管体系概述}
+
+中国银行业监管体系由"一委一行一局一会"构成：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{机构} & \textbf{全称} & \textbf{主要职能} \\
+\midrule
+国务院金融委 & 金融稳定发展委员会 & 统筹协调金融监管重大事项 \\
+人民银行 & 中国人民银行 & 货币政策、宏观审慎、支付清算 \\
+金融监管总局 & 国家金融监督管理总局 & 银行保险机构准入与日常监管 \\
+证监会 & 中国证券监督管理委员会 & 证券期货市场监管 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+2023年机构改革后，原银保监会的消费者保护职能划归金融监管总局，形成"机构监管+行为监管"的双支柱格局。
+
+\subsection{AI辅助监管政策解读}
+
+\subsubsection{政策文本结构化分析}
+
+监管政策文件通常篇幅长、条款多、法律语言晦涩。AI可将政策文本快速转化为结构化信息：
+
+\begin{lstlisting}
+任务：监管政策结构化解读
+
+请对以下监管政策文件进行结构化分析：
+
+【输入】政策文件全文（或核心条款摘录）
+
+【输出格式】
+1. 政策概要（100字以内）
+2. 核心条款清单（每条包含：条款编号、内容摘要、生效时间、影响范围）
+3. 与前序政策的差异对比（新增/修改/删除的条款）
+4. 关键时间节点（征求意见截止日、正式生效日、过渡期截止日）
+5. 影响评估：
+   - 对银行资产负债表的影响（定性+方向）
+   - 对特定业务线的影响（如零售贷款、同业业务）
+   - 对不同类型银行的差异化影响
+6. 应对建议（3-5条可操作建议）
+\end{lstlisting}
+
+\subsubsection{影响评估与应对建议}
+
+AI可基于历史政策类比和行业知识，快速生成政策影响评估框架。例如，当央行宣布降准时，AI可自动完成：
+
+\begin{enumerate}[leftmargin=2em]
+  \item 计算降准释放的流动性规模
+  \item 评估对银行净息差的边际影响
+  \item 对比历次降准后银行股价表现
+  \item 生成分银行类型的影响差异分析
+\end{enumerate}
+
+\subsubsection{合规检查清单自动生成}
+
+AI可根据最新监管政策自动生成银行合规检查清单，将政策条款转化为可执行的检查项：
+
+\begin{lstlisting}
+任务：合规检查清单生成
+
+基于最新发布的《商业银行资本管理办法》，请生成合规检查清单：
+
+格式要求：
+| 序号 | 检查项 | 政策依据 | 检查方式 | 合规标准 | 整改时限 | 责任部门 |
+|------|--------|----------|----------|----------|----------|----------|
+| 1    | ...    | 第X条    | 文件审查 | ...      | ...      | 风险管理部 |
+
+至少生成 20 个检查项，覆盖：
+- 资本充足率计算
+- 风险加权资产计量
+- 内部评级法合规
+- 信息披露要求
+- 过渡期安排
+\end{lstlisting}
+
+\begin{practicebox}[实操：用AI解读最新监管政策]
+\textbf{任务}：对最新银行业监管政策进行结构化解读，并生成银行应对方案。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：银行业监管政策解读与应对方案
+
+请完成以下政策解读任务：
+
+【第1步】政策采集
+使用 fetch MCP 搜索金融监管总局近一个月发布的最新监管政策，
+选择一个与银行业直接相关的政策文件
+
+【第2步】结构化解读
+对选定的政策文件进行结构化分析：
+1. 政策概要（100字）
+2. 核心条款（逐条解读）
+3. 与前序政策差异对比
+4. 关键时间节点
+5. 影响评估（按业务线分类）
+
+【第3步】银行应对方案
+针对该政策，生成银行应对方案：
+1. 短期应对（1-3个月）：需立即调整的业务操作
+2. 中期调整（3-12个月）：需修改的内部制度
+3. 长期规划（1-3年）：需建设的系统能力
+
+【第4步】合规检查清单
+生成 15-20 项合规检查清单，格式：
+| 序号 | 检查项 | 政策依据 | 检查方式 | 合规标准 | 整改时限 |
+
+保存政策解读到 reports/policy_analysis.md
+保存应对方案到 reports/compliance_response.md
+\end{lstlisting}
+
+\textbf{预期产出}：政策结构化解读 + 应对方案 + 合规检查清单。
+\end{practicebox}
+
+% ============================================================
+\section{实验：银行业周度舆情监控系统}
+% ============================================================
+
+本实验将构建一个完整的银行业周度舆情监控系统，涵盖新闻采集、情绪评分、风险信号识别和舆情简报生成四个环节。
+
+\subsection{实验设计}
+
+\subsubsection{系统架构}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{步骤} & \textbf{功能} & \textbf{工具/Skill} & \textbf{输出} \\
+\midrule
+Step 1 & 新闻采集 & fetch MCP & 新闻列表 \\
+Step 2 & 情绪评分 & finance-news Skill + AI & 评分表 \\
+Step 3 & 风险信号识别 & AI推理 & 风险标签 \\
+Step 4 & 生成舆情简报 & Word MCP & 周报文档 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Step 1：新闻采集（来源配置）}
+
+使用finance-news Skill或fetch MCP从多个来源采集银行业相关新闻。配置数据源优先级：
+
+\begin{lstlisting}
+任务：银行业周度新闻采集
+
+请使用 finance-news 技能或 fetch MCP 完成新闻采集：
+
+【数据源配置】
+1. 官方发布（优先级最高）：
+   - 央行/金融监管总局政策发布
+   - 上市银行公告（业绩快报、高管变动、处罚信息）
+
+2. 主流财经媒体（优先级次之）：
+   - 第一财经、证券时报、21世纪经济报道
+
+3. 社交媒体（辅助参考）：
+   - 雪球热门银行股讨论
+   - 东方财富股吧银行板块热帖
+
+【采集规则】
+- 时间范围：最近7天
+- 关键词：银行、信贷、利率、监管、不良贷款、资本充足率
+- 每个来源至少采集3条新闻
+- 去重：相同事件只保留最权威来源版本
+- 目标总量：10-15条
+
+输出格式：
+| 序号 | 标题 | 来源 | 日期 | URL | 摘要(50字) |
+\end{lstlisting}
+
+\subsubsection{Step 2：情绪评分（结构化表格）}
+
+对采集到的每条新闻进行多维度情绪评分：
+
+\begin{lstlisting}
+任务：新闻情绪评分
+
+对 Step 1 采集的每条新闻进行结构化评分：
+
+评分维度：
+1. 情绪倾向：positive / neutral / negative
+2. 情绪强度：1-5分（1=极度悲观，5=极度乐观）
+3. 影响范围：全行业 / 特定类型银行 / 个别银行
+4. 影响程度：high / medium / low
+5. 涉及行业：银行、房地产、科技、消费等
+6. 涉及机构：具体银行名称
+
+评分标准：
+- 降准降息、经济复苏信号 → positive (4-5)
+- 银行业绩超预期、资产质量改善 → positive (3-4)
+- 常规政策微调、数据符合预期 → neutral (3)
+- 监管处罚、不良上升预警 → negative (2)
+- 系统性风险信号、银行危机事件 → negative (1)
+
+输出CSV格式评分表，保存到 reports/bank_sentiment_scores.csv
+\end{lstlisting}
+
+\subsubsection{Step 3：风险信号识别（分类标签）}
+
+从情绪评分结果中识别和分类风险信号：
+
+\begin{lstlisting}
+任务：风险信号识别与分类
+
+基于情绪评分结果，识别潜在风险信号并分类：
+
+【风险类别】
+1. 合规风险：监管处罚、违规通报、合规整改
+2. 信用风险：不良贷款上升、违约事件、房地产风险暴露
+3. 流动性风险：利率政策变化、同业市场波动
+4. 竞争风险：科技公司跨界、市场份额变化
+5. 声誉风险：负面舆情、客户投诉集中爆发
+6. 系统性风险：宏观政策收紧、国际金融动荡
+
+【输出格式】
+| 风险类别 | 风险描述 | 相关新闻 | 严重程度 | 建议关注级别 |
+|----------|----------|----------|----------|--------------|
+| 信用风险 | ...      | 新闻#3   | high     | 紧急         |
+
+【特别关注】
+识别需要立即关注的"红旗信号"：
+- 单条新闻情绪强度=1的
+- 影响程度=high且情绪=negative的
+- 同一风险类别出现2条以上相关新闻的
+\end{lstlisting}
+
+\subsubsection{Step 4：生成舆情简报（Word格式）}
+
+将前三步结果整合为格式化的周度舆情简报：
+
+\begin{lstlisting}
+任务：生成银行业周度舆情简报
+
+请使用 Word MCP 生成周度舆情简报：
+
+【报告结构】
+1. 标题：银行业舆情周报（YYYY.MM.DD - YYYY.MM.DD）
+2. 本周要闻 TOP 5（按重要性排序）
+3. 情绪概况
+   - 本周情绪均值：X.X/5.0
+   - 情绪分布：正面X条/中性X条/负面X条
+   - 与上周对比：+0.X / -0.X
+4. 风险信号汇总
+   - 各类别风险条目
+   - 红旗信号（如有）
+5. 行业影响评估
+   - 对零售业务的影响
+   - 对公司业务的影响
+   - 对同业业务的影响
+6. 下周关注要点（3-5条）
+7. 免责声明
+
+保存到 reports/bank_sentiment_weekly.docx
+同时保存 Markdown 版本到 reports/bank_sentiment_weekly.md
+\end{lstlisting}
+
+\textbf{技能安装}（如尚未安装）：
+
+\begin{lstlisting}[style=shell]
+# 安装所需技能
+npx skills add sundial-org/awesome-openclaw-skills@finance-news -y
+npx skills add personamanagmentlayer/pcl@finance-expert -y
+\end{lstlisting}
+
+\subsection{预期产出}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cll}
+\toprule
+\textbf{\#} & \textbf{交付物} & \textbf{文件名} \\
+\midrule
+1 & 新闻采集表 & reports/bank\_news\_raw.csv \\
+2 & 情绪评分表 & reports/bank\_sentiment\_scores.csv \\
+3 & 风险信号表 & reports/bank\_risk\_signals.csv \\
+4 & 周度舆情简报（Word） & reports/bank\_sentiment\_weekly.docx \\
+5 & 周度舆情简报（Markdown） & reports/bank\_sentiment\_weekly.md \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{案例研究：某银行舆情危机应对}
+% ============================================================
+
+\begin{casebox}[某银行舆情危机应对——从预警到化解]
+
+\textbf{事件背景}：
+
+2026年3月15日，某城商行（以下简称"A银行"）因一则短视频在社交媒体上迅速发酵。视频显示该银行某支行客户经理在推销理财产品时，涉嫌误导老年客户将定期存款转为高风险理财。视频在微博上24小时内转发超5万次，话题\#A银行欺骗老人\#登上热搜。
+
+\textbf{事件发酵过程}：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Day 0（3月15日）}：视频发布，当日微博转发5万+，东方财富股吧出现大量负面帖子，A银行股价下跌2.3\%
+  \item \textbf{Day 1（3月16日）}：金融监管总局地方局表态"已关注到相关情况，将进行调查"；多家媒体跟进报道；A银行股价续跌3.1\%
+  \item \textbf{Day 2（3月17日）}：社交媒体上出现更多"受害者"站出来，事件从单一支行升级为全行性信任危机；A银行股价当日最大跌幅5.7\%
+  \item \textbf{Day 3--5}：A银行发布正式回应并采取整改措施；监管调查结论公布；舆情逐步平息
+\end{enumerate}
+
+\textbf{舆情监控如何发出预警}：
+
+如果A银行部署了本章介绍的舆情监控系统，事件走向可能完全不同：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{时间} & \textbf{系统状态} & \textbf{人工响应} \\
+\midrule
+Day 0, 14:00 & 情绪评分检测到negative信号，强度1/5，红旗触发 & 公关团队30分钟内收到预警 \\
+Day 0, 16:00 & 微博转发量突破1万，风险类别：声誉风险+合规风险 & 管理层启动应急预案 \\
+Day 0, 20:00 & 股吧讨论量激增300\%，同类事件历史案例匹配 & 法务/合规团队评估法律风险 \\
+Day 1, 09:00 & 监管表态新闻被系统采集，影响程度升级为high & CEO级回应方案制定完成 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{危机公关策略}：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{快速承认问题}：Day 2发布声明，承认管理疏漏，而非否认或回避
+  \item \textbf{具体整改措施}：公布涉事人员处理结果、全行理财销售流程整改方案、老年客户专属服务升级计划
+  \item \textbf{第三方背书}：邀请监管机构和消费者协会参与整改验收
+  \item \textbf{持续透明}：每日公布整改进展，直至舆情平息
+\end{enumerate}
+
+\textbf{AI在快速响应中的作用}：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{实时监测}：舆情系统7$\times$24小时自动运行，5分钟内检测到负面信号
+  \item \textbf{态势评估}：AI自动匹配历史类似事件，估算事件持续时间和影响范围
+  \item \textbf{声明起草}：AI根据事件信息和公关原则快速生成声明初稿，人工审核修改后发布
+  \item \textbf{情绪跟踪}：持续跟踪舆情走势，量化评估公关措施的效果
+\end{itemize}
+
+\textbf{案例启示}：舆情危机的核心是"速度"——在社交媒体时代，黄金响应时间从传统的24小时缩短至2小时。AI舆情监控系统的价值在于\textbf{压缩感知时间}，但最终的效果取决于\textbf{人的判断力和决策力}。
+\end{casebox}
+
+% ============================================================
+\section*{本章小结}
+% ============================================================
+
+\addcontentsline{toc}{section}{本章小结}
+
+本章围绕"金融舆情分析与智能投研"主题展开。8.1节系统阐述了金融文本挖掘的理论基础，从词袋模型到大语言模型的方法演进，以及金融情感词典的应用。8.2节介绍了金融舆情的三大数据来源（官方/媒体/社交）和三种情绪评分方法（词典法/机器学习/LLM零样本），并演示了fetch MCP+AI的舆情采集评分流程。8.3节将波特五力模型应用于中国银行业竞争格局分析，梳理了四梯队竞争、跨界冲击和替代威胁。8.4节构建了"数据采集→分析→Word→PPT"的投研自动化流水线，并警示了投研报告的合规要求。8.5节展示了AI辅助监管政策解读和合规预警的方法。8.6节通过周度舆情监控系统的完整实验，将上述能力串联为可运行的工作流。8.7节的舆情危机案例，生动展示了AI舆情监控在实战中的预警价值和应对策略。
+
+\keyterms{金融文本挖掘、NLP、词袋模型、TF-IDF、Word2Vec、BERT、FinBERT、大语言模型（LLM）、金融情感词典、Loughran-McDonald词典、舆情分析、情绪评分、波特五力模型、投研报告、杜邦分解、合规预警、fetch MCP、finance-news Skill、consulting-frameworks Skill}
+
+\begin{exercisebox}[思考题]
+\begin{enumerate}[leftmargin=2em]
+  \item 为什么金融情感分析必须使用领域专用词典或微调模型，而不能直接使用通用情感分析工具？请举出至少3个因忽视金融语境导致情感误判的例子。
+  \item 在舆情采集中，官方发布、媒体报道和社交媒体三类来源各有何优劣？如何设计一个合理的多源融合策略以降低噪声和偏见？
+  \item 波特五力模型在分析AI时代银行业竞争格局时存在哪些局限性？如何补充其他分析框架（如SWOT、PEST）来完善分析？
+  \item 使用AI生成投研报告时，"幻觉"问题可能导致严重后果。请设计一个包含3层验证机制的数据核实方案，确保AI输出报告中的关键数据真实可靠。
+  \item 假设你是某城商行的合规官，需要设计一个AI辅助的监管政策跟踪系统。请描述该系统的功能需求、技术架构和合规边界。
+\end{enumerate}
+\end{exercisebox}

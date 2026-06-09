@@ -1,0 +1,292 @@
+% !TEX program = xelatex
+% 智慧银行实验教程——AI驱动的金融科技实践
+% 四川农业大学经济学院
+% 主文件
+
+\documentclass[12pt,a4paper,openany]{ctexbook}
+
+% ============================================================
+% 页面设置（出版标准）
+% ============================================================
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=3cm]{geometry}
+
+% ============================================================
+% 基础宏包
+% ============================================================
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% ============================================================
+% 代码高亮
+% ============================================================
+\usepackage{listings}
+\usepackage{xcolor}
+
+% --- 颜色定义（与现有讲义保持一致）---
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codestring}{RGB}{163,21,21}
+\definecolor{codekeyword}{RGB}{0,0,255}
+
+% --- 全局代码样式 ---
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  breakatwhitespace=true,
+  showstringspaces=false,
+  tabsize=2,
+  commentstyle=\color{codecomment},
+  stringstyle=\color{codestring},
+  keywordstyle=\color{codekeyword}\bfseries,
+  columns=flexible,
+  keepspaces=true,
+  xleftmargin=1em,
+  xrightmargin=1em,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+}
+
+% --- Shell 样式 ---
+\lstdefinestyle{shell}{
+  language=bash,
+  morekeywords={npm,pip,node,python,git,qoder,claude,codex,opencli,pnpm,docker,xelatex,pdflatex,biber,curl,conda,winget,brew,uv,uvx,npx,conda,dotnet,cnb,skills},
+}
+
+% --- JSON 样式 ---
+\lstdefinestyle{json}{
+  stringstyle=\color{codestring},
+  morestring=[b]",
+  literate=
+    *{:}{{{\color{black}:}}}{1}
+    {,}{{{\color{black},}}}{1}
+    {\{}{{{\color{black}\{}}}{1}
+    {\}}{{{\color{black}\}}}}{1}
+    {[}{{{\color{black}[}}}{1}
+    {]}{{{\color{black}]}}}{1},
+}
+
+% --- Python 样式 ---
+\lstdefinestyle{python}{
+  language=Python,
+  morekeywords={as,with,True,False,None,self,lambda,yield,async,await},
+  morecomment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+
+% --- Stata 样式 ---
+\lstdefinestyle{stata}{
+  language=[LaTeX]TeX,
+  morekeywords={reg,summarize,describe,tabulate,correlate,esttab,reghdfe,sysuse,webuse,generate,replace,label,save,use,clear,merge,append,foreach,forvalues,if,in,by,sort,egen},
+}
+
+% --- HTML 样式 ---
+\lstdefinestyle{html}{
+  language=HTML,
+  morekeywords={html,head,body,div,span,table,tr,td,th,form,input,button,script,style,link,meta,title,header,footer,nav,section,article,aside},
+  morecomment=[s]{<!--}{-->},
+  morestring=[b]",
+}
+
+% ============================================================
+% 超链接
+% ============================================================
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+
+% ============================================================
+% tcolorbox 提示框
+% ============================================================
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable,skins}
+
+% --- 蓝色 提示信息 ---
+\newtcolorbox{notebox}[1][]{
+  colback=blue!5,
+  colframe=blue!50!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% --- 橙色 警告信息 ---
+\newtcolorbox{warningbox}[1][]{
+  colback=yellow!5,
+  colframe=orange!70!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% --- 紫色 理论要点 ---
+\newtcolorbox{theorybox}[1][]{
+  colback=purple!5,
+  colframe=purple!50!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% --- 绿色 案例研究 ---
+\newtcolorbox{casebox}[1][]{
+  colback=green!5,
+  colframe=green!50!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% --- 青色 实操步骤 ---
+\newtcolorbox{practicebox}[1][]{
+  colback=cyan!5,
+  colframe=cyan!50!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% --- 灰色 思考题/练习 ---
+\newtcolorbox{exercisebox}[1][]{
+  colback=gray!5,
+  colframe=gray!50!black,
+  title={#1},
+  fonttitle=\bfseries,
+  breakable,
+}
+
+% ============================================================
+% 其他宏包
+% ============================================================
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage{marginnote}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% ============================================================
+% 页眉页脚
+% ============================================================
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}            % 左页眉=章名
+\fancyhead[RO]{智慧银行实验教程}      % 右页眉=书名
+\fancyfoot[C]{\thepage}              % 页脚居中页码
+
+% 章标题页使用 plain 样式（无页眉）
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% ============================================================
+% 章节样式
+% ============================================================
+% 章标题：大字号 + 横线装饰
+\ctexset{
+  chapter = {
+    format = \huge\bfseries\centerline,
+    nameformat = {},
+    titleformat = {},
+    aftername = \par\nobreak\vspace{-0.5em}\rule{\textwidth}{0.8pt}\vspace{0.5em},
+    aftertitle = \par\vspace{-0.3em}\rule{\textwidth}{0.4pt}\vspace{1em},
+    beforeskip = 1ex,
+    afterskip = 2ex,
+  },
+  section = {
+    format = \Large\bfseries,
+  },
+  subsection = {
+    format = \large\bfseries,
+  },
+}
+
+% ============================================================
+% 自定义命令
+% ============================================================
+% \chapteroverview — 每章开头的学习目标框
+\newcommand{\chapteroverview}[1]{%
+  \begin{notebox}[本章学习目标]
+    #1
+  \end{notebox}
+  \vspace{1em}
+}
+
+% \keyterms — 关键术语列表
+\newcommand{\keyterms}[1]{%
+  \vspace{1em}
+  \noindent{\bfseries 关键术语：}#1
+  \vspace{1em}
+}
+
+% ============================================================
+% 参考文献
+% ============================================================
+\usepackage[backend=biber,style=authoryear,citestyle=authoryear]{biblatex}
+\addbibresource{references.bib}
+
+% ============================================================
+% 文档信息
+% ============================================================
+\title{
+  \vspace{-2cm}
+  {\Huge\bfseries 智慧银行实验教程} \\[0.5em]
+  {\Large ——AI驱动的金融科技实践}
+}
+\author{肖诗顺 \quad 编著}
+\date{}
+% \publishers{四川农业大学经济学院}  % ctexbook不支持\publishers
+
+% ============================================================
+\begin{document}
+
+% ---------- 前言部分 ----------
+\frontmatter
+\maketitle
+\input{chapters/preface}    % 前言
+\tableofcontents
+
+% ---------- 正文部分 ----------
+\mainmatter
+
+\part{基础模块}
+\input{chapters/ch01}  % 第1章 绪论
+\input{chapters/ch02}  % 第2章 环境搭建
+\input{chapters/ch03}  % 第3章 MCP协议
+\input{chapters/ch04}  % 第4章 Skill体系
+
+\part{进阶模块}
+\input{chapters/ch05}  % 第5章 零售业务
+\input{chapters/ch06}  % 第6章 公司业务与风控
+\input{chapters/ch07}  % 第7章 数据分析
+\input{chapters/ch08}  % 第8章 舆情与投研
+
+\part{综合模块}
+\input{chapters/ch09}  % 第9章 BMAD方法论
+\input{chapters/ch10}  % 第10章 CRM全栈开发
+\input{chapters/ch11}  % 第11章 智能客服
+\input{chapters/ch12}  % 第12章 综合项目
+
+% ---------- 附录部分 ----------
+\appendix
+\input{chapters/appendix}  % 附录A-H
+
+% ---------- 后记部分 ----------
+\backmatter
+\printbibliography
+
+\end{document}

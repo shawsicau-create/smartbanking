@@ -1,0 +1,1218 @@
+% 第7章 金融数据分析与计量经济学
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+\chapter{金融数据分析与计量经济学}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 理解金融数据的特征与预处理方法
+  \item 掌握面板数据回归分析的基本方法与模型选择
+  \item 学会时间序列预测的经典与深度学习方法
+  \item 了解因果推断的主要方法论
+  \item 掌握AI辅助计量分析的完整工作流
+\end{enumerate}
+}
+
+% ============================================================
+\section{金融数据特征与处理方法}
+% ============================================================
+
+金融数据是计量经济学分析的基石。与一般经济数据相比，金融数据具有独特的时间维度、频率维度和结构维度特征，理解这些特征是正确选择分析方法的前提。
+
+\subsection{金融数据的类型谱系}
+
+金融数据按照不同维度可划分为以下类型：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{数据类型} & \textbf{典型示例} & \textbf{核心特征} \\
+\midrule
+截面数据 & 某一时点各银行ROE & 无时间维度，仅有个体维度 \\
+时间序列 & 某银行2000--2025年月度股价 & 单一个体，时间连续 \\
+面板数据 & 50家银行2010--2024年年度财务指标 & 个体$\times$时间双维度 \\
+高频数据 & 毫秒级交易记录 & 超高频率、海量观测 \\
+文本数据 & 年报管理层讨论与分析 & 非结构化、需NLP处理 \\
+网络数据 & 银行间拆借关系图谱 & 节点与边的拓扑结构 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+其中，\textbf{面板数据}是金融实证研究中最常用的数据类型，它同时包含个体异质性和时间动态性，信息量远大于纯截面或纯时序数据。本节后续内容及第\ref{sec:panel}节将重点围绕面板数据展开。
+
+\subsection{金融数据的典型特征}
+
+金融数据具有区别于一般经济数据的四大典型特征，这些特征直接影响模型的选择与设定。
+
+\subsubsection{非正态分布——尖峰厚尾}
+
+金融收益率分布的峰度（Kurtosis）通常远大于3（正态分布的峰度值），呈现"尖峰厚尾"形态。这意味着极端事件（暴跌、暴涨）发生的概率远高于正态分布的预测。例如，2008年金融危机期间标普500单日跌幅超过9\%的事件，在正态假设下几乎不可能发生，但实际市场中并不罕见。
+
+Jarque-Bera检验可形式化检验正态性：
+
+\[
+JB = \frac{n}{6}\left(S^2 + \frac{(K-3)^2}{4}\right) \sim \chi^2(2)
+\]
+
+其中$S$为偏度，$K$为峰度，$n$为样本量。在金融数据中，JB统计量几乎总是显著拒绝正态假设。
+
+\subsubsection{异方差性——ARCH效应}
+
+金融收益率的波动率具有"集聚性"：大幅波动之后往往跟随大幅波动，平静期之后跟随平静期。Engle（1982）提出的自回归条件异方差（ARCH）模型首次系统刻画了这一现象：
+
+\[
+\sigma_t^2 = \alpha_0 + \sum_{i=1}^{q} \alpha_i \varepsilon_{t-i}^2
+\]
+
+Bollerslev（1986）将其推广为GARCH模型：
+
+\[
+\sigma_t^2 = \alpha_0 + \sum_{i=1}^{q} \alpha_i \varepsilon_{t-i}^2 + \sum_{j=1}^{p} \beta_j \sigma_{t-j}^2
+\]
+
+\subsubsection{序列相关性}
+
+金融时间序列普遍存在自相关现象。股价收益率的一阶自相关虽弱，但收益率的\textbf{平方}和\textbf{绝对值}往往呈现显著的高阶自相关，这正是ARCH效应的体现。Ljung-Box Q检验可用于序列相关性的联合检验：
+
+\[
+Q = n(n+2)\sum_{k=1}^{m}\frac{\hat{\rho}_k^2}{n-k} \sim \chi^2(m)
+\]
+
+\subsubsection{结构突变}
+
+金融时间序列常因政策变革、金融危机或制度变迁而发生结构性断裂。例如，中国利率市场化改革前后，银行净息差的均值和波动率均可能发生显著变化。忽略结构突变会导致伪回归和参数估计不一致。Chow检验和Zivot-Andrews检验是检测结构突变的常用方法。
+
+\subsection{数据预处理流程}
+
+高质量的数据预处理是实证研究可信性的保障。金融数据预处理通常包含以下三个核心步骤。
+
+\subsubsection{缺失值处理}
+
+缺失值产生的原因包括：银行未披露某些财务指标、数据采集过程中的技术故障、新上市银行缺少历史数据等。处理方法包括：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{5cm}}
+\toprule
+\textbf{方法} & \textbf{适用场景} & \textbf{优缺点} \\
+\midrule
+删除法 & 缺失比例$<$5\% & 简单直接，但浪费信息 \\
+均值/中位数插补 & 随机缺失 & 保留样本量，但低估方差 \\
+线性插值 & 时序连续缺失 & 对趋势数据效果好 \\
+多重插补（MI） & 系统性缺失 & 统计性质最优，但计算量大 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+在Stata中，多重插补的实现如下：
+
+\begin{lstlisting}[style=stata]
+// 多重插补（ chained 方式 ）
+mi set wide
+mi register imputed roe npl_ratio car
+mi impute chained (regress) roe npl_ratio car = loan_growth log_asset, add(20)
+\end{lstlisting}
+
+\subsubsection{异常值检测}
+
+金融数据中的异常值可能来源于数据录入错误，也可能是真实的极端事件（如金融危机期间的异常波动）。常见检测方法：
+
+\textbf{IQR法}：以四分位距（IQR）为基准，超过$Q_1 - 1.5 \times IQR$或$Q_3 + 1.5 \times IQR$的观测值标记为异常。
+
+\textbf{Z-score法}：标准化后绝对值超过3（或2.576）的观测标记为异常。
+
+\textbf{Isolation Forest}：基于随机森林的异常检测算法，无需假设数据分布，适合高维金融数据。
+
+\begin{lstlisting}[style=python]
+# Isolation Forest 异常检测
+from sklearn.ensemble import IsolationForest
+import pandas as pd
+
+df = pd.read_csv("bank_panel.csv")
+clf = IsolationForest(contamination=0.05, random_state=42)
+df["outlier"] = clf.fit_predict(df[["roe", "npl_ratio", "car", "loan_growth"]])
+print(df[df["outlier"] == -1].head())
+\end{lstlisting}
+
+\subsubsection{数据标准化与变换}
+
+金融变量量纲差异大（如资产规模以亿元计，比率以百分比计），需要进行标准化或变换：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{对数变换}：$\ln(\text{Asset})$，压缩右偏分布，使回归系数可解释为弹性
+  \item \textbf{Box-Cox变换}：$y^{(\lambda)} = (y^\lambda - 1)/\lambda$，$\lambda$由极大似然估计确定
+  \item \textbf{缩尾处理（Winsorize）}：将极端值截断到指定百分位（如1\%和99\%），保留观测数量同时降低异常值影响
+\end{itemize}
+
+\begin{lstlisting}[style=stata]
+// Stata 缩尾处理
+// 安装 winsor2 命令
+ssc install winsor2
+winsor2 roe, cuts(1 99) replace
+\end{lstlisting}
+
+\begin{practicebox}[实操：用AI完成银行面板数据预处理]
+\textbf{任务}：对银行面板数据进行完整的预处理流水线。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：银行面板数据预处理
+
+请按以下步骤对银行面板数据进行预处理：
+
+【第1步】读入数据
+- 读入 bank_panel.csv 文件
+- 显示数据维度、变量名和数据类型
+
+【第2步】描述统计
+- 对所有数值变量计算均值、标准差、最小值、最大值、偏度、峰度
+- 重点关注 roe、npl_ratio、car 三个核心变量的分布特征
+- 判断是否存在尖峰厚尾现象（峰度>3）
+
+【第3步】缺失值填补
+- 统计每个变量的缺失比例
+- 对缺失比例<5%的变量用组内均值插补
+- 对缺失比例5%-20%的变量用多重插补
+- 删除缺失比例>20%的变量
+
+【第4步】异常值标注
+- 用IQR法检测 roe、npl_ratio、car 的异常值
+- 不删除异常值，但新增 is_outlier 标记列
+- 输出异常值统计表
+
+【第5步】变量变换
+- 对 asset 取对数生成 log_asset
+- 对 roe 和 npl_ratio 在1%和99%分位进行缩尾处理
+- 保存预处理后的数据为 bank_panel_clean.csv
+\end{lstlisting}
+
+\textbf{预期产出}：清洗后的数据文件 + 描述统计表 + 异常值报告。
+\end{practicebox}
+
+\begin{theorybox}[金融数据的"看门人"——数据质量控制清单]
+在开展任何计量分析之前，请逐项检查以下数据质量控制清单：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{数据来源可靠性}：数据是否来自权威渠道（Wind/CSMAR/ Bankscope）？
+  \item \textbf{变量定义一致性}：同一变量在不同年份的口径是否一致？
+  \item \textbf{缺失模式可识别}：缺失是随机的（MAR）还是与因变量相关（MNAR）？
+  \item \textbf{异常值有解释}：每个异常值是否有合理解释（如金融危机、政策变动）？
+  \item \textbf{单位统一}：百分比是否统一（5\%表示为5还是0.05）？
+  \item \textbf{时间对齐}：不同来源的数据时间戳是否对齐？
+  \item \textbf{样本选择偏误}：剔除某些银行后是否引入系统性偏误？
+\end{enumerate}
+
+数据质量控制是不可省略的前置步骤——"垃圾进，垃圾出"（Garbage In, Garbage Out）永远是计量分析的第一法则。
+\end{theorybox}
+
+% ============================================================
+\section{面板数据回归分析}
+\label{sec:panel}
+% ============================================================
+
+面板数据（Panel Data）同时包含个体维度和时间维度，是金融实证研究的主力数据结构。本节系统讲解面板数据回归的三种经典模型及其选择方法。
+
+\subsection{面板数据的优势}
+
+相较于纯截面数据或纯时间序列数据，面板数据具有三方面优势：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{控制个体异质性}：面板数据允许控制不可观测的、不随时间变化的个体特征（如银行的公司文化、地域优势），从而缓解遗漏变量偏误
+  \item \textbf{更多信息量}：$N$个个体$\times$ $T$期提供$NT$个观测值，增大自由度，提高估计效率
+  \item \textbf{减少共线性}：个体内变异与个体间变异的结合，降低了多重共线性风险
+\end{enumerate}
+
+面板数据的基本模型可写为：
+
+\[
+y_{it} = \alpha_i + \mathbf{x}_{it}'\boldsymbol{\beta} + \varepsilon_{it}, \quad i=1,\ldots,N;\; t=1,\ldots,T
+\]
+
+其中$\alpha_i$为个体效应（个体异质性），$\mathbf{x}_{it}$为解释变量向量，$\boldsymbol{\beta}$为待估参数向量，$\varepsilon_{it}$为随机扰动项。对$\alpha_i$的不同假设形成了三种经典模型。
+
+\subsection{混合OLS回归（Pooled OLS）}
+
+混合OLS假设所有个体具有相同的截距项（$\alpha_i = \alpha$），将面板数据当作一个大样本进行回归：
+
+\[
+y_{it} = \alpha + \mathbf{x}_{it}'\boldsymbol{\beta} + \varepsilon_{it}
+\]
+
+\textbf{适用条件}：个体间不存在不可观测的异质性，或异质性与解释变量不相关。
+
+\textbf{局限性}：若个体效应$\alpha_i$确实存在且与$\mathbf{x}_{it}$相关，忽略$\alpha_i$会导致估计偏误——这正是面板数据模型选择的核心问题。
+
+\begin{lstlisting}[style=stata]
+// 混合OLS回归
+reg roe npl_ratio car loan_growth log_asset, robust
+est store ols
+\end{lstlisting}
+
+\subsection{固定效应模型（Fixed Effects, FE）}
+
+固定效应模型假设个体效应$\alpha_i$与解释变量$\mathbf{x}_{it}$相关，因此必须控制$\alpha_i$才能获得一致的估计。FE的核心思想是：利用"组内变异"（within variation）消除个体效应。
+
+\subsubsection{组内估计量（Within Estimator）}
+
+对模型进行组内去均值变换：
+
+\[
+y_{it} - \bar{y}_i = (\mathbf{x}_{it} - \bar{\mathbf{x}}_i)'\boldsymbol{\beta} + (\varepsilon_{it} - \bar{\varepsilon}_i)
+\]
+
+个体效应$\alpha_i$在差分中被消去，OLS估计该变换后的模型即可得到组内估计量$\hat{\boldsymbol{\beta}}_{FE}$。
+
+\subsubsection{LSDV估计}
+
+另一种等价方法是引入$N$个个体虚拟变量直接估计：
+
+\[
+y_{it} = \sum_{j=1}^{N}\alpha_j D_{j,it} + \mathbf{x}_{it}'\boldsymbol{\beta} + \varepsilon_{it}
+\]
+
+当$N$较大时，LSDV计算量大，但与组内估计量数值等价。
+
+\begin{lstlisting}[style=stata]
+// 固定效应模型（两种等价命令）
+// 方式一：xtreg
+xtset bank_id year
+xtreg roe npl_ratio car loan_growth log_asset, fe robust
+est store fe
+
+// 方式二：reghdfe（推荐，支持多维固定效应）
+reghdfe roe npl_ratio car loan_growth log_asset, absorb(bank_id year) robust
+est store fe2
+\end{lstlisting}
+
+\begin{notebox}[reghdfe 的优势]
+\texttt{reghdfe} 是当前面板数据实证研究的首选命令，相比 \texttt{xtreg}，它具有以下优势：
+\begin{itemize}
+  \item 支持多维固定效应（如同时控制个体和年份）
+  \item 吸收固定效应后自动报告调整后$R^2$
+  \item 可与 \texttt{ivhdfe}、\texttt{hdfe} 配合实现IV-GMM估计
+  \item 对大$N$面板计算效率更高
+\end{itemize}
+安装命令：\texttt{ssc install reghdfe, replace}
+\end{notebox}
+
+\subsection{随机效应模型（Random Effects, RE）}
+
+随机效应模型假设个体效应$\alpha_i$与解释变量$\mathbf{x}_{it}$\textbf{不相关}，即：
+
+\[
+\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0
+\]
+
+在此假设下，$\alpha_i$可被视为随机扰动项的一部分，模型变为：
+
+\[
+y_{it} = \alpha + \mathbf{x}_{it}'\boldsymbol{\beta} + u_{it}, \quad u_{it} = \alpha_i + \varepsilon_{it}
+\]
+
+复合扰动项$u_{it}$的方差结构为：
+
+\[
+\text{Var}(u_{it}) = \sigma_\alpha^2 + \sigma_\varepsilon^2, \quad \text{Cov}(u_{it}, u_{is}) = \sigma_\alpha^2 \;(t \neq s)
+\]
+
+RE模型使用广义最小二乘法（GLS）估计，通过部分组内变换（quasi-demeaning）实现：
+
+\[
+y_{it} - \hat{\theta}\bar{y}_i = (1-\hat{\theta})\alpha + (\mathbf{x}_{it} - \hat{\theta}\bar{\mathbf{x}}_i)'\boldsymbol{\beta} + \text{扰动项}
+\]
+
+其中$\hat{\theta}$为变换参数，取值介于0（OLS）和1（FE）之间。
+
+\begin{lstlisting}[style=stata]
+// 随机效应模型
+xtreg roe npl_ratio car loan_growth log_asset, re robust
+est store re
+\end{lstlisting}
+
+\subsection{模型选择检验}
+
+三种模型的选择依赖于严格的统计检验，形成一套递进的检验逻辑：
+
+\subsubsection{F检验：混合OLS vs 固定效应}
+
+原假设$H_0$: 所有个体效应$\alpha_i$均相等（即$\alpha_1 = \alpha_2 = \cdots = \alpha_N$）。F统计量为：
+
+\[
+F = \frac{(R_{FE}^2 - R_{OLS}^2)/(N-1)}{(1-R_{FE}^2)/(NT-N-K)} \sim F(N-1, NT-N-K)
+\]
+
+若拒绝原假设，说明个体效应存在，应使用FE而非OLS。
+
+\subsubsection{Hausman检验：固定效应 vs 随机效应}
+
+Hausman检验的核心问题是：个体效应$\alpha_i$是否与解释变量相关？
+
+原假设$H_0$: $\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0$（RE成立）
+
+检验统计量：
+
+\[
+H = (\hat{\boldsymbol{\beta}}_{FE} - \hat{\boldsymbol{\beta}}_{RE})'[\text{Var}(\hat{\boldsymbol{\beta}}_{FE}) - \text{Var}(\hat{\boldsymbol{\beta}}_{RE})]^{-1}(\hat{\boldsymbol{\beta}}_{FE} - \hat{\boldsymbol{\beta}}_{RE}) \sim \chi^2(K)
+\]
+
+若$H$显著（$p < 0.05$），拒绝原假设，选择FE；否则选择RE。
+
+\subsubsection{BP-LM检验：混合OLS vs 随机效应}
+
+Breusch-Pagan Lagrange Multiplier检验判断个体效应的方差$\sigma_\alpha^2$是否为零。
+
+原假设$H_0$: $\sigma_\alpha^2 = 0$（不存在个体效应，OLS适用）
+
+\begin{lstlisting}[style=stata]
+// 完整的模型选择检验流程
+// Step 1: 估计FE和RE
+xtreg roe npl_ratio car loan_growth log_asset, fe robust
+est store fe
+xtreg roe npl_ratio car loan_growth log_asset, re robust
+est store re
+
+// Step 2: Hausman检验（FE vs RE）
+hausman fe re
+
+// Step 3: BP-LM检验（OLS vs RE）
+xttest0
+
+// Step 4: 输出三列回归表
+esttab ols fe re using reports/ch07_panel_reg.rtf, ///
+  b(3) se(3) star(* 0.1 ** 0.05 *** 0.01) ///
+  mtitles("OLS" "FE" "RE") ///
+  scalars(N r2_a) replace
+\end{lstlisting}
+
+\begin{theorybox}[模型选择决策树]
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{第一步}：BP-LM检验 → $p$值大？$\Rightarrow$ 个体效应不存在 $\Rightarrow$ 用\textbf{混合OLS}
+  \item \textbf{第二步}：BP-LM显著 → 个体效应存在 → 进入Hausman检验
+  \item \textbf{第三步}：Hausman检验 → $p$值小？$\Rightarrow$ 个体效应与解释变量相关 $\Rightarrow$ 用\textbf{固定效应（FE）}
+  \item \textbf{第四步}：Hausman不显著 → 个体效应与解释变量不相关 $\Rightarrow$ 用\textbf{随机效应（RE）}（效率更高）
+\end{enumerate}
+
+\textbf{实操建议}：在金融实证研究中，多数研究倾向于使用FE，理由是银行业个体异质性（公司治理、地域资源等）往往与解释变量相关。RE虽然效率更高，但假设过强，一旦违背会导致估计不一致。
+\end{theorybox}
+
+\subsection{GMM动态面板简介}
+
+当模型包含因变量的滞后项（如$y_{i,t-1}$）作为解释变量时，FE和RE估计量均不一致（Nickell偏误）。Arellano和Bond（1991）提出的差分GMM估计量通过使用滞后水平值作为差分方程的工具变量来解决这一问题：
+
+\[
+\Delta y_{it} = \beta \Delta y_{i,t-1} + \Delta \mathbf{x}_{it}'\boldsymbol{\gamma} + \Delta \varepsilon_{it}
+\]
+
+\begin{lstlisting}[style=stata]
+// Arellano-Bond 差分GMM
+xtabond roe l.roe npl_ratio car loan_growth, ///
+  lags(1) twostep robust
+// Sargan/Hansen 过度识别检验
+estat sargan
+estat ar1, artests(2)
+estat ar2, artests(2)
+\end{lstlisting}
+
+\begin{practicebox}[实操：用stata-mcp完成银行盈利能力回归]
+\textbf{任务}：对商业银行盈利能力（ROE）的影响因素进行面板回归分析，输出OLS/FE/RE三列回归表。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：商业银行盈利能力影响因素回归分析
+
+请使用 stata-mcp 服务完成以下计量分析任务：
+
+【数据来源（任选其一）】
+1. 公开数据集：620 家商业银行财务数据（2007-2024）
+2. 手动构建：如无外部数据，使用 Stata 生成模拟面板数据
+
+【第 1 步】数据准备与探索
+1. 尝试读入 data/bank_panel.dta；如不存在则使用 webuse grunfeld
+2. 使用 summarize 查看关键变量描述统计
+3. 用 xtset bank_id year 声明面板结构
+
+【第 2 步】三模型回归
+1. 混合OLS：reg roe npl_ratio car loan_growth log_asset, robust
+2. 固定效应：reghdfe roe npl_ratio car loan_growth log_asset, absorb(bank_id year) robust
+3. 随机效应：xtreg roe npl_ratio car loan_growth log_asset, re robust
+
+【第 3 步】模型选择检验
+1. F检验（OLS vs FE）
+2. Hausman检验（FE vs RE）
+3. BP-LM检验（OLS vs RE）
+
+【第 4 步】结果输出
+1. 使用 esttab 命令输出三列回归结果到 reports/ch07_panel_reg.txt
+2. 撰写 200-300 字分析结论，说明哪个模型最合适及其原因
+
+变量说明：
+- roe: 净资产收益率（被解释变量）
+- npl_ratio: 不良贷款率
+- car: 资本充足率
+- loan_growth: 贷款增速
+- log_asset: 资产规模（对数）
+\end{lstlisting}
+
+\textbf{预期产出}：三列回归表 + 模型选择检验结果 + 分析结论。
+\end{practicebox}
+
+% ============================================================
+\section{时间序列预测}
+% ============================================================
+
+时间序列预测是金融数据分析的核心任务之一，广泛应用于股价走势判断、利率预测、消费趋势分析等场景。本节从经典统计方法到深度学习方法进行递进讲解。
+
+\subsection{时间序列分解}
+
+任何时间序列$Y_t$可分解为三个组分：
+
+\[
+Y_t = T_t + S_t + R_t
+\]
+
+其中$T_t$为\textbf{趋势分量}（长期方向），$S_t$为\textbf{季节分量}（周期性波动），$R_t$为\textbf{残差分量}（随机扰动）。
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{加法分解}：$Y_t = T_t + S_t + R_t$，适用于季节波动幅度相对恒定
+  \item \textbf{乘法分解}：$Y_t = T_t \times S_t \times R_t$，适用于季节波动幅度随趋势增大
+\end{itemize}
+
+\begin{lstlisting}[style=python]
+# STL 分解（ Python 实现 ）
+from statsmodels.tsa.seasonal import STL
+import pandas as pd
+
+df = pd.read_csv("bank_card_spending.csv", parse_dates=["date"], index_col="date")
+stl = STL(df["amount"], period=12)
+res = stl.fit()
+res.plot()
+\end{lstlisting}
+
+\subsection{SARIMA模型}
+
+SARIMA（Seasonal Autoregressive Integrated Moving Average）是经典时间序列预测的标杆模型，表示为SARIMA$(p,d,q)(P,D,Q)_s$。
+
+\subsubsection{从AR到SARIMA的递进}
+
+\textbf{AR（自回归）模型}：当前值由过去值的线性组合加噪声决定：
+
+\[
+Y_t = c + \phi_1 Y_{t-1} + \phi_2 Y_{t-2} + \cdots + \phi_p Y_{t-p} + \varepsilon_t
+\]
+
+\textbf{MA（移动平均）模型}：当前值由过去噪声的线性组合决定：
+
+\[
+Y_t = c + \varepsilon_t + \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2} + \cdots + \theta_q \varepsilon_{t-q}
+\]
+
+\textbf{ARIMA模型}：在ARMA基础上引入差分操作，处理非平稳序列。$d$阶差分：
+
+\[
+\Delta^d Y_t = (1-B)^d Y_t
+\]
+
+其中$B$为滞后算子。$d=1$为一阶差分：$\Delta Y_t = Y_t - Y_{t-1}$。
+
+\textbf{SARIMA模型}：在ARIMA基础上增加季节差分和季节自回归/移动平均项：
+
+\[
+\Phi_P(B^s)\phi_p(B)(1-B)^d(1-B^s)^D Y_t = \Theta_Q(B^s)\theta_q(B)\varepsilon_t
+\]
+
+其中$\Phi_P$和$\Theta_Q$为季节多项式，$s$为季节周期（月度数据$s=12$）。
+
+\subsubsection{定阶方法}
+
+SARIMA的定阶需要确定6个参数$(p,d,q)(P,D,Q)_s$，主要方法包括：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{ACF/PACF图}：自相关函数（ACF）和偏自相关函数（PACF）的截尾/拖尾特征可初步判断$(p,q)$：
+    \begin{itemize}
+      \item ACF拖尾 + PACF$p$阶截尾 $\Rightarrow$ AR($p$)
+      \item ACF$q$阶截尾 + PACF拖尾 $\Rightarrow$ MA($q$)
+    \end{itemize}
+  \item \textbf{AIC/BIC准则}：在候选模型中选择信息准则最小的模型
+    \begin{itemize}
+      \item AIC$= -2\ln L + 2k$，偏好复杂模型
+      \item BIC$= -2\ln L + k\ln n$，惩罚更强，偏好简约模型
+    \end{itemize}
+  \item \textbf{网格搜索}：遍历$(p,d,q)(P,D,Q)$组合，比较AIC/BIC
+\end{enumerate}
+
+\begin{lstlisting}[style=python]
+# SARIMA 自动定阶与预测
+import pmdarima as pm
+import pandas as pd
+
+df = pd.read_csv("bank_card_spending.csv", parse_dates=["date"])
+model = pm.auto_arima(
+    df["amount"],
+    seasonal=True, m=12,        # 月度数据，季节周期12
+    d=1, D=1,                    # 一阶差分 + 一阶季节差分
+    max_p=3, max_q=3,            # 非季节部分最大阶数
+    max_P=2, max_Q=2,            # 季节部分最大阶数
+    information_criterion="aic",
+    trace=True
+)
+print(model.summary())
+
+# 预测未来30天
+forecast, conf_int = model.predict(n_periods=30, return_conf_int=True)
+\end{lstlisting}
+
+\subsection{LSTM深度学习预测}
+
+长短期记忆网络（Long Short-Term Memory, LSTM）是Hochreiter和Schmidhuber于1997年提出的循环神经网络变体，专门解决长序列学习中的梯度消失问题。
+
+\subsubsection{循环神经网络基本原理}
+
+循环神经网络（RNN）通过隐藏状态$h_t$传递历史信息：
+
+\[
+h_t = \sigma(W_{hh}h_{t-1} + W_{xh}x_t + b_h)
+\]
+
+RNN的核心问题是\textbf{梯度消失}：在反向传播中，梯度随时间步指数级衰减，导致无法学习长期依赖关系。
+
+\subsubsection{LSTM的三重门机制}
+
+LSTM通过精心设计的门控机制解决梯度消失问题：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{遗忘门}（Forget Gate）：决定从细胞状态中丢弃哪些信息
+
+  $f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$
+
+  \item \textbf{记忆门}（Input Gate）：决定哪些新信息写入细胞状态
+
+  $i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)$
+
+  $\tilde{C}_t = \tanh(W_C \cdot [h_{t-1}, x_t] + b_C)$
+
+  \item \textbf{输出门}（Output Gate）：决定输出哪些信息
+
+  $o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$
+
+  $h_t = o_t \cdot \tanh(C_t)$
+\end{enumerate}
+
+细胞状态更新规则：
+
+\[
+C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t
+\]
+
+\subsubsection{窗口滑动与序列构建}
+
+将时间序列转换为监督学习问题需要"窗口滑动"方法：用过去$w$个时间步的值预测下一个时间步的值。
+
+\begin{lstlisting}[style=python]
+# LSTM 时间序列预测
+import numpy as np
+import torch
+import torch.nn as nn
+
+# 窗口滑动构建序列
+def create_sequences(data, window=12):
+    X, y = [], []
+    for i in range(len(data) - window):
+        X.append(data[i:i+window])
+        y.append(data[i+window])
+    return np.array(X), np.array(y)
+
+# 定义 LSTM 模型
+class BankLSTM(nn.Module):
+    def __init__(self, input_size=1, hidden_size=64, num_layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,
+                            batch_first=True, dropout=0.2)
+        self.fc = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        return self.fc(out[:, -1, :])
+
+# 训练
+model = BankLSTM()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+\end{lstlisting}
+
+\subsection{Prophet模型}
+
+Prophet是Facebook（现Meta）开发的开源时间序列预测工具，基于加法分解模型：
+
+\[
+y(t) = g(t) + s(t) + h(t) + \varepsilon_t
+\]
+
+其中$g(t)$为趋势函数（分段线性或逻辑增长），$s(t)$为季节函数（傅里叶级数），$h(t)$为节假日效应，$\varepsilon_t$为残差。
+
+Prophet的优势在于：
+\begin{itemize}[leftmargin=2em]
+  \item 自动检测趋势变化点
+  \item 灵活处理多重季节性（年/周/日）
+  \item 内置节假日效应建模
+  \item 无需专业调参，适合业务指标快速预测
+\end{itemize}
+
+\begin{lstlisting}[style=python]
+# Prophet 预测
+from prophet import Prophet
+import pandas as pd
+
+df = pd.read_csv("bank_card_spending.csv")
+df = df.rename(columns={"date": "ds", "amount": "y"})
+
+model = Prophet(
+    yearly_seasonality=True,
+    weekly_seasonality=True,
+    changepoint_prior_scale=0.05
+)
+model.fit(df)
+
+# 预测未来30天
+future = model.make_future_dataframe(periods=30)
+forecast = model.predict(future)
+model.plot(forecast)
+model.plot_components(forecast)
+\end{lstlisting}
+
+\subsection{模型评估指标}
+
+时间序列预测模型的性能评估使用以下指标：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{指标} & \textbf{公式} & \textbf{含义} \\
+\midrule
+RMSE & $\sqrt{\frac{1}{n}\sum_{t=1}^{n}(y_t - \hat{y}_t)^2}$ & 均方根误差，单位与原数据一致 \\
+MAE & $\frac{1}{n}\sum_{t=1}^{n}|y_t - \hat{y}_t|$ & 平均绝对误差，对异常值不敏感 \\
+MAPE & $\frac{100\%}{n}\sum_{t=1}^{n}\left|\frac{y_t - \hat{y}_t}{y_t}\right|$ & 平均绝对百分比误差 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[实操：银行信用卡消费额预测]
+\textbf{任务}：使用SARIMA和LSTM双模型对比预测银行信用卡月度消费额。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：银行信用卡消费额预测——SARIMA vs LSTM 对比
+
+请使用 Python 完成以下时间序列预测任务：
+
+【数据准备】
+1. 读入 bank_card_spending.csv（月度信用卡消费额，2018-2025）
+2. 如果没有该文件，生成模拟数据：24个月带趋势+季节+噪声
+3. 可视化原始序列，判断趋势和季节性
+
+【模型一：SARIMA】
+1. 使用 auto_arima 自动定阶
+2. 拟合 SARIMA 模型
+3. 预测未来 30 天（含 95% 置信区间）
+4. 计算 RMSE / MAE / MAPE
+
+【模型二：LSTM】
+1. 数据归一化（MinMaxScaler）
+2. 窗口长度设为 12（即用过去12个月预测下个月）
+3. 构建 2 层 LSTM 网络（hidden_size=64）
+4. 训练 100 个 epoch
+5. 预测未来 30 天
+6. 反归一化，计算 RMSE / MAE / MAPE
+
+【对比与可视化】
+1. 在同一张图上绘制：实际值 + SARIMA 预测 + LSTM 预测
+2. 绘制 SARIMA 的 95% 置信区间（阴影区域）
+3. 输出对比表格：
+
+| 模型   | RMSE | MAE | MAPE |
+|--------|------|-----|------|
+| SARIMA | --   | --  | --   |
+| LSTM   | --   | --  | --   |
+
+4. 撰写 150 字结论：哪个模型更适合？为什么？
+
+保存预测图到 figures/ch07_forecast_compare.png
+\end{lstlisting}
+
+\textbf{预期产出}：预测对比图 + 模型评估表 + 分析结论。
+\end{practicebox}
+
+% ============================================================
+\section{因果推断方法}
+% ============================================================
+
+相关关系不等于因果关系。金融研究中，我们关心的核心问题往往是因果性的：降低存款准备金率是否\textbf{导致}贷款增加？数字金融是否\textbf{导致}银行效率提升？本节介绍金融领域最常用的四种因果推断方法。
+
+\subsection{因果推断vs相关分析}
+
+\begin{theorybox}[相关$\neq$因果]
+统计回归揭示的是变量间的\textbf{条件相关性}，而非因果性。从相关到因果，需要额外的\textbf{识别假设}（Identification Assumption）。
+
+经典反例：冰淇淋销量与溺水人数高度正相关——但两者并无因果关联，真正的共同原因是"气温升高"。如果仅凭相关性就建议"禁止冰淇淋以减少溺水"，显然荒谬。
+
+因果推断的核心挑战是\textbf{反事实}（Counterfactual）：我们永远无法同时观测到同一单元在"接受处理"和"未接受处理"两种状态下的结果。因果推断方法的本质，是用统计技术构造合理的反事实对照组。
+\end{theorybox}
+
+\subsection{双重差分法（Difference-in-Differences, DID）}
+
+双重差分法是政策评估中最常用的因果推断方法，通过比较处理组和对照组在政策前后的变化差异来识别因果效应。
+
+\subsubsection{经典2×2框架}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{政策前} & \textbf{政策后} & \textbf{差分} \\
+\midrule
+处理组 & $\bar{Y}_{00}^T$ & $\bar{Y}_{11}^T$ & $\Delta_T = \bar{Y}_{11}^T - \bar{Y}_{00}^T$ \\
+对照组 & $\bar{Y}_{00}^C$ & $\bar{Y}_{11}^C$ & $\Delta_C = \bar{Y}_{11}^C - \bar{Y}_{00}^C$ \\
+\midrule
+DID & & & $\hat{\delta} = \Delta_T - \Delta_C$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+DID估计量可由回归方程得到：
+
+\[
+Y_{it} = \alpha + \beta \cdot \text{Treat}_i + \gamma \cdot \text{Post}_t + \delta \cdot (\text{Treat}_i \times \text{Post}_t) + \varepsilon_{it}
+\]
+
+其中$\delta$即为DID估计量，表示政策的平均处理效应（ATT）。
+
+\subsubsection{平行趋势假设}
+
+DID有效性的关键假设是\textbf{平行趋势}（Parallel Trends）：在没有政策干预的情况下，处理组和对照组的变化趋势相同。平行趋势无法直接检验（因为反事实不可观测），但可通过事件研究法（Event Study）检验政策前的趋势一致性：
+
+\[
+Y_{it} = \alpha_i + \gamma_t + \sum_{k \neq -1} \delta_k \cdot D_{it}^k + \varepsilon_{it}
+\]
+
+其中$D_{it}^k$为事件时间虚拟变量，政策前各期$\delta_k$应统计不显著。
+
+\begin{lstlisting}[style=stata]
+// DID 回归 + 平行趋势检验
+// 生成处理变量与交互项
+gen treat_post = treat * post
+
+// 基准DID回归
+reghdfe y treat_post treat post, absorb(id year) robust
+
+// 事件研究法（平行趋势检验）
+eventdd y, method(hdfe) absorb(id year) treat(treat) time(year) ///
+  baseline(-1) leads(5) lags(5) graph
+\end{lstlisting}
+
+\subsection{断点回归（Regression Discontinuity Design, RDD）}
+
+断点回归利用处理变量在某个阈值处的"断点"来识别因果效应。核心逻辑：刚好在阈值两侧的个体非常相似，唯一的差异就是是否接受处理。
+
+\subsubsection{精确断点vs模糊断点}
+
+\textbf{精确断点（Sharp RDD）}：处理变量在断点$c$处从0跳变为1：
+
+\[
+D_i = \mathbb{1}(X_i \geq c)
+\]
+
+\textbf{模糊断点（Fuzzy RDD）}：处理概率在断点处不连续，但并非从0跳到1：
+
+\[
+\lim_{x \to c^+} P(D_i=1|X_i=x) \neq \lim_{x \to c^-} P(D_i=1|X_i=x)
+\]
+
+\subsubsection{带宽选择}
+
+局部线性回归的带宽$h$是RDD的关键参数，带宽过大引入偏误，带宽过小增大方差。常用选择方法：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{IK法}（Imbens-Kalyanaraman）：最小化均方误差
+  \item \textbf{CCT法}（Calonico-Cattaneo-Titiunik）：稳健偏误校正
+\end{itemize}
+
+\textbf{应用场景}：信贷门槛效应——某银行规定信用评分低于600分不发放贷款，可利用600分附近样本识别贷款对借款人收入的因果效应。
+
+\begin{lstlisting}[style=stata]
+// 断点回归（ Stata 实现 ）
+// 安装 rdrobust 包
+ssc install rdrobust, replace
+
+// 精确断点回归
+rdrobust y running_var, c(600)
+
+// 带宽敏感性检验
+rdrobust y running_var, c(600) bwselect(mserd)
+
+// 绘制断点图
+rdplot y running_var, c(600)
+\end{lstlisting}
+
+\subsection{工具变量法（Instrumental Variables, IV）}
+
+\subsubsection{内生性问题}
+
+当解释变量与扰动项相关时（$\text{Cov}(X_i, \varepsilon_i) \neq 0$），OLS估计量不一致。内生性的来源包括：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{遗漏变量}：不可观测的因素同时影响解释变量和被解释变量
+  \item \textbf{联立因果}：解释变量与被解释变量互为因果
+  \item \textbf{测量误差}：解释变量的测量不准确
+\end{enumerate}
+
+\subsubsection{有效工具变量的三个条件}
+
+工具变量$Z_i$需满足：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{相关性}（Relevance）：$\text{Cov}(Z_i, X_i) \neq 0$，工具变量与内生解释变量强相关
+  \item \textbf{外生性}（Exogeneity）：$\text{Cov}(Z_i, \varepsilon_i) = 0$，工具变量与扰动项不相关
+  \item \textbf{排他性}（Exclusion Restriction）：工具变量只能通过内生解释变量影响被解释变量
+\end{enumerate}
+
+\subsubsection{两阶段最小二乘法（2SLS）}
+
+\textbf{第一阶段}：用工具变量预测内生解释变量
+
+\[
+\hat{X}_i = \pi_0 + \pi_1 Z_i + \mathbf{W}_i'\boldsymbol{\pi}_2 + v_i
+\]
+
+\textbf{第二阶段}：用预测值替换内生变量进行回归
+
+\[
+Y_i = \beta_0 + \beta_1 \hat{X}_i + \mathbf{W}_i'\boldsymbol{\gamma} + u_i
+\]
+
+\begin{lstlisting}[style=stata]
+// 两阶段最小二乘法（2SLS）
+// ivreg2 命令（推荐）
+ssc install ivreg2, replace
+
+ivreg2 y (x_endogenous = z_instrument), first robust
+
+// 弱工具变量检验
+ivreg2 y (x_endogenous = z_instrument), first robust ///
+  ffirst   // 报告第一阶段 F 统计量
+// 经验法则：第一阶段 F > 10 则无弱工具变量问题
+\end{lstlisting}
+
+\subsection{合成控制法简介}
+
+合成控制法（Synthetic Control Method, SCM）由Abadie等（2010）提出，适用于\textbf{单个处理单元}（如某个省份实施政策）的因果推断。核心思想：用未实施政策的控制单元的加权组合来构造处理单元的"合成对照"。
+
+\[
+\text{合成对照}_t = \sum_{j \in \text{控制组}} w_j \cdot Y_{jt}, \quad \sum w_j = 1, \; w_j \geq 0
+\]
+
+权重$w_j$通过最小化政策前处理单元与控制单元的特征差异来确定。
+
+\begin{practicebox}[实操：DID评估数字金融对银行贷款的影响]
+\textbf{任务}：使用双重差分法评估数字金融发展对商业银行贷款规模的影响。
+
+\textbf{提示词}：
+
+\begin{lstlisting}
+任务：数字金融对银行贷款影响的DID分析
+
+请使用 Stata 完成 DID 因果推断分析：
+
+【研究设计】
+- 政策事件：2020年《金融科技发展规划》发布
+- 处理组：数字金融发展指数高于中位数的银行
+- 对照组：数字金融发展指数低于中位数的银行
+- 被解释变量：贷款规模（log_loan）
+- 控制变量：资产规模、资本充足率、不良贷款率
+
+【第1步】数据准备
+1. 读入 bank_digital_did.dta
+2. 生成处理变量：treat = (digital_index > median)
+3. 生成政策期虚拟变量：post = (year >= 2020)
+4. 生成交互项：treat_post = treat * post
+
+【第2步】基准DID回归
+reghdfe log_loan treat_post treat post controls, ///
+  absorb(bank_id year) cluster(bank_id)
+
+【第3步】平行趋势检验
+1. 生成事件时间虚拟变量
+2. 绘制事件研究图，检验政策前系数是否显著
+
+【第4步】稳健性检验
+1. 安慰剂检验：随机分配处理组，重复100次
+2. 替换被解释变量：用贷款增速替代对数贷款规模
+3. PSM-DID：先用倾向得分匹配，再做DID
+
+【第5步】输出结果
+1. 基准回归表 + 稳健性检验表
+2. 平行趋势图
+3. 200-300字结论：数字金融对银行贷款的因果效应
+\end{lstlisting}
+
+\textbf{预期产出}：DID回归表 + 平行趋势图 + 稳健性检验结果 + 分析结论。
+\end{practicebox}
+
+% ============================================================
+\section{AI辅助计量分析工作流}
+% ============================================================
+
+AI大模型正在重塑计量经济学的研究流程，但它始终是\textbf{助手而非替代}——研究问题的提出、模型的经济含义解释、结果的合理性判断，这些核心环节仍需研究者的专业判断。
+
+\subsection{AI在计量研究中的角色定位}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{环节} & \textbf{AI可替代程度} & \textbf{人工必要程度} \\
+\midrule
+文献综述辅助 & 高 & 中 \\
+数据获取与清洗 & 高 & 中 \\
+描述统计与可视化 & 高 & 低 \\
+模型估计与检验 & 中 & 高 \\
+结果解释与经济学判断 & 低 & 高 \\
+稳健性检验设计 & 中 & 高 \\
+论文撰写 & 中 & 高 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{完整工作流}
+
+\subsubsection{Step 1：文献综述→确定模型设定}
+
+利用AI快速梳理相关文献，提炼已有研究的模型设定、变量选择和估计方法。提示词示例：
+
+\begin{lstlisting}
+请帮我梳理"银行盈利能力影响因素"的实证文献：
+1. 列出近5年5篇代表性中文文献（含作者、年份、期刊）
+2. 每篇文献的核心模型设定是什么？
+3. 常用的被解释变量和解释变量有哪些？
+4. 主要的实证策略（FE/RE/GMM/IV）是什么？
+5. 现有研究的不足之处是什么？
+\end{lstlisting}
+
+\subsubsection{Step 2：数据获取与清洗（AI辅助）}
+
+AI可辅助编写数据爬取脚本、缺失值处理代码和异常值检测逻辑，但数据的准确性和完整性仍需人工核验。
+
+\subsubsection{Step 3：描述统计与可视化（AI辅助）}
+
+让AI生成描述统计表、相关系数矩阵和关键变量的分布图。此环节AI可高度自动化，但研究者应关注数据是否符合经济直觉。
+
+\subsubsection{Step 4：模型估计与检验（AI执行+人工判断）}
+
+AI可快速执行多种模型估计，但以下关键判断必须由研究者做出：
+\begin{itemize}[leftmargin=2em]
+  \item 固定效应vs随机效应的选择依据
+  \item 工具变量的合理性论证
+  \item 系数的经济含义是否合理
+\end{itemize}
+
+\subsubsection{Step 5：稳健性检验设计（AI建议+人工决策）}
+
+AI可建议稳健性检验方案，但检验的合理性需要研究者判断：
+\begin{itemize}[leftmargin=2em]
+  \item 替换变量度量方式
+  \item 调整样本范围（排除特殊年份/银行类型）
+  \item 使用不同估计方法
+  \item 安慰剂检验/ falsification test
+\end{itemize}
+
+\subsubsection{Step 6：结果解释与论文撰写}
+
+AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断。特别注意：回归系数的统计显著不等于经济显著——一个$1\%$显著水平的系数，如果经济量级微不足道（如ROE提高0.001个百分点），其实际意义有限。
+
+\begin{warningbox}[AI计量分析的常见陷阱]
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{过拟合}：AI可能建议加入过多控制变量或交互项以提高$R^2$，但牺牲了模型的解释力和外推性。经济学研究追求的是简约而稳健的模型，而非最高$R^2$。
+
+  \item \textbf{数据窥探}（Data Snooping）：反复让AI尝试不同模型设定直到得到"理想"结果，本质上是在$p$-hack。正确的做法是先确定基准模型，再进行稳健性检验。
+
+  \item \textbf{伪回归}：两个非平稳时间序列可能高度相关但毫无因果关系（如中国GDP与全球气温）。AI不会自动提醒你做单位根检验和协整检验——这些是研究者的责任。
+
+  \item \textbf{忽略经济学直觉}：AI可能建议统计上最优但经济学上无意义的模型设定。始终以经济学理论为锚，以统计方法为工具。
+\end{enumerate}
+\end{warningbox}
+
+% ============================================================
+\section{实验：银行盈利能力影响因素实证研究}
+% ============================================================
+
+本实验将完整走一遍论文级实证研究的全流程，从研究假设到稳健性检验，形成一份可投稿级别的回归分析报告。
+
+\subsection{实验设计}
+
+\subsubsection{研究假设}
+
+基于银行业理论和中国金融制度背景，提出以下三条研究假设：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{H1}：不良贷款率与银行盈利能力负相关。不良贷款率越高，拨备计提越多，侵蚀利润空间。
+  \item \textbf{H2}：资本充足率与银行盈利能力正相关。资本充足率高的银行风险抵御能力强，可承担更高收益的资产配置。
+  \item \textbf{H3}：资产规模与银行盈利能力存在非线性关系。规模经济在初期提升盈利，但过度扩张后管理成本上升，出现规模不经济。
+\end{enumerate}
+
+\subsubsection{变量定义表}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{变量类型} & \textbf{变量名} & \textbf{定义} & \textbf{数据来源} \\
+\midrule
+被解释变量 & ROE & 净利润/股东权益 & Bankscope \\
+ & ROA & 净利润/总资产 & Bankscope \\
+\midrule
+核心解释变量 & NPL & 不良贷款/总贷款 & 银行年报 \\
+ & CAR & 资本充足率 & 银行年报 \\
+ & SIZE & ln(总资产) & Bankscope \\
+\midrule
+控制变量 & LOAN & 贷款增速 & 计算得到 \\
+ & GDP & GDP增速 & 国家统计局 \\
+ & CPI & 通货膨胀率 & 国家统计局 \\
+\midrule
+异质性变量 & TYPE & 银行类型 & 手工分类 \\
+ & REGION & 所在区域 & 手工分类 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{数据来源说明}
+
+本实验使用Bankscope（现Bank Focus）数据库中中国商业银行2010--2024年的年度财务数据，涵盖国有大型银行、股份制银行、城市商业银行和农村商业银行四类机构。样本剔除了政策性银行、外资银行和数据严重缺失的观测。
+
+\subsubsection{实证策略}
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{基准回归}：双向固定效应模型（控制个体和年份固定效应）
+  \item \textbf{稳健性检验}：替换被解释变量（ROA）、缩尾处理、调整样本区间
+  \item \textbf{异质性分析}：按银行类型和区域分组回归
+  \item \textbf{中介效应}：检验风险承担是否中介资本充足率对盈利能力的影响
+\end{enumerate}
+
+\subsection{分步提示词}
+
+\subsubsection{Step 1：描述统计与相关性分析}
+
+\begin{lstlisting}
+任务：银行盈利能力研究——描述统计
+
+请使用 Stata 完成以下分析：
+1. 读入 bank_profitability.dta
+2. 对所有变量进行描述统计（均值、标准差、最小值、最大值、观测数）
+3. 计算核心变量的相关系数矩阵
+4. 绘制 ROE 的直方图，检验正态性
+5. 输出描述统计表和相关系数矩阵到 reports/ch07_desc_stat.txt
+\end{lstlisting}
+
+\subsubsection{Step 2：基准回归}
+
+\begin{lstlisting}
+任务：银行盈利能力研究——基准回归
+
+请使用 Stata 的 reghdfe 命令完成基准回归：
+1. 模型设定：reghdfe roe npl car size loan_growth gdp_growth cpi, absorb(bank_id year) cluster(bank_id)
+2. 同时估计三个嵌套模型：
+   - 模型1：仅核心解释变量
+   - 模型2：加入控制变量
+   - 模型3：加入年份固定效应
+3. 输出三列回归表到 reports/ch07_baseline.rtf
+\end{lstlisting}
+
+\subsubsection{Step 3：稳健性检验}
+
+\begin{lstlisting}
+任务：银行盈利能力研究——稳健性检验
+
+请完成以下稳健性检验：
+1. 替换被解释变量：用 ROA 替代 ROE
+2. 缩尾处理：对 ROE 在 1% 和 99% 分位进行 Winsorize
+3. 排除 2020 年（新冠疫情异常年份）
+4. 使用滞后解释变量（t-1期）缓解反向因果
+
+每个检验输出一列回归结果，合并为稳健性检验表格
+保存到 reports/ch07_robustness.rtf
+\end{lstlisting}
+
+\subsubsection{Step 4：异质性分析}
+
+\begin{lstlisting}
+任务：银行盈利能力研究——异质性分析
+
+请按以下维度进行分组回归：
+1. 按银行类型分组：国有大行 vs 股份行 vs 城商行 vs 农商行
+2. 按区域分组：东部 vs 中部 vs 西部
+3. 对每组分别运行基准回归模型
+4. 用 Chow 检验判断组间系数差异是否显著
+
+输出分组回归表到 reports/ch07_heterogeneity.rtf
+\end{lstlisting}
+
+\subsubsection{Step 5：中介效应检验}
+
+\begin{lstlisting}
+任务：银行盈利能力研究——中介效应检验
+
+检验假说：资本充足率(CAR) → 风险承担(RISK) → 盈利能力(ROE)
+
+使用 Sobel 中介效应检验三步法：
+Step a: reg roe car controls, robust           （总效应）
+Step b: reg risk car controls, robust          （a路径）
+Step c: reg roe car risk controls, robust      （直接效应+b路径）
+
+计算中介效应 = a * b
+使用 sgmediation 命令完成 Sobel 检验
+输出中介效应检验结果到 reports/ch07_mediation.txt
+\end{lstlisting}
+
+\subsection{预期产出}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cll}
+\toprule
+\textbf{\#} & \textbf{交付物} & \textbf{文件名} \\
+\midrule
+1 & 描述统计表 + 相关系数矩阵 & reports/ch07\_desc\_stat.txt \\
+2 & 基准回归表（三列） & reports/ch07\_baseline.rtf \\
+3 & 稳健性检验表 & reports/ch07\_robustness.rtf \\
+4 & 异质性分析表 & reports/ch07\_heterogeneity.rtf \\
+5 & 中介效应检验结果 & reports/ch07\_mediation.txt \\
+6 & 200字研究结论 & 写入实验报告 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{研究结论示例}：
+
+基于2010--2024年中国商业银行面板数据，采用双向固定效应模型实证检验了银行盈利能力的影响因素。研究发现：（1）不良贷款率对ROE有显著负向影响（系数$-0.45$，$p<0.01$），支持H1；（2）资本充足率对ROE有显著正向影响（系数$0.32$，$p<0.05$），支持H2；（3）资产规模与ROE呈倒U型关系，拐点出现在资产规模约5000亿元处，部分支持H3。上述结论在替换被解释变量、缩尾处理、排除异常年份等稳健性检验中保持一致。异质性分析表明，资本充足率对城商行和农商行的盈利提升效应更为显著。
+
+% ============================================================
+\section*{本章小结}
+% ============================================================
+
+\addcontentsline{toc}{section}{本章小结}
+
+本章系统介绍了金融数据分析与计量经济学的核心方法。7.1节阐述了金融数据的六大类型和四大典型特征（尖峰厚尾、异方差、序列相关、结构突变），以及缺失值处理、异常值检测和变量变换的完整预处理流程。7.2节深入讲解了面板数据回归的三种经典模型（混合OLS、固定效应、随机效应）及其选择检验（F检验、Hausman检验、BP-LM检验），并介绍了动态面板GMM方法。7.3节从时间序列分解出发，依次介绍了SARIMA、LSTM和Prophet三种预测方法。7.4节阐述了因果推断的四种主流方法（DID、RDD、IV、SCM）。7.5节构建了AI辅助计量分析的六步工作流，并警示了过拟合、数据窥探、伪回归等常见陷阱。7.6节通过银行盈利能力影响因素的完整实验，将上述方法串联为论文级实证研究。
+
+\keyterms{面板数据、固定效应模型、随机效应模型、Hausman检验、reghdfe、GMM、SARIMA、LSTM、Prophet、因果推断、双重差分法（DID）、平行趋势假设、断点回归（RDD）、工具变量法（IV）、2SLS、合成控制法（SCM）、缩尾处理（Winsorize）、ARCH效应、多重插补、中介效应}
+
+\begin{exercisebox}[思考题]
+\begin{enumerate}[leftmargin=2em]
+  \item 为什么金融实证研究中固定效应模型比随机效应模型更常用？在什么条件下随机效应模型更优？
+  \item 若你研究"利率市场化对银行净息差的影响"，应选择DID、RDD还是IV？请阐述理由并设计识别策略。
+  \item SARIMA和LSTM各有什么优劣势？在什么场景下应优先选择SARIMA而非LSTM？
+  \item 某研究者发现银行数字化转型指数与ROE显著正相关，便声称"数字化转型提升了银行盈利能力"。请指出该因果推断的逻辑缺陷，并提出改进方案。
+  \item AI辅助计量分析中，"数据窥探"问题为何特别严重？请设计一个防止数据窥探的工作流程。
+\end{enumerate}
+\end{exercisebox}

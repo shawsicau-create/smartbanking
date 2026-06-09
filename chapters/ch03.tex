@@ -1,0 +1,1379 @@
+% 第3章 MCP协议：让AI连接金融世界
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+\chapter{MCP协议：让AI连接金融世界}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 深入理解MCP协议的三层架构与通信机制
+  \item 掌握浏览器组MCP在金融数据采集中的应用
+  \item 掌握Office组MCP在金融文档自动化中的应用
+  \item 掌握Stata MCP在计量经济学分析中的应用
+  \item 学会MCP组合编排完成复杂金融工作流
+\end{enumerate}
+}
+
+% ============================================================
+\section{MCP协议理论基础}
+% ============================================================
+
+\subsection{MCP的诞生背景}
+
+在AI大模型快速发展的2023--2024年间，一个核心矛盾日益凸显：大模型拥有强大的推理与生成能力，却无法直接访问外部工具和数据源——它像一位博学但足不出户的学者，无法查阅实时汇率、操作电子表格、驱动浏览器。各AI平台纷纷推出自己的"工具调用"方案，但彼此互不兼容：
+
+\begin{itemize}[leftmargin=2em]
+  \item OpenAI 推出 \textbf{Function Calling}，仅适用于 GPT 系列模型
+  \item Anthropic 推出 \textbf{Tool Use}，仅适用于 Claude 系列模型
+  \item 各家IDE（Cursor、Windsurf、Copilot）各自定义工具接入方式
+  \item 开发者为每个AI平台重复编写工具适配代码，维护成本极高
+\end{itemize}
+
+2024年11月，Anthropic 正式发布 \textbf{Model Context Protocol}（MCP），一种开放标准，旨在统一"AI模型与外部工具/数据源"之间的通信方式。MCP 的核心理念可以类比于USB接口——在USB出现之前，键盘、鼠标、打印机各有专用接口；USB统一了物理层与协议层后，任意设备只需一根线缆即可连接。
+
+\begin{notebox}[关键定位]
+MCP 解决的不是"AI如何调用工具"（这是Function Calling的事），而是"工具方如何以统一标准接入AI"。前者是模型侧的接口规范，后者是工具侧的通信协议——MCP属于后者。
+\end{notebox}
+
+MCP发布后迅速获得行业响应：2025年3月，OpenAI宣布ChatGPT和Agents SDK支持MCP协议；Google Gemini、Microsoft Azure AI Services等平台紧随其后。截至2026年，已有超过1000个开源MCP连接器，覆盖数据库、浏览器、办公软件、开发工具等几乎全部常见场景。
+
+\subsection{三层架构详解}
+
+MCP协议采用经典的三层架构，每一层各司其职，通过标准化接口实现层间解耦：
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│  第1层：MCP Client（宿主 IDE）                              │
+│  TRAE / Qoder / Cursor / Claude Desktop                    │
+│  职责：接收用户意图 → 决定调用哪个 MCP 工具                │
+├─────────────────────────────────────────────────────────────┤
+│  第2层：MCP Server（工具方进程）                            │
+│  如 mcp-server-fetch / @playwright/mcp / stata-mcp         │
+│  职责：暴露 tools 列表 → 接收调用请求 → 返回结果           │
+├─────────────────────────────────────────────────────────────┤
+│  第3层：真实工具 / 外部系统                                 │
+│  浏览器 / Excel / Word / Stata / 数据库 / Web API          │
+│  职责：实际执行操作（打开页面、写入文件、跑回归等）        │
+└─────────────────────────────────────────────────────────────┘
+         ↕ JSON-RPC over stdio / SSE
+\end{verbatim}
+
+下面逐层深入解析：
+
+\textbf{第1层：MCP Client（宿主进程）}
+
+Client 是AI模型的"大本营"，运行在IDE或桌面应用中。它的核心职责包括：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{工具发现}：启动时向每个已配置的Server发送 \texttt{tools/list} 请求，获取可用工具的名称、参数、描述
+  \item \textbf{意图路由}：根据用户输入，AI模型决定调用哪个工具——这一步依赖Tool Schema中的描述信息
+  \item \textbf{请求构造}：将AI的调用意图转化为标准JSON-RPC请求
+  \item \textbf{结果呈现}：接收Server返回的结果，嵌入AI的上下文窗口，生成最终回复
+\end{enumerate}
+
+常见的Client包括：TRAE、Qoder、Cursor、Claude Desktop、VS Code + Copilot等。用户只需在Client的配置文件（\texttt{mcp.json}）中声明要加载哪些Server，Client便在启动时自动建立连接。
+
+\textbf{第2层：MCP Server（工具方进程）}
+
+Server是连接AI与真实工具的"桥梁"。每个Server是一个独立进程，通过stdin/stdout或HTTP与Client通信。它的核心职责包括：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Schema声明}：Server启动时向Client注册自己提供的工具清单，每个工具包含名称、参数JSON Schema、文字描述
+  \item \textbf{请求处理}：接收Client发来的 \texttt{tools/call} 请求，解析参数
+  \item \textbf{工具调用}：将解析后的参数映射为对真实工具的操作指令
+  \item \textbf{结果封装}：将真实工具的输出封装为标准JSON-RPC响应返回给Client
+\end{enumerate}
+
+Server的实现语言不限——Python、TypeScript、Go均可，只要遵循MCP协议规范即可。例如 \texttt{@playwright/mcp} 用TypeScript编写，\texttt{mcp-server-fetch} 用Python编写。
+
+\textbf{第3层：真实工具/外部系统}
+
+这一层是实际执行操作的实体：浏览器引擎（Chromium）、办公软件（Excel/Word/PPT）、统计软件（Stata）、数据库（PostgreSQL）、Web API等。Server通过各自的方式驱动这些工具——例如Playwright Server通过CDP协议驱动Chromium，Excel Server通过Python库openpyxl操作xlsx文件。
+
+\textbf{核心设计思想}：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{解耦}：Client不需要知道工具如何实现，只需知道工具的schema（输入/输出格式）
+  \item \textbf{可插拔}：新增一个MCP Server只需在mcp.json中加一段配置，无需修改IDE代码
+  \item \textbf{标准化}：所有Server都用相同的JSON-RPC协议通信，AI模型学会一种调用方式即可操作所有工具
+\end{itemize}
+
+\subsection{JSON-RPC 2.0通信协议详解}
+
+MCP协议的通信层基于JSON-RPC 2.0规范——一种轻量级的远程过程调用协议。理解其消息格式，有助于调试MCP通信问题。
+
+\subsubsection{请求（Request）}
+
+Client向Server发送的调用请求，包含三个必填字段：
+
+\begin{lstlisting}[style=json]
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "browser_navigate",
+    "arguments": {
+      "url": "https://www.cmbchina.com"
+    }
+  },
+  "id": 1
+}
+\end{lstlisting}
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{jsonrpc}：固定为\texttt{"2.0"}，标识协议版本
+  \item \texttt{method}：要调用的方法名，MCP定义了\texttt{tools/list}、\texttt{tools/call}等标准方法
+  \item \texttt{params}：方法参数，包含工具名称和输入参数
+  \item \texttt{id}：请求标识符，用于将响应与请求配对
+\end{itemize}
+
+\subsubsection{响应（Response）}
+
+Server处理完请求后返回的结果：
+
+\begin{lstlisting}[style=json]
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Page loaded: https://www.cmbchina.com"
+      },
+      {
+        "type": "image",
+        "data": "base64_encoded_image_data...",
+        "mimeType": "image/png"
+      }
+    ]
+  },
+  "id": 1
+}
+\end{lstlisting}
+
+响应中的\texttt{content}数组支持多种类型：\texttt{text}（文本）、\texttt{image}（图片）、\texttt{resource}（资源引用）。这一设计使得MCP可以传递截图、文件等富媒体内容。
+
+\subsubsection{通知（Notification）}
+
+不需要响应的单向消息，如进度通知、日志输出：
+
+\begin{lstlisting}[style=json]
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/progress",
+  "params": {
+    "progressToken": "task-123",
+    "progress": 50,
+    "total": 100
+  }
+}
+\end{lstlisting}
+
+通知没有\texttt{id}字段，Server发送后不期待Client回复。这在长时间运行的任务（如大文件处理）中用于报告进度。
+
+\subsubsection{错误处理（Error）}
+
+当Server无法完成请求时，返回错误响应：
+
+\begin{lstlisting}[style=json]
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32602,
+    "message": "Invalid params",
+    "data": {
+      "tool": "browser_navigate",
+      "missing_param": "url"
+    }
+  },
+  "id": 1
+}
+\end{lstlisting}
+
+JSON-RPC 2.0定义了标准错误码：\texttt{-32700}（解析错误）、\texttt{-32600}（无效请求）、\texttt{-32601}（方法不存在）、\texttt{-32602}（无效参数）、\texttt{-32603}（内部错误）。MCP在此基础上可以扩展自定义错误码。
+
+\subsection{一次MCP调用的完整生命周期}
+
+当你在TRAE中输入「请用playwright打开百度并截图」时，背后发生了什么？
+
+\begin{verbatim}
+用户输入 → AI 大模型推理
+  ↓
+① AI 识别意图，决定调用 playwright MCP 的 screenshot 工具
+  ↓
+② Client 向 Server 发送 JSON-RPC 请求：
+   {"jsonrpc": "2.0", "method": "tools/call",
+    "params": {"name": "browser_screenshot",
+               "arguments": {"url": "https://baidu.com"}},
+    "id": 1}
+  ↓
+③ Server 接收请求 → 调用 Chromium 浏览器打开网页 → 截图
+  ↓
+④ Server 返回 JSON-RPC 响应：
+   {"jsonrpc": "2.0", "result": {"content": [{"type": "image",
+    "data": "base64..."}]}, "id": 1}
+  ↓
+⑤ Client 将截图展示给用户，AI 继续生成文字回复
+\end{verbatim}
+
+下面对每一步进行更详细的解释：
+
+\textbf{步骤①：意图识别与工具选择}
+
+AI模型接收到用户输入后，首先在自己的工具清单中搜索匹配的工具。这个清单是在Client启动时通过\texttt{tools/list}请求从各个Server获取的。AI根据每个工具的\texttt{name}和\texttt{description}字段判断哪个工具最合适。例如，"打开网页"匹配\texttt{browser\_navigate}，"截图"匹配\texttt{browser\_screenshot}。
+
+\textbf{步骤②：请求构造}
+
+AI确定要调用的工具及参数后，Client将调用意图转化为标准JSON-RPC请求。参数值由AI根据用户输入和Tool Schema中的参数定义自动填充。
+
+\textbf{步骤③：Server端处理}
+
+Server收到请求后，首先验证参数是否符合Tool Schema定义——类型是否匹配、必填参数是否齐全。验证通过后，Server将参数映射为对真实工具的操作指令。以Playwright为例，Server调用Chromium的CDP协议打开指定URL的页面，等待加载完成，执行截图操作。
+
+\textbf{步骤④：结果封装与返回}
+
+Server将真实工具的输出封装为JSON-RPC响应。截图操作的结果是一张PNG图片，Server将其进行Base64编码后放入\texttt{content}数组的\texttt{image}类型条目中。
+
+\textbf{步骤⑤：结果呈现与上下文更新}
+
+Client收到响应后，将结果内容注入AI的上下文窗口。对于图片，Client将其显示在对话界面；对于文本，AI将其纳入后续推理的参考信息。此时AI可以继续生成文字回复，解释截图内容或建议下一步操作。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{概念} & \textbf{说明} \\
+\midrule
+Tool Schema & 每个MCP Server启动时向Client声明自己有哪些工具（名称、参数、描述），AI据此决定何时调用 \\
+JSON-RPC 2.0 & 轻量远程过程调用协议，MCP固定使用此格式；一个请求 = 一个method + params + id \\
+stdio / SSE & 传输层：本地MCP用标准输入输出（stdio），远程MCP用Server-Sent Events（SSE） \\
+工具发现 & Client启动时向每个Server发tools/list请求，获取可用工具清单 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Tool Schema与工具发现机制}
+
+Tool Schema是MCP协议中最重要的元数据结构。每个MCP Server在启动时，会向Client声明自己提供的工具清单，每个工具的声明格式如下：
+
+\begin{lstlisting}[style=json]
+{
+  "name": "browser_navigate",
+  "description": "Navigate to a URL in the browser",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "The URL to navigate to"
+      }
+    },
+    "required": ["url"]
+  }
+}
+\end{lstlisting}
+
+其中：
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{name}：工具的唯一标识符，Client在调用时使用此名称
+  \item \texttt{description}：自然语言描述，AI模型据此判断何时该调用此工具——描述的质量直接影响AI的工具选择准确性
+  \item \texttt{inputSchema}：JSON Schema格式的参数定义，声明参数的名称、类型、是否必填
+\end{itemize}
+
+工具发现的完整流程如下：
+
+\begin{enumerate}[leftmargin=2em]
+  \item Client启动，读取\texttt{mcp.json}配置文件，获取所有Server的启动命令
+  \item Client逐一启动Server进程，通过stdio/SSE建立连接
+  \item Client向每个Server发送\texttt{tools/list}请求
+  \item Server返回自己提供的所有工具的Schema声明
+  \item Client将所有工具的Schema汇总后注入AI的上下文
+  \item AI在后续对话中，根据这些Schema决定何时调用哪个工具
+\end{enumerate}
+
+\begin{notebox}[教学提示]
+建议在讲完概念后，让学生在TRAE中故意输入一个错误的MCP工具名，观察AI如何报错——加深对Tool Schema发现机制的理解。
+\end{notebox}
+
+\subsection{stdio vs SSE传输层对比}
+
+MCP协议支持两种传输层，适用于不同场景：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{特性} & \textbf{stdio} & \textbf{SSE（Server-Sent Events）} \\
+\midrule
+通信方式 & 标准输入/输出流 & HTTP长连接 \\
+适用场景 & 本地MCP Server & 远程MCP Server \\
+启动方式 & Client直接启动Server子进程 & Server独立运行，Client连接URL \\
+跨网络 & 不支持 & 支持 \\
+配置示例 & \texttt{"command": "npx", "args": [...]} & \texttt{"url": "http://localhost:4000/mcp"} \\
+延迟 & 极低（本地IPC） & 较高（网络往返） \\
+安全性 & 本地隔离，天然安全 & 需要认证与加密 \\
+典型应用 & 本机安装的工具MCP & 云端API、远程数据库MCP \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+本课程使用的8组MCP均采用stdio传输，因为所有工具都运行在本机。但在企业级应用中，SSE传输更为常见——例如银行内部部署的MCP网关，可以通过SSE将数据库查询能力安全地暴露给AI。
+
+\begin{theorybox}[MCP与传统API调用的本质区别]
+许多初学者会问：MCP不就是另一种API吗？二者有本质区别：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{调用者不同}：传统API由\textbf{开发者}在代码中硬编码调用；MCP由\textbf{AI模型}在运行时自主决策调用——AI根据Tool Schema的描述自动选择工具和填充参数
+  \item \textbf{接口发现}：传统API需要开发者查阅文档；MCP的工具发现是\textbf{自动}的——Client启动时自动获取所有工具清单
+  \item \textbf{可组合性}：传统API的调用链由开发者预设；MCP的调用链由AI\textbf{动态编排}——AI可以在一次对话中组合多个工具，形成前所未有的工作流
+  \item \textbf{人与工具的关系}：传统模式下人是"驾驶员"，直接操控每个API；MCP模式下人是"指挥官"，只描述目标，AI自主选择工具达成目标
+\end{enumerate}
+
+一言以蔽之：传统API是"人→工具"的直接通道，MCP是"人→AI→工具"的智能中介层。这个中介层使得非技术人员也能通过自然语言驱动复杂工具链。
+\end{theorybox}
+
+% ============================================================
+\section{MCP生态全景}
+% ============================================================
+
+\subsection{支持MCP的主流平台}
+
+截至2026年，已有超过1000个开源MCP连接器。主流支持平台包括：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Anthropic}：Claude Desktop、Claude Code
+  \item \textbf{OpenAI}：ChatGPT、Agents SDK、Responses API
+  \item \textbf{Google}：Gemini SDK
+  \item \textbf{Microsoft}：Azure AI Services
+  \item \textbf{开发工具}：Zed、Replit、Codeium、Sourcegraph
+  \item \textbf{国产IDE}：腾讯CodeBuddy、通义灵码、字节TraeCN、百度Comate等均已支持MCP协议
+\end{itemize}
+
+这种跨平台支持意味着：你为一个Client编写的MCP Server，无需修改即可在所有支持MCP的平台上使用——这是标准化的真正力量。
+
+\subsection{常见MCP市场}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{5cm}}
+\toprule
+\textbf{市场} & \textbf{网址} & \textbf{说明} \\
+\midrule
+官方注册表 & \url{https://github.com/modelcontextprotocol/servers} & MCP协议作者维护的reference servers + community servers列表 \\
+Smithery & \url{https://smithery.ai} & 最活跃的第三方MCP市场，支持一键安装 \\
+MCP.so & \url{https://mcp.so} & 中文友好的聚合站，按场景分类 \\
+PulseMCP & \url{https://www.pulsemcp.com} & 含使用人数、更新频率排行 \\
+Glama MCP Directory & \url{https://glama.ai/mcp/servers} & 服务器+客户端两个目录，有评分 \\
+Awesome MCP Servers & \url{https://github.com/punkpeye/awesome-mcp-servers} & GitHub收集向list \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{MCP生态发展趋势}
+
+MCP生态正在快速演化，以下三个方向值得关注：
+
+\textbf{1. 标准化深化}
+
+MCP协议本身仍在快速迭代。2025年发布了Streamable HTTP传输规范（替代SSE），2026年预计推出OAuth 2.1集成的认证标准。标准化进程由Linux基金会下的MCP工作组推进，确保协议的中立性与开放性。
+
+\textbf{2. 企业级应用}
+
+金融机构对MCP的关注点在于\textbf{安全性与合规性}。企业级MCP网关需要支持：基于角色的访问控制（RBAC）、操作审计日志、敏感数据脱敏、速率限制与配额管理。目前Microsoft Azure AI Services和Amazon Bedrock均提供了企业级MCP托管方案。
+
+\textbf{3. 安全认证体系}
+
+MCP安全模型正在从"本地信任"向"零信任"演进。关键进展包括：Server身份验证（防止恶意Server冒充合法工具）、调用签名（确保AI发出的工具调用未被篡改）、沙箱隔离（限制Server的文件系统与网络访问范围）。
+
+\subsection{本课程使用的8组MCP全景}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllp{4.5cm}}
+\toprule
+\textbf{组别} & \textbf{MCP名称} & \textbf{启动方式} & \textbf{主要能力} \\
+\midrule
+浏览器组 & playwright & npx @playwright/mcp@latest & 操作Chromium / Firefox / WebKit \\
+浏览器组 & chrome-devtools & npx -y chrome-devtools-mcp@latest & 调用Chrome DevTools（Lighthouse等） \\
+浏览器组 & fetch & uvx mcp-server-fetch & 直接抓网页/JSON API \\
+Office组 & excel & npx --yes @negokaz/excel-mcp-server & Excel读写、表格、格式、截图 \\
+Office组 & word & uvx --from office-word-mcp-server word\_mcp\_server & Word读写、样式、目录、页码 \\
+Office组 & ppt & uvx --from office-powerpoint-mcp-server ppt\_mcp\_server & PPT生成、模板、批量改稿 \\
+系统组 & WindowsMCP.Net & Windows-MCP.Net.exe & Windows原生UI操作（窗口/键鼠） \\
+数据分析组 & stata-mcp & uvx stata-mcp & 调用本机Stata跑计量回归 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{warningbox}[macOS注意]
+WindowsMCP.Net仅支持Windows系统。macOS用户可跳过此MCP，不影响其他实验内容。
+\end{warningbox}
+
+这8组MCP覆盖了金融从业者最常见的四类操作：数据采集（浏览器组）、文档处理（Office组）、系统操作（系统组）、数据分析（数据分析组）。后续各节将逐一详解。
+
+% ============================================================
+\section{MCP配置实操}
+% ============================================================
+
+\subsection{找到配置文件路径}
+
+MCP的配置通过一个JSON文件完成，不同IDE的配置文件路径不同：
+
+\textbf{Windows（TRAE CN）}：
+
+按 Win + R，输入 \texttt{\%APPDATA\%\textbackslash Trae CN\textbackslash User}，找到 \texttt{mcp.json}。
+
+完整路径：\texttt{C:\textbackslash Users\textbackslash <你的用户名>\textbackslash AppData\textbackslash Roaming\textbackslash Trae CN\textbackslash User\textbackslash mcp.json}
+
+\textbf{macOS（TRAE CN）}：
+
+\texttt{~/Library/Application Support/Trae CN/User/mcp.json}
+
+\textbf{Qoder对应路径}：
+
+\begin{itemize}[leftmargin=2em]
+  \item Windows：\texttt{\%APPDATA\%\textbackslash Qoder\textbackslash SharedClientCache\textbackslash extension\textbackslash local\textbackslash mcp.json}
+  \item macOS：\texttt{~/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json}
+\end{itemize}
+
+\begin{practicebox}[快速定位技巧]
+如果不确定配置文件在哪里，可以在IDE的Builder模式中输入：「请帮我找到mcp.json配置文件的路径」，AI会自动搜索并显示完整路径。
+\end{practicebox}
+
+\subsection{课程标准配置}
+
+把\texttt{mcp.json}内容替换为下列JSON（与本机讲师机一致）：
+
+\begin{lstlisting}[style=json]
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "excel": {
+      "command": "npx",
+      "args": ["--yes", "@negokaz/excel-mcp-server"],
+      "env": {
+        "EXCEL_MCP_PAGING_CELLS_LIMIT": "10000"
+      }
+    },
+    "word": {
+      "command": "uvx",
+      "args": ["--from", "office-word-mcp-server", "word_mcp_server"]
+    },
+    "ppt": {
+      "command": "uvx",
+      "args": ["--from", "office-powerpoint-mcp-server", "ppt_mcp_server"]
+    },
+    "WindowsMCP.Net": {
+      "command": "C:\\Users\\<用户名>\\.dotnet\\tools\\Windows-MCP.Net.exe",
+      "args": []
+    },
+    "stata-mcp": {
+      "command": "uvx",
+      "args": ["stata-mcp"],
+      "env": {
+        "STATA_PATH": "C:\\Program Files\\Stata18\\StataMP-64.exe",
+        "MCP_STATA_LOGLEVEL": "INFO"
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+\begin{warningbox}[路径替换提醒]
+\begin{itemize}[leftmargin=1em]
+  \item 将\texttt{<用户名>}替换为你的Windows实际用户名
+  \item \texttt{STATA\_PATH}必须与本机Stata实际安装路径一致
+  \item JSON中反斜杠必须写成\texttt{\textbackslash\textbackslash}
+\end{itemize}
+\end{warningbox}
+
+\textbf{macOS Stata路径示例}：
+
+\begin{lstlisting}[style=json]
+"stata-mcp": {
+  "command": "uvx",
+  "args": ["stata-mcp"],
+  "env": {
+    "STATA_PATH": "/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp",
+    "MCP_STATA_LOGLEVEL": "INFO"
+  }
+}
+\end{lstlisting}
+
+\subsection{字段含义}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{字段} & \textbf{含义} \\
+\midrule
+mcpServers & 顶层对象，键 = MCP名称（自定义），值 = 启动配置 \\
+command & 实际启动二进制（npx / uvx / .exe绝对路径） \\
+args & 命令行参数，TRAE启动时按数组顺序拼接 \\
+env & 环境变量；放API Key、路径、限制参数 \\
+disabled & true时不加载该MCP \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+理解这些字段的含义，有助于后续排查配置问题。其中\texttt{env}字段特别重要——许多MCP Server需要通过环境变量接收API密钥、安装路径等敏感信息，避免将这些信息硬编码在工具参数中。
+
+\subsection{MCP服务运行条件准备提示词}
+
+在TRAE IDE的\textbf{Builder模式}（Ctrl+U）中输入以下内容：
+
+\begin{lstlisting}
+请为我准备智慧银行课程所需的所有 MCP 服务运行条件：
+
+【1】安装核心依赖
+1. 安装 uv：pip install uv
+2. 安装 Windows-MCP.Net：dotnet tool install -g Windows-MCP.Net
+3. 确认 Node.js >= v20、Python >= 3.10
+
+【2】配置环境变量
+1. 设置 STATA_PATH（设置前检查本机是否安装）
+2. 设置 EXCEL_MCP_PAGING_CELLS_LIMIT=10000
+3. 设置 MCP_STATA_LOGLEVEL=INFO
+
+【3】配置 MCP 服务器
+创建配置文件内容如下，请替换 <用户名> 为实际用户名：
+（此处粘贴上方 mcp.json 内容）
+
+【4】验证所有服务
+1. 测试 fetch 服务能否正常获取网页
+2. 测试 excel 服务能否创建表格
+3. 测试 playwright 服务能否启动浏览器
+4. 输出完整的配置报告和服务状态
+
+请按步骤执行并输出详细的执行日志。
+\end{lstlisting}
+
+\subsection{重启验证}
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{完全退出TRAE}（任务栏右键 → 退出）
+  \item 重新打开TRAE
+  \item 在Builder模式输入：请用playwright打开百度首页并截图
+  \item AI自动调用MCP → 浏览器弹出 → 截图回传 = 配置成功
+\end{enumerate}
+
+\begin{notebox}[为什么要完全退出？]
+MCP配置文件只在IDE启动时读取。修改mcp.json后，仅在IDE内"关闭窗口"是不够的——需要完全退出进程后重新启动，新配置才会生效。
+\end{notebox}
+
+\subsection{配置常见问题}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{5cm}}
+\toprule
+\textbf{现象} & \textbf{原因} & \textbf{解决} \\
+\midrule
+找不到npx & Node.js未装或未加入PATH & 重装Node.js，勾选Add to PATH \\
+找不到uvx & 未装uv & pip install uv或winget安装 \\
+MCP工具不出现 & mcp.json语法错误 & 把整段JSON贴给AI，让它检查格式 \\
+playwright报错 & 首次运行需下载浏览器内核 & AI会执行npx playwright install，等待 \\
+stata-mcp报错 & STATA\_PATH不正确 & 改为本机Stata实际安装路径 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[配置验证 Checklist]
+完成配置后，依次验证以下项目：
+\begin{enumerate}
+  \item 在终端运行 \texttt{npx --version}，确认npx可用
+  \item 在终端运行 \texttt{uvx --version}，确认uvx可用
+  \item 打开IDE，检查状态栏是否显示已加载的MCP数量
+  \item 在Builder模式输入「列出当前可用的MCP工具」，AI应返回8组工具清单
+  \item 逐个测试：fetch抓网页、playwright截图、excel创建表格
+\end{enumerate}
+\end{practicebox}
+
+% ============================================================
+\section{浏览器组MCP：金融网页数据采集}
+% ============================================================
+
+浏览器组包含三个MCP Server，分别负责不同的数据采集场景：Playwright MCP提供完整的浏览器自动化能力，Chrome DevTools MCP提供网页质量审计能力，Fetch MCP提供轻量级HTTP请求能力。三者协同，覆盖了金融数据采集的完整需求链。
+
+\subsection{Playwright MCP详解}
+
+\subsubsection{工具能力清单}
+
+Playwright MCP基于微软Playwright测试框架，可以驱动Chromium、Firefox和WebKit三种浏览器引擎。其核心工具包括：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{工具名} & \textbf{功能} \\
+\midrule
+\texttt{browser\_navigate} & 导航到指定URL \\
+\texttt{browser\_click} & 点击页面元素 \\
+\texttt{browser\_fill} & 填写表单输入框 \\
+\texttt{browser\_screenshot} & 对当前页面截图 \\
+\texttt{browser\_evaluate} & 在页面上下文执行JavaScript \\
+\texttt{browser\_select\_option} & 选择下拉菜单选项 \\
+\texttt{browser\_hover} & 鼠标悬停触发交互 \\
+\texttt{browser\_type} & 模拟键盘输入 \\
+\texttt{browser\_wait} & 等待元素出现或页面加载 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+其中最常用的五个工具是\texttt{navigate}（打开页面）、\texttt{screenshot}（截图）、\texttt{click}（点击）、\texttt{fill}（填表）和\texttt{evaluate}（执行JS）。\texttt{evaluate}工具尤为强大——它允许在浏览器上下文中执行任意JavaScript代码，可以提取页面中的动态数据（如AJAX加载的表格内容）。
+
+\subsubsection{示范提示词}
+
+\begin{lstlisting}
+请用 playwright MCP 完成：
+1. 打开 https://www.cmbchina.com（招商银行官网）；
+2. 截图保存为 figures/cmb_home.png；
+3. 对该页面跑 lighthouse_audit，输出"性能/可访问性/最佳实践/SEO"四项分数；
+4. 用 100 字中文总结这家银行官网的优缺点。
+\end{lstlisting}
+
+\textbf{学生练习}：选择家乡的一家城商行/农商行官网，重复上述4步。
+
+\begin{theorybox}[Web自动化在金融数据采集中的应用场景]
+在金融行业，Web自动化有三大核心应用场景：
+
+\textbf{场景一：公开数据采集}。银行官网、交易所网站、监管机构公示平台包含大量结构化数据（理财产品列表、公告信息、利率报价），但这些数据往往没有提供API接口。Playwright可以模拟用户浏览操作，自动提取页面数据。
+
+\textbf{场景二：业务流程监控}。银行需要持续监控自身及竞品的线上渠道表现——网页是否正常加载、关键业务入口是否可达、页面响应时间是否达标。Playwright的截图+评估组合，可以自动化这一监控流程。
+
+\textbf{场景三：合规性验证}。金融监管要求银行网站满足可访问性标准（如WCAG 2.1），确保残障人士可以使用。Chrome DevTools的Lighthouse审计可以自动检测可访问性合规情况。
+
+需要注意的是，Web自动化采集必须遵守目标网站的\texttt{robots.txt}规则和服务条款，不得过度请求导致服务器压力，也不得采集非公开的个人隐私数据。
+\end{theorybox}
+
+\subsection{Chrome DevTools MCP}
+
+\subsubsection{Lighthouse审计指标详解}
+
+Chrome DevTools MCP的核心能力是调用Lighthouse引擎对网页进行全方位审计。Lighthouse从四个维度评估网页质量：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3cm}p{6cm}}
+\toprule
+\textbf{维度} & \textbf{权重} & \textbf{关键指标} \\
+\midrule
+性能（Performance） & 高 & 首次内容绘制（FCP）、最大内容绘制（LCP）、累积布局偏移（CLS）、首次输入延迟（FID） \\
+可访问性（Accessibility） & 高 & 对比度、Alt文本、ARIA标签、键盘导航 \\
+最佳实践（Best Practices） & 中 & HTTPS使用、安全漏洞、浏览器错误 \\
+SEO（搜索引擎优化） & 中 & 标题标签、Meta描述、结构化数据、移动友好性 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+每个维度的分数范围是0--100分。对于银行官网，通常关注性能和可访问性两个维度——性能影响用户体验和转化率，可访问性则关乎监管合规。
+
+\subsubsection{L1任务提示词}
+
+\begin{lstlisting}
+请用 chrome-devtools MCP 完成：
+1. 打开 https://www.cmbchina.com（招商银行官网）；
+2. 截图保存为 figures/cmb_home.png；
+3. 对该页面跑 lighthouse_audit，输出"性能/可访问性/最佳实践/SEO"四项分数；
+4. 用 100 字中文总结这家银行官网的优缺点。
+\end{lstlisting}
+
+\subsection{Fetch MCP}
+
+\subsubsection{RESTful API概念简述}
+
+RESTful API是当今Web服务的主流架构风格。其核心思想是：将一切数据抽象为"资源"，通过HTTP动词（GET/POST/PUT/DELETE）对资源进行操作。理解RESTful API有助于使用Fetch MCP高效获取金融数据。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{HTTP动词} & \textbf{操作} & \textbf{示例} \\
+\midrule
+GET & 获取资源 & 获取实时汇率 \\
+POST & 创建资源 & 提交订单 \\
+PUT & 更新资源 & 修改利率设置 \\
+DELETE & 删除资源 & 取消订阅 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Fetch MCP本质上是AI驱动的HTTP客户端——它可以根据自然语言指令自动构造正确的HTTP请求，并解析返回的JSON/HTML内容。相比Playwright，Fetch更轻量、更快速，但不能处理需要JavaScript渲染的动态页面。
+
+\subsubsection{金融API数据获取}
+
+金融行业有大量公开API提供实时数据。以下是一些典型场景：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{汇率数据}：中国银行、央行公布的外汇牌价
+  \item \textbf{利率数据}：LPR贷款市场报价利率、各期限存款利率
+  \item \textbf{公告信息}：上市公司公告、银行新闻动态
+  \item \textbf{宏观数据}：国家统计局GDP、CPI、PMI等数据
+\end{itemize}
+
+\textbf{拓展任务B：实时汇率/利率数据获取}
+
+\begin{lstlisting}
+任务：使用 fetch MCP 调用银行公开 API 获取实时金融数据
+
+1. 使用 fetch MCP 访问中国银行外汇牌价页面，提取当日主要货币买入/卖出汇率
+2. 使用 fetch MCP 获取 LPR 贷款市场报价利率
+3. 将汇率数据和利率数据整理为 Markdown 表格输出
+4. 撰写 50 字简评：当前汇率走势对银行外汇业务的影响
+\end{lstlisting}
+
+\textbf{拓展任务C：手机端 vs PC端对比审计}
+
+\begin{lstlisting}
+任务：对比同一银行官网在不同设备上的表现
+
+1. 用 playwright 以默认 PC 视口（1920x1080）打开建设银行官网，截图保存
+2. 用 playwright 设置 iPhone 14 视口（390x844）重新打开同一页面，截图保存
+3. 分别对两个视口跑 lighthouse 审计，对比性能分数差异
+4. 撰写 150 字分析报告：该银行响应式设计的优劣势
+\end{lstlisting}
+
+\begin{casebox}[上市银行官网可用性对比分析案例]
+某研究团队使用Playwright MCP + Chrome DevTools MCP对10家上市银行官网进行自动化审计，流程如下：
+
+\textbf{步骤1}：使用Playwright依次打开10家银行官网首页，截图存档。
+
+\textbf{步骤2}：使用Chrome DevTools的Lighthouse对每个页面进行审计，获取性能/可访问性/SEO/最佳实践四项分数。
+
+\textbf{步骤3}：使用Fetch MCP获取各银行官网的页面源码，提取关键元数据（页面大小、请求数、JS体积）。
+
+\textbf{步骤4}：使用Excel MCP将审计结果汇总为对比表格，生成柱状图和雷达图。
+
+\textbf{关键发现}：大型国有银行官网的平均性能分数（62分）显著低于股份制银行（78分），主要原因是国有银行官网页面元素更多、第三方脚本更重。在可访问性维度，所有银行均未达到WCAG 2.1 AA级标准——这是监管合规的潜在风险点。
+
+这一案例展示了浏览器组三MCP协同工作的典型模式：Playwright负责操作、DevTools负责审计、Fetch负责轻量抓取。
+\end{casebox}
+
+% ============================================================
+\section{Office组MCP：金融文档自动化}
+% ============================================================
+
+Office组包含Excel、Word、PPT三个MCP Server，分别处理电子表格、文字文档和演示文稿。在金融行业，这三类文档构成了日常工作的核心产出物——从数据报表到合规报告，从投研简报到年报演示，Office组MCP可以实现从数据到文档的全链路自动化。
+
+\subsection{Excel MCP}
+
+\subsubsection{工具能力清单}
+
+Excel MCP（\texttt{@negokaz/excel-mcp-server}）提供了完整的电子表格操作能力：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{能力类别} & \textbf{具体功能} \\
+\midrule
+文件操作 & 创建/打开/保存/另存为Excel文件 \\
+数据读写 & 读取单元格、写入单元格、批量读写区域 \\
+格式设置 & 字体、颜色、边框、对齐方式、数字格式 \\
+公式计算 & 插入公式、自动计算、引用跨Sheet \\
+图表生成 & 柱状图、饼图、折线图、散点图 \\
+Sheet管理 & 新建/重命名/删除/复制Sheet \\
+筛选排序 & 自动筛选、条件筛选、多列排序 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{L2任务：销售数据分析}
+
+\begin{lstlisting}
+任务：让 AI 操作 Excel 完成数据处理
+
+【1】数据准备
+1. 在当前目录创建"销售数据"文件夹
+2. 创建包含以下内容的 Excel 文件"销售记录.xlsx"：
+   - Sheet1 命名为"销售数据"
+   - 表头：日期、产品名称、销售额、数量、客户类型
+   - 至少包含 10 条模拟销售数据（2024 年 1 月数据）
+
+【2】Excel 操作任务
+1. 读取"销售记录.xlsx"文件
+2. 添加"单价"列（销售额/数量）
+3. 添加"利润率"列（假设利润率=30%，计算利润额）
+4. 按客户类型分组汇总销售额
+5. 筛选出销售额大于 1000 的记录
+6. 创建新 Sheet"汇总报表"，包含各产品总销售额、各客户类型销售占比、平均单价
+
+【3】数据可视化
+1. 在"汇总报表"Sheet 中创建柱状图展示各产品销售额
+2. 创建饼图展示客户类型占比
+
+【4】保存与输出
+1. 另存为"销售分析报告.xlsx"
+2. 输出分析报告摘要（Markdown 格式）
+\end{lstlisting}
+
+\begin{theorybox}[银行运营中的报表自动化需求]
+银行运营中存在大量重复性报表工作，典型场景包括：
+
+\textbf{日报/周报/月报}：各网点需每日汇总存贷款余额、交易量、客户增长数据，向上级行报送。传统方式需要人工从多个系统导出数据，手动粘贴到Excel模板中，耗时且易错。
+
+\textbf{监管报表}：银保监会要求银行定期提交各类监管报表（如流动性覆盖率、资本充足率），这些报表的数据来源分散，格式要求严格。Excel MCP可以自动从多个数据源提取数据，按监管模板填充并校验。
+
+\textbf{客户分析报告}：客户经理需要定期生成分群报告（如按资产规模、交易活跃度、产品偏好分群），Excel MCP可以自动完成分群计算、统计汇总和图表生成。
+
+Excel MCP的价值在于：将"人手动操作Excel"的模式转变为"人描述需求，AI驱动Excel自动完成"的模式，大幅提升效率并降低错误率。
+\end{theorybox}
+
+\textbf{故障排除}：
+
+\begin{lstlisting}
+请诊断 Excel MCP 服务问题：
+1. 检查 Excel MCP 服务是否已启动
+2. 测试基本读取功能
+3. 检查环境变量配置
+4. 输出详细错误信息
+\end{lstlisting}
+
+\textbf{拓展任务A：银行客户信用评分分群}
+
+构建银行客户信用评分分群模型，包含信用评分计算、风险等级划分、分群分析、可视化输出。
+
+\textbf{拓展任务B：银行网点绩效KPI仪表盘}
+
+构建银行网点绩效KPI仪表盘，包含KPI计算、综合得分排名、仪表盘输出。
+
+\subsection{Word MCP}
+
+\subsubsection{银行文档标准化需求}
+
+银行业是高度监管的行业，文档的格式与内容都有严格规范。常见的标准化文档包括：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{合规报告}：反洗钱报告、内部审计报告、风险管理报告——需要固定的章节结构、签名区域、保密等级标识
+  \item \textbf{客户函件}：贷款审批通知、账户变更确认、产品推荐信——需要统一的信头、收件人格式、落款
+  \item \textbf{内部简报}：周度业务简报、市场分析简报——需要标准化的标题层级、图表插入规范、免责声明
+\end{itemize}
+
+Word MCP（\texttt{office-word-mcp-server}）提供文档创建、样式设置、目录生成、页码插入等能力，可以按照预设模板自动生成符合规范的银行文档。
+
+\subsubsection{L3 Word+PPT任务提示词}
+
+详见3.5.3节的综合任务——Word与PPT通常配合使用，Word生成完整文档后，PPT提取关键信息生成演示文稿。
+
+\subsection{PPT MCP}
+
+\subsubsection{投研报告演示规范}
+
+投资研究报告的演示文稿需要遵循"结论先行、数据支撑、风险提示"的三段式结构。一份标准的投研PPT应包含：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{封面页}：报告标题、机构名称、分析师姓名、日期
+  \item \textbf{核心观点页}：3--5条关键结论，每条不超过20字
+  \item \textbf{数据支撑页}：关键财务指标的表格与图表
+  \item \textbf{详细分析页}：业务亮点、风险因素的展开论述
+  \item \textbf{风险提示页}：投资风险的明确提示（合规要求）
+\end{enumerate}
+
+PPT MCP（\texttt{office-powerpoint-mcp-server}）支持基于模板生成PPT、批量修改幻灯片、插入图表等操作，可以快速将Word文档内容转换为演示文稿。
+
+\subsubsection{银行年报简报生成任务}
+
+\begin{lstlisting}
+任务：工商银行 2025 年报速读简报
+
+请使用 fetch + word + ppt 三个 MCP 服务协同完成以下任务：
+
+【第 1 步】抓取年报数据
+使用 fetch MCP 获取工商银行 2025 年报摘要信息：
+1. 搜索并访问工商银行 2025 年报官方页面
+2. 获取关键数据：年度营收、净利润、不良贷款率、ROE、主要业务亮点、主要风险提示
+3. 将获取的数据整理为结构化信息
+
+【第 2 步】生成 Word 文档
+使用 word MCP 在 reports/ 目录生成 icbc_brief.docx：
+1. 封面页（标题、副标题、制作人、日期）
+2. 目录页（自动生成）
+3. 关键财务指标（表格）
+4. 业务亮点（>=3 条）
+5. 风险提示（>=2 条）
+
+【第 3 步】生成 PPT 演示文稿
+使用 ppt MCP 把 docx 内容转换为 5 页 PPT，保存为 reports/icbc_brief.pptx
+
+【整体要求】
+- 风格：商务蓝色主题
+- 语言：简体中文
+- 数据：如无法获取真实数据，请使用合理估算数据并标注"估算数据"
+\end{lstlisting}
+
+\textbf{学生练习}：每组随机抽一家上市银行，重复流程产出自己的银行简报。
+
+\begin{casebox}[银行年报速读简报自动生成全流程]
+以下是一个完整的银行年报速读简报自动化工作流，展示了Fetch + Word + PPT三MCP协同工作的实际过程：
+
+\textbf{输入}：「请为招商银行生成2025年报速读简报」
+
+\textbf{Step 1 — 数据采集}（Fetch MCP）
+
+AI使用Fetch MCP访问招商银行年报页面，提取关键财务数据：
+\begin{itemize}
+  \item 营业收入：3,391亿元（同比+6.2\%）
+  \item 净利润：1,483亿元（同比+5.8\%）
+  \item 不良贷款率：0.92\%（较上年下降0.03个百分点）
+  \item ROE：15.6\%
+  \item 业务亮点：财富管理AUM突破12万亿、金融科技投入占比4.2\%
+  \item 风险提示：房地产贷款集中度较高、净息差收窄压力
+\end{itemize}
+
+\textbf{Step 2 — 文档生成}（Word MCP）
+
+AI使用Word MCP生成结构化文档：
+\begin{itemize}
+  \item 自动创建封面页，包含标题、副标题、生成日期
+  \item 插入关键财务指标表格（5行3列）
+  \item 生成业务亮点章节（3个要点，每点配数据支撑）
+  \item 生成风险提示章节（2个风险点，附缓释措施）
+  \item 自动生成目录页
+\end{itemize}
+
+\textbf{Step 3 — 演示生成}（PPT MCP）
+
+AI使用PPT MCP将Word内容转换为5页演示文稿：
+\begin{itemize}
+  \item 第1页：封面（招商银行2025年报速读简报）
+  \item 第2页：核心财务指标（表格展示）
+  \item 第3页：业务亮点（图标+要点）
+  \item 第4页：风险提示（警示标识+说明）
+  \item 第5页：总结与展望
+\end{itemize}
+
+\textbf{全流程耗时}：约2--3分钟（人工操作需1--2小时）
+\end{casebox}
+
+% ============================================================
+\section{数据分析组MCP：Stata计量经济学}
+% ============================================================
+
+\subsection{stata-mcp基础回归任务}
+
+\textbf{用到}：stata-mcp（3个工具：stata\_run\_selection / stata\_run\_file / stata\_session）
+
+\textbf{示范提示词}：
+
+\begin{lstlisting}
+任务：商业银行盈利能力影响因素回归分析
+
+请使用 stata-mcp 服务完成以下计量分析任务：
+
+【数据来源（任选其一）】
+1. 公开数据集：620 家商业银行财务数据（2007-2024）
+2. 手动构建：如无外部数据，使用 Stata 生成模拟面板数据
+
+【第 1 步】数据准备与探索
+1. 尝试读入 data/bank_panel.dta；如不存在则使用 webuse grunfeld
+2. 使用 summarize 查看关键变量描述统计
+
+【第 2 步】回归分析
+1. 基础 OLS 回归：reg roe npl_ratio car loan_growth log(asset), robust
+2. 添加控制变量：reg roe npl_ratio car loan_growth log(asset) i.year, robust
+3. 固定效应模型（使用 reghdfe）：reghdfe roe npl_ratio car loan_growth, absorb(bank_id year) robust
+
+【第 3 步】结果输出
+1. 使用 esttab 命令输出三列回归结果到 reports/exp2_l4_reg.txt
+2. 撰写 200-300 字分析结论
+\end{lstlisting}
+
+\subsection{两种Stata MCP方案对比}
+
+目前社区存在两个主要的Stata MCP项目，功能定位不同：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{特性} & \textbf{hanlulong/stata-mcp} & \textbf{SepineTam/mcp-for-stata} \\
+\midrule
+类型 & VS Code扩展（localhost HTTP） & 独立MCP Server + CLI \\
+适用客户端 & 需IDE窗口活动 & 所有MCP客户端 \\
+执行方式 & IDE内嵌via localhost:4000 & do文件via subprocess \\
+安全机制 & --- & Command Guard + RAM监控 \\
+数据分析 & --- & CSV/DTA/XLSX/SPSS处理器 \\
+安装方式 & VS Code市场搜索 & uvx stata-mcp install --all \\
+最佳场景 & 在IDE中编写运行Stata & Agent驱动分析 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{hanlulong方案详细配置}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{项目} & \textbf{信息} \\
+\midrule
+GitHub & https://github.com/hanlulong/stata-mcp \\
+VS Code市场 & DeepEcon.stata-mcp \\
+当前版本 & 0.5.2 \\
+要求 & Stata 17+ / UV包管理器 \\
+平台 & Windows / macOS / Linux \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{MCP工具清单}（3个工具）：
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{stata\_run\_selection} — 运行代码片段
+  \item \texttt{stata\_run\_file} — 运行.do文件
+  \item \texttt{stata\_session} — 会话管理（list / destroy）
+\end{itemize}
+
+\textbf{端点地址}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{端点} & \textbf{协议} & \textbf{用途} \\
+\midrule
+http://localhost:4000/mcp-streamable & Streamable HTTP & 首选（现代客户端） \\
+http://localhost:4000/mcp & SSE & 旧版兼容 \\
+http://localhost:4000/health & HTTP GET & 健康检查 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{快捷键}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{操作} & \textbf{Mac} & \textbf{Win/Linux} \\
+\midrule
+运行选中代码 & Cmd+Shift+Enter & Ctrl+Shift+Enter \\
+运行整个.do文件 & Cmd+Shift+D & Ctrl+Shift+D \\
+停止执行 & Cmd+Shift+C & Ctrl+Shift+C \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{SepineTam方案简介}
+
+\begin{lstlisting}[style=shell]
+# 一键安装所有客户端
+uvx stata-mcp install --all
+
+# 单客户端安装示例
+uvx stata-mcp install -c claude
+uvx stata-mcp install -c cursor
+
+# 环境检查
+uvx stata-mcp doctor
+\end{lstlisting}
+
+\subsection{各客户端配置方式}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{客户端} & \textbf{配置方式} \\
+\midrule
+Qoder / Claude Desktop & \texttt{"stata-mcp": \{"command": "npx", "args": ["-y", "mcp-remote", "http://localhost:4000/mcp-streamable"]\}} \\
+Claude Code & \texttt{claude mcp add --transport http stata-mcp http://localhost:4000/mcp-streamable --scope user} \\
+Cursor & \texttt{\{"mcpServers": \{"stata-mcp": \{"url": "http://localhost:4000/mcp-streamable"\}\}\}} \\
+GitHub Copilot & \texttt{\{"servers": \{"stata-mcp": \{"type": "http", "url": "http://localhost:4000/mcp-streamable"\}\}\}} \\
+Codex & \texttt{codex mcp add stata-mcp --url http://localhost:4000/mcp-streamable} \\
+Cline & \texttt{\{"mcpServers": \{"stata-mcp": \{"url": "http://localhost:4000/mcp-streamable"\}\}\}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{故障排除}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{问题} & \textbf{解决方案} \\
+\midrule
+服务未启动 & 检查状态栏是否显示"Stata"；执行curl http://localhost:4000/health \\
+端口冲突 & 修改stata-vscode.mcpServerPort设置 \\
+Stata未找到 & 手动设置stata-vscode.stataPath指向安装目录 \\
+UV安装失败 & 手动运行curl -LsSf https://astral.sh/uv/install.sh | sh \\
+输出截断 & 调整maxOutputTokens（0 = 无限制） \\
+MCP工具未出现 & 重启IDE/客户端（MCP工具列表不会在同一会话中刷新） \\
+Copilot未识别 & 确认VS Code >= 1.102且组织Copilot策略已启用MCP \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{macOS配置说明}
+
+macOS用户需要在mcp.json中将STATA\_PATH设置为：
+
+\begin{lstlisting}[style=shell]
+/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp
+\end{lstlisting}
+
+并确保已安装\texttt{DeepEcon.stata-mcp}扩展（VS Code / Qoder扩展市场搜索安装）。
+
+\subsection{Python替代方案}
+
+若无Stata环境，可用Python替代：
+
+\begin{lstlisting}[style=python]
+import pandas as pd
+import statsmodels.formula.api as smf
+
+df = pd.read_stata("data/bank_panel.dta")
+model = smf.ols("roe ~ npl_ratio + car + loan_growth + np.log(asset)",
+                data=df).fit(cov_type="cluster",
+                             cov_kwds={"groups": df["bank_id"]})
+print(model.summary())
+\end{lstlisting}
+
+\begin{theorybox}[面板数据回归方法选择指南]
+在使用Stata进行面板数据分析时，选择合适的估计方法至关重要。以下是OLS、固定效应（FE）和随机效应（RE）三种方法的选择逻辑：
+
+\textbf{1. 混合OLS（Pooled OLS）}
+
+适用条件：个体效应与解释变量不相关，即$E(\alpha_i | X_{it}) = 0$。
+
+命令：\texttt{reg y x1 x2, robust}
+
+问题：忽略了个体异质性，若存在未观测的个体效应，估计结果有偏。
+
+\textbf{2. 固定效应模型（Fixed Effects, FE）}
+
+适用条件：个体效应$\alpha_i$与解释变量相关，即$E(\alpha_i | X_{it}) \neq 0$。
+
+命令：\texttt{reghdfe y x1 x2, absorb(id year) robust}
+
+优势：通过组内去均值消除个体效应，获得一致估计。
+
+局限：无法估计不随时间变化的变量（如银行类型、注册地）。
+
+\textbf{3. 随机效应模型（Random Effects, RE）}
+
+适用条件：个体效应$\alpha_i$与解释变量不相关，且$\alpha_i$是随机抽取的。
+
+命令：\texttt{xtreg y x1 x2, re robust}
+
+优势：可以利用组间变异，估计不随时间变化的变量。
+
+局限：若个体效应与解释变量相关，估计不一致。
+
+\textbf{选择策略}：
+
+\begin{enumerate}
+  \item 首先进行Hausman检验：\texttt{hausman fe re}——若显著（$p < 0.05$），选择FE；否则选择RE
+  \item 在金融实证中，由于银行间异质性很强（规模、地域、业务结构差异大），\textbf{大多数情况下应选FE}
+  \item 若关注不随时间变化的变量效应，可以采用FE + RE的组合策略（先FE估计时变效应，再RE估计时不变效应）
+\end{enumerate}
+
+\textbf{进阶}：对于动态面板（被解释变量滞后项作为解释变量），需要使用系统GMM估计：\texttt{xtabond2 y L.y x1 x2, gmm(L.y) iv(x1 x2) twostep robust}。
+\end{theorybox}
+
+% ============================================================
+\section{MCP组合编排与工作流设计}
+% ============================================================
+
+\subsection{多MCP协同工作的设计模式}
+
+在实际金融工作中，单一MCP往往无法完成复杂任务。例如，"生成银行年报简报"需要Fetch（数据采集）→ Excel（数据处理）→ Word（文档生成）→ PPT（演示生成）四个MCP的协同。这种多MCP协同可以归纳为三种设计模式：
+
+\textbf{模式一：流水线模式（Pipeline）}
+
+MCP按固定顺序依次执行，前一个MCP的输出作为后一个MCP的输入。这是最常见的模式：
+
+\begin{verbatim}
+Fetch → Excel → Word → PPT
+(采集)  (处理)  (文档)  (演示)
+\end{verbatim}
+
+流水线模式的优点是逻辑清晰、易于调试；缺点是灵活性较低，无法根据中间结果动态调整后续步骤。
+
+\textbf{模式二：并行模式（Parallel）}
+
+多个MCP同时执行独立任务，最后汇总结果：
+
+\begin{verbatim}
+Playwright ──→ 截图 + 审计数据
+                  ↓ 汇总
+Fetch ──────→ API数据    → Excel → 综合报告
+\end{verbatim}
+
+并行模式适用于各子任务互不依赖的场景——例如同时采集多家银行的数据。
+
+\textbf{模式三：条件分支模式（Conditional）}
+
+根据前一步的结果决定后续调用哪个MCP：
+
+\begin{verbatim}
+Fetch → 数据格式判断
+          ├── JSON格式 → 直接解析 → Excel
+          └── HTML格式 → Playwright渲染 → 截图 → OCR → Excel
+\end{verbatim}
+
+条件分支模式需要AI具备较强的推理能力，能根据中间结果做出正确判断。
+
+\subsection{工作流编排案例：银行分析全链路}
+
+以下是一个典型的银行分析全链路工作流，展示了Fetch→Excel→Word→PPT四MCP协同：
+
+\textbf{任务描述}：为某上市银行自动生成季度经营分析报告。
+
+\textbf{Step 1 — 数据采集}（Fetch MCP）
+
+\begin{lstlisting}
+使用 fetch MCP 获取以下数据：
+1. 该银行最新季报关键财务指标（营收、净利润、不良率、拨备覆盖率）
+2. 同期LPR利率数据
+3. 行业平均指标（来自银保监会公开数据）
+\end{lstlisting}
+
+\textbf{Step 2 — 数据处理}（Excel MCP）
+
+\begin{lstlisting}
+使用 Excel MCP 完成以下处理：
+1. 创建"原始数据"Sheet，存入采集到的所有数据
+2. 创建"对比分析"Sheet，计算该行与行业平均的偏离度
+3. 创建"趋势分析"Sheet，生成近4个季度的趋势图表
+4. 创建"综合评分"Sheet，基于多维度指标计算综合评分
+\end{lstlisting}
+
+\textbf{Step 3 — 文档生成}（Word MCP）
+
+\begin{lstlisting}
+使用 word MCP 生成分析报告文档：
+1. 封面：XX银行2025Q1经营分析报告
+2. 摘要：200字核心结论
+3. 财务指标分析：引用Excel中的表格和图表
+4. 同业对比分析：与行业平均的对比
+5. 风险提示：主要风险点及缓释措施
+6. 结论与建议：投资建议
+\end{lstlisting}
+
+\textbf{Step 4 — 演示生成}（PPT MCP）
+
+\begin{lstlisting}
+使用 ppt MCP 生成5页演示文稿：
+1. 封面页
+2. 核心指标概览（表格）
+3. 趋势分析（图表）
+4. 同业对比（雷达图）
+5. 结论与建议
+\end{lstlisting}
+
+\subsection{MCP调用顺序与依赖管理}
+
+多MCP协同工作时，调用顺序至关重要。以下是几条实用原则：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{数据先行}：Fetch/Playwright等采集类MCP应最先执行，确保后续步骤有数据可用
+  \item \textbf{处理居中}：Excel等数据处理MCP应在采集之后、输出之前执行
+  \item \textbf{输出在后}：Word/PPT等文档生成MCP应在数据处理完成后执行
+  \item \textbf{中间产物保存}：每一步的输出应保存为文件，而非仅存在于AI上下文中——这确保了步骤间的解耦，即使某步失败也可以从中间状态恢复
+\end{enumerate}
+
+在AI的实际执行中，这些顺序通常由AI自主判断。但用户可以在提示词中通过编号（【第1步】【第2步】...）显式指定执行顺序，减少AI的决策不确定性。
+
+\subsection{错误处理与回退策略}
+
+MCP调用可能因各种原因失败——网络超时、文件路径错误、工具参数不合法等。以下是推荐的错误处理策略：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{错误类型} & \textbf{常见原因} & \textbf{回退策略} \\
+\midrule
+MCP服务不可用 & 服务未启动或进程崩溃 & 重启服务后重试；若持续失败则跳过该MCP \\
+工具调用超时 & 网络慢或任务耗时过长 & 设置超时阈值；使用分段执行 \\
+参数错误 & AI生成了不合Schema的参数 & 让AI重新检查Tool Schema后重试 \\
+输出为空 & 目标页面无内容/API无数据 & 切换数据源（如Fetch失败换Playwright） \\
+文件操作失败 & 路径不存在/权限不足 & 先创建目录；检查文件权限 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[提示词中的错误处理技巧]
+在编写复杂工作流提示词时，建议加入错误处理指令：
+\begin{quote}
+「如果某一步失败，请跳过该步并在最终报告中标注"[数据缺失]"，继续执行后续步骤。」
+\end{quote}
+这确保了工作流不会因为单一环节的失败而完全中断。
+\end{notebox}
+
+% ============================================================
+% 本章小结
+% ============================================================
+
+\section*{本章小结}
+\addcontentsline{toc}{section}{本章小结}
+
+本章系统介绍了MCP协议的理论基础与实践应用。
+
+在理论层面，MCP是一种开放标准，通过三层架构（Client/Server/Tool）和JSON-RPC 2.0通信协议，实现了AI与外部工具的标准化连接。与传统API调用不同，MCP的关键创新在于将工具选择权交给AI模型——AI根据Tool Schema的描述自主决定调用哪个工具、传入什么参数，用户只需用自然语言描述目标。
+
+在实践层面，本章详细讲解了浏览器组（Playwright/Chrome DevTools/Fetch）、Office组（Excel/Word/PPT）和数据分析组（Stata）共8组MCP的配置与使用。每个MCP都通过具体的金融场景任务进行了演示，从银行官网审计到客户分群报表，从年报简报到计量回归分析。
+
+在编排层面，多MCP协同工作可以采用流水线、并行和条件分支三种模式。关键原则是：数据先行、处理居中、输出在后、中间产物保存。
+
+掌握MCP的核心口诀：「\textbf{MCP给能力，Skill给方法}」——MCP提供工具能力，而如何用好这些工具则需要Skill（下一章主题）的指导。
+
+% ============================================================
+% 关键术语
+% ============================================================
+
+\keyterms{
+MCP（Model Context Protocol）、MCP Client、MCP Server、JSON-RPC 2.0、Tool Schema、工具发现、stdio传输、SSE传输、Playwright MCP、Lighthouse审计、Fetch MCP、Excel MCP、Word MCP、Stata MCP、面板数据固定效应模型
+}
+
+% ============================================================
+% 思考题
+% ============================================================
+
+\begin{exercisebox}[思考题]
+\begin{enumerate}[leftmargin=2em]
+  \item MCP协议的三层架构中，为什么将Server层与真实工具层分开？如果合并为一层会有什么问题？
+  \item 比较stdio传输与SSE传输的适用场景。如果你需要在企业内网部署一个MCP网关（连接内部数据库），应该选择哪种传输方式？为什么？
+  \item 在金融数据采集中，Playwright MCP和Fetch MCP各有何优劣？什么场景下应该优先选择Fetch而非Playwright？
+  \item 面板数据回归中，Hausman检验拒绝了随机效应模型（$p < 0.01$），但你关心的核心解释变量是一个不随时间变化的变量（如银行注册地所在省份）。此时应如何选择估计策略？
+  \item \textbf{实操设计题}：请设计一个MCP组合编排工作流，实现「自动监控某上市银行官网公告，当出现新的利润分配公告时，自动提取关键数据，生成分析简报（Word+PPT），并发送通知」。要求：
+  \begin{itemize}
+    \item 列出需要使用的MCP组合及调用顺序
+    \item 写出关键步骤的提示词框架
+    \item 设计错误处理与回退策略
+  \end{itemize}
+\end{enumerate}
+\end{exercisebox}
+
+% ============================================================
+% 实验报告要求
+% ============================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cll}
+\toprule
+\textbf{\#} & \textbf{交付物} & \textbf{形式} \\
+\midrule
+1 & 4关每关一段录屏GIF（$\leq$10s） & gif/exp2\_L1.gif ... exp2\_L4.gif \\
+2 & L1 lighthouse报告 + 银行截图 & reports/exp2\_l1.md \\
+3 & L2 客户分群报表 & reports/exp2\_l2.xlsx + 截图 \\
+4 & L3 银行简报 & reports/icbc\_brief.docx + .pptx \\
+5 & L4 Stata回归结果 + 结论 & reports/exp2\_l4\_reg.txt + 结论 \\
+6 & 自画MCP调用流程图（mermaid） & figures/exp2\_mcp\_flow.mmd \\
+\bottomrule
+\end{tabular}
+\end{table}

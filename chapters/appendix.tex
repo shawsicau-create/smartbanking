@@ -1,0 +1,1249 @@
+% 附录 A-H
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+% ============================================================
+% 附录A：完整环境配置手册
+% ============================================================
+
+\chapter{完整环境配置手册}
+
+\textbf{适用场景}：本附录提供从零搭建完整AI辅助开发环境的详细指南，涵盖LaTeX排版、Node.js、Python、Git、AI IDE（Qoder）、AI CLI工具、MCP服务器等全部内容。已在实验一中完成基本环境搭建的同学，可参考本附录进行进阶配置。
+
+% ------------------------------------------------------------
+\section{LaTeX排版环境（详细版）}
+% ------------------------------------------------------------
+
+\subsection{MiKTeX（Windows）}
+
+MiKTeX是Windows上最推荐的LaTeX发行版，支持按需自动安装宏包。
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问\url{https://miktex.org/download}，下载Basic MiKTeX Installer（约230 MB）
+  \item 运行安装程序，选择"Install for current user"（无需管理员权限）
+  \item 安装路径默认为\texttt{\%LOCALAPPDATA\%\textbackslash Programs\textbackslash MiKTeX\textbackslash}
+  \item 打开MiKTeX Console → Settings →"Install missing packages"设为Always
+  \item Updates →"Check for updates"更新一次
+\end{enumerate}
+
+安装后自动获得的工具：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{工具} & \textbf{版本} & \textbf{用途} \\
+\midrule
+xelatex & 4.16 & 中文论文必备（支持Unicode + 系统字体） \\
+pdflatex & 4.23 & 英文论文编译 \\
+biber & 2.21 & 现代参考文献处理（配合biblatex） \\
+latexmk & --- & 自动化多轮编译 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{MacTeX（macOS）}
+
+MacTeX是TeX Live的macOS封装版，包含\textbf{全部}宏包（约7 GB）。
+
+\begin{lstlisting}[style=shell]
+# 方式一：Homebrew（推荐）
+brew install --cask mactex
+
+# 方式二：清华CTAN镜像（国内速度快）
+curl -L -o /tmp/mactex.pkg \
+  "https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/mac/mactex/mactex-20260324.pkg"
+sudo installer -pkg /tmp/mactex.pkg -target /
+
+# 方式三：官网下载 .pkg
+# 访问 https://www.tug.org/mactex/ 下载安装
+\end{lstlisting}
+
+\textbf{PATH配置（如终端找不到xelatex）：}
+
+\begin{lstlisting}[style=shell]
+echo 'export PATH="/usr/local/texlive/2026/bin/universal-darwin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+\end{lstlisting}
+
+\subsection{系统中文字体}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{平台} & \textbf{字体} & \textbf{LaTeX调用名} \\
+\midrule
+Windows & 宋体/黑体/楷体/仿宋 & SimSun/SimHei/KaiTi/FangSong \\
+macOS & 华文宋体/华文黑体/华文楷体 & STSong/STHeiti/STKaiti \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[ctex自动适配]
+使用\texttt{ctexart}文档类时，ctex宏包会\textbf{自动检测}操作系统并选择对应的中文字体，无需手动指定。
+\end{notebox}
+
+\subsection{推荐的LaTeX编辑器}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{编辑器} & \textbf{平台} & \textbf{特点} \\
+\midrule
+Qoder & Win/Mac/Linux & AI辅助写作，MCP集成，本课程首选 \\
+TeXstudio & Win/Mac/Linux & 免费，功能全面，适合初学者 \\
+VS Code + LaTeX Workshop & Win/Mac/Linux & 轻量，实时预览，Git集成 \\
+Overleaf & 在线 & 无需安装，协作方便，国内访问需加速 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{AI IDE——Qoder}
+% ------------------------------------------------------------
+
+Qoder是一款基于VS Code架构的AI智能体编程平台，内置多模型支持。
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问\url{https://qoder.com/download}，下载对应系统版本
+  \item Windows双击安装；macOS拖拽到Applications
+  \item 首次启动后登录Qoder账号
+\end{enumerate}
+
+\textbf{Qoder核心功能：}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{功能} & \textbf{说明} \\
+\midrule
+智能补全 & 上下文感知的代码自动补全 \\
+Agent对话 & 右侧面板与AI对话，可读写文件、运行命令 \\
+MCP集成 & 内置MCP工具管理器，连接数据库、API、Office等 \\
+Skill系统 & 加载SKILL.md文件赋予AI领域知识 \\
+多模型切换 & 支持GPT-4o、Claude Sonnet、DeepSeek等 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{AI CLI工具}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{工具} & \textbf{厂商} & \textbf{安装命令} & \textbf{核心模型} \\
+\midrule
+QoderCLI & Qoder AI & \texttt{npm i -g @qoder-ai/qodercli} & 多模型切换 \\
+Claude Code & Anthropic & \texttt{npm i -g @anthropic-ai/claude-code} & Claude Sonnet \\
+Codex CLI & OpenAI & \texttt{npm i -g @openai/codex} & GPT-4o \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{CC Switch——多账号管理}
+% ------------------------------------------------------------
+
+CC Switch是AI CLI多账号/多服务商管理工具，提供可视化界面统一管理Claude Code、Codex、Gemini CLI等7款工具的配置。
+
+\begin{lstlisting}[style=shell]
+# macOS
+brew install --cask cc-switch
+
+# Windows：从GitHub Releases下载 .msi 安装
+# https://github.com/farion1231/cc-switch/releases
+\end{lstlisting}
+
+核心功能：50+预置服务商一键切换、系统托盘快切、统一MCP管理、用量追踪、云端同步。
+
+% ------------------------------------------------------------
+\section{OpenCLI与OpenClaw}
+% ------------------------------------------------------------
+
+\textbf{OpenCLI}——把网站变成命令行：
+
+\begin{lstlisting}[style=shell]
+npm install -g @jackwener/opencli
+opencli --version
+opencli setup   # 验证Chrome扩展连接
+\end{lstlisting}
+
+\textbf{OpenClaw}——AI Skill包管理：
+
+\begin{lstlisting}[style=shell]
+npm install -g openclaw
+openclaw --version
+openclaw install academic-paper-analysis
+openclaw install arxiv
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{MCP/Skill/CLI三种范式对比}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{维度} & \textbf{MCP} & \textbf{Skill} & \textbf{CLI} \\
+\midrule
+本质 & 连接协议 & 领域知识文件 & Shell命令 \\
+类比 & USB-C接口 & 操作手册 & 万能遥控器 \\
+开发成本 & 高（写Server） & 低（写Markdown） & 零 \\
+适合场景 & 企业SaaS & 知识沉淀复用 & 本地自动化 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[黄金组合]
+CLI（执行层）+ Skill（知识层）+ MCP（连接层）= 完整AI工具链。日常以CLI + Skill为主，MCP在需要跨系统数据连接时介入。
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{完整安装检查清单}
+% ------------------------------------------------------------
+
+\begin{lstlisting}[style=shell]
+# LaTeX
+xelatex --version
+biber --version
+
+# 运行时
+node --version
+npm --version
+python --version
+git --version
+
+# AI CLI
+qoder --version
+claude --version
+codex --version
+opencli --version
+openclaw --version
+cnb --version
+\end{lstlisting}
+
+\begin{notebox}[参考文档]
+完整版本的AI开发环境配置讲义（含OpenMAIC、DeepTutor、所有安装细节与故障排除）可参见独立文档：\texttt{AI开发环境配置讲义\_中文版.pdf}。
+\end{notebox}
+
+% ============================================================
+% 附录B：MCP配置大全与故障排除
+% ============================================================
+
+\chapter{MCP配置大全与故障排除}
+
+% ------------------------------------------------------------
+\section{MCP服务器配置详解}
+% ------------------------------------------------------------
+
+MCP（Model Context Protocol）让AI助手能够访问外部数据源和工具。Qoder的MCP配置文件位于：
+
+\begin{lstlisting}
+# Windows
+%APPDATA%\Qoder\SharedClientCache\extension\local\mcp.json
+
+# macOS
+~/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json
+\end{lstlisting}
+
+\subsection{推荐配置的MCP服务器}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{服务名} & \textbf{启动命令} & \textbf{用途} \\
+\midrule
+fetch & \texttt{uvx mcp-server-fetch} & HTTP网页抓取 \\
+playwright & \texttt{npx @playwright/mcp@latest} & 浏览器自动化 \\
+excel & \texttt{npx @negokaz/excel-mcp-server} & Excel读写 \\
+ppt & \texttt{uvx ppt\_mcp\_server} & PPT编辑 \\
+word & \texttt{uvx word\_mcp\_server} & Word文档 \\
+stata-mcp & \texttt{uvx stata-mcp} & Stata统计分析 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{完整mcp.json参考配置}
+
+\begin{lstlisting}[style=json]
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "excel": {
+      "command": "npx",
+      "args": ["@negokaz/excel-mcp-server"]
+    },
+    "ppt": {
+      "command": "uvx",
+      "args": ["ppt_mcp_server"]
+    },
+    "word": {
+      "command": "uvx",
+      "args": ["word_mcp_server"]
+    },
+    "stata-mcp": {
+      "command": "uvx",
+      "args": ["stata-mcp"],
+      "env": {
+        "STATA_PATH": "C:\\Program Files\\Stata18\\StataMP-64.exe",
+        "MCP_STATA_LOGLEVEL": "INFO"
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection{各平台路径说明}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{平台} & \textbf{mcp.json路径} \\
+\midrule
+Qoder (Windows) & \texttt{\%APPDATA\%\textbackslash Qoder\textbackslash SharedClientCache\textbackslash extension\textbackslash local\textbackslash mcp.json} \\
+Qoder (macOS) & \texttt{\textasciitilde/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json} \\
+Claude Desktop (Windows) & \texttt{\%APPDATA\%\textbackslash Claude\textbackslash claude\_desktop\_config.json} \\
+Claude Desktop (macOS) & \texttt{\textasciitilde/Library/Application Support/Claude/claude\_desktop\_config.json} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[路径注意]
+\begin{itemize}[leftmargin=1em]
+  \item 修改mcp.json后必须\textbf{完全退出IDE}再重启（任务栏右键退出，不只是关窗口）
+  \item JSON中Windows路径的反斜杠必须写成\texttt{\textbackslash\textbackslash}
+  \item macOS路径中的空格需注意转义
+\end{itemize}
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{常见问题排查}
+% ------------------------------------------------------------
+
+\subsection{IDE安装/登录问题}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3.5cm}p{5.5cm}}
+\toprule
+\textbf{现象} & \textbf{原因} & \textbf{解决} \\
+\midrule
+启动闪退 & 显卡驱动/VC++缺失 & 装NVIDIA/Intel驱动；装VC++ Redist \\
+登录转圈 & 防火墙/代理拦截 & 系统代理放行；或切手机热点 \\
+Builder不能建文件 & 未授权 & 文件 → 信任当前工作区 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Python/Node环境问题}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{多版本Python冲突}：优先Anaconda；\texttt{where python}看路径，环境变量上移Anaconda
+  \item \textbf{pip install SSL错误}：\texttt{pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple}
+  \item \textbf{npm install慢}：\texttt{npm config set registry https://registry.npmmirror.com}
+  \item \textbf{TensorFlow装不上}：业绩预测有SARIMA即可得分，LSTM可选
+\end{itemize}
+
+\subsection{MCP类问题}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{找不到npx/uvx}：Node.js与uv都得装，且加入PATH。\texttt{pip install uv}装uv
+  \item \textbf{mcp.json改完没生效}：必须\textbf{完全退出IDE}再重启（任务栏右键退出，不只是关窗口）
+  \item \textbf{playwright报EPERM}：不要装在\texttt{C:\textbackslash Program Files\textbackslash}下；改用户目录
+  \item \textbf{stata-mcp找不到Stata}：在env.STATA\_PATH填本机Stata实际路径
+  \item \textbf{word/ppt MCP启动慢}：首次uvx需联网下载，等1--3分钟
+\end{itemize}
+
+\subsection{Skill类问题}
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{AI不识别Skill}：①升级IDE；②使用skill finder重新安装；③检查description是否含明确触发词
+  \item \textbf{自写Skill不激活}：description写得太宽泛，AI不知何时调用——把场景写具体（如"当用户提到X或Y时使用"）
+\end{itemize}
+
+% ============================================================
+% 附录C：Stata安装与联动配置
+% ============================================================
+
+\chapter{Stata安装与联动配置}
+
+\textbf{适用场景}：实验中"数据分析组"使用stata-mcp跑计量回归时需要本机已安装Stata。无Stata的同学可改用Python（statsmodels）替代，但\textbf{强烈建议安装}以获得完整体验。
+
+% ------------------------------------------------------------
+\section{Stata软件介绍}
+% ------------------------------------------------------------
+
+Stata是一款强大的统计分析软件，广泛应用于经济学、金融学、社会学等领域的实证研究。本课程实验中使用Stata进行计量经济学分析和数据处理，配合stata-mcp可让AI直接调起Stata内核跑OLS/reghdfe/esttab等命令。
+
+% ------------------------------------------------------------
+\section{下载信息}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{项目} & \textbf{内容} \\
+\midrule
+\textbf{网盘链接} & \url{https://pan.baidu.com/s/1ciuS1G_6LtnZIuzRX9zzdg?pwd=vjji} \\
+\textbf{提取码} & vjji \\
+\textbf{文件名称} & stata \\
+\textbf{版本说明} & 2024年有效版本 \\
+\textbf{来源} & 人大经济论坛提供（仅供课程学习使用，正式研究请购买正版授权） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{warningbox}[版权声明]
+网盘资源仅用于本课程教学演示，\textbf{禁止用于商业用途}。课题组、论文发表等正式场合必须使用Stata官方授权版本（\url{https://www.stata.com}）。
+\end{warningbox}
+
+% ------------------------------------------------------------
+\section{安装步骤}
+% ------------------------------------------------------------
+
+\subsection{Step 1 下载与解压}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 点击上述百度网盘链接
+  \item 输入提取码\texttt{vjji}
+  \item 下载完整的Stata安装包到本地（建议放在D:\textbackslash Software\textbackslash{}等非中文路径）
+  \item 解压下载的压缩包（推荐用7-Zip/WinRAR）
+\end{enumerate}
+
+\subsection{Step 2 运行安装}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 进入解压后的目录，找到Setup.exe（或SetupStata18.exe），\textbf{右键 → 以管理员身份运行}
+  \item 安装路径建议保持默认：\texttt{C:\textbackslash Program Files\textbackslash Stata18\textbackslash}
+  \item 安装类型选择\textbf{StataMP}（多核版，性能最佳）或\textbf{StataSE}
+  \item 一路Next完成安装
+\end{enumerate}
+
+\subsection{Step 3 激活授权}
+
+按网盘内附带的安装说明.txt/Readme.pdf完成激活（通常需要拷贝授权文件\texttt{stata.lic}到安装目录）。
+
+\subsection{Step 4 验证安装}
+
+打开PowerShell执行：
+
+\begin{lstlisting}[style=shell]
+& "C:\Program Files\Stata18\StataMP-64.exe" -h
+\end{lstlisting}
+
+或直接双击桌面Stata图标，命令窗口输入：
+
+\begin{lstlisting}[style=stata]
+sysuse auto, clear
+summarize
+\end{lstlisting}
+
+能看到74条汽车数据的描述统计 = 安装成功。
+
+% ------------------------------------------------------------
+\section{与stata-mcp联动配置}
+% ------------------------------------------------------------
+
+stata-mcp有两种方案，分别对应不同的配置方式：
+
+\subsection{方案一：SepineTam/mcp-for-stata（独立Server，本课程默认）}
+
+本课程mcp.json使用的是SepineTam方案，它是独立的MCP Server，\textbf{无需IDE扩展}，直接通过subprocess调用Stata CLI：
+
+\begin{lstlisting}[style=json]
+"stata-mcp": {
+  "command": "uvx",
+  "args": ["stata-mcp"],
+  "env": {
+    "STATA_PATH": "C:\\Program Files\\Stata18\\StataMP-64.exe",
+    "MCP_STATA_LOGLEVEL": "INFO"
+  }
+}
+\end{lstlisting}
+
+\textbf{环境检查}（验证配置是否正确）：
+
+\begin{lstlisting}[style=shell]
+# 检查 stata-mcp 是否能找到 Stata
+uvx stata-mcp doctor
+\end{lstlisting}
+
+正常输出示例：
+\begin{lstlisting}
+stata-mcp v1.17.0 -- Doctor Report
+[PASS] os: macOS (Darwin 25.3.0, arm64)
+[PASS] python: 3.13.5
+[PASS] uv: uv 0.11.13
+[PASS] stata_cli: /usr/local/bin/stata-mp
+[PASS] stata_execution: OK (0.1s)
+[PASS] guard: enabled, loaded 27 rules
+Summary: 12 passed, 0 failed
+\end{lstlisting}
+
+\begin{notebox}[路径注意]
+如安装的是SE版本，把StataMP-64.exe改为StataSE-64.exe；如安装路径不同，整段绝对路径也要相应修改。\textbf{注意JSON中反斜杠必须写成\textbackslash\textbackslash}。
+\end{notebox}
+
+\subsection{方案二：hanlulong/stata-mcp（IDE扩展方案）}
+
+如果使用Qoder/VS Code/Cursor等支持扩展的IDE，可以选择安装\texttt{DeepEcon.stata-mcp}扩展。此方案的架构如下：
+
+\begin{verbatim}
+┌─────────────────┐        HTTP         ┌──────────────────────┐
+│  IDE (客户端)    │ ──mcp-remote──────▶ │  Stata MCP Server    │
+│  mcp.json 配置   │                     │  localhost:4000      │
+└─────────────────┘                     │  (由IDE扩展提供)      │
+                                        └──────────────────────┘
+\end{verbatim}
+
+\textbf{Step 1：安装DeepEcon.stata-mcp扩展}（\textbf{关键步骤，不可跳过}）
+
+\begin{lstlisting}[style=shell]
+# VS Code
+code --install-extension DeepEcon.stata-mcp
+
+# Cursor
+cursor --install-extension DeepEcon.stata-mcp
+
+# Qoder / Antigravity
+# 在扩展市场搜索 "Stata MCP" 安装
+\end{lstlisting}
+
+或在IDE中：扩展视图（Ctrl+Shift+X / Cmd+Shift+X）→搜索"Stata MCP"→安装。
+
+\begin{warningbox}[重要提醒]
+此方案\textbf{必须先安装扩展}！扩展启动后才会在localhost:4000监听，否则mcp-remote无法连接，会报"connection refused"错误。安装成功后状态栏应显示"Stata"。
+\end{warningbox}
+
+\textbf{Step 2：配置mcp.json}（仅Qoder/Claude Desktop需要此配置）
+
+\begin{lstlisting}[style=json]
+"stata-mcp": {
+  "command": "npx",
+  "args": ["-y", "mcp-remote", "http://localhost:4000/mcp-streamable"]
+}
+\end{lstlisting}
+
+\textbf{Step 3：验证服务}
+
+\begin{lstlisting}[style=shell]
+# 健康检查（扩展启动后执行）
+curl -s http://localhost:4000/health
+# 期望返回: {"status":"ok","service":"Stata MCP Server","version":"0.4.1","stata_available":true}
+\end{lstlisting}
+
+\textbf{端点说明}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{端点} & \textbf{协议} & \textbf{用途} \\
+\midrule
+http://localhost:4000/mcp-streamable & Streamable HTTP & 首选（现代客户端） \\
+http://localhost:4000/mcp & SSE & 旧版兼容 \\
+http://localhost:4000/health & HTTP GET & 健康检查 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{两种方案选型建议}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5.5cm}p{5.5cm}}
+\toprule
+\textbf{维度} & \textbf{SepineTam（本课程默认）} & \textbf{hanlulong（IDE扩展）} \\
+\midrule
+是否需要IDE扩展 & 否 & 是（DeepEcon.stata-mcp） \\
+是否需要IDE窗口保持打开 & 否 & 是 \\
+安全机制 & Command Guard + RAM监控 & 无 \\
+安装难度 & pip install uv即可 & 需安装扩展 \\
+适合场景 & Agent驱动分析、CLI环境 & IDE内交互式编码 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{完整Stata MCP设置参考}
+% ------------------------------------------------------------
+
+以下设置适用于hanlulong/stata-mcp扩展方案，可在IDE设置中搜索"Stata MCP"修改：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}l}
+\toprule
+\textbf{设置项} & \textbf{说明} & \textbf{默认值} \\
+\midrule
+stata-vscode.stataPath & Stata安装路径 & 自动检测 \\
+stata-vscode.stataEdition & 版本（MP/SE/BE） & mp \\
+stata-vscode.mcpServerPort & MCP端口 & 4000 \\
+stata-vscode.autoStartServer & 自动启动服务器 & true \\
+stata-vscode.multiSession & 多会话并行 & true \\
+stata-vscode.maxSessions & 最大并发会话数 & 100 \\
+stata-vscode.sessionTimeout & 会话空闲超时（秒） & 3600 \\
+stata-vscode.resultDisplayMode & 输出模式（compact/full） & compact \\
+stata-vscode.maxOutputTokens & MCP输出最大token（0=无限） & 10000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[Compact模式]
+Compact模式会过滤循环代码回显、程序定义块、命令回显和续行符、冗余消息如"(N real changes made)"，有助于减少AI的token消耗。
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{macOS安装说明}
+% ------------------------------------------------------------
+
+\begin{enumerate}[leftmargin=2em]
+  \item 下载macOS版Stata安装包（.dmg格式）
+  \item 双击.dmg文件，将Stata拖拽到Applications文件夹
+  \item 首次运行可能需要到「系统设置 → 隐私与安全性」中允许运行
+  \item 激活授权：按官方说明完成激活
+\end{enumerate}
+
+\textbf{macOS Stata路径}：
+
+\begin{lstlisting}[style=shell]
+/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp
+\end{lstlisting}
+
+macOS用户使用stata-mcp时：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{SepineTam方案}：mcp.json中STATA\_PATH设置为上述路径
+  \item \textbf{hanlulong方案}：安装DeepEcon.stata-mcp扩展后，扩展会自动检测Stata路径
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{常见问题}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3.5cm}p{5.5cm}}
+\toprule
+\textbf{现象} & \textbf{原因} & \textbf{解决} \\
+\midrule
+安装时提示「Windows已保护您的电脑」 & SmartScreen误报 & 点击「更多信息」→「仍要运行」 \\
+启动报「License not found」 & 授权文件未正确放置 & 把stata.lic拷贝到C:\textbackslash Program Files\textbackslash Stata18\textbackslash{}根目录 \\
+stata-mcp报「Stata not found」 & STATA\_PATH路径写错或转义错 & 用PowerShell Test-Path验证 \\
+中文路径乱码 & 安装在中文目录下 & 卸载后重装到C:\textbackslash Program Files\textbackslash{}等纯英文路径 \\
+网盘下载限速 & 百度网盘未登录或非会员 & 登录后下载 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{替代方案（无法安装Stata时）}
+% ------------------------------------------------------------
+
+若实在无法安装Stata，可使用Python替代：
+
+\begin{lstlisting}[style=python]
+import pandas as pd
+import statsmodels.formula.api as smf
+
+df = pd.read_stata("data/bank_panel.dta")
+# 或 pd.read_excel
+
+model = smf.ols("roe ~ npl_ratio + car + loan_growth + np.log(asset)",
+                data=df).fit(cov_type="cluster",
+                             cov_kwds={"groups": df["bank_id"]})
+print(model.summary())
+\end{lstlisting}
+
+并在实验报告中注明「采用Python statsmodels替代Stata」即可获得同等分数。
+
+% ============================================================
+% 附录D：CNB与GitHub命令速查
+% ============================================================
+
+\chapter{CNB与GitHub命令速查}
+
+% ------------------------------------------------------------
+\section{基础Git命令对比}
+% ------------------------------------------------------------
+
+CNB的基础Git命令与GitHub\textbf{完全相同}，因为它们都基于Git版本控制系统。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{操作} & \textbf{Git命令} & \textbf{CNB中使用} \\
+\midrule
+克隆仓库 & \texttt{git clone <url>} & 相同 \\
+添加文件 & \texttt{git add <file>} & 相同 \\
+提交 & \texttt{git commit -m "message"} & 相同 \\
+推送 & \texttt{git push origin main} & 相同 \\
+拉取 & \texttt{git pull origin main} & 相同 \\
+分支管理 & \texttt{git branch}, \texttt{git checkout} & 相同 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{CNB专属CLI命令}
+% ------------------------------------------------------------
+
+CNB提供了\texttt{cnb}命令行工具来管理平台资源：
+
+\begin{lstlisting}[style=shell]
+# 登录/登出
+cnb login
+cnb logout
+
+# 组织管理
+cnb organizations list-top-groups
+cnb organizations create-organization
+
+# 仓库管理
+cnb repositories list-repos
+cnb repositories create-repo
+
+# Issue和PR管理
+cnb issues list-issues
+cnb pulls list-pulls
+
+# AI功能
+cnb ai summarize-pr
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{仓库地址格式对比}
+% ------------------------------------------------------------
+
+\textbf{GitHub}：
+
+\begin{lstlisting}[style=shell]
+https://github.com/用户名/仓库名.git
+git@github.com:用户名/仓库名.git
+\end{lstlisting}
+
+\textbf{CNB}：
+
+\begin{lstlisting}[style=shell]
+https://cnb.cool/组织名/仓库名.git
+https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
+\end{lstlisting}
+
+\begin{notebox}[总结]
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{Git核心命令}：完全一致，可使用熟悉的Git命令进行代码管理
+  \item \textbf{平台管理命令}：CNB提供额外的\texttt{cnb} CLI来管理组织、仓库、Issue等
+  \item \textbf{认证方式}：CNB使用访问令牌（Token）进行认证
+\end{itemize}
+
+如果你熟悉GitHub的使用，切换到CNB几乎没有学习成本！
+\end{notebox}
+
+% ============================================================
+% 附录E：金融数据源汇总
+% ============================================================
+
+\chapter{金融数据源汇总}
+
+本附录汇总课程实验中可能用到的金融数据源，包括免费和付费两大类。
+
+% ------------------------------------------------------------
+\section{tushare Pro}
+% ------------------------------------------------------------
+
+tushare Pro是国内最流行的金融数据接口之一，提供A股、基金、期货、港股通等全品类数据。
+
+\textbf{官网}：\url{https://tushare.pro}
+
+\textbf{数据覆盖}：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{数据类别} & \textbf{接口示例} & \textbf{说明} \\
+\midrule
+A股日线 & \texttt{daily()} & 沪深A股日线行情（开盘/收盘/最高/最低/成交量） \\
+A股分钟线 & \texttt{pro.bar()} & 1分钟/5分钟线 \\
+财务数据 & \texttt{income()}, \texttt{balancesheet()} & 利润表、资产负债表等 \\
+基金净值 & \texttt{fund\_nav()} & 开放式基金净值数据 \\
+期货数据 & \texttt{futures\_daily()} & 商品期货日线行情 \\
+港股通 & \texttt{hk\_hold()} & 港股通持股数据 \\
+宏观经济 & \texttt{cn\_gdp()} & GDP、CPI等宏观数据 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{安装与使用}：
+
+\begin{lstlisting}[style=shell]
+pip install tushare
+\end{lstlisting}
+
+\begin{lstlisting}[style=python]
+import tushare as ts
+pro = ts.pro_api('your_token')
+
+# 获取贵州茅台日线数据
+df = pro.daily(ts_code='600519.SH', start_date='20260101', end_date='20260608')
+
+# 获取沪深300成分股
+hs300 = pro.index_weight(index_code='399300.SZ')
+\end{lstlisting}
+
+\begin{notebox}[tushare积分]
+tushare Pro采用积分制：注册送120积分，可访问基础数据；更高级的数据需要更多积分。获取积分的方式包括：完善个人信息、充值、分享文章等。课程实验所需的基础数据120积分即可满足。
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{akshare}
+% ------------------------------------------------------------
+
+akshare是免费开源的中国金融数据接口，无需注册和Token，适合初学者快速上手。
+
+\textbf{官网}：\url{https://akshare.akfamily.xyz}
+
+\textbf{安装与使用}：
+
+\begin{lstlisting}[style=shell]
+pip install akshare
+\end{lstlisting}
+
+\begin{lstlisting}[style=python]
+import akshare as ak
+
+# 获取A股实时行情
+df = ak.stock_zh_a_spot_em()
+
+# 获取个股历史数据
+df = ak.stock_zh_a_hist(symbol="600519", period="daily",
+                         start_date="20260101", end_date="20260608")
+
+# 获取基金净值
+df = ak.fund_open_fund_info_em(symbol="000001")
+
+# 获取宏观数据
+df = ak.macro_china_gdp()
+\end{lstlisting}
+
+\textbf{特点}：完全免费、无需注册、数据来源为东方财富等公开网站、更新频繁（几乎每周更新）。
+
+% ------------------------------------------------------------
+\section{yfinance}
+% ------------------------------------------------------------
+
+yfinance是Yahoo Finance的Python接口，提供全球市场的股票、基金、指数、汇率等数据。
+
+\textbf{安装与使用}：
+
+\begin{lstlisting}[style=shell]
+pip install yfinance
+\end{lstlisting}
+
+\begin{lstlisting}[style=python]
+import yfinance as yf
+
+# 获取苹果公司股票数据
+aapl = yf.Ticker("AAPL")
+df = aapl.history(period="1y")
+
+# 获取沪深300ETF数据
+df = yf.download("000300.SS", start="2026-01-01", end="2026-06-08")
+
+# 获取美元兑人民币汇率
+df = yf.download("CNY=X", period="6mo")
+\end{lstlisting}
+
+\textbf{特点}：全球市场覆盖、免费使用、适合国际比较分析。国内A股数据延迟约15分钟。
+
+% ------------------------------------------------------------
+\section{FRED}
+% ------------------------------------------------------------
+
+FRED（Federal Reserve Economic Data）是美联储经济数据库，提供50万+美国及全球经济指标。
+
+\textbf{官网}：\url{https://fred.stlouisfed.org}
+
+\begin{lstlisting}[style=shell]
+pip install fredapi
+\end{lstlisting}
+
+\begin{lstlisting}[style=python]
+from fredapi import Fred
+fred = Fred(api_key='your_key')
+
+# 获取美国GDP
+gdp = fred.get_series('GDP')
+
+# 获取联邦基金利率
+ffr = fred.get_series('FEDFUNDS')
+
+# 获取CPI
+cpi = fred.get_series('CPIAUCSL')
+\end{lstlisting}
+
+\textbf{特点}：数据权威、更新及时、免费API（需注册获取Key）。适合宏观经济研究和中美对比分析。
+
+% ------------------------------------------------------------
+\section{Wind与CSMAR}
+% ------------------------------------------------------------
+
+\textbf{Wind}：万得金融数据终端，国内金融机构标配，数据最全最专业。年费数万元，一般学校图书馆有终端机可使用。
+
+\textbf{CSMAR}：国泰安数据库，学术研究常用，涵盖中国上市公司财务、治理、交易等全维度数据。高校通常有机构订阅，可通过学校图书馆访问。
+
+\begin{notebox}[学术数据获取建议]
+\begin{itemize}[leftmargin=1em]
+  \item 课程实验：优先使用tushare/akshare免费数据
+  \item 毕业论文：申请学校图书馆的Wind/CSMAR访问权限
+  \item 竞赛/科研项目：可通过导师申请专项数据经费
+\end{itemize}
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{各数据源对比}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+\textbf{数据源} & \textbf{覆盖市场} & \textbf{费用} & \textbf{A股深度} & \textbf{API质量} & \textbf{推荐度} \\
+\midrule
+tushare Pro & 中国 & 免费/积分制 & 高 & 优 & ★★★★★ \\
+akshare & 中国 & 免费 & 中 & 良 & ★★★★ \\
+yfinance & 全球 & 免费 & 低 & 良 & ★★★ \\
+FRED & 美国/全球 & 免费 & 无 & 优 & ★★★★ \\
+Wind & 全球 & 付费（昂贵） & 极高 & 优 & ★★★★★ \\
+CSMAR & 中国 & 付费（机构） & 极高 & 良 & ★★★★ \\
+\bottomrule
+\end{tabular}
+\caption{金融数据源对比}
+\end{table}
+
+% ============================================================
+% 附录F：LaTeX论文排版模板
+% ============================================================
+
+\chapter{LaTeX论文排版模板}
+
+% ------------------------------------------------------------
+\section{课程实验报告模板}
+% ------------------------------------------------------------
+
+以下为本课程实验报告的LaTeX模板，可直接复制使用：
+
+\begin{lstlisting}[style=html]
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+
+\title{智慧银行实验教程\\实验X：\{实验名称\}}
+\author{姓名 \quad 学号 \quad 班级}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{实验目的}
+% 描述本次实验的学习目标
+
+\section{实验环境}
+% 列出操作系统、IDE、语言版本等
+
+\section{实验步骤}
+\subsection{步骤1：...}
+% 详细记录操作步骤，附截图
+
+\subsection{步骤2：...}
+
+\section{实验结果}
+% 展示实验产出（截图/代码/数据）
+
+\section{问题与解决}
+% 记录遇到的问题及解决方法
+
+\section{实验心得}
+% 总结收获和不足
+
+\end{document}
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{本科毕业论文模板简介}
+% ------------------------------------------------------------
+
+本科毕业论文一般采用学校提供的模板。如学校未提供，可参考以下基本结构：
+
+\begin{lstlisting}[style=html]
+\documentclass[12pt,a4paper]{ctexbook}
+\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=3cm]{geometry}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource{references.bib}
+% ... 其他宏包 ...
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+\chapter{绪论}
+\section{研究背景与意义}
+\section{文献综述}
+\section{研究内容与方法}
+
+\chapter{理论与方法}
+\chapter{实验设计}
+\chapter{结果与分析}
+\chapter{结论与展望}
+
+\backmatter
+\printbibliography
+\end{document}
+\end{lstlisting}
+
+\begin{notebox}[毕业论文排版建议]
+\begin{itemize}[leftmargin=1em]
+  \item 使用\texttt{gb7714-2015}参考文献格式，符合国标要求
+  \item 图表编号自动管理：\texttt{\textbackslash caption\{...\}} + \texttt{\textbackslash label\{...\}}
+  \item 交叉引用用\texttt{\textbackslash ref\{...\}}，不手动写编号
+  \item 编译顺序：xelatex → biber → xelatex → xelatex
+\end{itemize}
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{常用LaTeX技巧速查}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{7cm}}
+\toprule
+\textbf{需求} & \textbf{LaTeX代码} \\
+\midrule
+插入图片 & \texttt{\textbackslash includegraphics[width=0.8\textbackslash textwidth]\{fig.png\}} \\
+插入表格 & 使用\texttt{booktabs}宏包的\texttt{\textbackslash toprule}/\texttt{\textbackslash midrule}/\texttt{\textbackslash bottomrule} \\
+数学公式 & 行内\texttt{\$...\$}，行间\texttt{\textbackslash [...\textbackslash ]}，编号\texttt{\textbackslash begin\{equation\}} \\
+引用文献 & \texttt{\textbackslash textcite\{key\}}或\texttt{\textbackslash parencite\{key\}} \\
+超链接 & \texttt{\textbackslash url\{https://...\}}或\texttt{\textbackslash href\{url\}\{文字\}} \\
+代码块 & \texttt{\textbackslash begin\{lstlisting\}[style=shell] ... \textbackslash end\{lstlisting\}} \\
+分栏 & \texttt{\textbackslash begin\{multicols\}\{2\}...\textbackslash end\{multicols\}} \\
+脚注 & \texttt{\textbackslash footnote\{脚注内容\}} \\
+加粗/斜体 & \texttt{\textbackslash textbf\{加粗\}} / \texttt{\textbackslash textit\{斜体\}} \\
+特殊符号 & 度数\texttt{\$\^{}\textbackslash circ\$C}，百分号\texttt{\$\textbackslash \%\$}，美元\texttt{\$\textbackslash\$\$} \\
+\bottomrule
+\end{tabular}
+\caption{LaTeX技巧速查}
+\end{table}
+
+% ============================================================
+% 附录G：评分标准与交付规范
+% ============================================================
+
+\chapter{评分标准与交付规范}
+
+% ------------------------------------------------------------
+\section{各章实验评分标准}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{章节} & \textbf{实验内容} & \textbf{分值} & \textbf{核心评分点} \\
+\midrule
+第1章 & 绪论与课程导览 & 5 & 课程认知问卷 \\
+第2章 & 环境搭建与AI协作 & 15 & 环境验收清单（15项全过） \\
+第3章 & MCP协议实践 & 10 & 至少配置3个MCP并验证 \\
+第4章 & Skill体系实践 & 10 & 至少使用2个Skill完成任务 \\
+第5章 & 零售业务AI应用 & 10 & 产品推荐/客户画像系统 \\
+第6章 & 公司业务与风控 & 10 & 信贷审批/风控规则系统 \\
+第7章 & 数据分析实战 & 10 & 回归分析+可视化报告 \\
+第8章 & 舆情与投研 & 10 & 舆情分析/研报生成系统 \\
+第9章 & BMAD方法论 & 5 & 需求文档+架构设计 \\
+第10章 & CRM全栈开发 & 10 & 完整CRM系统（增删改查） \\
+第11章 & 智能客服开发 & 10 & FAQ+对话流+合规过滤 \\
+第12章 & 综合项目 & 15 & 功能+技术+创新+协作+答辩 \\
+\bottomrule
+\end{tabular}
+\caption{各章实验评分标准}
+\end{table}
+
+\begin{notebox}[评分说明]
+\begin{itemize}[leftmargin=1em]
+  \item 各章实验满分如上，总分120分，折算为课程成绩
+  \item 每章实验有基本分（完成核心功能即得60\%）和加分项
+  \item 使用AI协作是课程要求，合理使用AI不扣分，但需在报告中说明AI使用方式
+  \item 抄袭（包括AI直接生成完整报告不修改）记0分
+\end{itemize}
+\end{notebox}
+
+% ------------------------------------------------------------
+\section{文件命名规范}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{文件类型} & \textbf{命名格式} & \textbf{示例} \\
+\midrule
+实验报告 & \texttt{chXX-姓名-学号.pdf} & \texttt{ch02-张三-20240001.pdf} \\
+源代码 & \texttt{chXX-项目名/} & \texttt{ch11-smart-customer-service/} \\
+数据文件 & \texttt{chXX-data-描述.csv} & \texttt{ch07-data-bank-panel.csv} \\
+截图 & \texttt{chXX-screenshot-描述.png} & \texttt{ch02-screenshot-envcheck.png} \\
+\bottomrule
+\end{tabular}
+\caption{文件命名规范}
+\end{table}
+
+% ------------------------------------------------------------
+\section{目录结构规范}
+% ------------------------------------------------------------
+
+每个实验提交的目录结构应如下：
+
+\begin{lstlisting}
+chXX-姓名-学号/
+├── report.pdf           # 实验报告（必须）
+├── src/                 # 源代码目录
+│   ├── index.html       # 主页面（Web项目）
+│   ├── app.py           # Python主程序（如有）
+│   └── ...
+├── data/                # 数据文件（如有）
+│   ├── raw/             # 原始数据
+│   └── processed/       # 处理后数据
+├── screenshots/         # 截图（如报告需要）
+└── README.md            # 项目说明（可选）
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{提交方式}
+% ------------------------------------------------------------
+
+课程统一提交地址：坚果云收件箱 \url{https://send2me.cn/gC9Z1s7w/SSuYQaOQEsj6BQ}
+
+\begin{notebox}[提交注意]
+\begin{itemize}[leftmargin=1em]
+  \item 每章实验有截止日期，逾期扣10\%/天
+  \item 提交前检查文件完整性（报告+源码+数据）
+  \item 源码确保可运行，附必要的依赖说明
+  \item 大文件（>100MB）请压缩后提交
+\end{itemize}
+\end{notebox}
+
+% ============================================================
+% 附录H：术语表
+% ============================================================
+
+\chapter{术语表}
+
+本术语表收录课程中涉及的60+核心术语，按拼音首字母排序，附中英对照及简要释义。
+
+\begin{table}[H]
+\centering
+\small
+\begin{longtable}{lp{2.5cm}p{7cm}}
+\toprule
+\textbf{术语} & \textbf{英文} & \textbf{释义} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{术语} & \textbf{英文} & \textbf{释义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Agent & Autonomous Agent & 能自主感知环境、做出决策并执行动作的AI系统 \\
+BMAD & Build-Measure-Analyze-Decide & 一种迭代式软件开发方法论 \\
+CRM & Customer Relationship Management & 客户关系管理系统，用于管理客户交互和数据 \\
+CTAN & Comprehensive TeX Archive Network & LaTeX宏包的全球分发网络 \\
+DSL & Domain-Specific Language & 领域特定语言，为特定领域设计的专用语言 \\
+ESG & Environmental, Social, Governance & 环境、社会、治理，企业可持续发展评估框架 \\
+FAQ & Frequently Asked Questions & 常见问题解答 \\
+FRED & Federal Reserve Economic Data & 美联储经济数据库 \\
+FSM & Finite State Machine & 有限状态机，一种对话管理策略 \\
+Git & --- & 分布式版本控制系统 \\
+GUI & Graphical User Interface & 图形用户界面 \\
+IDE & Integrated Development Environment & 集成开发环境 \\
+IVR & Interactive Voice Response & 交互式语音应答系统 \\
+JSON & JavaScript Object Notation & 轻量级数据交换格式 \\
+KPI & Key Performance Indicator & 关键绩效指标 \\
+LaTeX & --- & 学术排版系统，本课程用于论文写作 \\
+LLM & Large Language Model & 大语言模型，如GPT-4、Claude等 \\
+LSTM & Long Short-Term Memory & 长短期记忆网络，一种循环神经网络 \\
+LPR & Loan Prime Rate & 贷款市场报价利率 \\
+MCP & Model Context Protocol & 模型上下文协议，AI工具调用标准 \\
+MVP & Minimum Viable Product & 最小可行产品 \\
+NER & Named Entity Recognition & 命名实体识别 \\
+NLP & Natural Language Processing & 自然语言处理 \\
+NLG & Natural Language Generation & 自然语言生成 \\
+NLU & Natural Language Understanding & 自然语言理解 \\
+OLS & Ordinary Least Squares & 普通最小二乘法 \\
+PR & Pull Request & 代码合并请求 \\
+RAG & Retrieval-Augmented Generation & 检索增强生成 \\
+SARIMA & Seasonal ARIMA & 季节性自回归移动平均模型 \\
+SHAP & SHapley Additive exPlanations & 基于博弈论的模型解释方法 \\
+Skill & --- & 领域知识文件（SKILL.md），赋予AI专业能力 \\
+WBS & Work Breakdown Structure & 工作分解结构 \\
+XeLaTeX & --- & 支持Unicode和系统字体的LaTeX引擎 \\
+按需安装 & On-demand Installation & MiKTeX特性，使用未安装宏包时自动下载 \\
+词嵌入 & Word Embedding & 将词语映射为低维向量的技术 \\
+对话框 & Dialogue Box & 聊天界面的消息展示区域 \\
+反洗钱 & Anti-Money Laundering (AML) & 防止不法资金通过金融系统合法化的监管要求 \\
+风险偏好 & Risk Appetite & 投资者对风险的承受意愿和能力 \\
+缝合怪 & Frankenstein & 指拼凑不同代码片段但不理解其原理的做法 \\
+幻觉 & Hallucination & AI生成看似合理但事实错误的内容 \\
+活期存款 & Demand Deposit & 随时可存取的银行存款 \\
+基金定投 & Regular Investment Plan & 定期定额投资基金的理财方式 \\
+框架填充 & Frame Filling & 一种对话管理策略，通过多轮收集槽位 \\
+跨行转账 & Interbank Transfer & 向其他银行账户转账 \\
+零售银行 & Retail Banking & 面向个人客户的银行服务 \\
+流动性 & Liquidity & 资产快速变现而不损失价值的能力 \\
+蒙特卡洛 & Monte Carlo & 通过随机模拟进行数值计算的方法 \\
+内幕交易 & Insider Trading & 利用非公开信息进行证券交易的违法行为 \\
+提示工程 & Prompt Engineering & 设计和优化AI输入提示的技术 \\
+刚性兑付 & Guaranteed Redemption & 金融机构承诺保本保收益的做法（已被禁止） \\
+商业计划书 & Business Plan & 描述商业机会和实施计划的文档 \\
+身份识别 & KYC (Know Your Customer) & 了解你的客户，银行客户身份识别义务 \\
+投资者适当性 & Investor Suitability & 确保推荐产品与客户风险承受能力匹配 \\
+脱敏 & Data Masking & 对敏感数据进行遮蔽处理，如6222****1234 \\
+微调 & Fine-tuning & 在预训练模型基础上用特定数据继续训练 \\
+向量数据库 & Vector Database & 存储和检索向量嵌入的专用数据库 \\
+协议签署 & Agreement Signing & 客户确认产品条款的法律行为 \\
+意图识别 & Intent Classification & 判断用户话语所表达的意图类型 \\
+槽填充 & Slot Filling & 从用户话语中提取业务所需的结构化信息 \\
+知识图谱 & Knowledge Graph & 以实体和关系构建的结构化知识库 \\
+投资者适当性管理 & Suitability Management & 确保产品推荐与客户风险等级匹配的监管要求 \\
+资产证券化 & Securitization & 将资产转化为可交易证券的金融技术 \\
+\bottomrule
+\end{longtable}
+\caption{术语表}
+\end{table}

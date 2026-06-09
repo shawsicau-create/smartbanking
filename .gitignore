@@ -8,9 +8,19 @@ Thumbs.db
 *.log
 *.out
 *.toc
+*.bbl
+*.blg
+*.bcf
+*.run.xml
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.nav
+*.snm
+*.vrb
 
 # 依赖锁定
 *.lock
+
+# 测试文件
+test_ch04.pdf

@@ -1,0 +1,1185 @@
+% 第2章 开发环境搭建与AI协作基础
+% 智慧银行实验教程——AI驱动的金融科技实践
+
+\chapter{开发环境搭建与AI协作基础}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 了解主流AI IDE的生态格局与选型依据
+  \item 独立完成Python/Node.js/Git/LaTeX全栈开发环境搭建
+  \item 掌握AI协作四种模式的适用场景与切换技巧
+  \item 通过实验验证AI协作闭环
+\end{enumerate}
+}
+
+\keyterms{AI IDE、Python环境管理、Node.js、Git版本控制、CNB云平台、LaTeX排版、IDE模式、Chat模式、Builder模式、SOLO模式、提示工程}
+
+% ============================================================
+\section{AI IDE生态全景}
+% ============================================================
+
+\subsection{从传统IDE到AI IDE的演进}
+
+集成开发环境（IDE）是程序员的核心工作工具。回顾IDE的发展历程，可以大致分为三个阶段：
+
+\textbf{第一阶段：编辑器时代}（1980s--2000s）。以Vim、Emacs为代表，程序员需要手动配置语法高亮、编译命令和调试流程，学习曲线陡峭但高度可定制。
+
+\textbf{第二阶段：传统IDE时代}（2000s--2022）。以Eclipse、Visual Studio、IntelliJ IDEA为代表，IDE集成了代码补全、语法检查、调试器、版本控制等功能，极大提升了开发效率。但这一阶段的代码补全本质上是\textbf{基于规则的模式匹配}——它只能根据已输入的字符推测可能的补全项，无法理解代码的语义和上下文。
+
+\textbf{第三阶段：AI IDE时代}（2023至今）。大语言模型（LLM）的突破催生了全新的IDE形态——AI IDE。与传统IDE的根本区别在于：AI IDE内嵌了具有代码理解能力的大模型，不仅能补全代码，还能\textbf{理解需求、生成项目、调试错误、重构代码}。AI IDE将程序员的角色从"逐行编写代码"转变为"描述需求+审核AI产出"，开发范式发生了根本性变革。
+
+\begin{theorybox}[从Copilot到AI IDE：技术跃迁的关键节点]
+\begin{itemize}[leftmargin=2em]
+  \item 2021年，GitHub Copilot发布，开创了AI代码补全的先河，但它只是一个插件，仍需依附于传统编辑器
+  \item 2023年，Cursor推出，首次将AI作为IDE的核心交互范式，而非附属功能
+  \item 2024--2025年，TRAE、Qoder、Windsurf等产品涌现，AI IDE进入百花齐放阶段
+  \item 2025--2026年，MCP协议和Skill体系成熟，AI IDE从"代码助手"升级为"全栈开发伙伴"
+\end{itemize}
+核心趋势：AI IDE的定位正在从\textbf{辅助工具}转向\textbf{协作伙伴}——AI不仅能写代码，还能操作文件系统、调用外部工具、执行测试、部署项目。
+\end{theorybox}
+
+\subsection{主流AI IDE对比}
+
+当前市场上的AI IDE产品众多，以下从金融专业学生和研究者的实际需求出发，对五款主流产品进行对比分析：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{对比维度} & \textbf{TRAE} & \textbf{Qoder} & \textbf{Cursor} & \textbf{CodeBuddy} & \textbf{Windsurf} \\
+\midrule
+模型支持 & 豆包系列 & 通义+Claude & Claude+GPT & 腾讯混元 & Claude+GPT \\
+MCP支持 & 支持 & 支持 & 支持 & 支持 & 支持 \\
+Skill支持 & 有限 & 丰富 & 有限 & 丰富(CNB) & 有限 \\
+定价 & 免费 & 付费 & 付费 & 试用后付费 & 付费 \\
+中文支持 & 优秀 & 优秀 & 一般 & 优秀 & 一般 \\
+Agent能力 & Builder/SOLO & Builder/SOLO & Agent & Builder & Cascade \\
+国内访问 & 直接 & 直接 & 需加速 & 直接 & 需加速 \\
+\bottomrule
+\end{tabular}
+\caption{主流AI IDE对比（2026年6月）}
+\end{table}
+
+\begin{notebox}[关于"国内访问"]
+Cursor和Windsurf的服务器位于海外，直接访问可能较慢或不稳定。如需使用，建议配置网络加速工具。TRAE、Qoder和CodeBuddy均为国内厂商出品，访问速度快且无需额外配置。
+\end{notebox}
+
+\subsection{选型建议}
+
+不同用户群体的需求差异较大，以下是针对性建议：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3.5cm}p{5cm}l}
+\toprule
+\textbf{用户类型} & \textbf{核心需求} & \textbf{推荐方案} & \textbf{理由} \\
+\midrule
+学生 / 初学者 & 免费易上手 & TRAE（首选） & 免费、中文友好、Builder模式零门槛 \\
+研究者 & 论文写作+数据分析 & Qoder或TRAE & Skill生态丰富，支持学术写作链路 \\
+企业开发者 & 稳定可控 & Cursor或Qoder & 成熟Agent能力，企业级安全合规 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[本课程推荐方案]
+本课程以\textbf{TRAE}为主要教学IDE，原因是：（1）完全免费；（2）中文界面友好；（3）Builder和SOLO模式适合教学演示。如果你更习惯其他AI IDE，核心概念和操作逻辑是相通的，可自行替换。
+\end{practicebox}
+
+% ============================================================
+\section{Python数据科学环境配置}
+% ============================================================
+
+Python是金融数据科学的基石语言。本节介绍四种环境配置方案，并提供金融专业的完整库安装指南。
+
+\subsection{四方案对比与安装}
+
+根据你的需求和电脑环境，以下提供四种配置方案：
+
+\textbf{方案一：Anaconda（推荐数据科学方向）}
+
+下载 \href{https://www.anaconda.com/download/}{Anaconda}，安装时\textbf{勾选} "Add Anaconda to PATH"。安装后在终端验证：
+
+\begin{lstlisting}[style=shell]
+python --version   # >= 3.10
+node --version     # >= v20
+git --version
+\end{lstlisting}
+
+\textbf{优点}：预装 pandas、numpy、scikit-learn 等科学计算库；可视化环境管理界面。\\
+\textbf{缺点}：安装包较大（约 800MB），部分包更新略慢于 pip。
+
+\textbf{方案二：Miniconda（轻量推荐）}
+
+如果不需要完整 Anaconda 的庞大库，可选 \href{https://docs.conda.io/en/latest/miniconda.html}{Miniconda}：
+
+\begin{lstlisting}[style=shell]
+# 安装后创建课程专用环境
+conda create -n smartbanking python=3.11
+conda activate smartbanking
+
+# 安装常用依赖
+conda install pandas numpy openpyxl
+pip install pypdf flask scikit-learn
+\end{lstlisting}
+
+\textbf{优点}：最小化安装（约 50MB），灵活创建多环境。\\
+\textbf{缺点}：仍需额外安装部分 Python 包。
+
+\textbf{方案三：venv（Python 内置，简单轻量）}
+
+\begin{lstlisting}[style=shell]
+# 官方下载：https://www.python.org/downloads/
+# 安装时勾选 "Add Python to PATH"
+
+# 创建虚拟环境（推荐命名 .venv）
+python -m venv .venv
+
+# Windows 激活
+.venv\Scripts\Activate.ps1    # PowerShell
+.venv\Scripts\activate.bat    # CMD
+
+# macOS / Linux 激活
+source .venv/bin/activate
+
+# 安装课程所需依赖
+pip install flask pandas openpyxl pypdf scikit-learn
+\end{lstlisting}
+
+\textbf{优点}：无需额外安装，Python 3.3+ 内置；轻量简单。\\
+\textbf{缺点}：不能管理多个 Python 版本，需先安装目标版本 Python。
+
+\textbf{方案四：pyenv + venv（多版本管理，推荐进阶用户）}
+
+macOS / Linux 下可用 pyenv 管理多个 Python 版本：
+
+\begin{lstlisting}[style=shell]
+# macOS 安装
+brew install pyenv
+
+# Linux 安装
+curl https://pyenv.run | bash
+
+# 配置 ~/.zshrc 或 ~/.bashrc
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+
+# 安装多个 Python 版本
+pyenv install 3.10.12
+pyenv install 3.11.8
+
+# 项目本地指定版本
+cd your-project
+pyenv local 3.11.8
+python -m venv .venv
+source .venv/bin/activate
+\end{lstlisting}
+
+\textbf{优点}：完美支持多版本 Python 共存；项目级自动切换。\\
+\textbf{缺点}：需要配置 shell；仅管理 Python 本身。
+
+\textbf{选型建议}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{场景} & \textbf{推荐方案} \\
+\midrule
+初学者 / 快速上手 & Anaconda \\
+磁盘空间有限 / 多项目 & Miniconda \\
+简单项目 / 不想额外装软件 & venv \\
+多版本 Python 开发 & pyenv + venv \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{环境验证（通用）}
+
+无论选择哪种方式，安装完成后在终端验证：
+
+\begin{lstlisting}[style=shell]
+python --version   # >= 3.10
+node --version     # >= v20
+git --version
+pip --version
+\end{lstlisting}
+
+\subsection{金融Python库全景图}
+
+金融数据科学的工作流通常包括\textbf{数据获取→数据处理→建模分析→可视化呈现}四个环节。以下按环节梳理核心Python库：
+
+\begin{theorybox}[金融数据科学工作流与工具链]
+金融数据科学的核心工作流可概括为：
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{数据获取}：从API、数据库或文件中获取原始数据
+  \item \textbf{数据处理}：清洗、转换、合并、特征工程
+  \item \textbf{建模分析}：统计分析、机器学习、深度学习
+  \item \textbf{可视化呈现}：图表、仪表盘、报告
+\end{enumerate}
+每个环节都有专门的Python库支撑，选择合适的工具链是高效工作的前提。
+\end{theorybox}
+
+\textbf{数据获取库}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{库名} & \textbf{数据源} & \textbf{说明} \\
+\midrule
+tushare & A股、基金、期货 & 国内最流行的金融数据接口，需注册获取Token \\
+akshare & A股、宏观数据、另类数据 & 开源免费，覆盖面广，适合学术研究 \\
+yfinance & 美股、全球市场 & Yahoo Finance数据接口，海外市场首选 \\
+pandas-datareader & FRED、World Bank & 宏观经济数据，国际比较研究必备 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{数据分析库}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{库名} & \textbf{定位} & \textbf{说明} \\
+\midrule
+pandas & 数据处理框架 & DataFrame数据结构，金融数据处理的基石 \\
+numpy & 数值计算 & 高性能数组运算，pandas的底层引擎 \\
+scipy & 科学计算 & 优化、插值、统计检验等高级数学运算 \\
+statsmodels & 统计建模 & 回归分析、时间序列、假设检验，计量经济学核心库 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{机器学习与深度学习库}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{库名} & \textbf{定位} & \textbf{说明} \\
+\midrule
+scikit-learn & 通用机器学习 & 分类、回归、聚类、降维，金融风控建模首选 \\
+xgboost & 梯度提升树 & 表格数据竞赛之王，信用评分模型常用 \\
+lightgbm & 轻量梯度提升 & 训练速度更快，内存更省，适合大规模数据 \\
+pytorch & 深度学习框架 & 灵活动态图，LSTM/Transformer等金融序列模型首选 \\
+tensorflow & 深度学习框架 & 工业部署成熟，本课程仅简要提及 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{可视化库}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{库名} & \textbf{定位} & \textbf{说明} \\
+\midrule
+matplotlib & 基础绑图 & Python可视化基石，高度可定制但代码较繁琐 \\
+seaborn & 统计可视化 & 基于matplotlib的高级接口，一行代码出美观统计图 \\
+plotly & 交互可视化 & 支持缩放/悬停/筛选，适合探索性数据分析 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{金融专用库}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{库名} & \textbf{定位} & \textbf{说明} \\
+\midrule
+QuantLib & 量化金融 & 定价、风险管理、利率建模，C++底层Python封装 \\
+zipline & 回测框架 & 量化策略回测，Quantopian开源项目 \\
+backtrader & 回测框架 & 轻量灵活，支持实盘交易接口 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[金融专业推荐安装清单]
+以下是一键安装命令，覆盖本课程全部实验所需库：
+
+\begin{lstlisting}[style=shell]
+# 数据获取
+pip install tushare akshare yfinance pandas-datareader
+
+# 数据分析（Anaconda已含pandas/numpy/scipy）
+pip install statsmodels openpyxl pypdf
+
+# 机器学习（Anaconda已含scikit-learn）
+pip install xgboost lightgbm
+
+# 可视化（Anaconda已含matplotlib/seaborn）
+pip install plotly
+
+# 金融专用（可选，按需安装）
+pip install QuantLib-Python zipline-reloaded backtrader
+
+# Web开发（实验三、四必装）
+pip install flask
+
+# MCP工具链（实验二必装）
+pip install uv
+\end{lstlisting}
+
+\textbf{加速提示}：国内用户建议使用清华镜像源加速下载：
+\begin{lstlisting}[style=shell]
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple \
+  tushare akshare statsmodels xgboost lightgbm plotly flask
+\end{lstlisting}
+\end{practicebox}
+
+% ============================================================
+\section{Node.js与前端工具链}
+% ============================================================
+
+\subsection{为什么金融专业需要Node.js}
+
+许多金融专业同学会问：我主要用Python做数据分析，为什么还需要装Node.js？原因有三：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{MCP工具链的运行基础}：本课程实验二将深入使用的MCP（Model Context Protocol）服务器，大多以Node.js包形式发布。例如文件操作、浏览器控制、Office文档处理等MCP工具，都需要通过Node.js运行。
+  \item \textbf{AI IDE的插件生态}：TRAE、Qoder等AI IDE的Skill和扩展机制基于Node.js生态，\texttt{npm install}是安装AI增强功能的通用方式。
+  \item \textbf{前端可视化}：金融仪表盘、交互式图表、Web应用等前端项目需要Node.js作为开发服务器和构建工具。
+\end{enumerate}
+
+简而言之，Python是你的"数据分析引擎"，而Node.js是你的"AI工具基础设施"。
+
+\subsection{安装步骤}
+
+Node.js 是所有 AI CLI 工具的运行基础，也是本课程后续实验的必备依赖。
+
+\textbf{Windows 安装步骤}
+
+\begin{lstlisting}[style=shell]
+# 方式一：winget（Windows 10/11 自带，推荐）
+winget install --id OpenJS.NodeJS.LTS -e --source winget
+
+# 方式二：官网下载安装包
+# 访问 https://nodejs.org/ 下载 LTS 版本
+\end{lstlisting}
+
+\textbf{macOS 安装步骤}
+
+\begin{lstlisting}[style=shell]
+# 方式一：Homebrew（推荐）
+brew install node
+
+# 方式二：官网下载 .pkg 安装包
+# 访问 https://nodejs.org/ 下载 macOS 版 LTS
+
+# 验证
+node --version   # 应输出 v22.x.x 或 v24.x.x
+npm --version    # 应输出 10.x.x 或更高
+\end{lstlisting}
+
+\begin{notebox}[版本选择提示]
+不要选 "Current" 版本（不稳定），始终选 LTS（长期支持版）。LTS版本每两年发布一次，享有30个月的维护保障。
+\end{notebox}
+
+\subsection{npm / npx / pnpm 区别}
+
+Node.js生态中有三个常用的包管理命令，初学者容易混淆：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{5cm}}
+\toprule
+\textbf{命令} & \textbf{功能} & \textbf{典型用法} \\
+\midrule
+npm & Node.js默认包管理器 & \texttt{npm install -g @cnbcool/cnb-cli}（全局安装CNB CLI） \\
+npx & 一次性执行远程包 & \texttt{npx skills add ...}（临时下载并运行，不污染全局） \\
+pnpm & 高效包管理器 & \texttt{pnpm install}（硬链接去重，节省磁盘空间） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[快速记忆]
+\texttt{npm install} = 安装到本地；\texttt{npm install -g} = 安装到全局；\texttt{npx} = 临时下载运行一次；\texttt{pnpm} = 更快的npm替代品。本课程主要使用npm和npx。
+\end{notebox}
+
+% ============================================================
+\section{Git版本控制与CNB云平台}
+% ============================================================
+
+\subsection{Git基础概念}
+
+Git是分布式版本控制系统的事实标准。理解Git的核心概念是高效使用它的前提。
+
+\begin{theorybox}[Git的四个核心概念]
+\begin{description}[leftmargin=2em]
+  \item[仓库（Repository）] 项目的数据库，存储所有文件的完整历史记录。分为本地仓库和远程仓库。
+  \item[暂存区（Staging Area）] 介于工作目录和仓库之间的缓冲区。用\texttt{git add}将修改放入暂存区，用\texttt{git commit}将暂存区的内容正式提交到仓库。
+  \item[提交（Commit）] 仓库中的一次快照。每个提交有唯一的哈希ID，包含作者、时间、提交信息。
+  \item[分支（Branch）] 独立的开发线。默认分支为\texttt{main}，可以创建新分支进行实验性开发，完成后合并回主分支。
+\end{description}
+
+Git的典型工作流：\textbf{修改文件} → \texttt{git add}（暂存）→ \texttt{git commit}（提交）→ \texttt{git push}（推送到远程）。
+\end{theorybox}
+
+\subsection{Git安装}
+
+\textbf{Windows}
+
+\begin{lstlisting}[style=shell]
+# 方式一：winget（推荐）
+winget install --id Git.Git -e --source winget
+
+# 方式二：官网下载
+# https://git-scm.com/download/win
+\end{lstlisting}
+
+\textbf{macOS}
+
+\begin{lstlisting}[style=shell]
+# 方式一：Homebrew（推荐）
+brew install git
+
+# 方式二：首次在终端运行 git 命令时，
+#       macOS 会自动提示安装 Xcode Command Line Tools（含 Git）
+
+# 验证（通用）
+git --version   # 应输出 git version 2.x.x
+\end{lstlisting}
+
+安装完成后，配置全局用户信息：
+
+\begin{lstlisting}[style=shell]
+git config --global user.name "你的姓名"
+git config --global user.email "你的邮箱@example.com"
+\end{lstlisting}
+
+\subsection{金融项目的版本控制最佳实践}
+
+金融项目通常涉及数据文件、模型代码和分析报告，版本控制有其特殊性：
+
+\begin{warningbox}[数据文件不要纳入Git管理]
+金融数据文件（.xlsx、.csv、.db）通常体积较大且可能包含敏感信息，不建议直接提交到Git仓库。正确做法是：
+\begin{enumerate}[leftmargin=2em]
+  \item 将数据文件放入\texttt{data/}目录，并在\texttt{.gitignore}中排除
+  \item 在README中说明数据来源和获取方式
+  \item 使用小规模样例数据进行版本控制（如\texttt{data/sample/}）
+\end{enumerate}
+\end{warningbox}
+
+\textbf{金融项目推荐的.gitignore模板}：
+
+\begin{lstlisting}
+# === Python ===
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# === 数据文件（敏感/大文件）===
+data/raw/
+data/*.xlsx
+data/*.csv
+!data/sample/
+
+# === Jupyter Notebook ===
+.ipynb_checkpoints/
+
+# === 模型文件 ===
+models/*.pkl
+models/*.h5
+
+# === LaTeX 临时文件 ===
+*.aux
+*.log
+*.out
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.toc
+*.lof
+*.lot
+
+# === 系统文件 ===
+.DS_Store
+Thumbs.db
+*.lock
+node_modules/
+\end{lstlisting}
+
+\subsection{CNB云开发平台配置}
+
+CNB（CodeNotebook，\url{https://cnb.cool}）是国内领先的云原生代码托管与开发平台，提供 Git 代码托管、CI/CD 流水线、AI 辅助编程等功能。相比 GitHub，CNB 具有国内访问速度快、中文界面友好、集成 AI Skill 等优势。
+
+\textbf{注册与配置}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问 \url{https://cnb.cool}，使用微信扫码注册/登录
+  \item 登录后进入个人设置，创建\textbf{访问令牌}（Access Token）：
+    \begin{itemize}
+      \item 进入「设置」→「访问令牌」→「创建新令牌」
+      \item 勾选 \texttt{repo-code:rw} 权限
+      \item 记录生成的 Token（仅显示一次）
+    \end{itemize}
+\end{enumerate}
+
+\textbf{安装 CNB CLI 和 Skills}
+
+\begin{lstlisting}[style=shell]
+# 安装 CNB CLI（全局）
+npm install @cnbcool/cnb-cli -g
+
+# 安装 Skills 工具（AI 增强功能）
+npm install skills -g
+
+# 添加 CNB Skill（增强 IDE 中的 AI 功能）
+npx skills add https://cnb.cool/cnb/skills/cnb-skill.git --agent codebuddy -y --copy
+\end{lstlisting}
+
+\textbf{验证安装}
+
+\begin{lstlisting}[style=shell]
+cnb --version
+skills list
+\end{lstlisting}
+
+安装成功后会显示已安装的技能列表，包括：cnb-api、cnb-code-commit、cnb-code-review、cnb-docs、cnb-pr-summary 等。
+
+\begin{notebox}[CNB与GitHub的关系]
+CNB兼容Git协议，可以与GitHub互操作。你可以将CNB视为"国内版GitHub"，核心操作（clone/push/pull/pull request）的逻辑完全一致。本课程选择CNB是因为其国内访问速度快、与AI Skill深度集成。
+\end{notebox}
+
+% ============================================================
+\section{LaTeX学术排版环境}
+% ============================================================
+
+\subsection{为什么金融专业需要LaTeX}
+
+在金融学术界，LaTeX是论文写作的\textbf{事实标准}。掌握LaTeX对金融专业学生有三重价值：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{学术论文}：国内外顶级金融期刊（如Journal of Finance、《经济研究》、《金融研究》）均要求或推荐LaTeX投稿。LaTeX的公式排版、参考文献管理、交叉引用等功能远超Word。
+  \item \textbf{基金申请}：国家自然科学基金（NSFC）的申请书模板即基于LaTeX，掌握LaTeX可以大幅提升基金写作效率。
+  \item \textbf{实验报告}：本课程的实验报告推荐使用LaTeX排版，培养学术写作的规范性习惯。
+\end{enumerate}
+
+\begin{theorybox}[LaTeX vs Word：金融学术写作的选择]
+\begin{tabular}{lll}
+ & \textbf{LaTeX} & \textbf{Word} \\
+学习曲线 & 陡峭，需学标记语言 & 平缓，所见即所得 \\
+公式排版 & 原生支持，精美 & 公式编辑器，较繁琐 \\
+参考文献 & BibTeX自动管理 & 手动或Zotero插件 \\
+多人协作 & Git版本控制 & OneDrive/批注 \\
+期刊模板 & 主流期刊均提供 & 部分期刊不提供 \\
+\end{tabular}
+
+建议：\textbf{正式学术论文用LaTeX，日常速记用Word}，两者互补而非替代。
+\end{theorybox}
+
+\subsection{安装步骤}
+
+\textbf{Windows：安装 MiKTeX（推荐）}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问 \url{https://miktex.org/download}，下载 Basic MiKTeX Installer（约 230 MB）
+  \item 运行安装程序，选择 ``Install for current user''（无需管理员权限）
+  \item 安装完成后打开 MiKTeX Console → Settings → 将 ``Install missing packages'' 设为 Always
+\end{enumerate}
+
+\textbf{macOS：安装 MacTeX}
+
+\begin{lstlisting}[style=shell]
+# 方式一：通过 Homebrew（推荐）
+brew install --cask mactex
+
+# 方式二：清华镜像手动下载（约 7 GB，国内速度快）
+curl -L -o /tmp/mactex.pkg \
+  "https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/mac/mactex/mactex-20260324.pkg"
+sudo installer -pkg /tmp/mactex.pkg -target /
+\end{lstlisting}
+
+\textbf{验证安装（Windows / macOS 通用）}
+
+\begin{lstlisting}[style=shell]
+xelatex --version   # 应输出 XeTeX 版本信息
+biber --version     # 应输出 biber 版本号
+\end{lstlisting}
+
+\textbf{测试中文编译}
+
+新建 \texttt{test.tex}，写入：
+
+\begin{lstlisting}
+\documentclass{ctexart}
+\begin{document}
+你好，LaTeX！如果中文正常显示，环境配置成功。
+\end{document}
+\end{lstlisting}
+
+终端执行 \texttt{xelatex test.tex}，生成 PDF 且中文正常即可。
+
+\begin{notebox}[首次编译提示]
+MiKTeX 首次编译会自动下载缺失宏包（如 ctex 系列），弹出提示点击 Install 即可。首次耗时约 1--2 分钟，后续约 5--10 秒。macOS 使用 MacTeX 则无需额外下载，已包含全部宏包。
+\end{notebox}
+
+\subsection{推荐的LaTeX编辑器}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{编辑器} & \textbf{平台} & \textbf{特点} \\
+\midrule
+TeXstudio & Win/Mac/Linux & 专用LaTeX编辑器，内置PDF预览、语法高亮、一键编译 \\
+VS Code + LaTeX Workshop & Win/Mac/Linux & 通用编辑器+插件方案，与AI IDE统一工作环境 \\
+Overleaf & 在线 & 无需安装，在线协作编辑，适合团队合作论文 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[推荐方案]
+如果你已经安装了TRAE或VS Code，安装\textbf{LaTeX Workshop}插件即可获得完整的LaTeX编辑体验，无需额外安装TeXstudio。这样你的AI IDE和LaTeX编辑器合二为一，工作流更顺畅。
+\end{practicebox}
+
+% ============================================================
+\section{AI协作四模式详解}
+% ============================================================
+
+现代AI IDE通常提供多种AI协作模式，理解每种模式的特点和适用场景，是高效利用AI的前提。本节以TRAE为例详解四种模式，其他AI IDE的逻辑类似。
+
+\subsection{IDE模式：传统编码+AI辅助补全}
+
+\textbf{工作方式}：在编辑器中正常编写代码，AI在光标位置提供行内补全建议（类似手机输入法的联想功能）。按Tab键接受建议，按Esc键忽略。
+
+\textbf{典型场景}：
+\begin{itemize}[leftmargin=2em]
+  \item 编写重复性代码（如批量定义变量、生成样板代码）
+  \item 补全函数签名和参数
+  \item 根据注释生成代码片段
+\end{itemize}
+
+\textbf{使用技巧}：先写好注释或函数签名，AI补全的准确率会大幅提升。例如：
+
+\begin{lstlisting}[style=python]
+# 计算年化收益率：给定日收益率序列，计算年化收益率
+def annualized_return(daily_returns, trading_days=252):
+    # AI将基于注释自动补全函数实现
+\end{lstlisting}
+
+\subsection{Chat模式：问答式交互}
+
+\textbf{工作方式}：在侧边栏的聊天窗口中与AI对话，AI仅以文字回答，\textbf{不会直接修改代码文件}。这是最安全的模式，适合学习理解阶段。
+
+\textbf{典型场景}：
+\begin{itemize}[leftmargin=2em]
+  \item 理解概念："什么是SARIMA模型的季节性差分？"
+  \item 解释代码："这段pandas代码的groupby操作做了什么？"
+  \item 排查错误："这个ImportError是什么原因？"
+  \item 对比方案："ARIMA和LSTM在时间序列预测中各有什么优劣？"
+\end{itemize}
+
+\textbf{使用技巧}：Chat模式支持选中代码后提问——选中一段代码，按快捷键发送到Chat窗口，AI会针对选中的代码进行解释或修改建议。
+
+\subsection{Builder模式：AI直接操作文件系统}
+
+\textbf{工作方式}：AI可以\textbf{直接创建、修改、删除文件}，并在终端中\textbf{执行命令}。这是生产力最高的模式，也是风险较高的模式。
+
+\textbf{典型场景}：
+\begin{itemize}[leftmargin=2em]
+  \item 从零生成项目："做一个贪吃蛇网页"
+  \item 批量修改文件："把所有Python文件的import语句按字母排序"
+  \item 安装依赖并运行："安装flask并启动开发服务器"
+\end{itemize}
+
+\textbf{使用技巧}：Builder模式下的AI操作可以\textbf{逐条确认}或\textbf{自动接受}。建议初学者使用"逐条确认"模式，仔细审核AI的每一步操作，逐步建立对AI输出的判断力。
+
+\subsection{SOLO模式：全自主开发}
+
+\textbf{工作方式}：SOLO模式下AI拥有最大自主权，它会自行规划任务、分解步骤、创建子Agent、执行操作。界面通常为三栏布局：左侧任务计划、中间代码编辑、右侧预览/终端。
+
+\textbf{典型场景}：
+\begin{itemize}[leftmargin=2em]
+  \item 快速原型验证："帮我搭建一个银行客户管理系统的原型"
+  \item 零代码开发：只描述需求，完全依赖AI生成
+\end{itemize}
+
+\textbf{使用技巧}：SOLO模式适合快速探索，但生成的代码质量需要人工审核。建议在SOLO模式生成项目后，切换到IDE模式逐一审查代码逻辑。
+
+\subsection{四模式对比}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llccc p{3cm}}
+\toprule
+\textbf{模式} & \textbf{触发方式} & \textbf{AI权限} & \textbf{风险等级} & \textbf{适用场景} & \textbf{关键提示} \\
+\midrule
+IDE & 编辑器内自动 & 行内补全 & 低 & 日常编码 & 写好注释再补全 \\
+Chat & 侧边栏对话 & 仅回答 & 最低 & 学习理解 & 选中代码再提问 \\
+Builder & Ctrl+U & 读写文件+执行命令 & 中 & 项目生成 & 初学者逐条确认 \\
+SOLO & 独立面板 & 全自主操作 & 高 & 快速原型 & 生成后务必审查 \\
+\bottomrule
+\end{tabular}
+\caption{AI协作四模式对比}
+\end{table}
+
+\begin{warningbox}[安全提醒]
+Builder和SOLO模式下AI可以直接操作文件系统，存在误删文件或执行危险命令的风险。建议：
+\begin{enumerate}[leftmargin=2em]
+  \item 重要项目务必使用Git版本控制，出错可以回退
+  \item 初学者优先使用Chat模式理解问题，再切换Builder模式执行
+  \item 不要在含有重要数据的目录中使用SOLO模式
+\end{enumerate}
+\end{warningbox}
+
+\subsection{提示工程基础}
+
+无论使用哪种模式，与AI交互的核心技能是\textbf{写好提示词}（Prompt）。提示工程（Prompt Engineering）是有效利用AI的基础能力。
+
+\begin{theorybox}[写好提示词的5个原则]
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{明确角色}：告诉AI"你是谁"。例如："你是一位资深的银行业学术解读助手"，比"帮我读论文"效果好得多。
+  \item \textbf{具体任务}：描述要做什么，而非怎么做。例如："生成一个贪吃蛇游戏"，而不是"写一些JavaScript代码"。
+  \item \textbf{约束条件}：给出边界和格式要求。例如："纯HTML+CSS+原生JS，不引入第三方库"。
+  \item \textbf{示例输出}：提供期望的输出格式或样例。例如："按以下结构输出：一、论文信息；二、研究问题；三、核心发现"。
+  \item \textbf{迭代优化}：第一次的输出通常不够完美，通过追加提示词逐步修正。例如："请把颜色方案改为蓝色主题，并增加暂停功能"。
+\end{enumerate}
+
+记忆口诀：\textbf{角色-任务-约束-样例-迭代}（RTEII原则）。
+\end{theorybox}
+
+以下是一个提示词的优化过程示例：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{版本} & \textbf{提示词} \\
+\midrule
+差 & 帮我做数据分析 \\
+一般 & 帮我分析信用卡消费数据，用SARIMA预测 \\
+好 & 请基于data/credit\_card\_daily.xlsx完成业绩预测：（1）缺失值用前后7日均值填补；（2）SARIMA(1,1,1)(1,1,1,7)预测未来30天；（3）输出预测报告到reports/ \\
+最佳 & （好版本）+ 角色设定 + 输出格式约束 + 异常值处理规则 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{实验：贪吃蛇与AI协作闭环验证}
+% ============================================================
+
+\begin{exercisebox}[实验目标]
+通过"一句话生成贪吃蛇"实验，验证AI协作闭环：\textbf{分析→生成→运行→调试}。完成本实验后，你将亲身体验Builder模式的完整工作流，并理解AI如何从需求描述自动生成可运行的项目。
+\end{exercisebox}
+
+\textbf{实验时间}：约30分钟
+
+\subsection{AI智能环境检测}
+
+在开始实验前，先用AI检测你的开发环境是否就绪。在 Builder 模式（Ctrl + U）输入下列提示词：
+
+\begin{lstlisting}
+请检测当前开发环境是否满足课程要求，输出表格：
+检测项 | 要求版本 | 当前状态 | 修复建议
+检测项至少包含：Python(>=3.10) / pip / Node.js(>=v20) / npm / Git / Flask / pandas / openpyxl。
+有缺失请给出 Windows 一键安装命令。
+\end{lstlisting}
+
+\textbf{如有缺失对应工具，可在 PowerShell（管理员）中执行}：
+
+\begin{lstlisting}[style=shell]
+# 1) 基础运行时（winget，Windows 10/11 自带）
+winget install --id Python.Python.3.12 -e --source winget
+winget install --id OpenJS.NodeJS.LTS -e --source winget
+winget install --id Git.Git -e --source winget
+
+# 2) 升级 pip / npm 到最新
+python -m pip install --upgrade pip
+npm install -g npm@latest
+
+# 3) Python 三件套 + Flask（实验必装）
+pip install flask pandas openpyxl pypdf -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 4) MCP 工具链（实验二必装 —— word/ppt/fetch/stata-mcp 都用 uvx）
+pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{提醒项} & \textbf{说明} \\
+\midrule
+Python 3.14 较新 & 部分老三方库尚未发 cp314 wheel。如 SARIMA+LSTM 报错，可用 conda 另建 3.11/3.12 虚拟环境 \\
+pandas 3.0 & 已升至 3.x，部分接口有变更 \\
+Flask \_\_version\_\_ & 在 Flask 3.2 将被弃用 \\
+uv / uvx（实验二关键） & MCP 服务如 fetch、word/ppt/stata-mcp 通过 uvx 启动，\textbf{必须先装 uv} \\
+Stata（实验二相关） & 如未安装 Stata，可在实验报告中注明用 Python statsmodels 替代 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{贪吃蛇网页实验}
+
+按 Ctrl + U 切换到 Builder 模式，输入下列提示词：
+
+\begin{lstlisting}
+做一个 HTML 贪吃蛇游戏单文件 index.html，要求：
+1. 纯 HTML+CSS+原生 JS，不引入第三方库；
+2. 画布 600x600，蛇头蓝、身体绿、食物红；
+3. 方向键控制方向，吃到食物分数 +1；
+4. 撞墙/撞身体游戏结束，弹"再来一局"按钮；
+5. 顶部显示当前分数与最高分（localStorage）。
+\end{lstlisting}
+
+做完后双击 \texttt{index.html} 验证。
+
+\subsection{观察AI工作流}
+
+AI生成贪吃蛇的过程是一个典型的\textbf{AI协作闭环}，包含四个步骤：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{分析（Analyze）}：AI解析你的提示词，提取关键需求——单文件、画布尺寸、颜色方案、游戏逻辑、分数系统。
+  \item \textbf{生成（Generate）}：AI创建\texttt{index.html}文件，包含HTML结构、CSS样式和JavaScript游戏逻辑。
+  \item \textbf{运行（Run）}：AI可能尝试在终端打开文件或启动本地服务器进行预览。
+  \item \textbf{调试（Debug）}：如果运行结果不符合预期（如蛇的移动方向反了、分数显示异常），AI会根据你的反馈修改代码。
+\end{enumerate}
+
+\begin{theorybox}[AI协作闭环：后续所有实验的基础]
+贪吃蛇实验中的"分析→生成→运行→调试"四步闭环，是本课程后续所有实验的工作模式。无论做论文解读、Excel合并还是业绩预测，AI都遵循这一流程。理解这个闭环，你就掌握了与AI高效协作的节奏感。
+\end{theorybox}
+
+\subsection{常见问题与AI修复策略}
+
+在贪吃蛇实验中，你可能会遇到以下问题：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{5cm}p{4.5cm}}
+\toprule
+\textbf{问题} & \textbf{原因} & \textbf{AI修复策略} \\
+\midrule
+页面空白 & JS语法错误或DOM未正确加载 & 在Chat模式中粘贴浏览器控制台错误信息，让AI定位修复 \\
+蛇不动 & 事件监听器未绑定或游戏循环未启动 & 告诉AI"蛇不动"，AI会检查keydown事件和setInterval \\
+方向控制反了 & 键盘事件映射错误 & 描述现象："按左键蛇向右走"，AI会修正keyCode映射 \\
+食物出现在蛇身上 & 食物生成未排除蛇身坐标 & 告诉AI"食物和蛇身重叠"，AI会添加排除逻辑 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{practicebox}[修复策略通用模板]
+遇到AI生成的代码有问题时，使用以下模板进行反馈：
+\begin{lstlisting}
+[现象] 描述你看到的具体问题
+[期望] 描述你期望的正确行为
+[环境] 浏览器/Python版本/操作系统
+[错误] 控制台/终端的完整错误信息
+\end{lstlisting}
+信息越具体，AI修复的准确率越高。
+\end{practicebox}
+
+\subsection{项目推送到CNB}
+
+完成贪吃蛇项目后，将其推送到 CNB 代码托管平台：
+
+\begin{lstlisting}[style=shell]
+# 1. 进入项目目录
+cd your-project-folder
+
+# 2. 初始化 Git 仓库（如未初始化）
+git init
+
+# 3. 创建 .gitignore（排除不需要的文件）
+cat > .gitignore << EOF
+*.lock
+.DS_Store
+Thumbs.db
+node_modules/
+.venv/
+EOF
+
+# 4. 添加并提交
+git add .
+git commit -m "Initial commit: 贪吃蛇项目"
+
+# 5. 配置 Git 用户信息（如未配置）
+git config --global user.name "cnb"
+git config --global user.email "your-email@example.com"
+
+# 6. 登录 CNB（可选）
+cnb login
+
+# 7. 查看可用组织
+cnb organizations list-top-groups
+
+# 8. 配置远程仓库（替换 your-token、组织名、仓库名）
+git remote add origin https://cnb:your-token@cnb.cool/组织名/仓库名.git
+
+# 9. 推送代码
+git push -u origin main
+\end{lstlisting}
+
+\begin{notebox}[CNB 提示]
+如果远程仓库已存在，使用 \texttt{git remote set-url origin} 更新地址。推送成功后访问 \url{https://cnb.cool/组织名/仓库名} 查看代码。
+\end{notebox}
+
+% ============================================================
+\section{实验：AI驱动的金融论文解读系统}
+% ============================================================
+
+\begin{exercisebox}[实验目标]
+通过三个递进任务，体验AI在金融研究中的三种典型应用：（1）学术论文智能解读；（2）Excel数据批量处理；（3）时间序列预测建模。完成本实验后，你将理解AI如何将繁琐的研究流程自动化。
+\end{exercisebox}
+
+\textbf{实验时间}：约60分钟
+
+\subsection{创建AI论文解读智能体}
+
+聊天框右上角 → \textbf{设置 → 智能体 → 创建}：
+
+\begin{itemize}[leftmargin=2em]
+  \item 名称：AI 论文解读助手
+  \item 工具：勾选文件读取、代码执行、网络访问
+  \item 系统提示词：
+\end{itemize}
+
+\begin{lstlisting}
+你是资深的银行业 / 金融科技领域学术论文解读助手。
+用户拖入 PDF 后，按下列结构输出 Markdown 报告：
+
+一、论文基本信息（标题/作者/期刊/年份/DOI）
+二、研究问题与背景（<=200 字）
+三、方法论（数据集/模型/实验设计）
+四、核心发现（<=5 条）
+五、术语速查表（5--10 个英文术语 + 中文解释）
+六、可复现性评估（数据/代码/难度 1--5）
+
+注意：英文论文关键概念中英对照；不得编造数据；
+首次运行如缺 pypdf 等 pdf 处理工具请提示用户并自动安装。
+\end{lstlisting}
+
+\textbf{使用方法}：从知网下载论文 → PDF 拖入对话框 → 选中本智能体 → 输入"解读一下"。
+
+\subsection{论文解读的学术规范}
+
+AI论文解读虽然高效，但需要注意学术规范：
+
+\begin{warningbox}[AI辅助论文解读的注意事项]
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{AI可能编造内容}：大语言模型存在"幻觉"问题，可能虚构论文中不存在的结论或数据。务必对照原文核实AI的解读。
+  \item \textbf{不能替代精读}：AI解读是快速获取论文框架的工具，不能替代深度阅读。理解研究方法和逻辑链仍需人工精读。
+  \item \textbf{引用规范}：在你的论文中引用被解读文献时，必须引用原文而非AI的解读摘要。
+  \item \textbf{数据核实}：AI可能误解论文中的统计结果（如混淆相关性与因果性），关键数字需回原文确认。
+\end{enumerate}
+\end{warningbox}
+
+\subsection{Excel多文件合并实验}
+
+这是金融数据处理中最常见的场景：多个Excel文件需要合并为统一数据集。
+
+\textbf{第一步（数据准备提示词）}：
+
+\begin{lstlisting}
+请为后续 Excel 整合任务做准备：
+1. 检查"原始数据"文件夹是否存在；不存在则自动创建一组 >=5 张表的模拟数据（每张 >=50 行，列名故意 1--2 处不一致便于练手）；
+2. 列出所有文件的编码 / 列名 / 样例 / 数据类型；
+3. 输出准备报告，明确合并可行性与最佳方案。本步骤只做准备，不做合并。
+\end{lstlisting}
+
+\textbf{第二步（执行合并提示词）}：
+
+\begin{lstlisting}
+基于上一步的准备报告：
+1. 用 pandas 读入"原始数据"中所有 .xlsx/.csv；
+2. 列名归一化（大小写统一、去空格、中英文映射）；
+3. concat 后基于"客户 ID + 交易日期"去重；
+4. 输出到"整合数据"/merged_{时间戳}.xlsx，并生成 merge_log.md。
+\end{lstlisting}
+
+\begin{theorybox}[分步提示的策略意义]
+为什么要把合并操作拆成两步？这是提示工程中"分步求解"原则的典型应用：
+\begin{itemize}[leftmargin=2em]
+  \item 第一步让AI先\textbf{观察数据}，了解编码、列名差异、数据类型等，避免盲目合并导致数据错乱
+  \item 第二步基于AI的观察结果，有针对性地执行合并，准确率大幅提升
+\end{itemize}
+如果直接给一个"合并所有Excel"的提示词，AI可能跳过数据质量检查，导致合并结果有误。
+\end{theorybox}
+
+\subsection{SARIMA+LSTM业绩预测实验}
+
+\begin{lstlisting}
+请基于 data/credit_card_daily.xlsx（如不存在请先按下列规则模拟生成）：
+- 时间 2022-01-01 至 2024-12-31，每日一行；
+- 列：日期 / 消费额(万元) / 是否节日 / 节日名称 / 星期几；
+- 节日 +-1 天放大 1.5--2.2 倍；故意造 5% 缺失 + 1% 异常值。
+
+完成业绩预测：
+1. 缺失值用前后 7 日均值填补，IQR 异常值标注但不删；
+2. EDA 三图（日时序 / 月度均值柱状 / 节日 vs 非节日箱线）→ reports/eda/；
+3. SARIMA(1,1,1)(1,1,1,7) 预测未来 30 天 + 95% 置信区间；
+4. LSTM(窗口=14, 隐层=64, epoch=20) 对比；
+5. 用 RMSE / MAPE 比较，画对比折线图；
+6. 生成 reports/forecast_report.md（含模型选择理由 + >=3 条业务建议）。
+\end{lstlisting}
+
+\begin{notebox}[模型选择解读]
+SARIMA是经典统计模型，适合捕捉线性趋势和季节性模式；LSTM是深度学习模型，适合捕捉非线性模式。两者对比是金融时间序列预测的标准范式。本实验中SARIMA通常在短期预测上表现更稳定，而LSTM在数据量充足时可能捕捉到更复杂的模式。
+\end{notebox}
+
+% ============================================================
+\section{本章小结}
+% ============================================================
+
+本章完成了三项核心任务：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{环境搭建}：安装并验证了Python、Node.js、Git、LaTeX四件套，以及CNB云开发平台，构建了完整的金融科技开发环境。
+  \item \textbf{AI协作模式}：理解了IDE/Chat/Builder/SOLO四种AI协作模式的适用场景和切换策略，掌握了提示工程的RTEII原则。
+  \item \textbf{实验验证}：通过贪吃蛇实验验证了"分析→生成→运行→调试"的AI协作闭环，通过论文解读、Excel合并和业绩预测实验体验了AI在金融研究中的三种典型应用。
+\end{enumerate}
+
+\begin{theorybox}[从"会用"到"善用"]
+环境搭建是起点，AI协作是方法，金融应用是目标。后续章节将在此基础上，依次引入MCP协议（第3章）和Skill体系（第4章），逐步将AI从"对话助手"升级为"专业金融工具"。
+\end{theorybox}
+
+% ============================================================
+\section{验收清单}
+% ============================================================
+
+请逐项检查你的开发环境：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clll}
+\toprule
+\textbf{序号} & \textbf{检查项} & \textbf{验证命令} & \textbf{期望结果} \\
+\midrule
+1  & Python $\geq$ 3.10 & \texttt{python --version} & Python 3.10+ \\
+2  & pip 已安装 & \texttt{pip --version} & pip 23+ \\
+3  & Node.js $\geq$ v20 & \texttt{node --version} & v20+ \\
+4  & npm 已安装 & \texttt{npm --version} & 10+ \\
+5  & Git 已安装 & \texttt{git --version} & git 2.x \\
+6  & XeLaTeX 已安装 & \texttt{xelatex --version} & XeTeX 3.x+ \\
+7  & Biber 已安装 & \texttt{biber --version} & biber 2.x+ \\
+8  & pandas 已安装 & \texttt{python -c "import pandas"} & 无报错 \\
+9  & Flask 已安装 & \texttt{python -c "import flask"} & 无报错 \\
+10 & openpyxl 已安装 & \texttt{python -c "import openpyxl"} & 无报错 \\
+11 & uv 已安装 & \texttt{uv --version} & uv 0.x \\
+12 & CNB CLI 已安装 & \texttt{cnb --version} & 版本号输出 \\
+13 & AI IDE 已登录 & 打开IDE确认 & 登录状态 \\
+14 & 贪吃蛇可运行 & 双击index.html & 游戏正常 \\
+15 & CNB仓库已推送 & 访问cnb.cool & 代码可见 \\
+\bottomrule
+\end{tabular}
+\caption{第2章验收清单}
+\end{table}
+
+% ============================================================
+\section{常见问题}
+% ============================================================
+
+\textbf{Q1：安装Anaconda后，终端输入python提示"命令未找到"？}
+
+这通常是因为安装时未勾选"Add Anaconda to PATH"。解决方法：
+\begin{itemize}[leftmargin=2em]
+  \item Windows：重新运行安装程序，勾选"Add Anaconda to PATH"；或手动将Anaconda安装目录添加到系统环境变量
+  \item macOS：在\texttt{\textasciitilde/.zshrc}中添加\texttt{export PATH="/opt/anaconda3/bin:\$PATH"}
+\end{itemize}
+
+\textbf{Q2：pip install安装包时报网络超时？}
+
+国内访问PyPI默认源较慢，改用清华镜像源：
+
+\begin{lstlisting}[style=shell]
+pip install 包名 -i https://pypi.tuna.tsinghua.edu.cn/simple
+\end{lstlisting}
+
+如需永久配置，创建\texttt{\textasciitilde/.pip/pip.conf}（macOS/Linux）或\texttt{\%APPDATA\%\textbackslash pip\textbackslash pip.ini}（Windows）：
+
+\begin{lstlisting}
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+\end{lstlisting}
+
+\textbf{Q3：macOS安装Homebrew报错"command not found: brew"？}
+
+Homebrew未安装或路径未配置。执行安装命令：
+
+\begin{lstlisting}[style=shell]
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+\end{lstlisting}
+
+安装后根据提示将brew路径添加到\texttt{\textasciitilde/.zshrc}。
+
+\textbf{Q4：TRAE的Builder模式生成代码很慢或经常中断？}
+
+高峰时段TRAE服务器可能排队。建议：
+\begin{itemize}[leftmargin=2em]
+  \item 避开上课高峰（工作日晚间通常较快）
+  \item 将复杂任务拆分为多个小步骤
+  \item 如果中断，发送"继续"让AI恢复
+\end{itemize}
+
+\textbf{Q5：贪吃蛇页面打开后空白？}
+
+打开浏览器的开发者工具（F12），查看Console面板的报错信息。常见原因：
+\begin{itemize}[leftmargin=2em]
+  \item JavaScript语法错误：将错误信息发给AI，让它修复
+  \item 文件编码问题：用UTF-8编码保存HTML文件
+  \item 浏览器兼容性：换用Chrome或Edge打开
+\end{itemize}
+
+\textbf{Q6：pip安装statsmodels报错"Building wheel for scipy failed"？}
+
+这通常是因为缺少C编译器。解决方法：
+\begin{itemize}[leftmargin=2em]
+  \item Windows：安装\href{https://visualstudio.microsoft.com/visual-cpp-build-tools/}{Microsoft C++ Build Tools}
+  \item macOS：运行\texttt{xcode-select --install}安装命令行工具
+  \item 或使用conda安装：\texttt{conda install statsmodels}
+\end{itemize}
+
+\textbf{Q7：SARIMA+LSTM实验报错"No module named 'statsmodels'"或"No module named 'torch'"？}
+
+需要安装缺失的依赖：
+
+\begin{lstlisting}[style=shell]
+pip install statsmodels -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install torch --index-url https://download.pytorch.org/whl/cpu  # CPU版即可
+\end{lstlisting}
+
+\textbf{Q8：Git push到CNB时报认证失败？}
+
+检查以下几点：
+\begin{itemize}[leftmargin=2em]
+  \item Token是否正确（注意Token仅显示一次，需重新生成如果忘记）
+  \item 远程地址格式是否正确：\texttt{https://cnb:your-token@cnb.cool/组织名/仓库名.git}
+  \item Token权限是否包含\texttt{repo-code:rw}
+\end{itemize}
+
+\textbf{Q9：MacTeX安装后xelatex命令找不到？}
+
+MacTeX的可执行文件位于\texttt{/Library/TeX/texbin/}，需要确保该路径在PATH中：
+
+\begin{lstlisting}[style=shell]
+# 在 ~/.zshrc 中添加
+export PATH="/Library/TeX/texbin:$PATH"
+source ~/.zshrc
+xelatex --version  # 验证
+\end{lstlisting}
+
+\textbf{Q10：Python 3.14安装后部分库报错怎么办？}
+
+Python 3.14较新，部分库尚未发布兼容版本。建议：
+
+\begin{lstlisting}[style=shell]
+# 使用 conda 创建 3.11 虚拟环境
+conda create -n py311 python=3.11
+conda activate py311
+pip install statsmodels scikit-learn torch
+\end{lstlisting}
