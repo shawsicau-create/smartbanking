@@ -12,17 +12,20 @@
 smartbanking/
 ├── 智慧银行实验教程chapters/          # 教程主体（自包含目录，可直接编译）
 │   ├── 智慧银行实验教程.tex            # LaTeX 主文件
-│   ├── 智慧银行实验教程.pdf            # 编译输出 PDF（355页）
+│   ├── 智慧银行实验教程.pdf            # 编译输出 PDF（365页）
 │   ├── preface.tex                    # 前言
 │   ├── ch01.tex – ch12.tex            # 第1–12章
-│   ├── appendix.tex                   # 附录 A–H
+│   ├── appendix.tex                   # 附录 A–I
 │   ├── references.bib                 # 参考文献
 │   └── MCP服务配置参考手册.md          # MCP 配置独立参考文档
-├── 实验讲义/                           # 早期讲义（v4.0，已归档）
+├── 实验讲义/                           # 实验讲义（v4.0）
 │   ├── 智慧银行实验讲义_v4.0.tex
-│   └── 智慧银行实验讲义_v4.0.pdf
+│   ├── 智慧银行实验讲义_v4.0.pdf
+│   └── 实验详细步骤 使用cnm同步项目库.txt  # 环境准备与CNB同步操作指南
+├── papers_digital_finance/             # 数字金融研究文献集（9篇）
 ├── .agents/skills/                     # Qoder AI 技能配置
-├── compile.md                          # LaTeX 编译命令参考
+├── mcp.json                            # MCP 服务配置文件
+├── 本地大模型部署指南.md               # 本地 LLM 部署参考
 └── .gitignore
 ```
 
@@ -43,6 +46,20 @@ smartbanking/
 | | 第11章 | 银行智能客服系统开发 |
 | | 第12章 | 课程综合项目与创新实践 |
 
+## 附录目录
+
+| 附录 | 主题 |
+|------|------|
+| 附录 A | 完整环境配置手册 |
+| 附录 B | MCP配置大全与故障排除 |
+| 附录 C | Stata安装与联动配置 |
+| 附录 D | 环境准备与CNB项目同步详细步骤 |
+| 附录 E | CNB与GitHub命令速查 |
+| 附录 F | 金融数据源汇总 |
+| 附录 G | LaTeX论文排版模板 |
+| 附录 H | 评分标准与交付规范 |
+| 附录 I | 术语表 |
+
 ## 技术栈
 
 | 类别 | 技术 |
@@ -53,7 +70,16 @@ smartbanking/
 | 数据分析 | Stata / Python（pandas, statsmodels） |
 | 版本控制 | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking) |
 
-## 编译方法
+## 快速开始
+
+### 克隆仓库
+
+```bash
+git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
+cd smartbanking-work
+```
+
+### 编译教程
 
 在 `智慧银行实验教程chapters/` 目录下执行：
 
@@ -63,6 +89,15 @@ biber "智慧银行实验教程"
 xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 ```
+
+### 环境准备
+
+详细的开发环境搭建步骤参见**附录 D**（环境准备与CNB项目同步详细步骤），主要包括：
+
+1. 安装 Trae CN / Qoder 等 AI IDE
+2. 安装 Python 3.12、Node.js LTS、Git 等基础运行时
+3. 安装 CNB CLI 与 Skills 技能管理工具
+4. 克隆课程仓库并同步到个人 CNB 空间
 
 ## 课程信息
 
