@@ -673,7 +673,334 @@ print(model.summary())
 并在实验报告中注明「采用Python statsmodels替代Stata」即可获得同等分数。
 
 % ============================================================
-% 附录D：CNB与GitHub命令速查
+% 附录D：环境准备与CNB项目同步详细步骤
+% ============================================================
+
+\chapter{环境准备与CNB项目同步详细步骤}
+
+本附录帮助学生完成开发环境搭建，并将课程仓库同步到个人CNB空间。
+
+% ------------------------------------------------------------
+\section{安装 Trae CN}
+% ------------------------------------------------------------
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问 \url{https://www.trae.cn/ide/download}
+  \item 根据你的电脑系统选择对应版本下载：
+  \begin{itemize}[leftmargin=1em]
+    \item Windows 用户：点击 Windows (x64) 下载
+    \item macOS 用户：点击 macOS (Apple Silicon) 下载
+  \end{itemize}
+  \item 安装完成后打开，首次启动选择「简体中文」
+  \item 使用手机号登录
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{安装基础运行时}
+% ------------------------------------------------------------
+
+winget 是 Windows 10/11 自带的包管理器。如果你的电脑上没有 winget，请使用下方「方式二」从官网下载安装。
+
+\textbf{如何打开 PowerShell（管理员）}：右键点击屏幕左下角「开始」按钮 $\rightarrow$ 选择「终端(管理员)」或「Windows PowerShell(管理员)」
+
+\subsection{方式一：winget 一键安装（Windows 10/11 推荐）}
+
+在打开的 PowerShell（管理员）窗口中，逐条复制粘贴执行以下命令：
+
+\begin{lstlisting}[style=shell]
+# 安装 Python 3.12
+winget install --id Python.Python.3.12 -e --source winget
+
+# 安装 Node.js LTS（长期支持版，不要选 Current）
+winget install --id OpenJS.NodeJS.LTS -e --source winget
+
+# 安装 Git
+winget install --id Git.Git -e --source winget
+\end{lstlisting}
+
+\subsection{方式二：官网下载安装（备选方案）}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{5.5cm}p{5cm}}
+\toprule
+\textbf{软件} & \textbf{下载地址} & \textbf{安装注意事项} \\
+\midrule
+Python 3.12 & \url{https://www.python.org/downloads/} & 务必勾选「Add Python to PATH」 \\
+Node.js LTS & \url{https://nodejs.org/} & 选 LTS 版本，一路 Next \\
+Git & \url{https://git-scm.com/download/win} & 务必勾选「Add Git to PATH」 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{macOS 用户}
+
+如果终端提示 \texttt{brew: command not found}，说明尚未安装 Homebrew。先在终端执行：
+
+\begin{lstlisting}[style=shell]
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+\end{lstlisting}
+
+然后安装所需软件：
+
+\begin{lstlisting}[style=shell]
+brew install python@3.12 node git
+\end{lstlisting}
+
+\begin{warningbox}[注意]
+安装完成后，\textbf{必须关闭当前终端窗口，重新打开一个新终端}，才能识别 \texttt{python}、\texttt{node}、\texttt{git} 命令。
+\end{warningbox}
+
+% ------------------------------------------------------------
+\section{安装 Python 包管理工具}
+% ------------------------------------------------------------
+
+前提：确保第二步中的三个软件已安装完成，并且已重启终端（关闭再重新打开）。
+
+\begin{lstlisting}[style=shell]
+# 升级 pip
+python -m pip install --upgrade pip
+
+# 安装 uv（MCP 服务运行必需）
+pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装课程依赖库
+pip install flask pandas openpyxl pypdf -i https://pypi.tuna.tsinghua.edu.cn/simple
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{安装 CNB CLI 与 Skills}
+% ------------------------------------------------------------
+
+前提：确保 \texttt{node --version} 有输出。如果报 \texttt{command not found}，回到第二步确认 Node.js 已安装并重启终端。
+
+\begin{lstlisting}[style=shell]
+# 安装 CNB 命令行工具（管理仓库、组织等）
+npm install @cnbcool/cnb-cli -g
+
+# 安装 Skills 技能管理工具（实验三 Skill 体系的前置依赖）
+npm install skills -g
+
+# 添加 CNB Skill（增强 IDE 中的 AI 功能）
+npx skills add https://cnb.cool/cnb/skills/cnb-skill.git --agent trae -y --copy
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{验证环境}
+% ------------------------------------------------------------
+
+在 Trae CN 终端（按 \texttt{Ctrl + `} 打开）中逐条执行：
+
+\begin{lstlisting}[style=shell]
+python --version     # 应显示 3.12.x
+node --version       # 应显示 v20.x 或更高
+git --version        # 应显示 git version x.x
+uvx --version        # 应显示版本号
+cnb --version        # 应显示版本号
+skills list          # 应显示已安装的技能列表（含 cnb-api 等）
+\end{lstlisting}
+
+如果某条命令报 \texttt{command not found}，说明该软件未正确安装或未加入 PATH。请回到对应步骤重新安装，然后重启终端再验证。
+
+% ------------------------------------------------------------
+\section{CNB 项目同步}
+% ------------------------------------------------------------
+
+\subsection{步骤 1：注册 CNB 账户并创建访问令牌}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 浏览器打开 \url{https://cnb.cool}
+  \item 点击「注册」$\rightarrow$ 微信扫码登录
+  \item 登录后，点击右上角头像 $\rightarrow$「个人设置」$\rightarrow$ 左侧菜单「访问令牌」
+  \item 在「令牌名」处填写：\texttt{smartbanking}
+  \item 授权范围设置（两种方式任选其一）：
+  \begin{itemize}[leftmargin=1em]
+    \item 方式 A（推荐）：在「常见场景」区域勾选「Git 客户端凭据」
+    \item 方式 B：在下方「授权范围」中找到 repo-code $\rightarrow$ 选择「读写」
+  \end{itemize}
+  \item 点击页面底部「创建」按钮
+  \item 立即复制 Token
+\end{enumerate}
+
+\begin{warningbox}[重要]
+Token 仅显示一次，关闭页面后无法再次查看！建议将 Token 粘贴到记事本或备忘录中保存。
+\end{warningbox}
+
+\subsection{步骤 2：在 CNB 新建空仓库}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 登录后点击页面左上角「+」按钮 $\rightarrow$ 选择「创建仓库」
+  \item「仓库归属」改为你的个人命名空间（点击下拉框选择自己的用户名）
+  \item「仓库名称」填写：\texttt{smartbanking}
+  \item「公开性」选择：公开（默认即是公开）
+  \item 点击「创建」按钮
+\end{enumerate}
+
+\subsection{步骤 3：登录 CNB CLI}
+
+在 Trae CN 终端执行：
+
+\begin{lstlisting}[style=shell]
+cnb login
+\end{lstlisting}
+
+终端会显示一个授权链接和一个 \texttt{user\_code}（如 \texttt{bUp4WV3u}），并自动打开浏览器。
+
+\begin{enumerate}[leftmargin=2em]
+  \item 终端显示链接后，浏览器会自动打开授权页面
+  \item 如果浏览器没有自动打开，手动复制终端中的链接到浏览器
+  \item 在授权页面确认 user\_code 与终端显示的一致，点击「授权」
+  \item 终端显示登录成功信息即可
+\end{enumerate}
+
+如果 \texttt{cnb login} 报错或超时，可以跳过此步骤，在步骤 6 中改用 Token URL 方式推送。
+
+\subsection{步骤 4：克隆课程仓库到本地}
+
+\begin{lstlisting}[style=shell]
+# 克隆教师仓库（完整课程资料）
+git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
+cd smartbanking-work
+\end{lstlisting}
+
+\subsection{步骤 5：配置 Git 用户信息}
+
+\begin{lstlisting}[style=shell]
+# 替换为你的真实姓名和邮箱（用于提交记录显示）
+git config --global user.name "你的姓名"
+git config --global user.email "你的邮箱@example.com"
+\end{lstlisting}
+
+\subsection{步骤 6：关联并推送到你的 CNB 仓库}
+
+\begin{lstlisting}[style=shell]
+# 添加你自己的 CNB 仓库为远程地址
+# 将 <你的用户名> 替换为你的 CNB 用户名
+git remote add myrepo https://cnb.cool/<你的用户名>/smartbanking.git
+
+# 推送所有代码到你的 CNB 仓库
+git push myrepo main
+\end{lstlisting}
+
+如果步骤 3 中 \texttt{cnb login} 成功，此步骤无需再输入密码。
+
+如果 \texttt{git push} 提示输入用户名密码或认证失败，改用以下命令：
+
+\begin{lstlisting}[style=shell]
+# 将 <你的Token> 替换为步骤 1 保存的令牌
+git remote set-url myrepo https://cnb:<你的Token>@cnb.cool/<你的用户名>/smartbanking.git
+git push myrepo main
+\end{lstlisting}
+
+\subsection{步骤 7：验证同步结果}
+
+打开浏览器访问 \texttt{https://cnb.cool/你的用户名/smartbanking}，确认页面显示以下目录结构：
+
+\begin{lstlisting}[style=shell]
+smartbanking/
++-- .agents/                     # Qoder AI 技能配置
++-- 智慧银行实验教程chapters/    # 教程主体（12章 + 附录）
+|   +-- 智慧银行实验教程.tex
+|   +-- preface.tex ~ ch12.tex
+|   +-- appendix.tex
+|   +-- ...
++-- 实验讲义 /                   # 实验讲义文档
++-- .gitignore
++-- cnb-smartbanking.png
++-- README.md
+\end{lstlisting}
+
+% ------------------------------------------------------------
+\section{附加练习：安装 PPT Master（AI 生成 PPT 工具）}
+% ------------------------------------------------------------
+
+PPT Master 是一个开源项目，可以用 AI 从任意文档生成原生可编辑的 PPT。
+
+\textbf{项目地址}（任选其一，优先选国内镜像，速度快）：
+\begin{itemize}[leftmargin=1em]
+  \item GitHub（官方）：\url{https://github.com/hugohe3/ppt-master}
+  \item AtomGit（国内镜像）：\url{https://atomgit.com/hugohe3/ppt-master}
+  \item Gitee AI（国内）：\url{https://ai.gitee.com/apps/66b932ba-9844-4184-adf6-aa567b2b8788}
+\end{itemize}
+
+\textbf{安装步骤}：
+
+\begin{enumerate}[leftmargin=2em]
+  \item 克隆项目到本地（国内推荐用 AtomGit）：
+  \begin{lstlisting}[style=shell]
+# 方式 A（AtomGit 国内镜像，推荐）
+git clone https://atomgit.com/hugohe3/ppt-master.git
+
+# 方式 B（GitHub 官方）
+git clone https://github.com/hugohe3/ppt-master.git
+\end{lstlisting}
+  也可以直接下载 ZIP 解压后进入目录。
+  \item 安装 Python 依赖：
+  \begin{lstlisting}[style=shell]
+pip install -r requirements.txt
+\end{lstlisting}
+  \item 验证安装：
+  \begin{lstlisting}[style=shell]
+python -c "import pptx; print('python-pptx 版本:', pptx.__version__)"
+\end{lstlisting}
+  \item 浏览示例（可选）：打开 \texttt{examples/} 目录查看示例，或在线预览 \url{https://hugohe3.github.io/ppt-master/}
+\end{enumerate}
+
+\textbf{使用方法}：在 Trae CN 中打开 ppt-master 项目，将源材料放入 \texttt{projects/} 目录，然后在 AI 对话中告诉它要把什么内容做成 PPT 即可。
+
+% ------------------------------------------------------------
+\section{验收清单}
+% ------------------------------------------------------------
+
+完成以下全部检查项，截图保存作为实验报告交付物：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cl}
+\toprule
+\textbf{完成} & \textbf{检查项} \\
+\midrule
+$\square$ & Trae CN 已安装并登录 \\
+$\square$ & \texttt{python --version} $\geq$ 3.10 \\
+$\square$ & \texttt{node --version} $\geq$ v20 \\
+$\square$ & \texttt{git --version} 有输出 \\
+$\square$ & \texttt{cnb --version} 有输出 \\
+$\square$ & \texttt{cnb login} 登录成功 \\
+$\square$ & 项目已成功推送到自己的 CNB 仓库 \\
+$\square$ & 在 CNB 网页能看到项目文件列表 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------
+\section{常见问题速查}
+% ------------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{4cm}p{3.5cm}p{5.5cm}}
+\toprule
+\textbf{报错信息} & \textbf{原因} & \textbf{解决方法} \\
+\midrule
+\texttt{command not found} & 安装后未重启终端 & 关闭终端窗口，重新打开再试 \\
+\texttt{cnb login} 超时 & 网络问题或 Token 错误 & 检查网络；或跳过 cnb login，在步骤6改用 Token URL \\
+git push 要求输入密码 & cnb login 未生效 & 改用 Token URL 方式推送 \\
+Authentication failed & Token 未复制完整或已过期 & 回步骤1重新创建令牌 \\
+403 Forbidden & 推送的是 origin（教师仓库） & 确认执行 \texttt{git push myrepo main} \\
+updates were rejected & 自己的仓库已有内容 & 回步骤2删除仓库重建空仓库 \\
+\texttt{skills add} 报错 & npm 镜像问题 & 执行 \texttt{npm config set registry https://registry.npmmirror.com} \\
+\texttt{uvx: command not found} & uv 未安装 & 运行 \texttt{pip install uv} \\
+Token 忘记保存 & Token 仅显示一次 & 回步骤1重新创建新令牌 \\
+中文文件名乱码 & 终端编码非 UTF-8 & Trae CN 设置中将终端编码改为 UTF-8 \\
+\bottomrule
+\end{tabular}
+\caption{常见问题速查}
+\end{table}
+
+% ============================================================
+% 附录E：CNB与GitHub命令速查
 % ============================================================
 
 \chapter{CNB与GitHub命令速查}
@@ -756,7 +1083,7 @@ https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
 \end{notebox}
 
 % ============================================================
-% 附录E：金融数据源汇总
+% 附录F：金融数据源汇总
 % ============================================================
 
 \chapter{金融数据源汇总}
@@ -940,7 +1267,7 @@ CSMAR & 中国 & 付费（机构） & 极高 & 良 & ★★★★ \\
 \end{table}
 
 % ============================================================
-% 附录F：LaTeX论文排版模板
+% 附录G：LaTeX论文排版模板
 % ============================================================
 
 \chapter{LaTeX论文排版模板}
@@ -1063,7 +1390,7 @@ CSMAR & 中国 & 付费（机构） & 极高 & 良 & ★★★★ \\
 \end{table}
 
 % ============================================================
-% 附录G：评分标准与交付规范
+% 附录H：评分标准与交付规范
 % ============================================================
 
 \chapter{评分标准与交付规范}
@@ -1160,7 +1487,7 @@ chXX-姓名-学号/
 \end{notebox}
 
 % ============================================================
-% 附录H：术语表
+% 附录I：术语表
 % ============================================================
 
 \chapter{术语表}

@@ -471,7 +471,7 @@ biber --version     # 应输出 biber 版本号
 终端执行 \texttt{xelatex test.tex}，生成 PDF 且中文正常即可。
 
 \begin{notebox}[首次编译提示]
-MiKTeX 首次编译会自动下载缺失宏包（如 ctex 系列），弹出提示点击 Install 即可。首次耗时约 1--2 分钟，后续约 5--10 秒。macOS 使用 MacTeX 则无需额外下载，已包含全部宏包。详细配置请参见\textbf{附录 E}。
+MiKTeX 首次编译会自动下载缺失宏包（如 ctex 系列），弹出提示点击 Install 即可。首次耗时约 1--2 分钟，后续约 5--10 秒。macOS 使用 MacTeX 则无需额外下载，已包含全部宏包。详细配置请参见\textbf{附录 F}。
 \end{notebox}
 
 \subsubsection{CNB 云开发平台配置}
@@ -552,7 +552,7 @@ Python 3.14 较新 & 部分老三方库尚未发 cp314 wheel。如实验一 SARI
 pandas 3.0 & 已升至 3.x，部分接口有变更 \\
 Flask \_\_version\_\_ & 在 Flask 3.2 将被弃用 \\
 uv / uvx（实验二关键） & MCP 服务如 fetch、word/ppt/stata-mcp 通过 uvx 启动，\textbf{必须先装 uv} \\
-Stata（实验二 L4 关） & 如未安装 Stata，可参考附录 C，或在实验报告中注明用 Python statsmodels 替代 \\
+Stata（实验二 L4 关） & 如未安装 Stata，可参考附录 D，或在实验报告中注明用 Python statsmodels 替代 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2128,7 +2128,298 @@ Mermaid 教程 & \url{https://mermaid.js.org/} \\
 \appendix
 % ===========================================================
 
-\section{附录A IMA 知识库导读}
+\section{附录A 环境准备与 CNB 项目同步详细步骤}
+
+本附录提供从零搭建开发环境并将课程仓库同步到个人 CNB 空间的完整操作指南。
+
+\subsection{安装 Trae CN}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 访问 \url{https://www.trae.cn/ide/download}
+  \item 根据电脑系统选择对应版本下载：
+    \begin{itemize}
+      \item Windows 用户：点击 Windows (x64) 下载
+      \item macOS 用户：点击 macOS (Apple Silicon) 下载
+    \end{itemize}
+  \item 安装完成后打开，首次启动选择「简体中文」
+  \item 使用手机号登录
+\end{enumerate}
+
+\subsection{安装基础运行时}
+
+winget 是 Windows 10/11 自带的包管理器。如果电脑上没有 winget，请使用下方「方式二」从官网下载安装。
+
+\textbf{如何打开 PowerShell（管理员）}：右键点击屏幕左下角「开始」按钮 → 选择「终端(管理员)」或「Windows PowerShell(管理员)」
+
+\textbf{方式一：winget 一键安装（Windows 10/11 推荐）}
+
+在 PowerShell（管理员）窗口中，逐条执行：
+
+\begin{lstlisting}[style=shell]
+# 安装 Python 3.12
+winget install --id Python.Python.3.12 -e --source winget
+
+# 安装 Node.js LTS（长期支持版，不要选 Current）
+winget install --id OpenJS.NodeJS.LTS -e --source winget
+
+# 安装 Git
+winget install --id Git.Git -e --source winget
+\end{lstlisting}
+
+\textbf{方式二：官网下载安装（备选方案）}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{5cm}}
+\toprule
+\textbf{软件} & \textbf{下载地址} & \textbf{安装注意事项} \\
+\midrule
+Python 3.12 & \url{https://www.python.org/downloads/} & 务必勾选「Add Python to PATH」 \\
+Node.js LTS & \url{https://nodejs.org/} & 选 LTS 版本，一路 Next \\
+Git & \url{https://git-scm.com/download/win} & 务必勾选「Add Git to PATH」 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{macOS 用户}：
+
+\begin{lstlisting}[style=shell]
+# 如果终端提示 brew: command not found，先安装 Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 安装基础运行时
+brew install python@3.12 node git
+\end{lstlisting}
+
+\begin{warningbox}[重要提示]
+安装完成后，\textbf{必须关闭当前终端窗口，重新打开一个新终端}，才能识别 python、node、git 命令。
+\end{warningbox}
+
+\subsection{安装 Python 包管理工具}
+
+前提：确保上一步中的三个软件已安装完成，并且已重启终端。
+
+\begin{lstlisting}[style=shell]
+# 升级 pip
+python -m pip install --upgrade pip
+
+# 安装 uv（MCP 服务运行必需）
+pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装课程依赖库
+pip install flask pandas openpyxl pypdf -i https://pypi.tuna.tsinghua.edu.cn/simple
+\end{lstlisting}
+
+\subsection{安装 CNB CLI 与 Skills}
+
+前提：确保 \texttt{node --version} 有输出。如果报 command not found，回到上一步确认 Node.js 已安装并重启终端。
+
+\begin{lstlisting}[style=shell]
+# 安装 CNB 命令行工具（管理仓库、组织等）
+npm install @cnbcool/cnb-cli -g
+
+# 安装 Skills 技能管理工具（实验三 Skill 体系的前置依赖）
+npm install skills -g
+
+# 添加 CNB Skill（增强 IDE 中的 AI 功能）
+npx skills add https://cnb.cool/cnb/skills/cnb-skill.git --agent trae -y --copy
+\end{lstlisting}
+
+\subsection{验证环境}
+
+在 Trae CN 终端（按 Ctrl + ` 打开）中逐条执行：
+
+\begin{lstlisting}[style=shell]
+python --version     # 应显示 3.12.x
+node --version       # 应显示 v20.x 或更高
+git --version        # 应显示 git version x.x
+uvx --version        # 应显示版本号
+cnb --version        # 应显示版本号
+skills list          # 应显示已安装的技能列表（含 cnb-api 等）
+\end{lstlisting}
+
+如果某条命令报 command not found，说明该软件未正确安装或未加入 PATH。请回到对应步骤重新安装，然后重启终端再验证。
+
+\subsection{CNB 项目同步}
+
+\subsubsection{步骤 1：注册 CNB 账户并创建访问令牌}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 浏览器打开 \url{https://cnb.cool}
+  \item 点击「注册」→ 微信扫码登录
+  \item 登录后，点击右上角头像 →「个人设置」→ 左侧菜单「访问令牌」
+  \item 在「令牌名」处填写：smartbanking
+  \item 授权范围设置（两种方式任选其一）：
+    \begin{itemize}
+      \item 方式 A（推荐）：在「常见场景」区域勾选「Git 客户端凭据」
+      \item 方式 B：在下方「授权范围」中找到 repo-code → 选择「读写」
+    \end{itemize}
+  \item 点击页面底部「创建」按钮
+  \item 立即复制 Token
+\end{enumerate}
+
+\begin{warningbox}[重要]
+Token 仅显示一次，关闭页面后无法再次查看！建议将 Token 粘贴到记事本或备忘录中保存。
+\end{warningbox}
+
+\subsubsection{步骤 2：在 CNB 新建空仓库}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 登录后点击页面左上角「+」按钮 → 选择「创建仓库」
+  \item 「仓库归属」改为你的个人命名空间（点击下拉框选择自己的用户名）
+  \item 「仓库名称」填写：smartbanking
+  \item 「公开性」选择：公开
+  \item 点击「创建」按钮
+\end{enumerate}
+
+\subsubsection{步骤 3：登录 CNB CLI}
+
+\begin{lstlisting}[style=shell]
+cnb login
+\end{lstlisting}
+
+终端会显示一个授权链接和一个 user\_code（如 bUp4WV3u），并自动打开浏览器。
+
+\begin{enumerate}[leftmargin=2em]
+  \item 终端显示链接后，浏览器会自动打开授权页面
+  \item 如果浏览器没有自动打开，手动复制终端中的链接到浏览器
+  \item 在授权页面确认 user\_code 与终端显示的一致，点击「授权」
+  \item 终端显示登录成功信息即可
+\end{enumerate}
+
+如果 cnb login 报错或超时，可以跳过此步骤，在步骤 6 中改用 Token URL 方式推送。
+
+\subsubsection{步骤 4：克隆课程仓库到本地}
+
+\begin{lstlisting}[style=shell]
+# 克隆教师仓库（完整课程资料）
+git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
+cd smartbanking-work
+\end{lstlisting}
+
+\subsubsection{步骤 5：配置 Git 用户信息}
+
+\begin{lstlisting}[style=shell]
+# 替换为你的真实姓名和邮箱
+git config --global user.name "你的姓名"
+git config --global user.email "你的邮箱@example.com"
+\end{lstlisting}
+
+\subsubsection{步骤 6：关联并推送到你的 CNB 仓库}
+
+\begin{lstlisting}[style=shell]
+# 添加你自己的 CNB 仓库为远程地址
+# 将 <你的用户名> 替换为你的 CNB 用户名
+git remote add myrepo https://cnb.cool/<你的用户名>/smartbanking.git
+
+# 推送所有代码到你的 CNB 仓库
+git push myrepo main
+\end{lstlisting}
+
+如果 git push 提示输入用户名密码或认证失败，改用以下命令：
+
+\begin{lstlisting}[style=shell]
+# 将 <你的Token> 替换为步骤 1 保存的令牌
+git remote set-url myrepo https://cnb:<你的Token>@cnb.cool/<你的用户名>/smartbanking.git
+git push myrepo main
+\end{lstlisting}
+
+\subsubsection{步骤 7：验证同步结果}
+
+打开浏览器访问 \url{https://cnb.cool/你的用户名/smartbanking}，确认页面显示以下目录结构：
+
+\begin{lstlisting}
+smartbanking/
+├── .agents/                     # Qoder AI 技能配置
+├── 智慧银行实验教程chapters/    # 教程主体（12章 + 附录）
+│   ├── 智慧银行实验教程.tex
+│   ├── preface.tex ~ ch12.tex
+│   ├── appendix.tex
+│   └── ...
+├── 实验讲义 /                   # 实验讲义文档
+├── .gitignore
+├── cnb-smartbanking.png
+└── README.md
+\end{lstlisting}
+
+\subsection{附加练习：安装 PPT Master}
+
+PPT Master 是一个开源项目，可以用 AI 从任意文档生成原生可编辑的 PPT。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{来源} & \textbf{地址} \\
+\midrule
+GitHub（官方） & \url{https://github.com/hugohe3/ppt-master} \\
+AtomGit（国内镜像） & \url{https://atomgit.com/hugohe3/ppt-master} \\
+Gitee AI（国内） & \url{https://ai.gitee.com/apps/66b932ba-9844-4184-adf6-aa567b2b8788} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{安装步骤}：
+
+\begin{lstlisting}[style=shell]
+# 方式 A（AtomGit 国内镜像，推荐）
+git clone https://atomgit.com/hugohe3/ppt-master.git
+
+# 方式 B（GitHub 官方）
+git clone https://github.com/hugohe3/ppt-master.git
+
+# 进入目录
+cd ppt-master
+
+# 安装 Python 依赖
+pip install -r requirements.txt
+
+# 验证安装
+python -c "import pptx; print('python-pptx 版本:', pptx.__version__)"
+\end{lstlisting}
+
+使用方法：在 Trae CN 中打开 ppt-master 项目，将源材料放入 projects/ 目录，然后在 AI 对话中告诉它要把什么内容做成 PPT 即可。
+
+\subsection{验收清单（1A）}
+
+完成以下全部检查项，截图保存作为实验报告交付物：
+
+\begin{itemize}[leftmargin=2em]
+  \item[$\square$] Trae CN 已安装并登录
+  \item[$\square$] \texttt{python --version} $\geq$ 3.10
+  \item[$\square$] \texttt{node --version} $\geq$ v20
+  \item[$\square$] \texttt{git --version} 有输出
+  \item[$\square$] \texttt{cnb --version} 有输出
+  \item[$\square$] cnb login 登录成功
+  \item[$\square$] 项目已成功推送到自己的 CNB 仓库
+  \item[$\square$] 在 CNB 网页能看到项目文件列表
+\end{itemize}
+
+\subsection{常见问题速查}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3.5cm}p{5.5cm}}
+\toprule
+\textbf{报错信息} & \textbf{原因} & \textbf{解决方法} \\
+\midrule
+command not found & 安装后未重启终端 & 关闭终端窗口，重新打开再试 \\
+cnb login 超时 & 网络问题或 Token 错误 & 检查网络；或跳过改用 Token URL \\
+git push 要求输入密码 & cnb login 未生效 & 改用 Token URL 方式推送 \\
+Authentication failed & Token 未复制完整 & 回步骤 1 重新创建令牌 \\
+403 Forbidden & 推送了 origin（教师仓库） & 确认执行 git push myrepo main \\
+updates were rejected & 自己的仓库已有内容 & 删除仓库重建空仓库 \\
+skills add 报错 & npm 镜像问题 & 切换 npmmirror 镜像后重试 \\
+uvx: command not found & uv 未安装 & 运行 pip install uv \\
+Token 忘记保存 & Token 仅显示一次 & 回步骤 1 重新创建新令牌 \\
+中文文件名乱码 & 终端编码非 UTF-8 & Trae CN 设置中改为 UTF-8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+
+\section{附录B IMA 知识库导读}
 
 IMA（Information Mutual Assistance）知识库是课程配套的学术资源平台，提供金融科技、银行数字化转型、AI 应用等领域的论文与报告。
 
@@ -2136,7 +2427,7 @@ IMA（Information Mutual Assistance）知识库是课程配套的学术资源平
 
 \clearpage
 
-\section{附录B 常见问题排查}
+\section{附录C 常见问题排查}
 
 \subsection{TRAE 安装/登录}
 
@@ -2187,7 +2478,7 @@ Builder 不能建文件 & 未授权 & 文件 → 信任当前工作区 \\
 
 \clearpage
 
-\section{附录C Stata 下载与安装指南}
+\section{附录D Stata 下载与安装指南}
 
 \textbf{适用场景}：实验二 L4 关「数据分析组」使用 stata-mcp 跑计量回归时需要本机已安装 Stata。无 Stata 的同学可改用 Python（statsmodels）替代，但\textbf{强烈建议安装}以获得完整体验。
 
@@ -2465,7 +2756,7 @@ print(model.summary())
 
 \clearpage
 
-\section{附录D CNB 与 GitHub 命令对比速查表}
+\section{附录E CNB 与 GitHub 命令对比速查表}
 
 \subsection{基础 Git 命令对比}
 
@@ -2540,7 +2831,7 @@ https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
 
 \clearpage
 
-\section{附录E AI 开发环境配置讲义（完整版）}
+\section{附录F AI 开发环境配置讲义（完整版）}
 
 \textbf{适用场景}：本附录提供从零搭建完整 AI 辅助开发环境的详细指南，涵盖 LaTeX 排版、Node.js、Python、Git、AI IDE（Qoder）、AI CLI 工具、MCP 服务器等全部内容。已在实验一中完成基本环境搭建的同学，可参考本附录进行进阶配置。
 

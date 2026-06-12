@@ -168,8 +168,10 @@
 % 其他宏包
 % ============================================================
 \usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, calc, mindmap, trees, decorations.pathreplacing, backgrounds, chains}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 \usepackage{tabularx}
 \usepackage{multicol}
 \usepackage{marginnote}
@@ -199,7 +201,7 @@
 % 章标题：大字号 + 横线装饰
 \ctexset{
   chapter = {
-    format = \huge\bfseries\centerline,
+    format = \huge\bfseries\centering,
     name = {},
     number = {},
     titleformat = {},
@@ -284,7 +286,7 @@
 
 % ---------- 附录部分 ----------
 \appendix
-\input{appendix}  % 附录A-H
+\input{appendix}  % 附录A-I
 
 % ---------- 后记部分 ----------
 \backmatter
