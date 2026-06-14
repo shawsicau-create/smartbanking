@@ -110,36 +110,46 @@ xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 
 ## 自动化构建（CI/CD）
 
-本项目配置了 GitHub Actions 自动化构建流程，每次提交代码时会自动编译PDF文件。
+本项目配置了 CNB CI/CD 自动化构建流程，每次提交代码时会自动编译PDF文件。
 
 ### 自动构建触发条件
 
-- **Push 到 main/master 分支**：修改 `智慧银行实验教程chapters/` 目录下的文件时自动触发
-- **Pull Request**：提交PR时自动构建并检查
-- **手动触发**：在 GitHub Actions 页面手动运行
+- **Push 到 main/master 分支**：每次推送代码自动触发
+- **手动触发**：在 CNB 控制台手动运行 Pipeline
+
+### 构建配置
+
+项目使用 `.cnb.yml` 配置文件定义CI/CD流程：
+
+```yaml
+stages:
+  - name: build
+    image: texlive/texlive:latest
+    script:
+      - apt-get update && apt-get install -y texlive-lang-chinese texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-bibtex-extra biber
+      - cd 智慧银行实验教程chapters
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+      - biber "智慧银行实验教程"
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+    artifacts:
+      paths:
+        - 智慧银行实验教程chapters/智慧银行实验教程.pdf
+      expire_in: 7 days
+```
 
 ### 构建产物
 
 - **PDF文件**：自动编译的 `智慧银行实验教程.pdf`
 - **构建日志**：详细的编译过程记录
-- **发布版本**：推送标签时自动创建 GitHub Release
+- **产物保存**：构建产物保存7天
 
-### 创建发布版本
+### 查看构建状态
 
-```bash
-# 1. 更新版本号（在README.md中）
-# 2. 提交更改
-git add .
-git commit -m "release: v5.1 新增第14章内容"
-
-# 3. 创建标签
-git tag v5.1
-
-# 4. 推送标签
-git push origin v5.1
-```
-
-系统会自动编译PDF并创建 GitHub Release。
+1. 登录 [CNB控制台](https://cnb.cool)
+2. 进入项目仓库：`xiaosicau/smartbanking`
+3. 查看"CI/CD"或"Pipelines"页面
+4. 查看构建日志和状态
 
 ## 本地构建工具（Makefile）
 
@@ -247,7 +257,8 @@ git push origin feature/新功能名称
 
 ## 相关文档
 
-- [CI/CD 配置说明](CI-CD-README.md) - 详细的自动化构建配置
+- [CNB CI/CD 配置说明](CNB-CICD-README.md) - CNB平台自动化构建配置
+- [GitHub Actions 配置说明](CI-CD-README.md) - GitHub Actions配置（备用）
 - [本地大模型部署指南](本地大模型部署指南.md) - 离线AI模型部署
 - [MCP服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md) - MCP服务配置
 

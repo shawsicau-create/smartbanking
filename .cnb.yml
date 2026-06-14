@@ -1,0 +1,31 @@
+# CNB CI/CD 配置文件
+# 用于腾讯云云原生开发平台
+
+# 构建阶段
+stages:
+  - name: build
+    image: texlive/texlive:latest
+    script:
+      - apt-get update && apt-get install -y texlive-lang-chinese texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-bibtex-extra biber
+      - cd 智慧银行实验教程chapters
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+      - biber "智慧银行实验教程"
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+      - xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
+    artifacts:
+      paths:
+        - 智慧银行实验教程chapters/智慧银行实验教程.pdf
+      expire_in: 7 days
+
+# 触发条件
+rules:
+  - if: $CI_COMMIT_BRANCH == "main"
+    when: always
+  - if: $CI_COMMIT_BRANCH == "master"
+    when: always
+  - if: $CI_PIPELINE_SOURCE == "web"
+    when: always
+
+# 环境变量
+variables:
+  CI_COMMIT_BRANCH: main
