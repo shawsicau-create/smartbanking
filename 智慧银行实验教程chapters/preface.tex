@@ -55,15 +55,19 @@
 
 \subsection*{内容架构概览}
 
-全书共12章，分为三个模块，外加附录：
+全书共13章，分为三个模块，外加附录：
 
 \begin{itemize}[leftmargin=2em]
   \item \textbf{基础模块}（第1—4章）：绪论与环境搭建、MCP协议、Skill体系——建立AI工具的认知框架和操作能力。
   \item \textbf{进阶模块}（第5—8章）：零售业务、公司业务与风控、数据分析、舆情与投研——在真实金融场景中运用AI工具解决业务问题。
-  \item \textbf{综合模块}（第9—12章）：BMAD方法论、CRM全栈开发、智能客服、综合项目——从方法论到全流程项目实践，培养系统级开发能力。
+  \item \textbf{综合模块}（第9—13章）：BMAD方法论、CRM全栈开发、智能客服、综合项目、CLI工具实战——从方法论到全流程项目实践，培养系统级开发能力。
 \end{itemize}
 
 附录部分提供了环境配置速查、MCP服务器清单、Skill模板库、Prompt工程指南等实用参考资料，供学生在实验过程中随时查阅。
+
+\subsection*{AI辅助教学工具}
+
+本书推荐使用清华大学开源的\textbf{OpenMAIC}（开放式多智能体交互课堂，GitHub 18.6k Stars）作为教学辅助工具。OpenMAIC可将本教程的任何章节一键转化为交互式课堂体验，包含AI教师讲解、AI同学讨论、随堂测验和模拟实验，帮助学生以更沉浸的方式学习金融科技知识。
 
 \subsection*{使用建议}
 
@@ -103,6 +107,17 @@
 \textbf{章节} & \textbf{学时} & \textbf{教学重点} & \textbf{实验内容} \\
 \midrule
 \endhead
+
+\multicolumn{4}{l}{\textbf{方案零：16学时入门版（第1—2章+第4章+第13章）}} \\
+\midrule
+第1章 绪论 & 2 & 数字化转型全景、AI应用矩阵、LLM与Agent范式 & 课堂讨论与案例分析 \\
+第2章 环境搭建 & 4 & IDE安装配置、MCP服务器接入、Skill模板部署 & 完整环境搭建实操 \\
+第4章 Skill体系 & 4 & Skill编写规范、金融Skill实例、调试与优化 & 开发金融Skill \\
+第13章 CLI工具实战 & 4 & CNB CLI、Skills CLI、AI CLI工具使用 & CLI工具安装与实操 \\
+综合练习 & 2 & AI辅助编程综合练习 & 使用MiMo CLI完成简单任务 \\
+\midrule
+\textbf{合计} & \textbf{16} & & \\
+\midrule
 
 \multicolumn{4}{l}{\textbf{方案一：32学时精简版（第1—4章+第9章）}} \\
 \midrule
@@ -153,6 +168,7 @@
 
 \begin{notebox}[选课建议]
 \begin{itemize}[leftmargin=1.5em]
+  \item \textbf{入门版}（16学时）：适合短期培训、工作坊或导论课程，快速建立AI工具认知和基本操作能力。
   \item \textbf{精简版}（32学时）：适合金融学专业必修课中的``金融科技''模块，或经济学大类的通识选修课。
   \item \textbf{标准版}（48学时）：适合金融科技方向的独立实验课程，建议每周3学时、持续16周。
   \item \textbf{完整版}（64学时）：适合金融科技专业核心课程，建议每周4学时、持续16周，或暑期集中实训。

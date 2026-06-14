@@ -1267,6 +1267,94 @@ CSMAR & 中国 & 付费（机构） & 极高 & 良 & ★★★★ \\
 \end{table}
 
 % ============================================================
+% OpenMAIC：AI辅助教学工具
+% ============================================================
+
+\section{OpenMAIC：AI辅助教学工具}
+
+\textbf{OpenMAIC}（Open Multi-Agent Interactive Classroom）是清华大学教育学院开发的开源AI教学平台，采用多智能体编排技术，可将任何主题一键转化为交互式课堂体验。
+
+\textbf{官网}：\url{https://open.maic.chat}
+
+\textbf{GitHub}：\url{https://github.com/THU-MAIC/OpenMAIC}（18.6k Stars）
+
+\subsection{核心功能}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{7cm}}
+\toprule
+\textbf{功能} & \textbf{说明} \\
+\midrule
+AI教师讲解 & 自动生成课件，支持语音讲解、聚光灯和激光笔效果 \\
+AI同学讨论 & 多智能体参与讨论，模拟真实课堂氛围 \\
+随堂测验 & 自动生成单选/多选/简答题，AI实时评分反馈 \\
+交互式模拟 & 可操作的HTML模拟场景（3D可视化、流程模拟、小游戏） \\
+白板演示 & AI实时绘图讲解，支持公式推导、流程图绘制 \\
+项目制学习 & 学生选择角色，与AI协作完成结构化项目 \\
+\bottomrule
+\end{tabular}
+\caption{OpenMAIC核心功能}
+\end{table}
+
+\subsection{快速上手}
+
+\begin{lstlisting}[style=shell]
+# 方式一：托管版（无需部署）
+# 访问 https://open.maic.chat，注册后即可使用
+
+# 方式二：本地部署
+git clone https://github.com/THU-MAIC/OpenMAIC.git
+cd OpenMAIC
+pnpm install
+cp .env.example .env.local
+# 编辑 .env.local，填入至少一个API Key
+pnpm dev
+# 访问 http://localhost:3000
+\end{lstlisting}
+
+\subsection{支持的AI模型}
+
+OpenMAIC支持多种AI模型提供商：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{提供商} & \textbf{模型} & \textbf{配置项} \\
+\midrule
+OpenAI & GPT-5.5, GPT-4o & \texttt{OPENAI\_API\_KEY} \\
+Anthropic & Claude Opus 4.8 & \texttt{ANTHROPIC\_API\_KEY} \\
+Google & Gemini 3 Flash & \texttt{GOOGLE\_API\_KEY} \\
+小米 & MiMo v2.5 Pro & \texttt{XIAOMI\_API\_KEY} \\
+智谱 & GLM-5.1 & \texttt{GLM\_API\_KEY} \\
+DeepSeek & DeepSeek-V4 & \texttt{DEEPSEEK\_API\_KEY} \\
+本地 & Ollama & \texttt{OLLAMA\_BASE\_URL} \\
+\bottomrule
+\end{tabular}
+\caption{OpenMAIC支持的AI模型}
+\end{table}
+
+\subsection{导出格式}
+
+\begin{itemize}[leftmargin=1.5em]
+  \item \textbf{PowerPoint (.pptx)}：可编辑的课件，包含图片、图表和LaTeX公式
+  \item \textbf{交互式HTML}：自包含网页，包含交互式模拟实验
+  \item \textbf{课堂ZIP}：完整课堂导出（课件+媒体），可备份或分享
+\end{itemize}
+
+\subsection{与本课程的结合}
+
+建议将OpenMAIC用于以下教学场景：
+
+\begin{enumerate}[leftmargin=1.5em]
+  \item \textbf{课前预习}：输入章节主题，生成预习课件，学生提前了解核心概念
+  \item \textbf{课堂互动}：使用AI教师讲解+AI同学讨论，增强课堂参与度
+  \item \textbf{课后复习}：生成随堂测验，巩固学习成果
+  \item \textbf{项目展示}：为综合项目生成交互式演示，提升答辩效果
+\end{enumerate}
+
+% ============================================================
 % 附录G：LaTeX论文排版模板
 % ============================================================
 
@@ -1390,114 +1478,15 @@ CSMAR & 中国 & 付费（机构） & 极高 & 良 & ★★★★ \\
 \end{table}
 
 % ============================================================
-% 附录H：评分标准与交付规范
-% ============================================================
-
-\chapter{评分标准与交付规范}
-
-% ------------------------------------------------------------
-\section{各章实验评分标准}
-% ------------------------------------------------------------
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{llcc}
-\toprule
-\textbf{章节} & \textbf{实验内容} & \textbf{分值} & \textbf{核心评分点} \\
-\midrule
-第1章 & 绪论与课程导览 & 5 & 课程认知问卷 \\
-第2章 & 环境搭建与AI协作 & 15 & 环境验收清单（15项全过） \\
-第3章 & MCP协议实践 & 10 & 至少配置3个MCP并验证 \\
-第4章 & Skill体系实践 & 10 & 至少使用2个Skill完成任务 \\
-第5章 & 零售业务AI应用 & 10 & 产品推荐/客户画像系统 \\
-第6章 & 公司业务与风控 & 10 & 信贷审批/风控规则系统 \\
-第7章 & 数据分析实战 & 10 & 回归分析+可视化报告 \\
-第8章 & 舆情与投研 & 10 & 舆情分析/研报生成系统 \\
-第9章 & BMAD方法论 & 5 & 需求文档+架构设计 \\
-第10章 & CRM全栈开发 & 10 & 完整CRM系统（增删改查） \\
-第11章 & 智能客服开发 & 10 & FAQ+对话流+合规过滤 \\
-第12章 & 综合项目 & 15 & 功能+技术+创新+协作+答辩 \\
-\bottomrule
-\end{tabular}
-\caption{各章实验评分标准}
-\end{table}
-
-\begin{notebox}[评分说明]
-\begin{itemize}[leftmargin=1em]
-  \item 各章实验满分如上，总分120分，折算为课程成绩
-  \item 每章实验有基本分（完成核心功能即得60\%）和加分项
-  \item 使用AI协作是课程要求，合理使用AI不扣分，但需在报告中说明AI使用方式
-  \item 抄袭（包括AI直接生成完整报告不修改）记0分
-\end{itemize}
-\end{notebox}
-
-% ------------------------------------------------------------
-\section{文件命名规范}
-% ------------------------------------------------------------
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{文件类型} & \textbf{命名格式} & \textbf{示例} \\
-\midrule
-实验报告 & \texttt{chXX-姓名-学号.pdf} & \texttt{ch02-张三-20240001.pdf} \\
-源代码 & \texttt{chXX-项目名/} & \texttt{ch11-smart-customer-service/} \\
-数据文件 & \texttt{chXX-data-描述.csv} & \texttt{ch07-data-bank-panel.csv} \\
-截图 & \texttt{chXX-screenshot-描述.png} & \texttt{ch02-screenshot-envcheck.png} \\
-\bottomrule
-\end{tabular}
-\caption{文件命名规范}
-\end{table}
-
-% ------------------------------------------------------------
-\section{目录结构规范}
-% ------------------------------------------------------------
-
-每个实验提交的目录结构应如下：
-
-\begin{lstlisting}
-chXX-姓名-学号/
-├── report.pdf           # 实验报告（必须）
-├── src/                 # 源代码目录
-│   ├── index.html       # 主页面（Web项目）
-│   ├── app.py           # Python主程序（如有）
-│   └── ...
-├── data/                # 数据文件（如有）
-│   ├── raw/             # 原始数据
-│   └── processed/       # 处理后数据
-├── screenshots/         # 截图（如报告需要）
-└── README.md            # 项目说明（可选）
-\end{lstlisting}
-
-% ------------------------------------------------------------
-\section{提交方式}
-% ------------------------------------------------------------
-
-课程统一提交地址：坚果云收件箱 \url{https://send2me.cn/gC9Z1s7w/SSuYQaOQEsj6BQ}
-
-\begin{notebox}[提交注意]
-\begin{itemize}[leftmargin=1em]
-  \item 每章实验有截止日期，逾期扣10\%/天
-  \item 提交前检查文件完整性（报告+源码+数据）
-  \item 源码确保可运行，附必要的依赖说明
-  \item 大文件（>100MB）请压缩后提交
-\end{itemize}
-\end{notebox}
-
-% ============================================================
-% 附录I：术语表
+% 附录H：术语表
 % ============================================================
 
 \chapter{术语表}
 
 本术语表收录课程中涉及的60+核心术语，按拼音首字母排序，附中英对照及简要释义。
 
-\begin{table}[H]
-\centering
-\small
 \begin{longtable}{lp{2.5cm}p{7cm}}
+\caption{术语表} \\
 \toprule
 \textbf{术语} & \textbf{英文} & \textbf{释义} \\
 \midrule
@@ -1572,5 +1561,3 @@ XeLaTeX & --- & 支持Unicode和系统字体的LaTeX引擎 \\
 资产证券化 & Securitization & 将资产转化为可交易证券的金融技术 \\
 \bottomrule
 \end{longtable}
-\caption{术语表}
-\end{table}

@@ -313,37 +313,6 @@ Demo演示是答辩的核心环节，以下是关键技巧：
 \end{itemize}
 \end{notebox}
 
-\subsection{评分标准}
-
-课程综合项目评分标准如下：
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lp{8cm}c}
-\toprule
-\textbf{维度} & \textbf{评分要点} & \textbf{权重} \\
-\midrule
-功能完整性 & 核心功能是否可用？边界情况是否处理？演示是否流畅？ & 30\% \\
-技术实现质量 & 代码结构是否清晰？AI协作是否充分？技术选型是否合理？ & 25\% \\
-创新性与金融专业度 & 是否有创新点？金融业务理解是否深入？问题定义是否精准？ & 20\% \\
-团队协作与文档 & Git协作是否规范？文档是否完整？团队分工是否合理？ & 15\% \\
-答辩表现 & 演示是否流畅？回答是否专业？团队配合是否默契？ & 10\% \\
-\bottomrule
-\end{tabular}
-\caption{综合项目评分标准}
-\end{table}
-
-\begin{notebox}[加分项]
-以下情况可获得额外加分（单项加2--5分，总分不超过100分）：
-\begin{itemize}[leftmargin=1em]
-  \item 项目已投稿学术论文或竞赛作品
-  \item 开源项目获得外部Star/Fork
-  \item 系统部署到公网可访问
-  \item 详细的用户测试与反馈分析
-  \item 创新性的AI协作方法（如BMAD深度应用）
-\end{itemize}
-\end{notebox}
-
 % ============================================================
 \section{从实验到论文：学术成果转化}
 % ============================================================
@@ -571,3 +540,94 @@ Demo演示是答辩的核心环节，以下是关键技巧：
   \item 访问"互联网+"或"挑战杯"官网，了解最新的竞赛规则和评审标准，分析你的项目需要在哪些方面重点加强。
 \end{enumerate}
 \end{exercisebox}
+
+% ============================================================
+\section{AI辅助教学：OpenMAIC实践}
+% ============================================================
+
+\begin{theorybox}[清华大学OpenMAIC项目]
+\textbf{OpenMAIC}（Open Multi-Agent Interactive Classroom，开放式多智能体交互课堂）是清华大学教育学院于济凡团队开发的开源AI教学平台（GitHub 18.6k Stars）。它采用多智能体编排技术，可将任何主题或文档一键转化为丰富的交互式课堂体验。
+\end{theorybox}
+
+\subsection{OpenMAIC核心功能}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{功能} & \textbf{说明} \\
+\midrule
+演示幻灯片 & AI自动生成课件，支持语音讲解、聚光灯和激光笔效果 \\
+随堂测验 & 自动生成单选/多选/简答题，AI实时评分反馈 \\
+交互式模拟实验 & 可操作的HTML模拟场景（3D可视化、流程模拟、小游戏） \\
+白板演示 & AI教师实时绘图讲解，支持公式推导、流程图绘制 \\
+项目制学习(PBL) & 学生选择角色，与AI协作完成结构化项目 \\
+\bottomrule
+\end{tabular}
+\caption{OpenMAIC核心功能}
+\end{table}
+
+\subsection{OpenMAIC在金融教学中的应用}
+
+OpenMAIC特别适合金融科技课程的以下场景：
+
+\textbf{场景一：概念讲解}。输入"商业银行数字化转型"，OpenMAIC自动生成包含AI教师讲解、AI同学讨论的互动课堂，学生可随时提问。
+
+\textbf{场景二：案例分析}。输入"招商银行智慧零售实践"，系统生成交互式案例分析，学生可扮演不同角色（客户经理、风控官、产品经理）进行模拟决策。
+
+\textbf{场景三：技术演示}。输入"MCP协议工作原理"，系统生成3D可视化演示，直观展示AI Agent与MCP Server的交互流程。
+
+\textbf{场景四：项目答辩}。学生使用OpenMAIC为综合项目生成5分钟交互式课堂演示，作为答辩材料。
+
+\subsection{快速上手}
+
+\begin{lstlisting}[style=shell]
+# 克隆仓库
+git clone https://github.com/THU-MAIC/OpenMAIC.git
+cd OpenMAIC
+
+# 安装依赖
+pnpm install
+
+# 配置API Key（至少配置一个）
+cp .env.example .env.local
+# 编辑 .env.local，填入 OPENAI_API_KEY 或 ANTHROPIC_API_KEY
+
+# 启动服务
+pnpm dev
+\end{lstlisting}
+
+启动后访问 \texttt{http://localhost:3000}，输入学习主题即可开始。
+
+\begin{notebox}[实践任务]
+使用OpenMAIC为你的综合项目生成一个交互式课堂演示：
+\begin{enumerate}[leftmargin=1.5em]
+  \item 登录 \texttt{http://open.maic.chat}（托管版）或本地部署
+  \item 输入你的项目主题（如"基于AI的银行智能客服系统"）
+  \item 选择课堂模式：标准模式（课件+测验）或深度交互模式（模拟实验+编程）
+  \item 导出为PPT或HTML，嵌入项目答辩材料
+\end{enumerate}
+\end{notebox}
+
+\subsection{OpenMAIC与本课程工具链的关系}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{工具} & \textbf{定位} & \textbf{与OpenMAIC的关系} \\
+\midrule
+AI CLI（MiMo/Claude） & 代码生成与执行 & OpenMAIC可调用CLI生成交互式代码演示 \\
+MCP协议 & 工具连接 & OpenMAIC的API可作为MCP Server接入 \\
+Skill体系 & 领域知识 & OpenMAIC的Skill系统与本课程Skill兼容 \\
+OpenMAIC & 教学呈现 & 将上述工具的成果转化为交互式课堂 \\
+\bottomrule
+\end{tabular}
+\caption{OpenMAIC与课程工具链的协同}
+\end{table}
+
+\begin{notebox}[黄金组合]
+CLI（执行层）+ Skill（知识层）+ MCP（连接层）+ OpenMAIC（呈现层）= 完整AI教学工具链。
+
+使用CLI和Skill开发金融应用，通过MCP连接数据源，最后用OpenMAIC将成果转化为交互式课堂演示——这是本课程推荐的"从开发到展示"完整路径。
+\end{notebox}
