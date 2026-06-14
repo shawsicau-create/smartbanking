@@ -24,3 +24,21 @@ Thumbs.db
 
 # 测试文件
 test_ch04.pdf
+
+# IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 临时文件
+*.tmp
+*.temp
+*~
+
+# 编译输出目录
+build/
+dist/
+*.pdf
+!智慧银行实验教程chapters/智慧银行实验教程.pdf
+!实验讲义/智慧银行实验讲义_v4.0.pdf

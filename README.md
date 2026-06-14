@@ -108,11 +108,148 @@ xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 3. 安装 CNB CLI 与 Skills 技能管理工具
 4. 克隆课程仓库并同步到个人 CNB 空间
 
+## 自动化构建（CI/CD）
+
+本项目配置了 GitHub Actions 自动化构建流程，每次提交代码时会自动编译PDF文件。
+
+### 自动构建触发条件
+
+- **Push 到 main/master 分支**：修改 `智慧银行实验教程chapters/` 目录下的文件时自动触发
+- **Pull Request**：提交PR时自动构建并检查
+- **手动触发**：在 GitHub Actions 页面手动运行
+
+### 构建产物
+
+- **PDF文件**：自动编译的 `智慧银行实验教程.pdf`
+- **构建日志**：详细的编译过程记录
+- **发布版本**：推送标签时自动创建 GitHub Release
+
+### 创建发布版本
+
+```bash
+# 1. 更新版本号（在README.md中）
+# 2. 提交更改
+git add .
+git commit -m "release: v5.1 新增第14章内容"
+
+# 3. 创建标签
+git tag v5.1
+
+# 4. 推送标签
+git push origin v5.1
+```
+
+系统会自动编译PDF并创建 GitHub Release。
+
+## 本地构建工具（Makefile）
+
+项目提供了 Makefile 简化本地编译流程：
+
+### 常用命令
+
+```bash
+# 编译PDF
+make pdf
+
+# 清理编译文件
+make clean
+
+# 编译并打开PDF
+make view
+
+# 检查LaTeX语法
+make check
+
+# 统计字数
+make wordcount
+
+# 显示帮助
+make help
+```
+
+### Makefile 优势
+
+- **简化命令**：无需记忆复杂的xelatex编译流程
+- **自动化处理**：自动处理多遍编译和参考文献
+- **错误处理**：编译失败时提供清晰的错误信息
+- **跨平台**：支持macOS、Linux、Windows（WSL）
+
+## CI/CD 测试
+
+项目提供了本地测试脚本，用于验证CI/CD配置：
+
+```bash
+# 运行CI/CD测试
+./test-cicd.sh
+```
+
+测试脚本会：
+1. 检查必要工具（xelatex、biber、make）
+2. 清理旧的编译文件
+3. 检查LaTeX语法
+4. 编译PDF文件
+5. 验证生成的PDF文件
+
+## 贡献指南
+
+欢迎贡献代码！请遵循以下步骤：
+
+### 1. Fork 项目
+
+```bash
+# 克隆你的Fork
+git clone https://github.com/your-username/smartbanking-work.git
+cd smartbanking-work
+```
+
+### 2. 创建分支
+
+```bash
+# 创建并切换到新分支
+git checkout -b feature/新功能名称
+```
+
+### 3. 提交更改
+
+```bash
+# 添加更改
+git add .
+
+# 提交更改（使用语义化提交信息）
+git commit -m "feat: 添加新功能描述"
+```
+
+### 4. 推送并创建PR
+
+```bash
+# 推送到你的Fork
+git push origin feature/新功能名称
+
+# 在GitHub上创建Pull Request
+```
+
+### 提交信息规范
+
+使用语义化提交信息：
+- `feat:` 新功能
+- `fix:` 修复bug
+- `docs:` 文档更新
+- `style:` 代码格式调整
+- `refactor:` 代码重构
+- `test:` 测试相关
+- `chore:` 构建/工具相关
+
 ## 课程信息
 
 - **教程版本**: v5.0（2026年春季）
 - **所属院系**: 四川农业大学经济学院 · 数字经济系
 - **CNB 仓库**: https://cnb.cool/xiaosicau/smartbanking
+
+## 相关文档
+
+- [CI/CD 配置说明](CI-CD-README.md) - 详细的自动化构建配置
+- [本地大模型部署指南](本地大模型部署指南.md) - 离线AI模型部署
+- [MCP服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md) - MCP服务配置
 
 ## 许可证
 
