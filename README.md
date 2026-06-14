@@ -12,9 +12,9 @@
 smartbanking/
 ├── 智慧银行实验教程chapters/          # 教程主体（自包含目录，可直接编译）
 │   ├── 智慧银行实验教程.tex            # LaTeX 主文件
-│   ├── 智慧银行实验教程.pdf            # 编译输出 PDF（365页）
+│   ├── 智慧银行实验教程.pdf            # 编译输出 PDF（379页）
 │   ├── preface.tex                    # 前言
-│   ├── ch01.tex – ch12.tex            # 第1–12章
+│   ├── ch01.tex – ch13.tex            # 第1–13章
 │   ├── appendix.tex                   # 附录 A–I
 │   ├── references.bib                 # 参考文献
 │   └── MCP服务配置参考手册.md          # MCP 配置独立参考文档
@@ -24,7 +24,15 @@ smartbanking/
 │   └── 实验详细步骤 使用cnm同步项目库.txt  # 环境准备与CNB同步操作指南
 ├── papers_digital_finance/             # 数字金融研究文献集（9篇）
 ├── .agents/skills/                     # Qoder AI 技能配置
+│   ├── consulting-frameworks/         # 咨询框架技能
+│   ├── docx/                          # Word文档处理技能
+│   ├── finance-expert/                # 金融专家技能
+│   ├── finance-news/                  # 金融新闻技能
+│   ├── humanizer-zh/                  # 中文人文化写作技能
+│   ├── mermaid-diagrams/              # Mermaid图表技能
+│   └── xlsx/                          # Excel处理技能
 ├── mcp.json                            # MCP 服务配置文件
+├── mino                                # Mino 配置
 ├── 本地大模型部署指南.md               # 本地 LLM 部署参考
 └── .gitignore
 ```
@@ -45,6 +53,7 @@ smartbanking/
 | | 第10章 | 银行CRM系统全栈开发 |
 | | 第11章 | 银行智能客服系统开发 |
 | | 第12章 | 课程综合项目与创新实践 |
+| **实战模块** | 第13章 | CLI工具实战——AI辅助开发的命令行利器 |
 
 ## 附录目录
 
