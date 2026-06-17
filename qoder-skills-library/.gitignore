@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Node
+node_modules/
+
+# Build artifacts
+*.pdf
+output/
+runs/
+results/
+
+# MCP debug logs
+.playwright-mcp/
+.mimocode/
+
+# Qoder local config
+.qoder/

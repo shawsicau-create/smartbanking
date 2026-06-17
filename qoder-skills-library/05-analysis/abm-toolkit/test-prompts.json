@@ -1,0 +1,26 @@
+[
+    {
+        "id": "tp1",
+        "category": "通用ABM",
+        "prompt": "我想构建一个银行间市场风险传染的ABM模型，10家银行，网络结构用核心-外围网络，帮我设计ODD协议并生成Mesa代码骨架。",
+        "expected_behavior": "Agent应先加载modules/core-framework.md和modules/economic-systems.md，按ODD协议模板填写Overview→Design Concepts→Details，然后基于templates/code-templates.md生成BankAgent类和主模型类代码，包含直接传染和间接传染机制。代码应可直接pip install mesa后运行。",
+        "checkpoint": "Agent在填写完ODD协议后应暂停，询问用户'ODD协议草稿已完成，请确认主体类型和行为规则是否需要调整？'后再进入编码阶段。",
+        "pass_criteria": "输出包含完整的ODD协议（至少覆盖Purpose、主体类型、空间结构、涌现、适应、交互6项）+ 可运行的Python代码（import语句齐全，BankAgent类包含check_default和apply_shock方法）"
+    },
+    {
+        "id": "tp2",
+        "category": "农业保险",
+        "prompt": "设计一个农业保险参保决策的ABM模型，500个农户，考虑补贴政策和邻里效应，前景理论建模。",
+        "expected_behavior": "Agent应加载modules/agricultural-insurance.md，使用其中的前景理论框架和Logit投保决策模型，参考examples/insurance-adoption/中的完整实现。输出应包含ODD协议、FarmerAgent类（含decide_insure方法使用前景理论）、参数校准表（标注每个参数来源）。",
+        "checkpoint": "Agent在生成参数校准表后应暂停，提醒用户'以下参数为默认值（来自文献），建议用本地调查数据替换后再运行仿真。'",
+        "pass_criteria": "输出包含FarmerAgent类（decide_insure方法包含Logit概率计算+邻里效应项）+ 参数校准表（至少6个参数，每个标注来源）+ 至少3个情景设计（基准/政策干预/压力测试）"
+    },
+    {
+        "id": "tp3",
+        "category": "方法论",
+        "prompt": "我已经有一个Mesa模型跑完了，想做敏感性分析和稳健性检验，关键参数有风险厌恶系数和补贴率。",
+        "expected_behavior": "Agent应引用references/validations.md中的验证规则和templates/code-templates.md中的敏感性分析模板，生成OAT敏感性分析代码（含参数范围设定、多次运行、结果汇总）和稳健性检验清单（参数±20%扰动、随机种子更换n=30、极端边界测试）。",
+        "checkpoint": "Agent应在生成代码前确认'你计划运行多少次重复？推荐至少30次以保证统计显著性。'",
+        "pass_criteria": "输出包含可运行的sensitivity_analysis函数（参数循环+多次运行+均值标准差汇总）+ 稳健性检验清单表格 + 明确的通过标准（如'CV<0.1'、'定性结论不变'）"
+    }
+]

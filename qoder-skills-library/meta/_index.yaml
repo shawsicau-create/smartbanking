@@ -1,0 +1,2599 @@
+version: '1.0'
+total_skills: 164
+categories:
+  01-ideation:
+    category_name: 选题与创意
+    count: 6
+    skills:
+    - name: lin-yifu-perspective
+      description: '以林毅夫（Justin Yifu Lin）的视角分析经济发展与政策问题。
+
+
+        【何时使用】你的问题符合以下任一特征：
+
+        - 涉及中国或发展中国家的经济发展路径分析
+
+        - 需要评估产业政策的合理性（如"某国应不应该补贴某产业"）
+
+        - 讨论"市场vs'
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - lin
+      - yifu
+      - perspective
+      directory: 01-ideation/lin-yifu-perspective
+    - name: idea-creator
+      description: Generate and rank research ideas given a broad direction. Use when
+        user says "找idea", "brainstorm ideas", "generate rese
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - idea
+      - creator
+      directory: 01-ideation/idea-creator
+    - name: idea-discovery
+      description: 'Workflow 1: Full idea discovery pipeline. Orchestrates research-lit
+        → idea-creator → novelty-check → research-review to '
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - idea
+      - discovery
+      directory: 01-ideation/idea-discovery
+    - name: idea-discovery-robot
+      description: Workflow 1 adaptation for robotics and embodied AI. Orchestrates
+        robotics-aware literature survey, idea generation, nove
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - idea
+      - discovery
+      - robot
+      directory: 01-ideation/idea-discovery-robot
+    - name: novelty-check
+      description: Verify research idea novelty against recent literature. Use when
+        user says "查新", "novelty check", "有没有人做过", "check novel
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - novelty
+      - check
+      directory: 01-ideation/novelty-check
+    - name: research-ideation
+      description: Generate research questions from economic phenomena
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - research
+      - ideation
+      - hypothesis
+      - brainstorming
+      directory: 01-ideation/research-ideation
+  02-literature:
+    category_name: 文献综述
+    count: 10
+    skills:
+    - name: paper-finder-research
+      description: 使用 Allen AI PaperFinder 进行智能文献综述、筛选重要文献并自动下载保存
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Research Assistant
+      version: 1.0.0
+      tags:
+      - paper
+      - finder
+      - research
+      directory: 02-literature/paper-finder-research
+    - name: academic-researcher
+      description: Conduct systematic academic research from topic identification
+        to literature synthesis and hypothesis development.
+      workflow_stage: ideation
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - academic
+      - literature
+      - hypothesis
+      directory: 02-literature/academic-researcher
+    - name: 文献导读助手
+      description: 学术文献渐进式理解专家，服务科研小白/进阶人员/资深学者等多级别读者。将复杂的中英文学术内容转化为由浅入深、脉络清晰的知识架构（直觉层→概念层→技术层→批判层）。**首次使用时必须先询问读者背景**（科研小白/进阶人员/资深学者），然后根据
+      workflow_stage: literature
+      compatibility: 需要 web_fetch 或 browser 工具进行 Web Search 验证；需要 write 工具保存输出
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - academic
+      - literature
+      - guide
+      directory: 02-literature/academic-literature-guide
+    - name: lit-review-assistant
+      description: Search, summarize, and synthesize economics literature
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - literature-review
+      - papers
+      - citations
+      - synthesis
+      directory: 02-literature/lit-review-assistant
+    - name: literature-toolkit
+      description: Academic literature analysis toolkit with CLI interface for searching,
+        parsing, and analyzing research papers.
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - literature
+      - analysis
+      - parser
+      - search
+      directory: 02-literature/literature-toolkit
+    - name: systematic-literature-review
+      description: 当用户明确要求"做系统综述/文献综述/related work/相关工作/文献调研"时使用。AI 自定检索词，多源检索→去重→AI
+        逐篇阅读并评分（1–10分语义相关性与子主题分组）→按高分优先比例选文→自动生成"综/述"字数预算→资深领域
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - systematic
+      - literature
+      - review
+      directory: 02-literature/systematic-literature-review
+    - name: arxiv
+      description: 'Search, download, and summarize academic papers from arXiv. Use
+        when user says "search arxiv", "download paper", "fetch '
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - arxiv
+      directory: 02-literature/arxiv
+    - name: academic-paper-analysis
+      description: 深度分析学术文献（PDF格式），提取核心内容并转换为结构化Markdown文档。适用于分析期刊论文、综述文章、学位论文等学术文献，生成包含写作技巧分析、论证结构解析、文献综述方法总结和完整内容转换的Markdown文档。当用户需要分析PDF
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - academic
+      - paper
+      directory: 02-literature/academic-paper-analysis
+    - name: comm-lit-review-claude-single
+      description: Communications-domain literature review with Claude-style knowledge-base-first
+        retrieval. Use when the task is about com
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - comm
+      - lit
+      - review
+      directory: 02-literature/comm-lit-review
+    - name: research-lit
+      description: Search and analyze research papers, find related work, summarize
+        key ideas. Use when user says "find papers", "related w
+      workflow_stage: literature
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - lit
+      directory: 02-literature/research-lit
+  03-theory:
+    category_name: 理论与建模
+    count: 5
+    skills:
+    - name: proof-writer
+      description: Writes rigorous mathematical proofs for ML/AI theory. Use when
+        asked to prove a theorem, lemma, proposition, or corollar
+      workflow_stage: theory
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - proof
+      - writer
+      directory: 03-theory/proof-writer
+    - name: formula-derivation
+      description: Structures and derives research formulas when the user wants to
+        推导公式, build a theory line, organize assumptions, turn sc
+      workflow_stage: theory
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - formula
+      - derivation
+      directory: 03-theory/formula-derivation
+    - name: general-equilibrium-model-builder
+      description: Build and solve Walrasian general equilibrium models with theory
+        derivations and Julia computation
+      workflow_stage: theory
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Abhimanyu Nag <abhi.nag1601@gmail.com>
+      version: 1.0.0
+      tags:
+      - general-equilibrium
+      - walrasian
+      - microeconomic-theory
+      - julia
+      - computational-economics
+      - welfare-economics
+      - pure-exchange
+      directory: 03-theory/general-equilibrium-model-builder
+    - name: make_latex_model
+      description: '当用户明确要求"LaTeX 模板优化""样式参数对齐""make_latex_model"时使用。支持任意 LaTeX 模板的样式参数对齐、标题文字对齐、标题格式对比（加粗）、HTML
+        可视化报告、LaTeX 自动修复建议和像素级 PDF '
+      workflow_stage: theory
+      compatibility:
+        platforms:
+        - macos
+        - windows
+        - linux
+        latex_templates:
+        - NSFC_Young
+        - NSFC_General
+        - NSFC_Local
+        - generic
+      author: ChineseResearchLaTeX Project
+      version: 2.9.0
+      tags:
+      - latex
+      - template
+      - optimization
+      - nsfc
+      - pdf-analysis
+      - style-alignment
+      - iterative-optimization
+      directory: 03-theory/make_latex_model
+    - name: latex-econ-model
+      description: Write and typeset economic models in LaTeX with proper notation
+      workflow_stage: theory
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - LaTeX
+      - economic-models
+      - theory
+      - equations
+      directory: 03-theory/latex-econ-model
+  04-data:
+    category_name: 数据获取与清洗
+    count: 3
+    skills:
+    - name: stata-data-cleaning
+      description: Clean and transform messy data in Stata with reproducible workflows
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - Stata
+      - data-cleaning
+      - data-wrangling
+      - reproducibility
+      directory: 04-data/stata-data-cleaning
+    - name: questionnaire-design
+      description: Design and analyze academic survey questionnaires for economics,
+        finance, and rural development research.
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - survey
+      - questionnaire
+      - data-collection
+      - rural-development
+      directory: 04-data/questionnaire-design
+    - name: api-data-fetcher
+      description: Fetch economic data from FRED, World Bank, and other APIs
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - Python
+      - API
+      - FRED
+      - World-Bank
+      - data-collection
+      directory: 04-data/api-data-fetcher
+  05-analysis:
+    category_name: 统计分析与仿真
+    count: 9
+    skills:
+    - name: economist-analyst
+      description: Apply economist reasoning frameworks to analyze economic phenomena,
+        policy impacts, and market dynamics.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - economics
+      - analyst
+      - policy
+      - market
+      directory: 05-analysis/economist-analyst
+    - name: economic-systems
+      description: Analyze economic systems and institutional structures using comparative
+        economics and institutional analysis frameworks.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - economics
+      - systems
+      - institutional
+      - comparative
+      directory: 05-analysis/economic-systems
+    - name: abm-toolkit
+      description: "ABM建模副驾驶：从ODD协议到Mesa 3.x代码生成、参数校准、敏感性分析全流程"
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Qoder Skills Library
+      version: 3.0.0
+      tags:
+      - abm
+      - agent-based-modeling
+      - simulation
+      - economics
+      - python
+      directory: 05-analysis/abm-toolkit
+    - name: r-econometrics
+      description: Run IV, DiD, and RDD analyses in R with proper diagnostics
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - R
+      - econometrics
+      - causal-inference
+      - fixest
+      - regression
+      directory: 05-analysis/r-econometrics
+
+    - name: analyze-results
+      description: 'Analyze ML experiment results, compute statistics, generate comparison
+        tables and insights. Use when user says "analyze '
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - analysis
+      - statistics
+      - results
+      directory: 05-analysis/analyze-results
+    - name: data-analysis
+      description: Perform exploratory data analysis, statistical testing, and pattern
+        discovery for research data insights.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - analysis
+      - EDA
+      - statistics
+      - data
+      directory: 05-analysis/data-analysis
+
+    - name: stata-regression
+      description: Run regression analyses in Stata with publication-ready output
+        tables.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - stata
+      - regression
+      - esttab
+      - econometrics
+      directory: 05-analysis/stata-regression
+    - name: python-panel-data
+      description: Panel data analysis with Python using linearmodels and pandas.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - python
+      - pandas
+      - linearmodels
+      - panel-data
+      directory: 05-analysis/python-panel-data
+    - name: stata
+      description: 'Comprehensive Stata reference for writing correct .do files, data
+        management, econometrics, causal inference, graphics, '
+      workflow_stage: analysis
+      compatibility: 'Requires Stata 15+ installed. For Chinese graphics support,
+        ensure SimHei or similar Chinese font is available on the system. When creating
+        graphics, always ask user if they want Chinese labels/titles before proceeding.
+
+        '
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - stata
+      directory: 05-analysis/stata
+  06-experiment:
+    category_name: 实验与仿真流程
+    count: 5
+    skills:
+    - name: experiment-plan
+      description: Turn a refined research proposal or method idea into a detailed,
+        claim-driven experiment roadmap. Use after `research-re
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - experiment
+      - plan
+      directory: 06-experiment/experiment-plan
+    - name: monitor-experiment
+      description: Monitor running experiments, check progress, collect results. Use
+        when user says "check results", "is it done", "monitor
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - monitor
+      - experiment
+      directory: 06-experiment/monitor-experiment
+    - name: run-experiment
+      description: Deploy and run ML experiments on local or remote GPU servers. Use
+        when user says "run experiment", "deploy to server", "
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - run
+      - experiment
+      directory: 06-experiment/run-experiment
+    - name: experiment-bridge
+      description: 'Workflow 1.5: Bridge between idea discovery and auto review. Reads
+        EXPERIMENT_PLAN.md, implements experiment code, deplo'
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - experiment
+      - bridge
+      directory: 06-experiment/experiment-bridge
+    - name: dse-loop
+      description: Autonomous design space exploration loop for computer architecture
+        and EDA. Runs a program, analyzes results, tunes para
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - dse
+      directory: 06-experiment/dse-loop
+  07-writing:
+    category_name: 论文写作
+    count: 7
+    skills:
+    - name: paper-write
+      description: 'Draft LaTeX paper section by section from an outline. Use when
+        user says "写论文", "write paper", "draft LaTeX", "开始写", or '
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - write
+      directory: 07-writing/paper-write
+    - name: management-world-case-writing
+      description: 用于《管理世界》期刊案例研究论文写作、修改、选题评估、理论贡献建构、研究方法呈现和审稿模拟。当用户提到《管理世界》、案例研究、质性研究、理论建构、审稿意见、论文修改、公共管理或管理学案例论文时，应优先使用本技能。
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - management
+      - world
+      - case
+      directory: 07-writing/management-world-case-writing-skill
+    - name: latex-tables
+      description: Generate publication-ready regression tables in LaTeX.
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - latex
+      - tables
+      - regression
+      - booktabs
+      directory: 07-writing/latex-tables
+    - name: bilingual-lecture-notes
+      description: '将中文学术LaTeX讲义（ctexart/ctexbook）转换为中英双语版本，同时对主要知识点进行面向本科基础水平的拓展。
+
+        适用于任何学科的中文LaTeX讲义。处理内容包括：正文段落双语化、表格中英对照、TikZ图示双语标注、
+
+        定理/tc'
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - bilingual
+      - lecture
+      - notes
+      directory: 07-writing/bilingual-lecture-notes
+    - name: paper-plan
+      description: Generate a structured paper outline from review conclusions and
+        experiment results. Use when user says "写大纲", "paper out
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - plan
+      directory: 07-writing/paper-plan
+    - name: academic-paper-writer
+      description: Draft economics papers with proper structure and academic style
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - LaTeX
+      - academic-writing
+      - papers
+      - economics
+      directory: 07-writing/academic-paper-writer
+    - name: paper-writing
+      description: 'Workflow 3: Full paper writing pipeline. Orchestrates paper-plan
+        → paper-figure → paper-write → paper-compile → auto-pap'
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - writing
+      directory: 07-writing/paper-writing
+  08-funding:
+    category_name: NSFC基金申报
+    count: 6
+    skills:
+    - name: nsfc-bib-manager
+      description: 当用户明确要求"加引用""补参考文献""核对论文信息""写bibtex""更新.bib"时使用。新增/核验论文信息（题目/作者/年份/期刊/DOI）并写入
+        `references/ccs.bib` 或 `references/mypaper
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - nsfc
+      - bib
+      - manager
+      directory: 08-funding/nsfc-bib-manager
+    - name: nsfc-justification-writer
+      description: 当用户明确要求"写/改 NSFC 立项依据""立项依据写作/重构"时使用。基于最小信息表输出价值与必要性、现状不足、科学问题/假说与项目切入点，并保持模板结构不被破坏。适用于
+        NSFC 及各类科研基金申请书的立项依据写作场景。
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: ChineseResearchLaTeX Project
+      version: 0.7.7
+      tags:
+      - nsfc
+      - justification
+      - writer
+      directory: 08-funding/nsfc-justification-writer
+    - name: nsfc-research-foundation-writer
+      description: 当用户明确要求"写/改研究基础""研究基础+工作条件+风险应对编排"时使用。为 NSFC 正文"（三）研究基础"写作/重构，并同步编排"工作条件"和"研究风险应对"，用证据链证明项目可行、资源条件对位研究内容、风险预案可执行。
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: ChineseResearchLaTeX Project
+      version: 0.1.0
+      tags:
+      - nsfc
+      - research
+      - foundation
+      directory: 08-funding/nsfc-research-foundation-writer
+    - name: grant-proposal
+      description: Draft a structured grant proposal from research ideas and literature.
+        Supports KAKENHI (Japan), NSF (US), NSFC (China, i
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - grant
+      - proposal
+      directory: 08-funding/grant-proposal
+    - name: nsfc-abstract
+      description: 当用户明确要求"写/润色 NSFC 标书摘要""生成中文摘要和英文摘要""把中文摘要翻译成英文摘要"时使用。输出中文、英文两个版本（英文必须是中文的忠实翻译版），同时输出标题建议（1个推荐标题+5个候选标题及理由）。中文摘要默认≤400字符
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - nsfc
+      - abstract
+      directory: 08-funding/nsfc-abstract
+    - name: nsfc-research-content-writer
+      description: 当用户明确要求"写/改研究内容""研究内容+创新+年度计划编排"时使用。为 NSFC 正文"（二）研究内容"写作/重构，并同步编排"特色与创新"和"三年年度研究计划"，输出可直接落到
+        LaTeX 模板的三个 extraTex 文件。
+      workflow_stage: writing
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: ChineseResearchLaTeX Project
+      version: 0.2.2
+      tags:
+      - nsfc
+      - research
+      - content
+      directory: 08-funding/nsfc-research-content-writer
+  09-review:
+    category_name: 审稿与改进
+    count: 11
+    skills:
+    - name: research-refine-pipeline
+      description: Run an end-to-end workflow that chains `research-refine` and `experiment-plan`.
+        Use when the user wants a one-shot pipel
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - refine
+      - pipeline
+      directory: 09-review/research-refine-pipeline
+    - name: auto-review-loop-llm
+      description: Autonomous research review loop using any OpenAI-compatible LLM
+        API. Configure via llm-chat MCP server or environment va
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - auto
+      - review
+      - llm
+      directory: 09-review/auto-review-loop-llm
+    - name: research-pipeline
+      description: 'Full research pipeline: Workflow 1 (idea discovery) → implementation
+        → Workflow 2 (auto review loop). Goes from a broad '
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - pipeline
+      directory: 09-review/research-pipeline
+    - name: research-refine
+      description: Turn a vague research direction into a problem-anchored, elegant,
+        frontier-aware, implementation-oriented method plan vi
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - refine
+      directory: 09-review/research-refine
+    - name: auto-review-loop
+      description: Autonomous multi-round research review loop. Repeatedly reviews
+        via Codex MCP, implements fixes, and re-reviews until po
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - auto
+      - review
+      directory: 09-review/auto-review-loop
+    - name: get-review-theme
+      description: 当用户明确要求"从文件/图片/网页/描述中提取综述主题"或"生成主题+关键词+核心问题结构化输出"时使用。支持文件（PDF/Word/Markdown/Tex）、文件夹、图片、自然语言描述、网页
+        URL 等多种输入源，自动识别输入类型并提取
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - get
+      - review
+      - theme
+      directory: 09-review/get-review-theme
+    - name: auto-review-loop-minimax
+      description: Autonomous multi-round research review loop using MiniMax API.
+        Use when you want to use MiniMax instead of Codex MCP for
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - auto
+      - review
+      - minimax
+      directory: 09-review/auto-review-loop-minimax
+    - name: research-review
+      description: Get a deep critical review of research from GPT via Codex MCP.
+        Use when user says "review my research", "help me review"
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - research
+      - review
+      directory: 09-review/research-review
+    - name: auto-paper-improvement-loop
+      description: Autonomously improve a generated paper via GPT-5.4 xhigh review
+        → implement fixes → recompile, for 2 rounds. Use when us
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - auto
+      - paper
+      - improvement
+      directory: 09-review/auto-paper-improvement-loop
+    - name: peer-review
+      description: Structured manuscript/grant review with checklist-based evaluation.
+        Use when writing formal peer reviews with specific c
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - peer
+      - review
+      directory: 09-review/peer-review
+    - name: check-review-alignment
+      description: 当用户明确要求"核查/优化综述 `{主题}_review.tex` 的正文引用"或"运行 check-review-alignment"时使用。通过宿主
+        AI 的语义理解逐条核查引用是否与文献内容吻合，只在发现致命性引用错误时对"包含引用的
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - check
+      - review
+      - alignment
+      directory: 09-review/check-review-alignment
+  10-communication:
+    category_name: 演示与展示
+    count: 7
+    skills:
+    - name: paper-poster
+      description: Generate a conference poster (article + tcbposter LaTeX → A0/A1
+        PDF + editable PPTX + SVG) from a compiled paper. Use wh
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - poster
+      directory: 10-communication/paper-poster
+    - name: beamer-presentation
+      description: Create academic presentations in Beamer with professional themes
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - LaTeX
+      - Beamer
+      - presentations
+      - slides
+      directory: 10-communication/beamer-presentation
+    - name: paper-compile
+      description: Compile LaTeX paper to PDF, fix errors, and verify output. Use
+        when user says "编译论文", "compile paper", "build PDF", "生成P
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - compile
+      directory: 10-communication/paper-compile
+    - name: paper-slides
+      description: Generate conference presentation slides (beamer LaTeX → PDF + editable
+        PPTX) from a compiled paper, with speaker notes a
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - slides
+      directory: 10-communication/paper-slides
+    - name: paper-figure
+      description: Generate publication-quality figures and tables from experiment
+        results. Use when user says "画图", "作图", "generate figure
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - figure
+      directory: 10-communication/paper-figure
+    - name: econ-visualization
+      description: Create publication-quality charts and graphs for economics papers.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - visualization
+      - ggplot2
+      - charts
+      - publication
+      directory: 10-communication/econ-visualization
+    - name: paper-illustration
+      description: Generate publication-quality AI illustrations for academic papers
+        using Gemini image generation. Creates architecture di
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paper
+      - illustration
+      directory: 10-communication/paper-illustration
+  11-perspective:
+    category_name: 思维顾问
+    count: 17
+    skills:
+    - name: china-finance-knowledge-system-v6
+      description: 中国金融学视角分析副驾驶。22个模型+23条命题+25位学者+128条文献。从马克思到习近平，从轻重论到系统性风险理论。触发词：中国金融学、自主知识体系、保险学、农业保险、风险管理。
+      workflow_stage: theory
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Qoder Skills Library
+      version: 6.1.0
+      tags:
+      - finance
+      - knowledge-system
+      - china
+      - insurance
+      - agricultural-insurance
+      - rural-finance
+      - marxist-economics
+      directory: 11-perspective/china-finance-knowledge-system-v6
+    - name: huashu-nuwa
+      description: '女娲造人：输入人名/主题/甚至只是模糊需求，自动深度调研→思维框架提炼→生成可运行的人物Skill。
+
+        两种入口：(1)明确人名→直接蒸馏 (2)模糊需求→诊断推荐→再蒸馏。
+
+        触发词：「造skill」「蒸馏XX」「女娲」「造人」「XX的思维方'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - nuwa
+      directory: 11-perspective/nuwa-skill
+    - name: andrej-karpathy-perspective
+      description: 'Andrej Karpathy的思维框架与表达方式。基于20+篇博文、16段深度访谈、100+条X帖子的系统蒸馏，
+
+        提炼6个核心心智模型、8条决策启发式、完整的中文输出适配和经典句式速查。
+
+        用途：作为思维顾问，用Karpathy的视角分析A'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - andrej
+      - karpathy
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/andrej-karpathy-perspective
+    - name: steve-jobs-perspective
+      description: '史蒂夫·乔布斯(Steve Jobs)的思维框架与表达方式。基于Isaacson授权传记、Stanford演讲、
+
+        Lost Interview、D Conference系列、Make Something Wonderful、30+一手来源的'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - steve
+      - jobs
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/steve-jobs-perspective
+    - name: trump-perspective
+      description: '唐纳德·特朗普（Donald Trump）的思维框架与行为逻辑。基于著作、长访谈、辩论、
+
+        心理分析、前幕僚回忆录、重大决策记录共6个维度的深度调研（320KB+原始资料），
+
+        提炼6个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：（'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - trump
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/trump-perspective
+    - name: zhangxuefeng-perspective
+      description: '张雪峰的思维框架与表达方式。基于5本著作、15+篇权威媒体深度采访、
+
+        30+条一手语录、11个关键决策记录和完整人生时间线的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用张雪峰的视角分析教育选择'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - zhangxuefeng
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/zhangxuefeng-perspective
+    - name: mrbeast-perspective
+      description: 'MrBeast（Jimmy Donaldson）的内容创造操作系统。基于泄露的36页内部培训手册、
+
+        6个深度播客、决策记录和外部批评的深度调研，提炼6个核心心智模型、8条决策启发式、
+
+        完整的标题/缩略图/Hook/节奏公式，和4个可运行的内'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - mrbeast
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/mrbeast-perspective
+    - name: zhang-yiming-perspective
+      description: '张一鸣（字节跳动/TikTok创始人）的思维框架与表达方式。基于6个维度（著作、深度访谈、
+
+        表达DNA、他者视角、决策记录、时间线）的调研，涵盖32个访谈片段、12个重大决策案例，
+
+        提炼5个核心心智模型、7条决策启发式和完整的表达DNA。
+
+        '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - zhang
+      - yiming
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/zhang-yiming-perspective
+    - name: taleb-perspective
+      description: '塔勒布(Nassim Nicholas Taleb)的思维框架与表达方式。基于40+个来源的深度调研，
+
+        提炼6个核心心智模型、9条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用塔勒布的视角分析问题、审视决策、质疑主流叙事。
+
+        当用户提'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - taleb
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/taleb-perspective
+    - name: ilya-sutskever-perspective
+      description: 'Ilya Sutskever的思维框架与表达方式。基于12段一手对话、9篇学术论文、10小时宣誓证词、
+
+        27篇推荐阅读清单和14个权威二手来源的深度调研，
+
+        提炼6个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用Il'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - ilya
+      - sutskever
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/ilya-sutskever-perspective
+    - name: paul-graham-perspective
+      description: 'Paul Graham的思维框架与表达方式。基于200+篇essays、12个播客/访谈、
+
+        Twitter/X分析、7位核心批评者视角和完整人生时间线的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - paul
+      - graham
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/paul-graham-perspective
+    - name: feynman-perspective
+      description: '理查德·费曼的思维框架与表达方式。基于40+个一手来源的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用费曼的视角分析问题、审视决策、提供反馈。
+
+        当用户提到「用费曼的视角」「费曼会怎么看」「费曼模'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - feynman
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/feynman-perspective
+    - name: x-mastery-mentor
+      description: '$10K/hr级X/Twitter运营导师。基于Nicolas Cole、Dickie Bush、Sahil Bloom、Justin
+        Welsh、
+
+        Dan Koe、Alex Hormozi六位顶级创作者的方法论 + X开源算法深度分析 +'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - mastery
+      - mentor
+      directory: 11-perspective/nuwa-skill/examples/x-mastery-mentor
+    - name: munger-perspective
+      description: '查理·芒格的思维框架与表达方式。基于《穷查理宝典》、伯克希尔/Daily Journal股东会、
+
+        USC/哈佛演讲、访谈记录、外部批评等50+来源的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - munger
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/munger-perspective
+    - name: naval-perspective
+      description: 'Naval Ravikant的思维操作系统。基于著作、播客、推文、决策记录和外部批评的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        激活后沉浸式扮演Naval，直接以「我」的视角回应问题。
+
+        当用户提到「用Naval的'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - naval
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/naval-perspective
+    - name: elon-musk-perspective
+      description: '马斯克的思维操作系统。基于传记、播客、推文、法庭证词、决策记录和外部批评的深度调研，
+
+        提炼5个核心心智模型、8条决策启发式和完整的表达DNA。
+
+        用途：作为思维顾问，用马斯克的视角分析问题、审视决策、拆解成本结构、挑战行业假设。
+
+        当用户提到「'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - elon
+      - musk
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/elon-musk-perspective
+    - name: sun-yuchen-perspective
+      description: '孙宇晨（Justin Sun / 孙割）的思维框架与行为逻辑。基于6个维度（著作、深度采访、表达DNA、
+
+        他者视角、决策记录、时间线）共1500+行调研素材的深度蒸馏，
+
+        提炼6个核心心智模型、8条决策启发式、5种割味造句公式和完整的表达DN'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - sun
+      - yuchen
+      - perspective
+      directory: 11-perspective/nuwa-skill/examples/sun-yuchen-perspective
+  12-finance:
+    category_name: 金融与商业
+    count: 12
+    skills:
+    - name: finance-expert
+      description: Expert financial analysis framework combining accounting, valuation,
+        and risk assessment for comprehensive financial res
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - accounting
+      - valuation
+      - risk
+      directory: 12-finance/finance-expert
+    - name: stock-analysis
+      description: Perform comprehensive stock analysis with technical, fundamental,
+        and quantitative approaches for investment research.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - stock
+      - technical-analysis
+      - fundamental
+      directory: 12-finance/stock-analysis
+    - name: china-stock-analysis
+      description: Analyze Chinese A-share market data using tushare and akshare APIs
+        for quantitative research.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - china
+      - stock
+      - a-share
+      directory: 12-finance/china-stock-analysis
+    - name: backtesting-trading-strategies
+      description: Backtest quantitative trading strategies against historical market
+        data with performance metrics and risk analysis.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - trading
+      - backtesting
+      - quantitative
+      directory: 12-finance/backtesting-trading-strategies
+    - name: financial-modeling
+      description: Build and analyze financial models including DCF, LBO, M&A, and
+        budget projection models.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - modeling
+      - DCF
+      - valuation
+      directory: 12-finance/financial-modeling
+    - name: financial-unit-economics
+      description: Calculate and analyze unit economics metrics (CAC, LTV, ARPU, payback
+        period) for business viability assessment.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - unit-economics
+      - SaaS
+      - metrics
+      directory: 12-finance/financial-unit-economics
+    - name: startup-financial-modeling
+      description: Build financial models for startups including runway calculation,
+        fundraising scenarios, and growth projections.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - startup
+      - modeling
+      - fundraising
+      directory: 12-finance/startup-financial-modeling
+    - name: tushare-finance
+      description: Fetch Chinese financial market data via tushare Pro API for A-share
+        research and quantitative analysis.
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - tushare
+      - A-share
+      - data
+      directory: 12-finance/tushare-finance
+    - name: saas-economics-efficiency-metrics
+      description: Analyze SaaS-specific efficiency metrics (Rule of 40, burn multiple,
+        payback period, net retention) for growth-stage eva
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - SaaS
+      - efficiency
+      - Rule-of-40
+      directory: 12-finance/saas-economics-efficiency-metrics
+    - name: yahoo-finance
+      description: Fetch global financial market data via yfinance API for international
+        market research and cross-border analysis.
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - yahoo
+      - data
+      - international
+      directory: 12-finance/yahoo-finance
+    - name: finance-news
+      description: Fetch and analyze real-time financial news from multiple sources
+        for market sentiment and event-driven research.
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - finance
+      - news
+      - sentiment
+      - market
+      directory: 12-finance/finance-news
+    - name: news-read
+      description: Search today's news and auto-read aloud via edge-tts natural voice
+        (XiaoxiaoNeural). Combines WebSearch with voice synthesis.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Qoder Skills Library
+      version: 2.0.0
+      tags:
+      - news
+      - tts
+      - voice
+      - speech
+      - read-aloud
+      - edge-tts
+      directory: 12-finance/news-read
+  13-consulting:
+    category_name: 咨询框架
+    count: 3
+    skills:
+    - name: persona-researcher
+      description: Create and analyze customer/user personas with behavioral segmentation
+        for market research and product strategy.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - consulting
+      - persona
+      - segmentation
+      - market-research
+      directory: 13-consulting/persona-researcher
+    - name: consulting-frameworks
+      description: 'Apply classic consulting analysis frameworks (McKinsey 7S, BCG
+        Matrix, Porter''s Five Forces, SWOT) to business strategy '
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - consulting
+      - strategy
+      - frameworks
+      - McKinsey
+      - BCG
+      directory: 13-consulting/consulting-frameworks
+    - name: consulting-playbook
+      description: Apply consulting engagement methodology from problem definition
+        to recommendation delivery for strategy projects.
+      workflow_stage: analysis
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - consulting
+      - playbook
+      - methodology
+      - strategy
+      directory: 13-consulting/consulting-playbook
+  14-cnb:
+    category_name: CNB平台工具
+    count: 13
+    skills:
+    - name: cnb-api
+      description: CNB 平台交互命令，支持仓库、Issue、PR、流水线、制品库等操作。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - api
+      directory: 14-cnb/cnb-api
+    - name: cnb-code-review
+      description: PR 代码评审，检查安全漏洞、Bug 和代码质量，输出结构化结果并通过 API 发送行级评论。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - code
+      - review
+      directory: 14-cnb/cnb-code-review
+    - name: cnb-npc-delegate
+      description: 当任务复杂或需要特定专长时，主动召唤其他 NPC 协同工作。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - npc
+      - delegate
+      directory: 14-cnb/cnb-npc-delegate
+    - name: cnb-pipeline
+      description: 编写、修改、审查 .cnb.yml 流水线配置，诊断构建失败原因，优化构建性能；覆盖 CI/CD、pipeline 语法、触发事件、环境变量、内置任务、build
+        error、build slow。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - pipeline
+      directory: 14-cnb/cnb-pipeline
+    - name: cnb-upload-attachment
+      description: 上传附件（图片、文档、压缩包等）到 Issue 或 PR 评论，返回 Markdown 附件链接。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - upload
+      - attachment
+      directory: 14-cnb/cnb-upload-attachment
+    - name: cnb-tapd-resource-fetcher
+      description: 获取 TAPD 资源（需求/缺陷/任务/迭代），支持从 TAPD 链接自动解析。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - tapd
+      - resource
+      directory: 14-cnb/cnb-tapd-resource-fetcher
+    - name: cnb-code-commit
+      description: 编写代码、提交推送并创建 PR，适用于功能开发、Bug 修复、重构优化等场景。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - code
+      - commit
+      directory: 14-cnb/cnb-code-commit
+    - name: cnb-pr-diff
+      description: 获取 PR 的 diff 变更信息。当需要查看 PR 代码变更、获取文件差异时使用此技能。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - diff
+      directory: 14-cnb/cnb-pr-diff
+    - name: cnb-pr-summary
+      description: 总结 PR 变更内容，概述主要改动点并生成变更说明。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - summary
+      directory: 14-cnb/cnb-pr-summary
+    - name: cnb-repo-knowledge-base
+      description: 检索指定仓库的知识库，返回相关的文本片段及其来源。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - repo
+      - knowledge
+      directory: 14-cnb/cnb-repo-knowledge-base
+    - name: cnb-text-path-converter
+      description: 将 ISSUE/PR 描述、评论、Review 中的相对路径转换为绝对路径，避免路径歧义，支持纯文本与 Markdown。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - text
+      - path
+      directory: 14-cnb/cnb-text-path-converter
+    - name: cnb-npc-search
+      description: 通过关键词语义搜索 CNB 平台上的公开 NPC 角色，帮助用户找到最适合当前需求的 NPC。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - npc
+      - search
+      directory: 14-cnb/cnb-npc-search
+    - name: cnb-docs
+      description: 查询 CNB 平台官方文档，包括代码托管、制品库、AI 助手、云原生构建（CI/CD）、开发者工具等。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cnb
+      - docs
+      directory: 14-cnb/cnb-docs
+  15-browser:
+    category_name: 浏览器自动化
+    count: 9
+    skills:
+    - name: playwright-cli
+      description: Playwright CLI Skill
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - browser
+      - playwright
+      - testing
+      directory: 15-browser/playwright-cli
+    - name: playwright-mcp
+      description: Playwright MCP Skill
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - browser
+      - playwright
+      - mcp
+      directory: 15-browser/playwright-mcp
+    - name: agent-browser
+      description: Browser automation CLI for AI agents. Use when the user needs to
+        interact with websites, including navigating pages, fil
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - agent
+      - browser
+      directory: 15-browser/agent-browser
+    - name: browser-act
+      description: Browser automation CLI for AI agents. NEVER run browser-act commands
+        directly via Bash — always invoke this skill first.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - browser
+      - act
+      directory: 15-browser/browser-act
+    - name: agentcore
+      description: Run agent-browser on AWS Bedrock AgentCore cloud browsers. Use
+        when the user wants to use AgentCore, run browser automat
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - agentcore
+      directory: 15-browser/agentcore
+    - name: browser-act-skill-forge
+      description: 'Forges reusable Skill packages (SKILL.md + scripts) from website
+        exploration via browser-act — no re-exploration later. '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - browser
+      - act
+      - forge
+      directory: 15-browser/browser-act-skill-forge
+    - name: vercel-sandbox
+      description: 'Run agent-browser + Chrome inside Vercel Sandbox microVMs for
+        browser automation from any Vercel-deployed app. Use when '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - vercel
+      - sandbox
+      directory: 15-browser/vercel-sandbox
+    - name: electron
+      description: Automate Electron desktop apps (VS Code, Slack, Discord, Figma,
+        Notion, Spotify, etc.) using agent-browser via Chrome De
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - electron
+      directory: 15-browser/electron
+    - name: dogfood
+      description: Systematically explore and test a web application to find bugs,
+        UX issues, and other problems. Use when asked to "dogfoo
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - dogfood
+      directory: 15-browser/dogfood
+  16-office:
+    category_name: 文档办公
+    count: 8
+    skills:
+    - name: xlsx
+      description: 'Use this skill any time a spreadsheet file is the primary input
+        or output. This means any task where the user wants to: '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.1
+      tags:
+      - xlsx
+      directory: 16-office/xlsx
+    - name: pdf
+      description: Use this skill whenever the user wants to do anything with PDF
+        files. This includes reading or extracting text/tables fr
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.1
+      tags:
+      - pdf
+      directory: 16-office/pdf
+    - name: cli-anything
+      description: Build powerful, stateful CLI interfaces for any GUI application
+        using the cli-anything harness methodology.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cli
+      - gui
+      - automation
+      - harness
+      directory: 16-office/cli-anything
+    - name: pptx
+      description: 'Use this skill any time a .pptx file is involved in any way —
+        as input, output, or both. This includes: creating slide d'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.1
+      tags:
+      - pptx
+      directory: 16-office/pptx
+    - name: cli-anything-libreoffice
+      description: CLI harness for LibreOffice — document conversion, text extraction,
+        and batch operations via the real soffice backend.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - cli
+      - anything
+      - libreoffice
+      directory: 16-office/cli-anything-libreoffice
+    - name: qoderwork-ppt
+      description: Generate QoderWork-style presentations. Automatically matches 14
+        templates based on your topic and outputs an editable .
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - qoderwork
+      - ppt
+      directory: 16-office/qoderwork-ppt
+    - name: migrating-latex-templates
+      description: 当用户明确要求"迁移标书""升级模板""跨版本迁移""旧标书转新模板"时使用。智能迁移NSFC LaTeX标书到新版模板，基于五阶段工作流（分析→映射→规划→执行→验证），自动处理结构变化、内容重组、引用更新；支持AI驱动语义匹配与启发式回
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: AI Agent (Claude Code)
+      version: 1.4.1
+      tags:
+      - transfer_old_latex_to_new
+      directory: 16-office/transfer_old_latex_to_new
+    - name: docx
+      description: Use this skill whenever the user wants to create, read, edit, or
+        manipulate Word documents (.docx files). Triggers inclu
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.1
+      tags:
+      - docx
+      directory: 16-office/docx
+  17-ima:
+    category_name: IMA统一技能
+    count: 3
+    skills:
+    - name: ima-skill
+      description: Unified IMA OpenAPI skill for note management and knowledge base
+        operations.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.1.3
+      tags:
+      - ima
+      - notes
+      - knowledge-base
+      - tencent
+      directory: 17-ima/.
+    - name: notes
+      description: Notes (笔记)
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - ima
+      - notes
+      - tencent
+      directory: 17-ima/notes
+    - name: knowledge-base
+      description: Knowledge Base (知识库)
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - ima
+      - knowledge-base
+      - tencent
+      directory: 17-ima/knowledge-base
+  18-opencli:
+    category_name: OpenCLI系列
+    count: 6
+    skills:
+    - name: smart-search
+      description: 基于 opencli 命令的智能搜索路由器。当用户想要搜索、查询、查找或研究信息时，尤其是涉及指定网站、社交媒体、技术资料、新闻、购物、旅游、求职、金融或中文内容时，务必使用此
+        skill
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - smart
+      - search
+      directory: 18-opencli/smart-search
+    - name: opencli-repair
+      description: Diagnose and fix broken OpenCLI adapters when websites change.
+        Use when an opencli command fails with SELECTOR, EMPTY_RE
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - opencli
+      - repair
+      directory: 18-opencli/opencli-repair
+    - name: opencli-oneshot
+      description: Use when quickly generating a single OpenCLI command from a specific
+        URL and goal description. 4-step process — open pag
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - opencli
+      - adapter
+      - quick-start
+      - yaml
+      - cli
+      - one-shot
+      - automation
+      directory: 18-opencli/opencli-oneshot
+    - name: opencli-explorer
+      description: Use when creating a new OpenCLI adapter from scratch, adding support
+        for a new website or platform, or exploring a site'
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - opencli
+      - adapter
+      - browser
+      - api-discovery
+      - cli
+      - web-scraping
+      - automation
+      directory: 18-opencli/opencli-explorer
+    - name: opencli-usage
+      description: Use when running OpenCLI commands to interact with websites (Bilibili,
+        Twitter, Reddit, Xiaohongshu, etc.), desktop apps
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: jackwener
+      version: 1.6.3
+      tags:
+      - opencli
+      - cli
+      - browser
+      - web
+      - chrome-extension
+      - cdp
+      - bilibili
+      - twitter
+      - reddit
+      - xiaohongshu
+      - github
+      - youtube
+      - AI
+      - agent
+      - automation
+      directory: 18-opencli/opencli-usage
+    - name: opencli-operate
+      description: Make websites accessible for AI agents. Navigate, click, type,
+        extract, wait — using Chrome with existing login sessions
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - opencli
+      - operate
+      directory: 18-opencli/opencli-operate
+  19-devtools:
+    category_name: 开发与项目管理
+    count: 20
+    skills:
+    - name: vm-error-recovery
+      description: Diagnose and guide users through secure workspace startup errors
+        with actionable recovery steps. Use when users report s
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - error
+      - recovery
+      directory: 19-devtools/vm-error-recovery
+    - name: git-commit
+      description: '当用户明确要求"提交 Git 改动"、"生成 commit 信息"或"创建 git commit"时使用。仅用 Git 分析改动并自动生成
+        conventional commit 信息（可选 emoji）；必要时建议拆分提交，默认运行本地 '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - git
+      - commit
+      directory: 19-devtools/git-commit
+    - name: techdebt
+      description: 'Find and fix technical debt including duplicated code, dead code,
+        outdated patterns, and code smells. Run at the end of '
+      workflow_stage: engineering
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - refactoring
+      - code-quality
+      - maintenance
+      directory: 19-devtools/techdebt
+    - name: install-bensz-skills
+      description: Batch install all skills from the repository to system level (Codex
+        and Claude Code), with MD5 hash version control.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - skill
+      - installation
+      - batch
+      - system-level
+      directory: 19-devtools/install-bensz-skills
+    - name: mermaid-diagram
+      description: Generate Mermaid diagrams from user requirements. Saves .mmd and
+        .md files to figures/ directory with syntax verificatio
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - mermaid
+      - diagram
+      directory: 19-devtools/mermaid-diagram
+    - name: security-best-practices
+      description: Implement security best practices for web applications and infrastructure.
+        Use when securing APIs, preventing common vul
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - security
+      - best
+      - practices
+      directory: 19-devtools/security-best-practices
+    - name: find-skills
+      description: ALWAYS use this skill as the FIRST step before handling any substantive
+        task, even if you believe general capabilities a
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.4
+      tags:
+      - finds
+      directory: 19-devtools/find-skills
+    - name: install-skill-dependency
+      description: 'Diagnose and fix missing dependencies, binaries, or runtime environments
+        required by installed skills. Use when a skill '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - install
+      - dependency
+      directory: 19-devtools/install-skill-dependency
+    - name: skill-auditor
+      description: Comprehensive security auditor for OpenClaw skills. Checks for
+        typosquatting, dangerous permissions, prompt injection, s
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - skill
+      - auditor
+      directory: 19-devtools/skill-auditor
+    - name: git-publish-release
+      description: 当用户明确要求"发布项目到 GitHub"、"创建 GitHub Release"或"生成 Release Notes"时使用。智能分析
+        tag 间历史变化，生成专业且吸引人的 Release Notes，自动创建 GitHub Relea
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - git
+      - publish
+      - release
+      directory: 19-devtools/git-publish-release
+    - name: create-skill
+      description: 'Guides users through creating effective Agent Skills for QoderWork.
+        Use when the user wants to create, write, or author '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - create
+      directory: 19-devtools/create-skill
+    - name: guide-updater
+      description: 当用户明确要求"更新项目指南""同步指南""沉淀洞见到指南"时使用。将对话中新产生的可复用写作洞见实时沉淀到项目指南文件，保持术语口径一致、结构稳定、可检验与可复现。调用时必须指定指南文件路径。
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - guide
+      - updater
+      directory: 19-devtools/guide-updater
+    - name: plugin-creator
+      description: Create, customize, or modify QoderWork expert plugins. Use when
+        the user wants to create a new plugin, customize an exis
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.4.0
+      tags:
+      - plugin
+      - creator
+      directory: 19-devtools/plugin-creator
+    - name: commit-push-pr
+      description: Commit changes, push to remote, and create a pull request. Use
+        for completing features or fixes ready for review.
+      workflow_stage: engineering
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - git
+      - github
+      - pull-request
+      directory: 19-devtools/commit-push-pr
+    - name: sdd
+      description: Implements the Spec-Driven Development lifecycle (Intent, Requirements,
+        Design, Tasks, Build) for structured feature dev
+      workflow_stage: engineering
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - spec-driven-development
+      - requirements
+      - design
+      - documentation
+      directory: 19-devtools/sdd
+    - name: pixel-art
+      description: 'Generate pixel art SVG illustrations for READMEs, docs, or slides.
+        Use when user says "画像素图", "pixel art", "make an SVG '
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - pixel
+      - art
+      directory: 19-devtools/pixel-art
+    - name: write-skill-readme
+      description: 当用户明确要求"生成技能 README"、"编写用户指南"或"更新技能文档"时使用。为 Agent Skills 编写符合最佳实践的
+        README.md 用户使用指南。自动分析技能结构（SKILL.md、config.yaml、script
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - write
+      - readme
+      directory: 19-devtools/write-skill-readme
+    - name: everything-search
+      description: Fast file system search using Everything SDK for Windows or spotlight/find
+        for macOS to locate research files and data.
+      workflow_stage: data
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - devtools
+      - search
+      - file-system
+      - utility
+      directory: 19-devtools/everything-search
+    - name: init-project
+      description: 当用户明确要求"初始化项目"、"创建项目指令文件"或"生成 AGENTS.md"时使用。完全自动化：自动检测操作系统默认语言，分析项目目录结构（支持
+        Python/Web/Rust/Go/Java/数据科学/文档项目等），推断项目类型和用途
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - init
+      - project
+      directory: 19-devtools/init-project
+    - name: code-simplifier
+      description: Simplify and clean up code after changes are complete. Reduces
+        complexity, improves readability, and ensures consistency
+      workflow_stage: engineering
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      - gemini-cli
+      author: Awesome Econ AI Community
+      version: 1.0.0
+      tags:
+      - refactoring
+      - python
+      - readability
+      directory: 19-devtools/code-simplifier
+  20-messaging:
+    category_name: 通讯与通知
+    count: 4
+    skills:
+    - name: imap-smtp-email
+      description: Send and receive emails via IMAP/SMTP protocols for automated research
+        communication and notification workflows.
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - messaging
+      - email
+      - IMAP
+      - SMTP
+      directory: 20-messaging/imap-smtp-email
+    - name: baoyu-post-to-wechat
+      description: Posts content to WeChat Official Account (微信公众号) via API or Chrome
+        CDP. Supports article posting (文章) with HTML, markdow
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - baoyu
+      - post
+      directory: 20-messaging/baoyu-post-to-wechat
+    - name: wechat-sender
+      description: This skill should be used whenever the user wants to send a WeChat
+        message to a specific friend or group chat. It levera
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - wechat
+      - sender
+      directory: 20-messaging/wechat-sender
+    - name: feishu-notify
+      description: Send notifications to Feishu/Lark. Internal utility used by other
+        skills, or manually via /feishu-notify. Supports push-
+      workflow_stage: communication
+      compatibility:
+      - claude-code
+      - cursor
+      - codex
+      author: Qoder Skills Library
+      version: 1.0.0
+      tags:
+      - feishu
+      - notify
+      directory: 20-messaging/feishu-notify

@@ -1,0 +1,60 @@
+{
+  "mcpServers": {
+    "universal-email": {
+      "command": "npx",
+      "args": [
+        "mcp-email"
+      ],
+      "env": {
+        "EMAIL_PASSWORD": "zyjwdkkwdoewbhci",
+        "EMAIL_TYPE": "auto",
+        "EMAIL_USER": "xiaosicau@qq.com"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "amap-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@amap/amap-maps-mcp-server"
+      ],
+      "env": {
+        "AMAP_MAPS_API_KEY": "63f93d2223f744affebade9ef7982732"
+      }
+    },
+    "stata-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:4000/mcp-streamable"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ]
+    }
+  }
+}

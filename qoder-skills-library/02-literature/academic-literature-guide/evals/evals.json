@@ -1,0 +1,29 @@
+{
+  "skill_name": "文献导读助手",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "经典心理学论文 - 斯坦福监狱实验",
+      "prompt": "帮我解读这篇经典论文：Haney, C., Banks, W. C., & Zimbardo, P. G. (1973). A study of prisoners and guards in a simulated prison. Naval Research Reviews, 30, 1-17. 我是大一心理学新生，完全看不懂这个方法论部分，特别是他们如何分配角色和控制变量。请用文献导读助手的方式帮我理解。",
+      "expected_output": "完整的四层递进解读，包含：1) 后续检索验证（该实验的伦理争议和后续批评）；2) 直觉层用生活场景解释"为什么好人会变坏"；3) 概念层解释"去个性化"、"角色内化"等术语；4) 技术层拆解实验设计；5) 批判层讨论伦理问题和可重复性危机；6) 知识族谱图展示与 Milgram 服从实验的关系",
+      "files": [],
+      "skill_path": "/Users/jefeer/Library/Application Support/LobsterAI/SKILLs/academic-literature-guide/SKILL.md"
+    },
+    {
+      "id": 2,
+      "eval_name": "计算机科学顶会论文 - Attention Is All You Need",
+      "prompt": "我是大一计算机新生，老师让我们读 Transformer 的原始论文 (Vaswani et al., 2017, NeurIPS)，但我完全看不懂 Self-Attention 机制。请帮我解读这篇论文，特别是 Figure 1 的模型架构和那个 Q/K/V 矩阵是怎么回事。",
+      "expected_output": "完整的四层递进解读，包含：1) 后续检索验证（Transformer 的后续影响和应用）；2) 直觉层用类比解释"为什么需要 Attention"；3) 概念层解释 Q/K/V、Encoder-Decoder 等概念；4) 技术层拆解模型架构和训练流程；5) 批判层讨论计算成本和局限性；6) 知识族谱图展示从 RNN 到 Transformer 的演进",
+      "files": [],
+      "skill_path": "/Users/jefeer/Library/Application Support/LobsterAI/SKILLs/academic-literature-guide/SKILL.md"
+    },
+    {
+      "id": 3,
+      "eval_name": "有争议的近期论文 - 需要风险预警",
+      "prompt": "帮我看看这篇论文：Doudna, J. A., & Charpentier, E. (2014). The new frontier of genome engineering with CRISPR-Cas9. Science, 346(6213), 1258096. 我对基因编辑很感兴趣，但不知道这个技术现在发展到什么程度了，有没有什么争议。",
+      "expected_output": "完整的四层递进解读，包含：1) 强制后续检索（CRISPR 的伦理争议、贺建奎事件、诺贝尔奖）；2) 直觉层解释"基因剪刀"是什么；3) 概念层解释 CRISPR、Cas9、gRNA 等；4) 技术层讲解 CRISPR-Cas9 的工作原理；5) 批判层深入讨论伦理问题、脱靶效应、监管框架；6) 知识族谱图展示从发现到应用的时间线；7) 显著标注伦理争议和风险警示",
+      "files": [],
+      "skill_path": "/Users/jefeer/Library/Application Support/LobsterAI/SKILLs/academic-literature-guide/SKILL.md"
+    }
+  ]
+}
