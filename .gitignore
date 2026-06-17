@@ -42,3 +42,14 @@ dist/
 *.pdf
 !智慧银行实验教程chapters/智慧银行实验教程.pdf
 !实验讲义/智慧银行实验讲义_v4.0.pdf
+
+# Python 虚拟环境
+.venv/
+__pycache__/
+*.pyc
+
+# 外部技能库（嵌套Git仓库，不纳入版本控制）
+qoder-skills-library/
+
+# 生成的分析文件（可选保留）
+aapl_daily_data.csv
