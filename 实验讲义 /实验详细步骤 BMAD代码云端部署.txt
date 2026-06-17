@@ -27,30 +27,7 @@ PinMe 的核心优势：
 
 ----------------------------------------
 
-步骤 1：全局安装 PinMe CLI
-
-  在终端执行：
-
-  npm install -g pinme
-
-  如果遇到下载速度慢的问题，可以先切换国内镜像：
-  npm config set registry https://registry.npmmirror.com
-  npm install -g pinme
-
-----------------------------------------
-
-步骤 2：验证安装
-
-  在终端执行：
-
-  pinme --version     应显示版本号
-
-  如果报 command not found，说明 Node.js 未正确安装或未加入 PATH。
-  回到环境准备实验确认安装后重启终端。
-
-----------------------------------------
-
-步骤 3：安装 PinMe Skill（让 AI 能识别部署命令）
+步骤 1：安装 PinMe Skill（让 AI 能识别部署命令）
 
   在终端执行：
 
@@ -64,7 +41,26 @@ PinMe 的核心优势：
 
 ----------------------------------------
 
-步骤 4：登录 PinMe 账户
+步骤 2：全局安装 PinMe CLI
+
+  在终端执行：
+
+  npm install -g pinme
+
+  如果遇到下载速度慢的问题，可以先切换国内镜像：
+  npm config set registry https://registry.npmmirror.com
+  npm install -g pinme
+
+  安装后验证：
+
+  pinme --version     应显示版本号
+
+  如果报 command not found，说明 Node.js 未正确安装或未加入 PATH。
+  回到环境准备实验确认安装后重启终端。
+
+----------------------------------------
+
+步骤 3：登录 PinMe 账户
 
   在终端执行：
 
@@ -128,11 +124,13 @@ PinMe 的核心优势：
 
   输出示例：
 
-  Upload complete!
-  IPFS CID: QmXyZ...
-  Access URL: https://pinme.eth.limo/ipfs/QmXyZ...
+  uploading dist to ipfs...
+  ✔ Upload completed [████████████████████] 100%
 
-  复制 Access URL，在浏览器中打开即可查看部署的网站。
+  URL:
+  https://pinme.eth.limo/#/preview/U2FsdGVkX1_...
+
+  复制输出的 URL，在浏览器中打开即可查看部署的网站。
 
 ----------------------------------------
 
@@ -147,7 +145,15 @@ PinMe 的核心优势：
 
   如果你有自定义 DNS 域名（含点号，如 smartbank.example.com）：
 
-  pinme upload dist --domain smartbank.example.com --dns
+  pinme upload dist --domain smartbank.example.com
+
+  PinMe 会自动识别域名类型（PinMe 子域名或 DNS 域名）并完成绑定。
+
+  域名命名规则：
+  - 3-63 个字符
+  - 只能使用小写字母、数字、连字符
+  - 不能以连字符开头或结尾
+  - 使用 PinMe 子域名时需在全局范围内唯一
 
   注意：域名绑定需要钱包余额，具体费用参见 PinMe 官网。
 
@@ -182,16 +188,15 @@ PinMe 的核心优势：
 
   smart-bank-queue/
   ├── pinme.toml          # 项目配置（勿删除）
-  ├── src/
-  │   ├── worker/         # Worker 后端代码
-  │   └── frontend/       # 前端代码
-  ├── db/                 # 数据库 SQL 文件
+  ├── frontend/           # 前端代码
+  ├── backend/            # Worker 后端代码
+  ├── db/                 # 数据库 SQL 迁移文件
   ├── package.json
   └── ...
 
   将 BMAD 开发阶段生成的代码文件复制到对应目录：
-  - 前端文件 → src/frontend/
-  - 后端 API → src/worker/
+  - 前端文件 → frontend/
+  - 后端 API → backend/
   - 数据库表结构 → db/
 
   根据 pinme.toml 中的配置调整入口文件路径。
@@ -241,8 +246,7 @@ PinMe 的核心优势：
 ----------------------------------------
 
 前提：
-  已完成第二部分的步骤 3（npx skills add glitternetwork/pinme），
-  并且已登录 PinMe（pinme login）。
+  已完成第二部分的步骤 1（npx skills add glitternetwork/pinme）和步骤 3（pinme login）。
 
 ----------------------------------------
 
@@ -326,7 +330,7 @@ PinMe 的核心优势：
       执行命令：pinme upload dist
 
       ✓ 上传完成！
-      访问链接：https://pinme.eth.limo/ipfs/QmAbCdEf...
+      访问链接：https://pinme.eth.limo/#/preview/U2FsdGVkX1...
 
       你可以点击上面的链接在浏览器中查看你的排队系统。
 
@@ -365,7 +369,7 @@ PinMe 的核心优势：
   pinme save 报错                   不在 PinMe 项目根目录              确认当前目录下有 pinme.toml 文件
   域名绑定失败                      钱包余额不足                      执行 pinme wallet 查看余额，充值后再试
   AI 不认识"部署"命令               PinMe Skill 未安装                 执行 npx skills add glitternetwork/pinme 后重启 IDE
-  单文件超过 100MB                  超出默认限制                       优化构建产物或拆分上传
+  单文件超过 200MB                  超出默认限制（单文件 200MB，目录 1GB）  优化构建产物或拆分上传
 
 ========================================
 附录：PinMe 命令速查表
@@ -380,7 +384,7 @@ PinMe 的核心优势：
 
   静态部署      pinme upload dist                     上传 dist 目录到 IPFS
                pinme upload dist --domain my-app      上传并绑定 PinMe 子域名
-               pinme upload dist --domain a.com --dns 上传并绑定自定义域名
+               pinme upload dist --domain a.com       上传并绑定自定义 DNS 域名
 
   全栈项目      pinme create <name>                   创建全栈项目
                pinme save                             全量部署（Worker + DB + 前端）
