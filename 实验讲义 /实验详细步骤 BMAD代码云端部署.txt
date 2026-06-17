@@ -1,0 +1,398 @@
+实验步骤：BMAD 生成代码的云端部署
+
+本实验指导学生在 BMAD 方法论完成代码开发后，使用 PinMe 工具将项目部署到云端，实现一键上线。
+
+========================================
+第一部分：理解 PinMe 部署工具
+========================================
+
+PinMe 是一个零配置的全栈部署 CLI 工具，由 Glitter Network 开发。它支持两种部署路径：
+
+  路径                    适用场景
+  ──────────────────────  ──────────────────────────────────
+  静态上传（IPFS）        将构建好的前端静态文件上传到 IPFS 网络，获取公开访问链接
+  全栈项目部署            一键部署前端 + Worker 后端 + 数据库，适合完整 Web 应用
+
+PinMe 的核心优势：
+  1. 零配置 —— 不需要手动配置服务器、域名、SSL 证书
+  2. 一键部署 —— 一条命令完成构建、上传、发布
+  3. IPFS 持久存储 —— 静态文件上传后永久保存，去中心化
+  4. AI 原生 —— 专为 AI Agent 设计，可在 AI 对话中直接调用部署
+
+========================================
+第二部分：安装 PinMe
+========================================
+
+前提：已完成「实验详细步骤 使用cnm同步项目库」中的环境准备（Node.js LTS 已安装）。
+
+----------------------------------------
+
+步骤 1：全局安装 PinMe CLI
+
+  在终端执行：
+
+  npm install -g pinme
+
+  如果遇到下载速度慢的问题，可以先切换国内镜像：
+  npm config set registry https://registry.npmmirror.com
+  npm install -g pinme
+
+----------------------------------------
+
+步骤 2：验证安装
+
+  在终端执行：
+
+  pinme --version     应显示版本号
+
+  如果报 command not found，说明 Node.js 未正确安装或未加入 PATH。
+  回到环境准备实验确认安装后重启终端。
+
+----------------------------------------
+
+步骤 3：安装 PinMe Skill（让 AI 能识别部署命令）
+
+  在终端执行：
+
+  npx skills add glitternetwork/pinme
+
+  此命令将 PinMe 的 Skill 配置文件下载到项目中，
+  使 AI IDE（如 Trae CN、Qoder、Cursor 等）能在对话中自动调用 PinMe 命令。
+
+  安装完成后，你可以在 AI 对话中直接说"帮我部署到云端"，
+  AI 会自动识别并调用 PinMe 完成部署。
+
+----------------------------------------
+
+步骤 4：登录 PinMe 账户
+
+  在终端执行：
+
+  pinme login
+
+  终端会输出一个授权链接，并自动打开浏览器。
+
+  操作步骤：
+  (1) 浏览器打开授权页面（如果没有自动打开，手动复制终端中的链接）
+  (2) 使用钱包或邮箱注册/登录
+  (3) 确认授权
+  (4) 终端显示登录成功信息即可
+
+  登录成功后，你的身份信息会保存在本地，后续命令无需重复登录。
+
+========================================
+第三部分：部署静态前端项目
+========================================
+
+适用场景：BMAD 生成的代码是纯前端项目（React、Vue、静态网站等），
+只需要将构建产物上传到云端。
+
+这是最简单的部署方式，适合实验演示。
+
+----------------------------------------
+
+步骤 1：确认构建产物目录
+
+  在部署之前，确保项目已经构建完成。
+
+  检查以下常见构建输出目录是否存在：
+
+  目录         说明
+  ──────────  ──────────────────────────────────
+  dist/       Vite、Vue CLI、Webpack 的默认输出
+  build/      Create React App 的默认输出
+  out/        Next.js 静态导出的默认输出
+  public/     部分框架的静态资源目录
+
+  如果目录不存在，需要先执行构建命令：
+
+  常见构建命令：
+  npm run build         大多数前端框架的通用构建命令
+  npx vite build        Vite 项目
+  npx next build        Next.js 项目
+
+  构建完成后，目录中应包含 index.html 等文件。
+
+----------------------------------------
+
+步骤 2：上传到云端
+
+  在终端执行（将 dist 替换为你的实际构建目录名）：
+
+  pinme upload dist
+
+  PinMe 会：
+  (1) 扫描 dist 目录中的所有文件
+  (2) 将文件打包上传到 IPFS 网络
+  (3) 输出一个永久访问链接
+
+  输出示例：
+
+  Upload complete!
+  IPFS CID: QmXyZ...
+  Access URL: https://pinme.eth.limo/ipfs/QmXyZ...
+
+  复制 Access URL，在浏览器中打开即可查看部署的网站。
+
+----------------------------------------
+
+步骤 3：绑定自定义域名（可选）
+
+  如果你有一个 PinMe 子域名（不含点号的名称）：
+
+  pinme upload dist --domain my-smart-bank
+
+  这样可以通过以下地址访问：
+  https://my-smart-bank.pinme.eth.limo
+
+  如果你有自定义 DNS 域名（含点号，如 smartbank.example.com）：
+
+  pinme upload dist --domain smartbank.example.com --dns
+
+  注意：域名绑定需要钱包余额，具体费用参见 PinMe 官网。
+
+========================================
+第四部分：部署全栈项目（前端 + 后端 + 数据库）
+========================================
+
+适用场景：BMAD 生成的代码包含后端 API（Worker）和数据库，
+需要完整的全栈部署。
+
+----------------------------------------
+
+步骤 1：创建 PinMe 项目
+
+  在终端执行：
+
+  pinme create smart-bank-queue
+
+  此命令会：
+  (1) 从官方模板创建项目骨架
+  (2) 在云端创建 Worker 和数据库资源
+  (3) 生成 pinme.toml 配置文件
+  (4) 安装依赖并执行首次构建和部署
+
+  创建完成后，终端会输出项目管理 URL。
+
+----------------------------------------
+
+步骤 2：将 BMAD 生成的代码迁移到 PinMe 项目
+
+  PinMe 项目结构：
+
+  smart-bank-queue/
+  ├── pinme.toml          # 项目配置（勿删除）
+  ├── src/
+  │   ├── worker/         # Worker 后端代码
+  │   └── frontend/       # 前端代码
+  ├── db/                 # 数据库 SQL 文件
+  ├── package.json
+  └── ...
+
+  将 BMAD 开发阶段生成的代码文件复制到对应目录：
+  - 前端文件 → src/frontend/
+  - 后端 API → src/worker/
+  - 数据库表结构 → db/
+
+  根据 pinme.toml 中的配置调整入口文件路径。
+
+----------------------------------------
+
+步骤 3：一键部署
+
+  在 PinMe 项目根目录下执行：
+
+  pinme save
+
+  此命令会依次执行：
+  (1) 安装项目依赖（npm install）
+  (2) 构建 Worker 后端代码
+  (3) 上传 Worker 代码和数据库 SQL
+  (4) 构建前端代码
+  (5) 上传前端静态文件
+  (6) 输出项目访问 URL
+
+  如果需要绑定域名：
+  pinme save --domain my-smart-bank
+
+----------------------------------------
+
+步骤 4：局部更新
+
+  后续只修改了某一部分时，不需要全量部署：
+
+  只更新后端 Worker：
+  pinme update-worker
+
+  只更新数据库：
+  pinme update-db
+
+  只更新前端：
+  pinme update-web
+
+  这在迭代开发中非常高效，每次只部署变更的部分。
+
+========================================
+第五部分：在 AI 对话中一键部署
+========================================
+
+本部分演示如何让 AI Agent 自动完成部署，无需手动输入命令。
+
+----------------------------------------
+
+前提：
+  已完成第二部分的步骤 3（npx skills add glitternetwork/pinme），
+  并且已登录 PinMe（pinme login）。
+
+----------------------------------------
+
+步骤 1：通过 AI 对话部署
+
+  在 AI IDE 的对话窗口中，直接告诉 AI：
+
+  请帮我把 dist 目录部署到云端
+
+  或者：
+
+  deploy this project to the cloud
+
+  AI 会自动：
+  (1) 检查 pinme 是否已安装
+  (2) 检查登录状态
+  (3) 找到构建输出目录
+  (4) 执行 pinme upload 命令
+  (5) 返回部署链接
+
+----------------------------------------
+
+步骤 2：通过 AI 创建全栈项目并部署
+
+  如果你使用 BMAD 的 Quick Dev 模式刚开发完一个功能，
+  可以直接在对话中说：
+
+  我刚开发完排队系统的前端，请帮我部署上线
+
+  AI 会根据项目上下文判断最佳部署方式：
+  - 如果项目中已有 pinme.toml → 使用 pinme save
+  - 如果只是静态文件 → 使用 pinme upload
+
+----------------------------------------
+
+步骤 3：查看部署历史
+
+  在 AI 对话中或终端中执行：
+
+  pinme list          查看上传历史
+  pinme list -l 5     查看最近 5 条记录
+
+========================================
+第六部分：BMAD + PinMe 完整实战流程
+========================================
+
+本部分将 BMAD 方法论（上一个实验）和 PinMe 部署串联为完整流程。
+
+以"智能排队管理系统"为例，端到端实战步骤如下：
+
+  步骤          工具/命令                          产出
+  ──────────  ────────────────────────────────  ────────────────────────────
+  1. 头脑风暴   "help me brainstorm"              brainstorming-session-*.md
+  2. 创建 PRD   "bmad-prd create"                 prd.md
+  3. 架构设计   "lets create architecture"         architecture.md
+  4. 史诗拆分   "create the epics and stories"     epics.md
+  5. 冲刺规划   "run sprint planning"              sprint-status.yaml
+  6. 创建故事   "create the next story"            1-1-*.md
+  7. 开发代码   "dev this story"                   源代码 + 测试
+  8. 代码审查   "run code review"                  审查报告
+  9. 构建项目   npm run build                      dist/ 目录
+  10. 云端部署  pinme upload dist 或 pinme save    在线访问链接
+
+  其中步骤 1-8 在「实验详细步骤 BMAD方法论实战」中完成，
+  步骤 9-10 在本实验中完成。
+
+----------------------------------------
+
+完整对话示例（AI IDE 中）：
+
+  你：我已经完成了智能排队系统的开发，现在请帮我部署到云端
+
+  AI：我来帮你部署。首先检查一下环境...
+      ✓ Node.js v20.x 已安装
+      ✓ PinMe CLI 已安装
+      ✓ 已登录 PinMe 账户
+
+      发现项目中有 dist/ 目录，包含构建好的前端文件。
+      正在上传到 IPFS...
+
+      执行命令：pinme upload dist
+
+      ✓ 上传完成！
+      访问链接：https://pinme.eth.limo/ipfs/QmAbCdEf...
+
+      你可以点击上面的链接在浏览器中查看你的排队系统。
+
+========================================
+验收清单（BMAD + 云端部署）
+========================================
+
+完成以下全部检查项，截图保存作为实验报告交付物：
+
+环境准备：
+[ ] pinme --version 有输出
+[ ] pinme login 登录成功
+[ ] PinMe Skill 已安装（npx skills add glitternetwork/pinme）
+
+部署验证：
+[ ] 静态项目上传成功（pinme upload dist）
+[ ] 获得可访问的在线链接
+[ ] 在浏览器中打开链接能正常显示页面
+
+全栈部署（选做）：
+[ ] PinMe 项目创建成功（pinme create）
+[ ] pinme save 全量部署成功
+[ ] pinme update-web 局部更新成功
+
+========================================
+常见问题速查
+========================================
+
+  问题                              原因                              解决方法
+  ────────────────────────────────  ────────────────────────────────  ──────────────────────────────────
+  npm install -g pinme 报错          Node.js 版本过低                  确保 node --version >= 16.13
+  npm install 下载太慢              npm 默认源在国外                   先执行 npm config set registry https://registry.npmmirror.com 再安装
+  pinme login 超时                  网络问题或浏览器被拦截             检查网络；手动复制链接到浏览器；或使用 pinme set-appkey <AppKey> 替代
+  pinme upload 报错                 未登录或目录不存在                 先执行 pinme login；确认 dist/ 目录存在且包含 index.html
+  上传后访问链接 404                构建目录选错                       确认上传的是构建输出目录（dist/build/out），而非源码目录（src）
+  pinme save 报错                   不在 PinMe 项目根目录              确认当前目录下有 pinme.toml 文件
+  域名绑定失败                      钱包余额不足                      执行 pinme wallet 查看余额，充值后再试
+  AI 不认识"部署"命令               PinMe Skill 未安装                 执行 npx skills add glitternetwork/pinme 后重启 IDE
+  单文件超过 100MB                  超出默认限制                       优化构建产物或拆分上传
+
+========================================
+附录：PinMe 命令速查表
+========================================
+
+  类别          命令                                  说明
+  ──────────  ──────────────────────────────────────  ────────────────────────────
+  安装认证      npm install -g pinme                  全局安装 CLI
+               pinme login                            登录账户
+               pinme logout                           退出登录
+               pinme set-appkey <AppKey>              使用 AppKey 认证（自动化场景）
+
+  静态部署      pinme upload dist                     上传 dist 目录到 IPFS
+               pinme upload dist --domain my-app      上传并绑定 PinMe 子域名
+               pinme upload dist --domain a.com --dns 上传并绑定自定义域名
+
+  全栈项目      pinme create <name>                   创建全栈项目
+               pinme save                             全量部署（Worker + DB + 前端）
+               pinme save --domain my-app             全量部署并绑定域名
+               pinme update-worker                    只更新后端 Worker
+               pinme update-db                        只更新数据库
+               pinme update-web                       只更新前端
+
+  管理          pinme list                            查看上传历史
+               pinme my-domains                       查看已绑定域名
+               pinme wallet                           查看钱包余额
+               pinme delete <name>                    删除项目
+
+  信息          pinme --version                       查看版本
+               pinme help                             查看帮助
