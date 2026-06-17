@@ -1,14 +1,12 @@
-#!/usr/bin/env python3
-# ──────────────────────────────────────────────────────────────────
-# Coalesce adjacent <w:r> elements sharing identical <w:rPr> in DOCX.
-#
-# Pre-processing steps that enable merging:
-#   1. Strip all proofErr elements (spell/grammar markers)
-#   2. Remove rsid* attributes from runs (revision metadata)
-#
-# After merging, adjacent <w:t> children inside the same run are
-# concatenated into a single text node.
-# ──────────────────────────────────────────────────────────────────
+"""Merge adjacent runs with identical formatting in DOCX.
+
+Merges adjacent <w:r> elements that have identical <w:rPr> properties.
+Works on runs in paragraphs and inside tracked changes (<w:ins>, <w:del>).
+
+Also:
+- Removes rsid attributes from runs (revision metadata that doesn't affect rendering)
+- Removes proofErr elements (spell/grammar markers that block merging)
+"""
 
 from pathlib import Path
 
@@ -16,211 +14,186 @@ import defusedxml.minidom
 
 
 def merge_runs(input_dir: str) -> tuple[int, str]:
-    """Entry point – merge runs in word/document.xml and return (count, msg)."""
-    doc = Path(input_dir) / "word" / "document.xml"
+    doc_xml = Path(input_dir) / "word" / "document.xml"
 
-    if not doc.exists():
-        return 0, "Error: {} not found".format(doc)
+    if not doc_xml.exists():
+        return 0, f"Error: {doc_xml} not found"
 
     try:
-        tree = defusedxml.minidom.parseString(doc.read_text(encoding="utf-8"))
-        top = tree.documentElement
+        dom = defusedxml.minidom.parseString(doc_xml.read_text(encoding="utf-8"))
+        root = dom.documentElement
 
-        # housekeeping
-        _purge_by_tag(top, "proofErr")
-        _drop_rsid_attrs(top)
+        _remove_elements(root, "proofErr")
+        _strip_run_rsid_attrs(root)
 
-        # collect unique parent containers of all <w:r>
-        parents = {nd.parentNode for nd in _query_tag(top, "r")}
+        containers = {run.parentNode for run in _find_elements(root, "r")}
 
-        merged = 0
-        for p in parents:
-            merged += _coalesce_in_container(p)
+        merge_count = 0
+        for container in containers:
+            merge_count += _merge_runs_in(container)
 
-        doc.write_bytes(tree.toxml(encoding="UTF-8"))
-        return merged, "Merged {} runs".format(merged)
+        doc_xml.write_bytes(dom.toxml(encoding="UTF-8"))
+        return merge_count, f"Merged {merge_count} runs"
 
-    except Exception as ex:
-        return 0, "Error: {}".format(ex)
+    except Exception as e:
+        return 0, f"Error: {e}"
 
 
-# ──────────────────────────────────────────────────────────────────
-# DOM traversal helpers
-# ──────────────────────────────────────────────────────────────────
-
-def _query_tag(root, local_name: str) -> list:
-    """Recursively find all elements whose local name matches *local_name*."""
-    hits = []
-
-    def _walk(nd):
-        if nd.nodeType != nd.ELEMENT_NODE:
-            return
-        tag = nd.localName or nd.tagName
-        if tag == local_name or tag.endswith(":{}".format(local_name)):
-            hits.append(nd)
-        for ch in nd.childNodes:
-            _walk(ch)
-
-    _walk(root)
-    return hits
 
 
-def _child_by_tag(parent, local_name: str):
-    """Return the first direct child element matching *local_name*."""
-    for ch in parent.childNodes:
-        if ch.nodeType != ch.ELEMENT_NODE:
-            continue
-        tag = ch.localName or ch.tagName
-        if tag == local_name or tag.endswith(":{}".format(local_name)):
-            return ch
+def _find_elements(root, tag: str) -> list:
+    results = []
+
+    def traverse(node):
+        if node.nodeType == node.ELEMENT_NODE:
+            name = node.localName or node.tagName
+            if name == tag or name.endswith(f":{tag}"):
+                results.append(node)
+            for child in node.childNodes:
+                traverse(child)
+
+    traverse(root)
+    return results
+
+
+def _get_child(parent, tag: str):
+    for child in parent.childNodes:
+        if child.nodeType == child.ELEMENT_NODE:
+            name = child.localName or child.tagName
+            if name == tag or name.endswith(f":{tag}"):
+                return child
     return None
 
 
-def _children_by_tag(parent, local_name: str) -> list:
-    """Return every direct child element matching *local_name*."""
-    return [
-        ch for ch in parent.childNodes
-        if ch.nodeType == ch.ELEMENT_NODE
-        and ((ch.localName or ch.tagName) == local_name
-             or (ch.localName or ch.tagName).endswith(":{}".format(local_name)))
-    ]
+def _get_children(parent, tag: str) -> list:
+    results = []
+    for child in parent.childNodes:
+        if child.nodeType == child.ELEMENT_NODE:
+            name = child.localName or child.tagName
+            if name == tag or name.endswith(f":{tag}"):
+                results.append(child)
+    return results
 
 
-def _only_whitespace_between(a, b) -> bool:
-    """True when nothing meaningful sits between siblings *a* and *b*."""
-    cur = a.nextSibling
-    while cur is not None:
-        if cur is b:
+def _is_adjacent(elem1, elem2) -> bool:
+    node = elem1.nextSibling
+    while node:
+        if node == elem2:
             return True
-        if cur.nodeType == cur.ELEMENT_NODE:
+        if node.nodeType == node.ELEMENT_NODE:
             return False
-        if cur.nodeType == cur.TEXT_NODE and cur.data.strip():
+        if node.nodeType == node.TEXT_NODE and node.data.strip():
             return False
-        cur = cur.nextSibling
+        node = node.nextSibling
     return False
 
 
-# ──────────────────────────────────────────────────────────────────
-# Cleanup passes
-# ──────────────────────────────────────────────────────────────────
-
-def _purge_by_tag(root, local_name: str):
-    """Remove every element whose local name matches *local_name*."""
-    for nd in _query_tag(root, local_name):
-        if nd.parentNode is not None:
-            nd.parentNode.removeChild(nd)
 
 
-def _drop_rsid_attrs(root):
-    """Strip revision-save-ID attributes from all <w:r> elements."""
-    for r in _query_tag(root, "r"):
-        doomed = [a for a in r.attributes.values() if "rsid" in a.name.lower()]
-        for a in doomed:
-            r.removeAttribute(a.name)
+def _remove_elements(root, tag: str):
+    for elem in _find_elements(root, tag):
+        if elem.parentNode:
+            elem.parentNode.removeChild(elem)
 
 
-# ──────────────────────────────────────────────────────────────────
-# Core merging logic
-# ──────────────────────────────────────────────────────────────────
-
-def _tag_is_run(nd) -> bool:
-    tag = nd.localName or nd.tagName
-    return tag == "r" or tag.endswith(":r")
+def _strip_run_rsid_attrs(root):
+    for run in _find_elements(root, "r"):
+        for attr in list(run.attributes.values()):
+            if "rsid" in attr.name.lower():
+                run.removeAttribute(attr.name)
 
 
-def _next_elem(nd):
-    """Return the next element sibling (skip text/comment nodes)."""
-    s = nd.nextSibling
-    while s is not None:
-        if s.nodeType == s.ELEMENT_NODE:
-            return s
-        s = s.nextSibling
+
+
+def _merge_runs_in(container) -> int:
+    merge_count = 0
+    run = _first_child_run(container)
+
+    while run:
+        while True:
+            next_elem = _next_element_sibling(run)
+            if next_elem and _is_run(next_elem) and _can_merge(run, next_elem):
+                _merge_run_content(run, next_elem)
+                container.removeChild(next_elem)
+                merge_count += 1
+            else:
+                break
+
+        _consolidate_text(run)
+        run = _next_sibling_run(run)
+
+    return merge_count
+
+
+def _first_child_run(container):
+    for child in container.childNodes:
+        if child.nodeType == child.ELEMENT_NODE and _is_run(child):
+            return child
     return None
 
 
-def _next_run_sibling(nd):
-    """Walk forward until we hit another <w:r> element."""
-    s = nd.nextSibling
-    while s is not None:
-        if s.nodeType == s.ELEMENT_NODE and _tag_is_run(s):
-            return s
-        s = s.nextSibling
+def _next_element_sibling(node):
+    sibling = node.nextSibling
+    while sibling:
+        if sibling.nodeType == sibling.ELEMENT_NODE:
+            return sibling
+        sibling = sibling.nextSibling
     return None
 
 
-def _first_run_child(container):
-    """Return the first child that is a run element."""
-    for ch in container.childNodes:
-        if ch.nodeType == ch.ELEMENT_NODE and _tag_is_run(ch):
-            return ch
+def _next_sibling_run(node):
+    sibling = node.nextSibling
+    while sibling:
+        if sibling.nodeType == sibling.ELEMENT_NODE:
+            if _is_run(sibling):
+                return sibling
+        sibling = sibling.nextSibling
     return None
 
 
-def _runs_compatible(a, b) -> bool:
-    """Two runs are compatible when their <w:rPr> serialisations match."""
-    rpr_a = _child_by_tag(a, "rPr")
-    rpr_b = _child_by_tag(b, "rPr")
-    if (rpr_a is None) != (rpr_b is None):
+def _is_run(node) -> bool:
+    name = node.localName or node.tagName
+    return name == "r" or name.endswith(":r")
+
+
+def _can_merge(run1, run2) -> bool:
+    rpr1 = _get_child(run1, "rPr")
+    rpr2 = _get_child(run2, "rPr")
+
+    if (rpr1 is None) != (rpr2 is None):
         return False
-    return True if rpr_a is None else rpr_a.toxml() == rpr_b.toxml()
+    if rpr1 is None:
+        return True
+    return rpr1.toxml() == rpr2.toxml()  
 
 
-def _absorb_run(dst, src):
-    """Move non-rPr children from *src* into *dst*."""
-    for ch in list(src.childNodes):
-        if ch.nodeType != ch.ELEMENT_NODE:
-            continue
-        tag = ch.localName or ch.tagName
-        if tag == "rPr" or tag.endswith(":rPr"):
-            continue
-        dst.appendChild(ch)
+def _merge_run_content(target, source):
+    for child in list(source.childNodes):
+        if child.nodeType == child.ELEMENT_NODE:
+            name = child.localName or child.tagName
+            if name != "rPr" and not name.endswith(":rPr"):
+                target.appendChild(child)
 
 
-def _squash_text_nodes(run):
-    """Concatenate adjacent <w:t> children into one."""
-    t_nodes = _children_by_tag(run, "t")
+def _consolidate_text(run):
+    t_elements = _get_children(run, "t")
 
-    idx = len(t_nodes) - 1
-    while idx > 0:
-        cur, prev = t_nodes[idx], t_nodes[idx - 1]
+    for i in range(len(t_elements) - 1, 0, -1):
+        curr, prev = t_elements[i], t_elements[i - 1]
 
-        if _only_whitespace_between(prev, cur):
-            txt_prev = prev.firstChild.data if prev.firstChild else ""
-            txt_cur = cur.firstChild.data if cur.firstChild else ""
-            combined = txt_prev + txt_cur
+        if _is_adjacent(prev, curr):
+            prev_text = prev.firstChild.data if prev.firstChild else ""
+            curr_text = curr.firstChild.data if curr.firstChild else ""
+            merged = prev_text + curr_text
 
             if prev.firstChild:
-                prev.firstChild.data = combined
+                prev.firstChild.data = merged
             else:
-                prev.appendChild(run.ownerDocument.createTextNode(combined))
+                prev.appendChild(run.ownerDocument.createTextNode(merged))
 
-            if combined.startswith(" ") or combined.endswith(" "):
+            if merged.startswith(" ") or merged.endswith(" "):
                 prev.setAttribute("xml:space", "preserve")
             elif prev.hasAttribute("xml:space"):
                 prev.removeAttribute("xml:space")
 
-            run.removeChild(cur)
-
-        idx -= 1
-
-
-def _coalesce_in_container(container) -> int:
-    """Merge compatible adjacent runs inside *container*."""
-    count = 0
-    cur = _first_run_child(container)
-
-    while cur is not None:
-        # absorb as many consecutive compatible runs as possible
-        while True:
-            nxt = _next_elem(cur)
-            if nxt is not None and _tag_is_run(nxt) and _runs_compatible(cur, nxt):
-                _absorb_run(cur, nxt)
-                container.removeChild(nxt)
-                count += 1
-            else:
-                break
-
-        _squash_text_nodes(cur)
-        cur = _next_run_sibling(cur)
-
-    return count
+            run.removeChild(curr)

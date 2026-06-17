@@ -1,4 +1,6 @@
-# ── Office document validation sub-package ──
+"""
+Validation modules for Word document processing.
+"""
 
 from .base import BaseSchemaValidator
 from .docx import DOCXSchemaValidator

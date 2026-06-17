@@ -1,36 +1,72 @@
 """
-Wrapper around LibreOffice (``soffice``) that transparently handles
-sandboxed environments where AF_UNIX sockets are unavailable.
+Helper for running LibreOffice (soffice) in environments where AF_UNIX
+sockets may be blocked (e.g., sandboxed VMs).  Detects the restriction
+at runtime and applies an LD_PRELOAD shim if needed.
 
-The module detects the restriction at startup and, when necessary,
-compiles and injects a tiny C shim via ``LD_PRELOAD``.
-
-Public surface::
-
+Usage:
     from office.soffice import run_soffice, get_soffice_env
 
-    # Approach A – call soffice directly
+    # Option 1 – run soffice directly
     result = run_soffice(["--headless", "--convert-to", "pdf", "input.docx"])
 
-    # Approach B – retrieve an env dict for manual subprocess usage
+    # Option 2 – get env dict for your own subprocess calls
     env = get_soffice_env()
     subprocess.run(["soffice", ...], env=env)
 """
 
 import os
-import pathlib
 import socket
 import subprocess
 import tempfile
+from pathlib import Path
 
 
-# ── Shared-object path for the optional shim ────────────────────────────────
+def get_soffice_env() -> dict:
+    env = os.environ.copy()
+    env["SAL_USE_VCLPLUGIN"] = "svp"
 
-_COMPILED_SHIM = pathlib.Path(tempfile.gettempdir()) / "lo_socket_shim.so"
+    if _needs_shim():
+        shim = _ensure_shim()
+        env["LD_PRELOAD"] = str(shim)
 
-# ── C source for the LD_PRELOAD shim ────────────────────────────────────────
+    return env
 
-_C_SOURCE = r"""
+
+def run_soffice(args: list[str], **kwargs) -> subprocess.CompletedProcess:
+    env = get_soffice_env()
+    return subprocess.run(["soffice"] + args, env=env, **kwargs)
+
+
+
+_SHIM_SO = Path(tempfile.gettempdir()) / "lo_socket_shim.so"
+
+
+def _needs_shim() -> bool:
+    try:
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.close()
+        return False
+    except OSError:
+        return True
+
+
+def _ensure_shim() -> Path:
+    if _SHIM_SO.exists():
+        return _SHIM_SO
+
+    src = Path(tempfile.gettempdir()) / "lo_socket_shim.c"
+    src.write_text(_SHIM_SOURCE)
+    subprocess.run(
+        ["gcc", "-shared", "-fPIC", "-o", str(_SHIM_SO), str(src), "-ldl"],
+        check=True,
+        capture_output=True,
+    )
+    src.unlink()
+    return _SHIM_SO
+
+
+
+_SHIM_SOURCE = r"""
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <errno.h>
@@ -140,55 +176,8 @@ int close(int fd) {
 """
 
 
-# ── Internal helpers ─────────────────────────────────────────────────────────
-
-def _unix_sockets_blocked() -> bool:
-    """Return *True* when the OS refuses to create AF_UNIX sockets."""
-    try:
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.close()
-        return False
-    except OSError:
-        return True
-
-
-def _build_shim_if_missing() -> pathlib.Path:
-    """Compile the C shim to a shared object when it is not yet present."""
-    if _COMPILED_SHIM.exists():
-        return _COMPILED_SHIM
-
-    c_file = pathlib.Path(tempfile.gettempdir()) / "lo_socket_shim.c"
-    c_file.write_text(_C_SOURCE)
-    subprocess.run(
-        ["gcc", "-shared", "-fPIC", "-o", str(_COMPILED_SHIM), str(c_file), "-ldl"],
-        check=True,
-        capture_output=True,
-    )
-    c_file.unlink()
-    return _COMPILED_SHIM
-
-
-# ── Public API ───────────────────────────────────────────────────────────────
-
-def get_soffice_env() -> dict:
-    """Return an ``env`` dict suitable for ``subprocess.run(env=…)``."""
-    merged = os.environ.copy()
-    merged["SAL_USE_VCLPLUGIN"] = "svp"
-
-    if _unix_sockets_blocked():
-        merged["LD_PRELOAD"] = str(_build_shim_if_missing())
-
-    return merged
-
-
-def run_soffice(args: list[str], **kw) -> subprocess.CompletedProcess:
-    """Launch ``soffice`` with the correct environment and given *args*."""
-    return subprocess.run(["soffice"] + args, env=get_soffice_env(), **kw)
-
-
-# ── CLI passthrough ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     import sys
-    outcome = run_soffice(sys.argv[1:])
-    sys.exit(outcome.returncode)
+    result = run_soffice(sys.argv[1:])
+    sys.exit(result.returncode)

@@ -1,59 +1,34 @@
-"""Extract and beautify Office archives (DOCX / PPTX / XLSX) for manual XML editing.
+"""Unpack Office files (DOCX, PPTX, XLSX) for editing.
 
-The ZIP contents are inflated, every XML file is pretty-printed, and — for
-Word documents — adjacent runs may be coalesced and redundant tracked-change
-wrappers collapsed.
+Extracts the ZIP archive, pretty-prints XML files, and optionally:
+- Merges adjacent runs with identical formatting (DOCX only)
+- Simplifies adjacent tracked changes from same author (DOCX only)
 
-Invocation::
-
+Usage:
     python unpack.py <office_file> <output_dir> [options]
 
-Samples::
-
+Examples:
     python unpack.py document.docx unpacked/
     python unpack.py presentation.pptx unpacked/
     python unpack.py document.docx unpacked/ --merge-runs false
 """
 
 import argparse
-import pathlib
 import sys
 import zipfile
+from pathlib import Path
 
 import defusedxml.minidom
 
-from helpers.merge_runs import merge_runs as _coalesce_runs
-from helpers.simplify_redlines import simplify_redlines as _compact_redlines
+from helpers.merge_runs import merge_runs as do_merge_runs
+from helpers.simplify_redlines import simplify_redlines as do_simplify_redlines
 
-_TYPOGRAPHIC_QUOTES = {
-    "\u201c": "&#x201C;",
-    "\u201d": "&#x201D;",
-    "\u2018": "&#x2018;",
-    "\u2019": "&#x2019;",
+SMART_QUOTE_REPLACEMENTS = {
+    "\u201c": "&#x201C;",  
+    "\u201d": "&#x201D;",  
+    "\u2018": "&#x2018;",  
+    "\u2019": "&#x2019;",  
 }
-
-_OFFICE_SUFFIXES = {".docx", ".pptx", ".xlsx"}
-
-
-def _beautify_xml(fp: pathlib.Path) -> None:
-    """Rewrite *fp* in indented form via minidom."""
-    try:
-        raw = fp.read_text(encoding="utf-8")
-        dom = defusedxml.minidom.parseString(raw)
-        fp.write_bytes(dom.toprettyxml(indent="  ", encoding="utf-8"))
-    except Exception:
-        pass
-
-
-def _replace_typographic_quotes(fp: pathlib.Path) -> None:
-    """Convert Unicode curly quotes to XML numeric entities so they survive round-trips."""
-    try:
-        blob = fp.read_text(encoding="utf-8")
-        for ch, entity in _TYPOGRAPHIC_QUOTES.items():
-            blob = blob.replace(ch, entity)
-        fp.write_text(blob, encoding="utf-8")
-    except Exception:
-        pass
 
 
 def unpack(
@@ -62,82 +37,94 @@ def unpack(
     merge_runs: bool = True,
     simplify_redlines: bool = True,
 ) -> tuple[None, str]:
-    """Inflate *input_file* into *output_directory* and post-process XML."""
-    src = pathlib.Path(input_file)
-    dest = pathlib.Path(output_directory)
-    ext = src.suffix.lower()
+    input_path = Path(input_file)
+    output_path = Path(output_directory)
+    suffix = input_path.suffix.lower()
 
-    if not src.exists():
-        return None, "Error: %s does not exist" % input_file
+    if not input_path.exists():
+        return None, f"Error: {input_file} does not exist"
 
-    if ext not in _OFFICE_SUFFIXES:
-        return None, "Error: %s must be a .docx, .pptx, or .xlsx file" % input_file
+    if suffix not in {".docx", ".pptx", ".xlsx"}:
+        return None, f"Error: {input_file} must be a .docx, .pptx, or .xlsx file"
 
     try:
-        dest.mkdir(parents=True, exist_ok=True)
+        output_path.mkdir(parents=True, exist_ok=True)
 
-        with zipfile.ZipFile(src, "r") as zf:
-            zf.extractall(dest)
+        with zipfile.ZipFile(input_path, "r") as zf:
+            zf.extractall(output_path)
 
-        xml_inventory = [
-            *dest.rglob("*.xml"),
-            *dest.rglob("*.rels"),
-        ]
+        xml_files = list(output_path.rglob("*.xml")) + list(output_path.rglob("*.rels"))
+        for xml_file in xml_files:
+            _pretty_print_xml(xml_file)
 
-        for xf in xml_inventory:
-            _beautify_xml(xf)
+        message = f"Unpacked {input_file} ({len(xml_files)} XML files)"
 
-        summary = "Unpacked %s (%d XML files)" % (input_file, len(xml_inventory))
-
-        if ext == ".docx":
+        if suffix == ".docx":
             if simplify_redlines:
-                n_simplified, _ = _compact_redlines(str(dest))
-                summary += ", simplified %d tracked changes" % n_simplified
+                simplify_count, _ = do_simplify_redlines(str(output_path))
+                message += f", simplified {simplify_count} tracked changes"
 
             if merge_runs:
-                n_merged, _ = _coalesce_runs(str(dest))
-                summary += ", merged %d runs" % n_merged
+                merge_count, _ = do_merge_runs(str(output_path))
+                message += f", merged {merge_count} runs"
 
-        for xf in xml_inventory:
-            _replace_typographic_quotes(xf)
+        for xml_file in xml_files:
+            _escape_smart_quotes(xml_file)
 
-        return None, summary
+        return None, message
 
     except zipfile.BadZipFile:
-        return None, "Error: %s is not a valid Office file" % input_file
-    except Exception as exc:
-        return None, "Error unpacking: %s" % exc
+        return None, f"Error: {input_file} is not a valid Office file"
+    except Exception as e:
+        return None, f"Error unpacking: {e}"
 
 
-# ── CLI entry point ──────────────────────────────────────────────────────────
+def _pretty_print_xml(xml_file: Path) -> None:
+    try:
+        content = xml_file.read_text(encoding="utf-8")
+        dom = defusedxml.minidom.parseString(content)
+        xml_file.write_bytes(dom.toprettyxml(indent="  ", encoding="utf-8"))
+    except Exception:
+        pass  
+
+
+def _escape_smart_quotes(xml_file: Path) -> None:
+    try:
+        content = xml_file.read_text(encoding="utf-8")
+        for char, entity in SMART_QUOTE_REPLACEMENTS.items():
+            content = content.replace(char, entity)
+        xml_file.write_text(content, encoding="utf-8")
+    except Exception:
+        pass
+
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description="Unpack an Office file (DOCX, PPTX, XLSX) for editing"
     )
-    ap.add_argument("input_file", help="Office file to unpack")
-    ap.add_argument("output_directory", help="Output directory")
-    ap.add_argument(
+    parser.add_argument("input_file", help="Office file to unpack")
+    parser.add_argument("output_directory", help="Output directory")
+    parser.add_argument(
         "--merge-runs",
-        type=lambda v: v.lower() == "true",
+        type=lambda x: x.lower() == "true",
         default=True,
         metavar="true|false",
         help="Merge adjacent runs with identical formatting (DOCX only, default: true)",
     )
-    ap.add_argument(
+    parser.add_argument(
         "--simplify-redlines",
-        type=lambda v: v.lower() == "true",
+        type=lambda x: x.lower() == "true",
         default=True,
         metavar="true|false",
         help="Merge adjacent tracked changes from same author (DOCX only, default: true)",
     )
-    cli = ap.parse_args()
+    args = parser.parse_args()
 
     _, message = unpack(
-        cli.input_file,
-        cli.output_directory,
-        merge_runs=cli.merge_runs,
-        simplify_redlines=cli.simplify_redlines,
+        args.input_file,
+        args.output_directory,
+        merge_runs=args.merge_runs,
+        simplify_redlines=args.simplify_redlines,
     )
     print(message)
 

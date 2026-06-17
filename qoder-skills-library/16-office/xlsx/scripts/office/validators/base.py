@@ -1,12 +1,6 @@
-#!/usr/bin/env python3
-# ──────────────────────────────────────────────────────────────────
-# Foundation class for OOXML schema validation.
-#
-# Subclasses (DOCX, PPTX) override `validate()` and optionally
-# `repair()`.  The base provides shared XSD checking, namespace
-# auditing, unique-ID enforcement, relationship verification, and
-# content-type validation.
-# ──────────────────────────────────────────────────────────────────
+"""
+Base validator with common validation logic for document files.
+"""
 
 import re
 from pathlib import Path
@@ -16,38 +10,40 @@ import lxml.etree
 
 
 class BaseSchemaValidator:
-    """Shared validation infrastructure for Office Open XML packages."""
 
-    # ── patterns that we silently ignore in XSD output ──
-    IGNORED_VALIDATION_ERRORS = ["hyphenationZone", "purl.org/dc/terms"]
+    IGNORED_VALIDATION_ERRORS = [
+        "hyphenationZone",
+        "purl.org/dc/terms",
+    ]
 
-    # tag → (attribute, scope) for uniqueness checks
     UNIQUE_ID_REQUIREMENTS = {
-        "comment": ("id", "file"),
-        "commentrangestart": ("id", "file"),
-        "commentrangeend": ("id", "file"),
-        "bookmarkstart": ("id", "file"),
-        "bookmarkend": ("id", "file"),
-        "sldid": ("id", "file"),
-        "sldmasterid": ("id", "global"),
-        "sldlayoutid": ("id", "global"),
-        "cm": ("authorid", "file"),
-        "sheet": ("sheetid", "file"),
-        "definedname": ("id", "file"),
-        "cxnsp": ("id", "file"),
-        "sp": ("id", "file"),
-        "pic": ("id", "file"),
-        "grpsp": ("id", "file"),
+        "comment": ("id", "file"),  
+        "commentrangestart": ("id", "file"),  
+        "commentrangeend": ("id", "file"),  
+        "bookmarkstart": ("id", "file"),  
+        "bookmarkend": ("id", "file"),  
+        "sldid": ("id", "file"),  
+        "sldmasterid": ("id", "global"),  
+        "sldlayoutid": ("id", "global"),  
+        "cm": ("authorid", "file"),  
+        "sheet": ("sheetid", "file"),  
+        "definedname": ("id", "file"),  
+        "cxnsp": ("id", "file"),  
+        "sp": ("id", "file"),  
+        "pic": ("id", "file"),  
+        "grpsp": ("id", "file"),  
     }
 
-    EXCLUDED_ID_CONTAINERS = {"sectionlst"}
+    EXCLUDED_ID_CONTAINERS = {
+        "sectionlst",  
+    }
 
     ELEMENT_RELATIONSHIP_TYPES = {}
 
     SCHEMA_MAPPINGS = {
-        "word": "ISO-IEC29500-4_2016/wml.xsd",
-        "ppt": "ISO-IEC29500-4_2016/pml.xsd",
-        "xl": "ISO-IEC29500-4_2016/sml.xsd",
+        "word": "ISO-IEC29500-4_2016/wml.xsd",  
+        "ppt": "ISO-IEC29500-4_2016/pml.xsd",  
+        "xl": "ISO-IEC29500-4_2016/sml.xsd",  
         "[Content_Types].xml": "ecma/fouth-edition/opc-contentTypes.xsd",
         "app.xml": "ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd",
         "core.xml": "ecma/fouth-edition/opc-coreProperties.xsd",
@@ -62,9 +58,9 @@ class BaseSchemaValidator:
         "drawing": "ISO-IEC29500-4_2016/dml-main.xsd",
     }
 
-    # well-known XML / OPC / OOXML namespace URIs
     MC_NAMESPACE = "http://schemas.openxmlformats.org/markup-compatibility/2006"
     XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
+
     PACKAGE_RELATIONSHIPS_NAMESPACE = (
         "http://schemas.openxmlformats.org/package/2006/relationships"
     )
@@ -95,8 +91,6 @@ class BaseSchemaValidator:
         "http://www.w3.org/XML/1998/namespace",
     }
 
-    # ──────────────────────────────────────────────────────────────
-
     def __init__(self, unpacked_dir, original_file=None, verbose=False):
         self.unpacked_dir = Path(unpacked_dir).resolve()
         self.original_file = Path(original_file) if original_file else None
@@ -104,696 +98,749 @@ class BaseSchemaValidator:
 
         self.schemas_dir = Path(__file__).parent.parent / "schemas"
 
+        patterns = ["*.xml", "*.rels"]
         self.xml_files = [
-            fp
-            for glob in ("*.xml", "*.rels")
-            for fp in self.unpacked_dir.rglob(glob)
+            f for pattern in patterns for f in self.unpacked_dir.rglob(pattern)
         ]
-        if not self.xml_files:
-            print("Warning: No XML files found in {}".format(self.unpacked_dir))
 
-    # ── abstract / default methods ──
+        if not self.xml_files:
+            print(f"Warning: No XML files found in {self.unpacked_dir}")
 
     def validate(self):
         raise NotImplementedError("Subclasses must implement the validate method")
 
     def repair(self) -> int:
-        return self._fix_whitespace_preservation()
+        return self.repair_whitespace_preservation()
 
-    # ──────────────────────────────────────────────────────────────
-    # Repair: xml:space="preserve" on <w:t> with leading/trailing ws
-    # ──────────────────────────────────────────────────────────────
+    def repair_whitespace_preservation(self) -> int:
+        repairs = 0
 
-    def _fix_whitespace_preservation(self) -> int:
-        n_fixed = 0
-        for fp in self.xml_files:
+        for xml_file in self.xml_files:
             try:
-                raw = fp.read_text(encoding="utf-8")
-                dom = defusedxml.minidom.parseString(raw)
-                touched = False
+                content = xml_file.read_text(encoding="utf-8")
+                dom = defusedxml.minidom.parseString(content)
+                modified = False
 
-                for el in dom.getElementsByTagName("*"):
-                    if not el.tagName.endswith(":t"):
-                        continue
-                    if el.firstChild is None:
-                        continue
-                    txt = el.firstChild.nodeValue
-                    if not txt:
-                        continue
-                    has_ws = txt.startswith((' ', '\t')) or txt.endswith((' ', '\t'))
-                    if has_ws and el.getAttribute("xml:space") != "preserve":
-                        el.setAttribute("xml:space", "preserve")
-                        preview = repr(txt[:30]) + "..." if len(txt) > 30 else repr(txt)
-                        print("  Repaired: {}: Added xml:space='preserve' to {}: {}".format(
-                            fp.name, el.tagName, preview
-                        ))
-                        n_fixed += 1
-                        touched = True
+                for elem in dom.getElementsByTagName("*"):
+                    if elem.tagName.endswith(":t") and elem.firstChild:
+                        text = elem.firstChild.nodeValue
+                        if text and (text.startswith((' ', '\t')) or text.endswith((' ', '\t'))):
+                            if elem.getAttribute("xml:space") != "preserve":
+                                elem.setAttribute("xml:space", "preserve")
+                                text_preview = repr(text[:30]) + "..." if len(text) > 30 else repr(text)
+                                print(f"  Repaired: {xml_file.name}: Added xml:space='preserve' to {elem.tagName}: {text_preview}")
+                                repairs += 1
+                                modified = True
 
-                if touched:
-                    fp.write_bytes(dom.toxml(encoding="UTF-8"))
+                if modified:
+                    xml_file.write_bytes(dom.toxml(encoding="UTF-8"))
+
             except Exception:
                 pass
-        return n_fixed
 
-    # alternative name kept for backward compat
-    repair_whitespace_preservation = _fix_whitespace_preservation
-
-    # ──────────────────────────────────────────────────────────────
-    # Check 1 – well-formed XML
-    # ──────────────────────────────────────────────────────────────
+        return repairs
 
     def validate_xml(self):
-        issues = []
-        for fp in self.xml_files:
+        errors = []
+
+        for xml_file in self.xml_files:
             try:
-                lxml.etree.parse(str(fp))
-            except lxml.etree.XMLSyntaxError as exc:
-                issues.append("  {}: Line {}: {}".format(
-                    fp.relative_to(self.unpacked_dir), exc.lineno, exc.msg
-                ))
-            except Exception as exc:
-                issues.append("  {}: Unexpected error: {}".format(
-                    fp.relative_to(self.unpacked_dir), exc
-                ))
+                lxml.etree.parse(str(xml_file))
+            except lxml.etree.XMLSyntaxError as e:
+                errors.append(
+                    f"  {xml_file.relative_to(self.unpacked_dir)}: "
+                    f"Line {e.lineno}: {e.msg}"
+                )
+            except Exception as e:
+                errors.append(
+                    f"  {xml_file.relative_to(self.unpacked_dir)}: "
+                    f"Unexpected error: {str(e)}"
+                )
 
-        if issues:
-            print("FAILED - Found {} XML violations:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+        if errors:
+            print(f"FAILED - Found {len(errors)} XML violations:")
+            for error in errors:
+                print(error)
             return False
-        if self.verbose:
-            print("PASSED - All XML files are well-formed")
-        return True
-
-    # ──────────────────────────────────────────────────────────────
-    # Check 2 – mc:Ignorable namespace prefixes
-    # ──────────────────────────────────────────────────────────────
+        else:
+            if self.verbose:
+                print("PASSED - All XML files are well-formed")
+            return True
 
     def validate_namespaces(self):
-        issues = []
-        for fp in self.xml_files:
-            try:
-                root = lxml.etree.parse(str(fp)).getroot()
-                declared = set(root.nsmap.keys()) - {None}
+        errors = []
 
-                ignorable_vals = [
+        for xml_file in self.xml_files:
+            try:
+                root = lxml.etree.parse(str(xml_file)).getroot()
+                declared = set(root.nsmap.keys()) - {None}  
+
+                for attr_val in [
                     v for k, v in root.attrib.items() if k.endswith("Ignorable")
-                ]
-                for val in ignorable_vals:
-                    for ns in set(val.split()) - declared:
-                        issues.append("  {}: Namespace '{}' in Ignorable but not declared".format(
-                            fp.relative_to(self.unpacked_dir), ns
-                        ))
+                ]:
+                    undeclared = set(attr_val.split()) - declared
+                    errors.extend(
+                        f"  {xml_file.relative_to(self.unpacked_dir)}: "
+                        f"Namespace '{ns}' in Ignorable but not declared"
+                        for ns in undeclared
+                    )
             except lxml.etree.XMLSyntaxError:
                 continue
 
-        if issues:
-            print("FAILED - {} namespace issues:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+        if errors:
+            print(f"FAILED - {len(errors)} namespace issues:")
+            for error in errors:
+                print(error)
             return False
         if self.verbose:
             print("PASSED - All namespace prefixes properly declared")
         return True
 
-    # ──────────────────────────────────────────────────────────────
-    # Check 3 – unique IDs
-    # ──────────────────────────────────────────────────────────────
-
     def validate_unique_ids(self):
-        issues = []
-        g_ids = {}
+        errors = []
+        global_ids = {}  
 
-        for fp in self.xml_files:
+        for xml_file in self.xml_files:
             try:
-                root = lxml.etree.parse(str(fp)).getroot()
-                per_file = {}
+                root = lxml.etree.parse(str(xml_file)).getroot()
+                file_ids = {}  
 
-                # strip mc:AlternateContent before scanning
-                for ac in root.xpath(
-                    ".//mc:AlternateContent",
-                    namespaces={"mc": self.MC_NAMESPACE},
-                ):
-                    ac.getparent().remove(ac)
+                mc_elements = root.xpath(
+                    ".//mc:AlternateContent", namespaces={"mc": self.MC_NAMESPACE}
+                )
+                for elem in mc_elements:
+                    elem.getparent().remove(elem)
 
-                for nd in root.iter():
-                    raw_tag = nd.tag
-                    local = raw_tag.split("}")[-1].lower() if "}" in raw_tag else raw_tag.lower()
+                for elem in root.iter():
+                    tag = (
+                        elem.tag.split("}")[-1].lower()
+                        if "}" in elem.tag
+                        else elem.tag.lower()
+                    )
 
-                    if local not in self.UNIQUE_ID_REQUIREMENTS:
-                        continue
+                    if tag in self.UNIQUE_ID_REQUIREMENTS:
+                        in_excluded_container = any(
+                            ancestor.tag.split("}")[-1].lower() in self.EXCLUDED_ID_CONTAINERS
+                            for ancestor in elem.iterancestors()
+                        )
+                        if in_excluded_container:
+                            continue
 
-                    # skip elements inside excluded containers
-                    if any(
-                        anc.tag.split("}")[-1].lower() in self.EXCLUDED_ID_CONTAINERS
-                        for anc in nd.iterancestors()
-                    ):
-                        continue
+                        attr_name, scope = self.UNIQUE_ID_REQUIREMENTS[tag]
 
-                    attr_name, scope = self.UNIQUE_ID_REQUIREMENTS[local]
-
-                    # find the actual attribute value
-                    id_val = None
-                    for ak, av in nd.attrib.items():
-                        a_local = ak.split("}")[-1].lower() if "}" in ak else ak.lower()
-                        if a_local == attr_name:
-                            id_val = av
-                            break
-
-                    if id_val is None:
-                        continue
-
-                    rel_path = fp.relative_to(self.unpacked_dir)
-
-                    if scope == "global":
-                        if id_val in g_ids:
-                            pf, pl, pt = g_ids[id_val]
-                            issues.append(
-                                "  {}: Line {}: Global ID '{}' in <{}> "
-                                "already used in {} at line {} in <{}>".format(
-                                    rel_path, nd.sourceline, id_val, local, pf, pl, pt
-                                )
+                        id_value = None
+                        for attr, value in elem.attrib.items():
+                            attr_local = (
+                                attr.split("}")[-1].lower()
+                                if "}" in attr
+                                else attr.lower()
                             )
-                        else:
-                            g_ids[id_val] = (rel_path, nd.sourceline, local)
-                    else:
-                        bucket_key = (local, attr_name)
-                        if bucket_key not in per_file:
-                            per_file[bucket_key] = {}
-                        if id_val in per_file[bucket_key]:
-                            issues.append(
-                                "  {}: Line {}: Duplicate {}='{}' in <{}> "
-                                "(first occurrence at line {})".format(
-                                    rel_path, nd.sourceline, attr_name, id_val, local,
-                                    per_file[bucket_key][id_val],
-                                )
-                            )
-                        else:
-                            per_file[bucket_key][id_val] = nd.sourceline
+                            if attr_local == attr_name:
+                                id_value = value
+                                break
 
-            except (lxml.etree.XMLSyntaxError, Exception) as exc:
-                issues.append("  {}: Error: {}".format(
-                    fp.relative_to(self.unpacked_dir), exc
-                ))
+                        if id_value is not None:
+                            if scope == "global":
+                                if id_value in global_ids:
+                                    prev_file, prev_line, prev_tag = global_ids[
+                                        id_value
+                                    ]
+                                    errors.append(
+                                        f"  {xml_file.relative_to(self.unpacked_dir)}: "
+                                        f"Line {elem.sourceline}: Global ID '{id_value}' in <{tag}> "
+                                        f"already used in {prev_file} at line {prev_line} in <{prev_tag}>"
+                                    )
+                                else:
+                                    global_ids[id_value] = (
+                                        xml_file.relative_to(self.unpacked_dir),
+                                        elem.sourceline,
+                                        tag,
+                                    )
+                            elif scope == "file":
+                                key = (tag, attr_name)
+                                if key not in file_ids:
+                                    file_ids[key] = {}
 
-        if issues:
-            print("FAILED - Found {} ID uniqueness violations:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+                                if id_value in file_ids[key]:
+                                    prev_line = file_ids[key][id_value]
+                                    errors.append(
+                                        f"  {xml_file.relative_to(self.unpacked_dir)}: "
+                                        f"Line {elem.sourceline}: Duplicate {attr_name}='{id_value}' in <{tag}> "
+                                        f"(first occurrence at line {prev_line})"
+                                    )
+                                else:
+                                    file_ids[key][id_value] = elem.sourceline
+
+            except (lxml.etree.XMLSyntaxError, Exception) as e:
+                errors.append(
+                    f"  {xml_file.relative_to(self.unpacked_dir)}: Error: {e}"
+                )
+
+        if errors:
+            print(f"FAILED - Found {len(errors)} ID uniqueness violations:")
+            for error in errors:
+                print(error)
             return False
-        if self.verbose:
-            print("PASSED - All required IDs are unique")
-        return True
-
-    # ──────────────────────────────────────────────────────────────
-    # Check 4 – .rels file references
-    # ──────────────────────────────────────────────────────────────
+        else:
+            if self.verbose:
+                print("PASSED - All required IDs are unique")
+            return True
 
     def validate_file_references(self):
-        issues = []
-        rels = list(self.unpacked_dir.rglob("*.rels"))
+        errors = []
 
-        if not rels:
+        rels_files = list(self.unpacked_dir.rglob("*.rels"))
+
+        if not rels_files:
             if self.verbose:
                 print("PASSED - No .rels files found")
             return True
 
-        physical_files = [
-            fp.resolve()
-            for fp in self.unpacked_dir.rglob("*")
-            if fp.is_file()
-            and fp.name != "[Content_Types].xml"
-            and not fp.name.endswith(".rels")
-        ]
+        all_files = []
+        for file_path in self.unpacked_dir.rglob("*"):
+            if (
+                file_path.is_file()
+                and file_path.name != "[Content_Types].xml"
+                and not file_path.name.endswith(".rels")
+            ):  
+                all_files.append(file_path.resolve())
 
-        all_referenced = set()
+        all_referenced_files = set()
+
         if self.verbose:
-            print("Found {} .rels files and {} target files".format(len(rels), len(physical_files)))
+            print(
+                f"Found {len(rels_files)} .rels files and {len(all_files)} target files"
+            )
 
-        for rf in rels:
+        for rels_file in rels_files:
             try:
-                rr = lxml.etree.parse(str(rf)).getroot()
-                rd = rf.parent
-                referenced = set()
-                broken = []
+                rels_root = lxml.etree.parse(str(rels_file)).getroot()
 
-                for rel in rr.findall(
+                rels_dir = rels_file.parent
+
+                referenced_files = set()
+                broken_refs = []
+
+                for rel in rels_root.findall(
                     ".//ns:Relationship",
                     namespaces={"ns": self.PACKAGE_RELATIONSHIPS_NAMESPACE},
                 ):
-                    tgt = rel.get("Target")
-                    if not tgt or tgt.startswith(("http", "mailto:")):
-                        continue
-
-                    if tgt.startswith("/"):
-                        tp = self.unpacked_dir / tgt.lstrip("/")
-                    elif rf.name == ".rels":
-                        tp = self.unpacked_dir / tgt
-                    else:
-                        tp = rd.parent / tgt
-
-                    try:
-                        tp = tp.resolve()
-                        if tp.exists() and tp.is_file():
-                            referenced.add(tp)
-                            all_referenced.add(tp)
+                    target = rel.get("Target")
+                    if target and not target.startswith(
+                        ("http", "mailto:")
+                    ):  
+                        if target.startswith("/"):
+                            target_path = self.unpacked_dir / target.lstrip("/")
+                        elif rels_file.name == ".rels":
+                            target_path = self.unpacked_dir / target
                         else:
-                            broken.append((tgt, rel.sourceline))
-                    except (OSError, ValueError):
-                        broken.append((tgt, rel.sourceline))
+                            base_dir = rels_dir.parent
+                            target_path = base_dir / target
 
-                if broken:
-                    rp = rf.relative_to(self.unpacked_dir)
-                    for ref, line in broken:
-                        issues.append("  {}: Line {}: Broken reference to {}".format(rp, line, ref))
+                        try:
+                            target_path = target_path.resolve()
+                            if target_path.exists() and target_path.is_file():
+                                referenced_files.add(target_path)
+                                all_referenced_files.add(target_path)
+                            else:
+                                broken_refs.append((target, rel.sourceline))
+                        except (OSError, ValueError):
+                            broken_refs.append((target, rel.sourceline))
 
-            except Exception as exc:
-                issues.append("  Error parsing {}: {}".format(
-                    rf.relative_to(self.unpacked_dir), exc
-                ))
+                if broken_refs:
+                    rel_path = rels_file.relative_to(self.unpacked_dir)
+                    for broken_ref, line_num in broken_refs:
+                        errors.append(
+                            f"  {rel_path}: Line {line_num}: Broken reference to {broken_ref}"
+                        )
 
-        orphans = set(physical_files) - all_referenced
-        for orphan in sorted(orphans):
-            issues.append("  Unreferenced file: {}".format(
-                orphan.relative_to(self.unpacked_dir)
-            ))
+            except Exception as e:
+                rel_path = rels_file.relative_to(self.unpacked_dir)
+                errors.append(f"  Error parsing {rel_path}: {e}")
 
-        if issues:
-            print("FAILED - Found {} relationship validation errors:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+        unreferenced_files = set(all_files) - all_referenced_files
+
+        if unreferenced_files:
+            for unref_file in sorted(unreferenced_files):
+                unref_rel_path = unref_file.relative_to(self.unpacked_dir)
+                errors.append(f"  Unreferenced file: {unref_rel_path}")
+
+        if errors:
+            print(f"FAILED - Found {len(errors)} relationship validation errors:")
+            for error in errors:
+                print(error)
             print(
                 "CRITICAL: These errors will cause the document to appear corrupt. "
-                "Broken references MUST be fixed, "
-                "and unreferenced files MUST be referenced or removed."
+                + "Broken references MUST be fixed, "
+                + "and unreferenced files MUST be referenced or removed."
             )
             return False
-        if self.verbose:
-            print("PASSED - All references are valid and all files are properly referenced")
-        return True
-
-    # ──────────────────────────────────────────────────────────────
-    # Check 5 – relationship ID cross-references
-    # ──────────────────────────────────────────────────────────────
+        else:
+            if self.verbose:
+                print(
+                    "PASSED - All references are valid and all files are properly referenced"
+                )
+            return True
 
     def validate_all_relationship_ids(self):
         import lxml.etree
 
-        issues = []
-        for fp in self.xml_files:
-            if fp.suffix == ".rels":
+        errors = []
+
+        for xml_file in self.xml_files:
+            if xml_file.suffix == ".rels":
                 continue
 
-            rels_dir = fp.parent / "_rels"
-            companion = rels_dir / "{}.rels".format(fp.name)
-            if not companion.exists():
+            rels_dir = xml_file.parent / "_rels"
+            rels_file = rels_dir / f"{xml_file.name}.rels"
+
+            if not rels_file.exists():
                 continue
 
             try:
-                rr = lxml.etree.parse(str(companion)).getroot()
-                id_map = {}
+                rels_root = lxml.etree.parse(str(rels_file)).getroot()
+                rid_to_type = {}
 
-                for rel in rr.findall(
-                    ".//{{{}}}Relationship".format(self.PACKAGE_RELATIONSHIPS_NAMESPACE)
+                for rel in rels_root.findall(
+                    f".//{{{self.PACKAGE_RELATIONSHIPS_NAMESPACE}}}Relationship"
                 ):
                     rid = rel.get("Id")
-                    rtype = rel.get("Type", "")
-                    if rid is None:
-                        continue
-                    if rid in id_map:
-                        issues.append(
-                            "  {}: Line {}: Duplicate relationship ID '{}' (IDs must be unique)".format(
-                                companion.relative_to(self.unpacked_dir), rel.sourceline, rid
+                    rel_type = rel.get("Type", "")
+                    if rid:
+                        if rid in rid_to_type:
+                            rels_rel_path = rels_file.relative_to(self.unpacked_dir)
+                            errors.append(
+                                f"  {rels_rel_path}: Line {rel.sourceline}: "
+                                f"Duplicate relationship ID '{rid}' (IDs must be unique)"
                             )
+                        type_name = (
+                            rel_type.split("/")[-1] if "/" in rel_type else rel_type
                         )
-                    short_type = rtype.rsplit("/", 1)[-1] if "/" in rtype else rtype
-                    id_map[rid] = short_type
+                        rid_to_type[rid] = type_name
 
-                xr = lxml.etree.parse(str(fp)).getroot()
+                xml_root = lxml.etree.parse(str(xml_file)).getroot()
+
                 r_ns = self.OFFICE_RELATIONSHIPS_NAMESPACE
-                for nd in xr.iter():
-                    for aname in ("id", "embed", "link"):
-                        val = nd.get("{{{}}}{}" .format(r_ns, aname))
-                        if not val:
+                rid_attrs_to_check = ["id", "embed", "link"]
+                for elem in xml_root.iter():
+                    for attr_name in rid_attrs_to_check:
+                        rid_attr = elem.get(f"{{{r_ns}}}{attr_name}")
+                        if not rid_attr:
                             continue
-                        rel_p = fp.relative_to(self.unpacked_dir)
-                        tag = nd.tag.split("}")[-1] if "}" in nd.tag else nd.tag
+                        xml_rel_path = xml_file.relative_to(self.unpacked_dir)
+                        elem_name = (
+                            elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
+                        )
 
-                        if val not in id_map:
-                            preview = ", ".join(sorted(id_map.keys())[:5])
-                            if len(id_map) > 5:
-                                preview += "..."
-                            issues.append(
-                                "  {}: Line {}: <{}> r:{} references non-existent relationship '{}' "
-                                "(valid IDs: {})".format(rel_p, nd.sourceline, tag, aname, val, preview)
+                        if rid_attr not in rid_to_type:
+                            errors.append(
+                                f"  {xml_rel_path}: Line {elem.sourceline}: "
+                                f"<{elem_name}> r:{attr_name} references non-existent relationship '{rid_attr}' "
+                                f"(valid IDs: {', '.join(sorted(rid_to_type.keys())[:5])}{'...' if len(rid_to_type) > 5 else ''})"
                             )
-                        elif aname == "id" and self.ELEMENT_RELATIONSHIP_TYPES:
-                            expected = self._get_expected_relationship_type(tag)
-                            if expected and expected not in id_map[val].lower():
-                                issues.append(
-                                    "  {}: Line {}: <{}> references '{}' which points to '{}' "
-                                    "but should point to a '{}' relationship".format(
-                                        rel_p, nd.sourceline, tag, val, id_map[val], expected
+                        elif attr_name == "id" and self.ELEMENT_RELATIONSHIP_TYPES:
+                            expected_type = self._get_expected_relationship_type(
+                                elem_name
+                            )
+                            if expected_type:
+                                actual_type = rid_to_type[rid_attr]
+                                if expected_type not in actual_type.lower():
+                                    errors.append(
+                                        f"  {xml_rel_path}: Line {elem.sourceline}: "
+                                        f"<{elem_name}> references '{rid_attr}' which points to '{actual_type}' "
+                                        f"but should point to a '{expected_type}' relationship"
                                     )
-                                )
 
-            except Exception as exc:
-                issues.append("  Error processing {}: {}".format(
-                    fp.relative_to(self.unpacked_dir), exc
-                ))
+            except Exception as e:
+                xml_rel_path = xml_file.relative_to(self.unpacked_dir)
+                errors.append(f"  Error processing {xml_rel_path}: {e}")
 
-        if issues:
-            print("FAILED - Found {} relationship ID reference errors:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+        if errors:
+            print(f"FAILED - Found {len(errors)} relationship ID reference errors:")
+            for error in errors:
+                print(error)
             print("\nThese ID mismatches will cause the document to appear corrupt!")
             return False
-        if self.verbose:
-            print("PASSED - All relationship ID references are valid")
-        return True
+        else:
+            if self.verbose:
+                print("PASSED - All relationship ID references are valid")
+            return True
 
-    def _get_expected_relationship_type(self, elem_tag):
-        lc = elem_tag.lower()
-        if lc in self.ELEMENT_RELATIONSHIP_TYPES:
-            return self.ELEMENT_RELATIONSHIP_TYPES[lc]
-        if lc.endswith("id") and len(lc) > 2:
-            stem = lc[:-2]
-            if stem.endswith("master") or stem.endswith("layout"):
-                return stem
-            return "slide" if stem == "sld" else stem
-        if lc.endswith("reference") and len(lc) > 9:
-            return lc[:-9]
+    def _get_expected_relationship_type(self, element_name):
+        elem_lower = element_name.lower()
+
+        if elem_lower in self.ELEMENT_RELATIONSHIP_TYPES:
+            return self.ELEMENT_RELATIONSHIP_TYPES[elem_lower]
+
+        if elem_lower.endswith("id") and len(elem_lower) > 2:
+            prefix = elem_lower[:-2]  
+            if prefix.endswith("master"):
+                return prefix.lower()
+            elif prefix.endswith("layout"):
+                return prefix.lower()
+            else:
+                if prefix == "sld":
+                    return "slide"
+                return prefix.lower()
+
+        if elem_lower.endswith("reference") and len(elem_lower) > 9:
+            prefix = elem_lower[:-9]  
+            return prefix.lower()
+
         return None
 
-    # ──────────────────────────────────────────────────────────────
-    # Check 6 – [Content_Types].xml completeness
-    # ──────────────────────────────────────────────────────────────
-
     def validate_content_types(self):
-        issues = []
-        ct_file = self.unpacked_dir / "[Content_Types].xml"
-        if not ct_file.exists():
+        errors = []
+
+        content_types_file = self.unpacked_dir / "[Content_Types].xml"
+        if not content_types_file.exists():
             print("FAILED - [Content_Types].xml file not found")
             return False
 
         try:
-            root = lxml.etree.parse(str(ct_file)).getroot()
+            root = lxml.etree.parse(str(content_types_file)).getroot()
+            declared_parts = set()
+            declared_extensions = set()
 
-            overrides = {
-                ov.get("PartName").lstrip("/")
-                for ov in root.findall(
-                    ".//{{{}}}Override".format(self.CONTENT_TYPES_NAMESPACE)
+            for override in root.findall(
+                f".//{{{self.CONTENT_TYPES_NAMESPACE}}}Override"
+            ):
+                part_name = override.get("PartName")
+                if part_name is not None:
+                    declared_parts.add(part_name.lstrip("/"))
+
+            for default in root.findall(
+                f".//{{{self.CONTENT_TYPES_NAMESPACE}}}Default"
+            ):
+                extension = default.get("Extension")
+                if extension is not None:
+                    declared_extensions.add(extension.lower())
+
+            declarable_roots = {
+                "sld",
+                "sldLayout",
+                "sldMaster",
+                "presentation",  
+                "document",  
+                "workbook",
+                "worksheet",  
+                "theme",  
+            }
+
+            media_extensions = {
+                "png": "image/png",
+                "jpg": "image/jpeg",
+                "jpeg": "image/jpeg",
+                "gif": "image/gif",
+                "bmp": "image/bmp",
+                "tiff": "image/tiff",
+                "wmf": "image/x-wmf",
+                "emf": "image/x-emf",
+            }
+
+            all_files = list(self.unpacked_dir.rglob("*"))
+            all_files = [f for f in all_files if f.is_file()]
+
+            for xml_file in self.xml_files:
+                path_str = str(xml_file.relative_to(self.unpacked_dir)).replace(
+                    "\\", "/"
                 )
-                if ov.get("PartName") is not None
-            }
 
-            defaults = {
-                df.get("Extension").lower()
-                for df in root.findall(
-                    ".//{{{}}}Default".format(self.CONTENT_TYPES_NAMESPACE)
-                )
-                if df.get("Extension") is not None
-            }
-
-            important_roots = {
-                "sld", "sldLayout", "sldMaster", "presentation",
-                "document", "workbook", "worksheet", "theme",
-            }
-
-            _MEDIA_CT = {
-                "png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
-                "gif": "image/gif", "bmp": "image/bmp", "tiff": "image/tiff",
-                "wmf": "image/x-wmf", "emf": "image/x-emf",
-            }
-
-            for xf in self.xml_files:
-                rp = str(xf.relative_to(self.unpacked_dir)).replace("\\", "/")
-                if any(skip in rp for skip in (".rels", "[Content_Types]", "docProps/", "_rels/")):
+                if any(
+                    skip in path_str
+                    for skip in [".rels", "[Content_Types]", "docProps/", "_rels/"]
+                ):
                     continue
+
                 try:
-                    tag = lxml.etree.parse(str(xf)).getroot().tag
-                    root_name = tag.split("}")[-1] if "}" in tag else tag
-                    if root_name in important_roots and rp not in overrides:
-                        issues.append(
-                            "  {}: File with <{}> root not declared in [Content_Types].xml".format(
-                                rp, root_name
-                            )
+                    root_tag = lxml.etree.parse(str(xml_file)).getroot().tag
+                    root_name = root_tag.split("}")[-1] if "}" in root_tag else root_tag
+
+                    if root_name in declarable_roots and path_str not in declared_parts:
+                        errors.append(
+                            f"  {path_str}: File with <{root_name}> root not declared in [Content_Types].xml"
                         )
+
                 except Exception:
+                    continue  
+
+            for file_path in all_files:
+                if file_path.suffix.lower() in {".xml", ".rels"}:
+                    continue
+                if file_path.name == "[Content_Types].xml":
+                    continue
+                if "_rels" in file_path.parts or "docProps" in file_path.parts:
                     continue
 
-            all_files = [f for f in self.unpacked_dir.rglob("*") if f.is_file()]
-            for fp in all_files:
-                if fp.suffix.lower() in (".xml", ".rels"):
-                    continue
-                if fp.name == "[Content_Types].xml":
-                    continue
-                if "_rels" in fp.parts or "docProps" in fp.parts:
-                    continue
-                ext = fp.suffix.lstrip(".").lower()
-                if ext and ext not in defaults and ext in _MEDIA_CT:
-                    issues.append(
-                        '  {}: File with extension \'{}\' not declared in [Content_Types].xml'
-                        ' - should add: <Default Extension="{}" ContentType="{}"/>'.format(
-                            fp.relative_to(self.unpacked_dir), ext, ext, _MEDIA_CT[ext]
+                extension = file_path.suffix.lstrip(".").lower()
+                if extension and extension not in declared_extensions:
+                    if extension in media_extensions:
+                        relative_path = file_path.relative_to(self.unpacked_dir)
+                        errors.append(
+                            f'  {relative_path}: File with extension \'{extension}\' not declared in [Content_Types].xml - should add: <Default Extension="{extension}" ContentType="{media_extensions[extension]}"/>'
                         )
-                    )
 
-        except Exception as exc:
-            issues.append("  Error parsing [Content_Types].xml: {}".format(exc))
+        except Exception as e:
+            errors.append(f"  Error parsing [Content_Types].xml: {e}")
 
-        if issues:
-            print("FAILED - Found {} content type declaration errors:".format(len(issues)))
-            for ln in issues:
-                print(ln)
+        if errors:
+            print(f"FAILED - Found {len(errors)} content type declaration errors:")
+            for error in errors:
+                print(error)
             return False
-        if self.verbose:
-            print("PASSED - All content files are properly declared in [Content_Types].xml")
-        return True
-
-    # ──────────────────────────────────────────────────────────────
-    # XSD validation (single file + batch)
-    # ──────────────────────────────────────────────────────────────
+        else:
+            if self.verbose:
+                print(
+                    "PASSED - All content files are properly declared in [Content_Types].xml"
+                )
+            return True
 
     def validate_file_against_xsd(self, xml_file, verbose=False):
         xml_file = Path(xml_file).resolve()
-        base = self.unpacked_dir.resolve()
+        unpacked_dir = self.unpacked_dir.resolve()
 
-        ok, cur_errs = self._check_one_xsd(xml_file, base)
+        is_valid, current_errors = self._validate_single_file_xsd(
+            xml_file, unpacked_dir
+        )
 
-        if ok is None:
-            return None, set()
-        if ok:
-            return True, set()
+        if is_valid is None:
+            return None, set()  
+        elif is_valid:
+            return True, set()  
 
-        orig_errs = self._original_xsd_errors(xml_file)
+        original_errors = self._get_original_file_errors(xml_file)
 
-        assert cur_errs is not None
-        fresh = cur_errs - orig_errs
-        fresh = {
-            e for e in fresh
-            if not any(pat in e for pat in self.IGNORED_VALIDATION_ERRORS)
+        assert current_errors is not None
+        new_errors = current_errors - original_errors
+
+        new_errors = {
+            e for e in new_errors
+            if not any(pattern in e for pattern in self.IGNORED_VALIDATION_ERRORS)
         }
 
-        if fresh:
+        if new_errors:
             if verbose:
-                rp = xml_file.relative_to(base)
-                print("FAILED - {}: {} new error(s)".format(rp, len(fresh)))
-                for e in list(fresh)[:3]:
-                    print("  - {}".format(e[:250] + "..." if len(e) > 250 else e))
-            return False, fresh
-        if verbose:
-            print("PASSED - No new errors (original had {} errors)".format(len(cur_errs)))
-        return True, set()
+                relative_path = xml_file.relative_to(unpacked_dir)
+                print(f"FAILED - {relative_path}: {len(new_errors)} new error(s)")
+                for error in list(new_errors)[:3]:
+                    truncated = error[:250] + "..." if len(error) > 250 else error
+                    print(f"  - {truncated}")
+            return False, new_errors
+        else:
+            if verbose:
+                print(
+                    f"PASSED - No new errors (original had {len(current_errors)} errors)"
+                )
+            return True, set()
 
     def validate_against_xsd(self):
-        fresh_issues = []
-        n_orig_err = 0
-        n_ok = 0
-        n_skip = 0
+        new_errors = []
+        original_error_count = 0
+        valid_count = 0
+        skipped_count = 0
 
-        for fp in self.xml_files:
-            rp = str(fp.relative_to(self.unpacked_dir))
-            ok, errs = self.validate_file_against_xsd(fp, verbose=False)
-
-            if ok is None:
-                n_skip += 1
-            elif ok and not errs:
-                n_ok += 1
-            elif ok:
-                n_orig_err += 1
-                n_ok += 1
-            else:
-                fresh_issues.append("  {}: {} new error(s)".format(rp, len(errs)))
-                for e in list(errs)[:3]:
-                    fresh_issues.append(
-                        "    - {}".format(e[:250] + "..." if len(e) > 250 else e)
-                    )
-
-        if self.verbose:
-            print("Validated {} files:".format(len(self.xml_files)))
-            print("  - Valid: {}".format(n_ok))
-            print("  - Skipped (no schema): {}".format(n_skip))
-            if n_orig_err:
-                print("  - With original errors (ignored): {}".format(n_orig_err))
-            print(
-                "  - With NEW errors: {}".format(
-                    len(fresh_issues) > 0
-                    and len([e for e in fresh_issues if not e.startswith("    ")])
-                    or 0
-                )
+        for xml_file in self.xml_files:
+            relative_path = str(xml_file.relative_to(self.unpacked_dir))
+            is_valid, new_file_errors = self.validate_file_against_xsd(
+                xml_file, verbose=False
             )
 
-        if fresh_issues:
-            print("\nFAILED - Found NEW validation errors:")
-            for ln in fresh_issues:
-                print(ln)
-            return False
+            if is_valid is None:
+                skipped_count += 1
+                continue
+            elif is_valid and not new_file_errors:
+                valid_count += 1
+                continue
+            elif is_valid:
+                original_error_count += 1
+                valid_count += 1
+                continue
+
+            new_errors.append(f"  {relative_path}: {len(new_file_errors)} new error(s)")
+            for error in list(new_file_errors)[:3]:  
+                new_errors.append(
+                    f"    - {error[:250]}..." if len(error) > 250 else f"    - {error}"
+                )
+
         if self.verbose:
-            print("\nPASSED - No new XSD validation errors introduced")
-        return True
+            print(f"Validated {len(self.xml_files)} files:")
+            print(f"  - Valid: {valid_count}")
+            print(f"  - Skipped (no schema): {skipped_count}")
+            if original_error_count:
+                print(f"  - With original errors (ignored): {original_error_count}")
+            print(
+                f"  - With NEW errors: {len(new_errors) > 0 and len([e for e in new_errors if not e.startswith('    ')]) or 0}"
+            )
 
-    # ── private XSD helpers ──
+        if new_errors:
+            print("\nFAILED - Found NEW validation errors:")
+            for error in new_errors:
+                print(error)
+            return False
+        else:
+            if self.verbose:
+                print("\nPASSED - No new XSD validation errors introduced")
+            return True
 
-    def _resolve_schema(self, fp):
-        if fp.name in self.SCHEMA_MAPPINGS:
-            return self.schemas_dir / self.SCHEMA_MAPPINGS[fp.name]
-        if fp.suffix == ".rels":
+    def _get_schema_path(self, xml_file):
+        if xml_file.name in self.SCHEMA_MAPPINGS:
+            return self.schemas_dir / self.SCHEMA_MAPPINGS[xml_file.name]
+
+        if xml_file.suffix == ".rels":
             return self.schemas_dir / self.SCHEMA_MAPPINGS[".rels"]
-        if "charts/" in str(fp) and fp.name.startswith("chart"):
+
+        if "charts/" in str(xml_file) and xml_file.name.startswith("chart"):
             return self.schemas_dir / self.SCHEMA_MAPPINGS["chart"]
-        if "theme/" in str(fp) and fp.name.startswith("theme"):
+
+        if "theme/" in str(xml_file) and xml_file.name.startswith("theme"):
             return self.schemas_dir / self.SCHEMA_MAPPINGS["theme"]
-        if fp.parent.name in self.MAIN_CONTENT_FOLDERS:
-            return self.schemas_dir / self.SCHEMA_MAPPINGS[fp.parent.name]
+
+        if xml_file.parent.name in self.MAIN_CONTENT_FOLDERS:
+            return self.schemas_dir / self.SCHEMA_MAPPINGS[xml_file.parent.name]
+
         return None
 
-    # keep old name as alias
-    _get_schema_path = _resolve_schema
+    def _clean_ignorable_namespaces(self, xml_doc):
+        xml_string = lxml.etree.tostring(xml_doc, encoding="unicode")
+        xml_copy = lxml.etree.fromstring(xml_string)
 
-    def _strip_non_ooxml_attrs(self, doc):
-        """Return a cleaned ElementTree with non-OOXML attrs/elements removed."""
-        s = lxml.etree.tostring(doc, encoding="unicode")
-        copy = lxml.etree.fromstring(s)
+        for elem in xml_copy.iter():
+            attrs_to_remove = []
 
-        for nd in copy.iter():
-            bad = [
-                a for a in nd.attrib
-                if "{" in a and a.split("}")[0][1:] not in self.OOXML_NAMESPACES
-            ]
-            for a in bad:
-                del nd.attrib[a]
+            for attr in elem.attrib:
+                if "{" in attr:
+                    ns = attr.split("}")[0][1:]
+                    if ns not in self.OOXML_NAMESPACES:
+                        attrs_to_remove.append(attr)
 
-        self._strip_foreign_elements(copy)
-        return lxml.etree.ElementTree(copy)
+            for attr in attrs_to_remove:
+                del elem.attrib[attr]
 
-    # keep old name
-    _clean_ignorable_namespaces = _strip_non_ooxml_attrs
+        self._remove_ignorable_elements(xml_copy)
 
-    def _strip_foreign_elements(self, root):
-        doomed = []
-        for el in list(root):
-            if not hasattr(el, "tag") or callable(el.tag):
+        return lxml.etree.ElementTree(xml_copy)
+
+    def _remove_ignorable_elements(self, root):
+        elements_to_remove = []
+
+        for elem in list(root):
+            if not hasattr(elem, "tag") or callable(elem.tag):
                 continue
-            t = str(el.tag)
-            if t.startswith("{") and t.split("}")[0][1:] not in self.OOXML_NAMESPACES:
-                doomed.append(el)
-                continue
-            self._strip_foreign_elements(el)
-        for el in doomed:
-            root.remove(el)
 
-    _remove_ignorable_elements = _strip_foreign_elements
+            tag_str = str(elem.tag)
+            if tag_str.startswith("{"):
+                ns = tag_str.split("}")[0][1:]
+                if ns not in self.OOXML_NAMESPACES:
+                    elements_to_remove.append(elem)
+                    continue
 
-    def _drop_mc_ignorable(self, doc):
-        root = doc.getroot()
-        mc_key = "{{{}}}Ignorable".format(self.MC_NAMESPACE)
-        if mc_key in root.attrib:
-            del root.attrib[mc_key]
-        return doc
+            self._remove_ignorable_elements(elem)
 
-    _preprocess_for_mc_ignorable = _drop_mc_ignorable
+        for elem in elements_to_remove:
+            root.remove(elem)
 
-    def _check_one_xsd(self, fp, base):
-        schema_path = self._resolve_schema(fp)
-        if schema_path is None:
-            return None, None
+    def _preprocess_for_mc_ignorable(self, xml_doc):
+        root = xml_doc.getroot()
+
+        if f"{{{self.MC_NAMESPACE}}}Ignorable" in root.attrib:
+            del root.attrib[f"{{{self.MC_NAMESPACE}}}Ignorable"]
+
+        return xml_doc
+
+    def _validate_single_file_xsd(self, xml_file, base_path):
+        schema_path = self._get_schema_path(xml_file)
+        if not schema_path:
+            return None, None  
 
         try:
-            with open(schema_path, "rb") as fh:
-                xsd_doc = lxml.etree.parse(fh, parser=lxml.etree.XMLParser(), base_url=str(schema_path))
+            with open(schema_path, "rb") as xsd_file:
+                parser = lxml.etree.XMLParser()
+                xsd_doc = lxml.etree.parse(
+                    xsd_file, parser=parser, base_url=str(schema_path)
+                )
                 schema = lxml.etree.XMLSchema(xsd_doc)
 
-            with open(fp, "r") as fh:
-                xml_doc = lxml.etree.parse(fh)
+            with open(xml_file, "r") as f:
+                xml_doc = lxml.etree.parse(f)
 
-            xml_doc, _ = self._scrub_template_tags(xml_doc)
-            xml_doc = self._drop_mc_ignorable(xml_doc)
+            xml_doc, _ = self._remove_template_tags_from_text_nodes(xml_doc)
+            xml_doc = self._preprocess_for_mc_ignorable(xml_doc)
 
-            rp = fp.relative_to(base)
-            if rp.parts and rp.parts[0] in self.MAIN_CONTENT_FOLDERS:
-                xml_doc = self._strip_non_ooxml_attrs(xml_doc)
+            relative_path = xml_file.relative_to(base_path)
+            if (
+                relative_path.parts
+                and relative_path.parts[0] in self.MAIN_CONTENT_FOLDERS
+            ):
+                xml_doc = self._clean_ignorable_namespaces(xml_doc)
 
             if schema.validate(xml_doc):
                 return True, set()
-            return False, {e.message for e in schema.error_log}
+            else:
+                errors = set()
+                for error in schema.error_log:
+                    errors.add(error.message)
+                return False, errors
 
-        except Exception as exc:
-            return False, {str(exc)}
+        except Exception as e:
+            return False, {str(e)}
 
-    _validate_single_file_xsd = _check_one_xsd
-
-    def _original_xsd_errors(self, fp):
+    def _get_original_file_errors(self, xml_file):
         if self.original_file is None:
             return set()
 
-        import tempfile, zipfile
+        import tempfile
+        import zipfile
 
-        fp = Path(fp).resolve()
-        rp = fp.relative_to(self.unpacked_dir.resolve())
+        xml_file = Path(xml_file).resolve()
+        unpacked_dir = self.unpacked_dir.resolve()
+        relative_path = xml_file.relative_to(unpacked_dir)
 
-        with tempfile.TemporaryDirectory() as td:
-            tp = Path(td)
-            with zipfile.ZipFile(self.original_file, "r") as zr:
-                zr.extractall(tp)
-            orig = tp / rp
-            if not orig.exists():
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            with zipfile.ZipFile(self.original_file, "r") as zip_ref:
+                zip_ref.extractall(temp_path)
+
+            original_xml_file = temp_path / relative_path
+
+            if not original_xml_file.exists():
                 return set()
-            _, errs = self._check_one_xsd(orig, tp)
-            return errs if errs else set()
 
-    _get_original_file_errors = _original_xsd_errors
+            is_valid, errors = self._validate_single_file_xsd(
+                original_xml_file, temp_path
+            )
+            return errors if errors else set()
 
-    def _scrub_template_tags(self, doc):
+    def _remove_template_tags_from_text_nodes(self, xml_doc):
         warnings = []
-        tpl_re = re.compile(r"\{\{[^}]*\}\}")
+        template_pattern = re.compile(r"\{\{[^}]*\}\}")
 
-        s = lxml.etree.tostring(doc, encoding="unicode")
-        copy = lxml.etree.fromstring(s)
+        xml_string = lxml.etree.tostring(xml_doc, encoding="unicode")
+        xml_copy = lxml.etree.fromstring(xml_string)
 
-        def _clean(txt, ctx):
-            if not txt:
-                return txt
-            hits = list(tpl_re.finditer(txt))
-            if hits:
-                for h in hits:
-                    warnings.append("Found template tag in {}: {}".format(ctx, h.group()))
-                return tpl_re.sub("", txt)
-            return txt
+        def process_text_content(text, content_type):
+            if not text:
+                return text
+            matches = list(template_pattern.finditer(text))
+            if matches:
+                for match in matches:
+                    warnings.append(
+                        f"Found template tag in {content_type}: {match.group()}"
+                    )
+                return template_pattern.sub("", text)
+            return text
 
-        for nd in copy.iter():
-            if not hasattr(nd, "tag") or callable(nd.tag):
+        for elem in xml_copy.iter():
+            if not hasattr(elem, "tag") or callable(elem.tag):
                 continue
-            t = str(nd.tag)
-            if t.endswith("}t") or t == "t":
+            tag_str = str(elem.tag)
+            if tag_str.endswith("}t") or tag_str == "t":
                 continue
-            nd.text = _clean(nd.text, "text content")
-            nd.tail = _clean(nd.tail, "tail content")
 
-        return lxml.etree.ElementTree(copy), warnings
+            elem.text = process_text_content(elem.text, "text content")
+            elem.tail = process_text_content(elem.tail, "tail content")
 
-    _remove_template_tags_from_text_nodes = _scrub_template_tags
+        return lxml.etree.ElementTree(xml_copy), warnings
 
 
 if __name__ == "__main__":

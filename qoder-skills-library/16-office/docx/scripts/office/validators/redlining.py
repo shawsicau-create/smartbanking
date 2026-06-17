@@ -1,121 +1,109 @@
 """
-Semantic validation of tracked changes (redlining) in Word documents.
-
-Verifies that removing the nominated author's changes from the modified
-document yields text identical to the original — i.e. all edits are
-properly wrapped in ``<w:ins>``/``<w:del>`` markup.
+Validator for tracked changes in Word documents.
 """
 
-import pathlib
 import subprocess
 import tempfile
 import zipfile
+from pathlib import Path
 
 
 class RedliningValidator:
-    """Compares original and modified DOCX text after stripping one author's revisions."""
-
-    _WML = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
     def __init__(self, unpacked_dir, original_docx, verbose=False, author="Claude"):
-        self._src_dir = pathlib.Path(unpacked_dir)
-        self._orig    = pathlib.Path(original_docx)
-        self._verbose = verbose
-        self._author  = author
-        self._ns      = {"w": self._WML}
-
-    # kept for API compat
-    @property
-    def unpacked_dir(self):
-        return self._src_dir
-
-    @property
-    def original_docx(self):
-        return self._orig
-
-    @property
-    def verbose(self):
-        return self._verbose
-
-    @property
-    def author(self):
-        return self._author
-
-    @property
-    def namespaces(self):
-        return self._ns
+        self.unpacked_dir = Path(unpacked_dir)
+        self.original_docx = Path(original_docx)
+        self.verbose = verbose
+        self.author = author
+        self.namespaces = {
+            "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+        }
 
     def repair(self) -> int:
         return 0
 
-    # ── Main check ───────────────────────────────────────────────────────
-
     def validate(self):
-        mod_doc = self._src_dir / "word" / "document.xml"
-        if not mod_doc.exists():
-            print("FAILED - Modified document.xml not found at %s" % mod_doc)
+        modified_file = self.unpacked_dir / "word" / "document.xml"
+        if not modified_file.exists():
+            print(f"FAILED - Modified document.xml not found at {modified_file}")
             return False
 
         try:
             import xml.etree.ElementTree as ET
 
-            m_root = ET.parse(mod_doc).getroot()
-            del_elems = m_root.findall(".//w:del", self._ns)
-            ins_elems = m_root.findall(".//w:ins", self._ns)
+            tree = ET.parse(modified_file)
+            root = tree.getroot()
 
-            a_key = "{%s}author" % self._WML
-            has_del = any(e.get(a_key) == self._author for e in del_elems)
-            has_ins = any(e.get(a_key) == self._author for e in ins_elems)
+            del_elements = root.findall(".//w:del", self.namespaces)
+            ins_elements = root.findall(".//w:ins", self.namespaces)
 
-            if not has_del and not has_ins:
-                if self._verbose:
-                    print("PASSED - No tracked changes by %s found." % self._author)
+            author_del_elements = [
+                elem
+                for elem in del_elements
+                if elem.get(f"{{{self.namespaces['w']}}}author") == self.author
+            ]
+            author_ins_elements = [
+                elem
+                for elem in ins_elements
+                if elem.get(f"{{{self.namespaces['w']}}}author") == self.author
+            ]
+
+            if not author_del_elements and not author_ins_elements:
+                if self.verbose:
+                    print(f"PASSED - No tracked changes by {self.author} found.")
                 return True
+
         except Exception:
             pass
 
-        with tempfile.TemporaryDirectory() as td:
-            tp = pathlib.Path(td)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
             try:
-                with zipfile.ZipFile(self._orig, "r") as zf:
-                    zf.extractall(tp)
-            except Exception as exc:
-                print("FAILED - Error unpacking original docx: %s" % exc)
+                with zipfile.ZipFile(self.original_docx, "r") as zip_ref:
+                    zip_ref.extractall(temp_path)
+            except Exception as e:
+                print(f"FAILED - Error unpacking original docx: {e}")
                 return False
 
-            orig_doc = tp / "word" / "document.xml"
-            if not orig_doc.exists():
-                print("FAILED - Original document.xml not found in %s" % self._orig)
+            original_file = temp_path / "word" / "document.xml"
+            if not original_file.exists():
+                print(
+                    f"FAILED - Original document.xml not found in {self.original_docx}"
+                )
                 return False
 
             try:
                 import xml.etree.ElementTree as ET
-                m_tree = ET.parse(mod_doc)
-                o_tree = ET.parse(orig_doc)
-            except ET.ParseError as exc:
-                print("FAILED - Error parsing XML files: %s" % exc)
+
+                modified_tree = ET.parse(modified_file)
+                modified_root = modified_tree.getroot()
+                original_tree = ET.parse(original_file)
+                original_root = original_tree.getroot()
+            except ET.ParseError as e:
+                print(f"FAILED - Error parsing XML files: {e}")
                 return False
 
-            self._strip_author_changes(o_tree.getroot())
-            self._strip_author_changes(m_tree.getroot())
+            self._remove_author_tracked_changes(original_root)
+            self._remove_author_tracked_changes(modified_root)
 
-            txt_mod = self._gather_text(m_tree.getroot())
-            txt_orig = self._gather_text(o_tree.getroot())
+            modified_text = self._extract_text_content(modified_root)
+            original_text = self._extract_text_content(original_root)
 
-            if txt_mod != txt_orig:
-                report = self._build_diff_report(txt_orig, txt_mod)
-                print(report)
+            if modified_text != original_text:
+                error_message = self._generate_detailed_diff(
+                    original_text, modified_text
+                )
+                print(error_message)
                 return False
 
-            if self._verbose:
-                print("PASSED - All changes by %s are properly tracked" % self._author)
+            if self.verbose:
+                print(f"PASSED - All changes by {self.author} are properly tracked")
             return True
 
-    # ── Diff reporting ───────────────────────────────────────────────────
-
-    def _build_diff_report(self, old_txt, new_txt):
-        lines = [
-            "FAILED - Document text doesn't match after removing %s's tracked changes" % self._author,
+    def _generate_detailed_diff(self, original_text, modified_text):
+        error_parts = [
+            f"FAILED - Document text doesn't match after removing {self.author}'s tracked changes",
             "",
             "Likely causes:",
             "  1. Modified text inside another author's <w:ins> or <w:del> tags",
@@ -127,84 +115,131 @@ class RedliningValidator:
             "  - To restore another's DELETION: Add new <w:ins> AFTER their <w:del>",
             "",
         ]
-        diff = self._word_diff(old_txt, new_txt)
-        if diff:
-            lines += ["Differences:", "============", diff]
+
+        git_diff = self._get_git_word_diff(original_text, modified_text)
+        if git_diff:
+            error_parts.extend(["Differences:", "============", git_diff])
         else:
-            lines.append("Unable to generate word diff (git not available)")
-        return "\n".join(lines)
+            error_parts.append("Unable to generate word diff (git not available)")
 
-    def _word_diff(self, old_txt, new_txt):
-        """Attempt a character-level diff via ``git diff --word-diff``."""
+        return "\n".join(error_parts)
+
+    def _get_git_word_diff(self, original_text, modified_text):
         try:
-            with tempfile.TemporaryDirectory() as td:
-                tp = pathlib.Path(td)
-                (tp / "a.txt").write_text(old_txt, encoding="utf-8")
-                (tp / "b.txt").write_text(new_txt, encoding="utf-8")
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_path = Path(temp_dir)
 
-                for extra_args in (["--word-diff-regex=."], []):
-                    proc = subprocess.run(
-                        ["git", "diff", "--word-diff=plain", "-U0", "--no-index",
-                         str(tp / "a.txt"), str(tp / "b.txt")] + extra_args,
-                        capture_output=True, text=True,
-                    )
-                    if proc.stdout.strip():
-                        body: list[str] = []
-                        active = False
-                        for ln in proc.stdout.split("\n"):
-                            if ln.startswith("@@"):
-                                active = True
-                                continue
-                            if active and ln.strip():
-                                body.append(ln)
-                        if body:
-                            return "\n".join(body)
+                original_file = temp_path / "original.txt"
+                modified_file = temp_path / "modified.txt"
+
+                original_file.write_text(original_text, encoding="utf-8")
+                modified_file.write_text(modified_text, encoding="utf-8")
+
+                result = subprocess.run(
+                    [
+                        "git",
+                        "diff",
+                        "--word-diff=plain",
+                        "--word-diff-regex=.",  
+                        "-U0",  
+                        "--no-index",
+                        str(original_file),
+                        str(modified_file),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+
+                if result.stdout.strip():
+                    lines = result.stdout.split("\n")
+                    content_lines = []
+                    in_content = False
+                    for line in lines:
+                        if line.startswith("@@"):
+                            in_content = True
+                            continue
+                        if in_content and line.strip():
+                            content_lines.append(line)
+
+                    if content_lines:
+                        return "\n".join(content_lines)
+
+                result = subprocess.run(
+                    [
+                        "git",
+                        "diff",
+                        "--word-diff=plain",
+                        "-U0",  
+                        "--no-index",
+                        str(original_file),
+                        str(modified_file),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+
+                if result.stdout.strip():
+                    lines = result.stdout.split("\n")
+                    content_lines = []
+                    in_content = False
+                    for line in lines:
+                        if line.startswith("@@"):
+                            in_content = True
+                            continue
+                        if in_content and line.strip():
+                            content_lines.append(line)
+                    return "\n".join(content_lines)
+
         except (subprocess.CalledProcessError, FileNotFoundError, Exception):
             pass
+
         return None
 
-    # ── XML manipulation ─────────────────────────────────────────────────
-
-    def _strip_author_changes(self, root):
-        """Remove the nominated author's ``<w:ins>`` and ``<w:del>`` from *root*."""
-        ins_tag = "{%s}ins" % self._WML
-        del_tag = "{%s}del" % self._WML
-        a_attr  = "{%s}author" % self._WML
-
-        # Pass 1 — drop author's insertions entirely
-        for parent in root.iter():
-            kills = [ch for ch in parent if ch.tag == ins_tag and ch.get(a_attr) == self._author]
-            for k in kills:
-                parent.remove(k)
-
-        # Pass 2 — unwrap author's deletions (promote children)
-        dt_tag = "{%s}delText" % self._WML
-        t_tag  = "{%s}t" % self._WML
+    def _remove_author_tracked_changes(self, root):
+        ins_tag = f"{{{self.namespaces['w']}}}ins"
+        del_tag = f"{{{self.namespaces['w']}}}del"
+        author_attr = f"{{{self.namespaces['w']}}}author"
 
         for parent in root.iter():
-            targets = [
-                (ch, list(parent).index(ch))
-                for ch in parent
-                if ch.tag == del_tag and ch.get(a_attr) == self._author
-            ]
-            for del_el, idx in reversed(targets):
-                for inner in del_el.iter():
-                    if inner.tag == dt_tag:
-                        inner.tag = t_tag
-                for child in reversed(list(del_el)):
-                    parent.insert(idx, child)
-                parent.remove(del_el)
+            to_remove = []
+            for child in parent:
+                if child.tag == ins_tag and child.get(author_attr) == self.author:
+                    to_remove.append(child)
+            for elem in to_remove:
+                parent.remove(elem)
 
-    def _gather_text(self, root) -> str:
-        """Concatenate ``<w:t>`` content per paragraph, separated by newlines."""
-        p_tag = "{%s}p" % self._WML
-        t_tag = "{%s}t" % self._WML
-        paragraphs: list[str] = []
-        for p in root.findall(".//%s" % p_tag):
-            parts = [t.text for t in p.findall(".//%s" % t_tag) if t.text]
-            combined = "".join(parts)
-            if combined:
-                paragraphs.append(combined)
+        deltext_tag = f"{{{self.namespaces['w']}}}delText"
+        t_tag = f"{{{self.namespaces['w']}}}t"
+
+        for parent in root.iter():
+            to_process = []
+            for child in parent:
+                if child.tag == del_tag and child.get(author_attr) == self.author:
+                    to_process.append((child, list(parent).index(child)))
+
+            for del_elem, del_index in reversed(to_process):
+                for elem in del_elem.iter():
+                    if elem.tag == deltext_tag:
+                        elem.tag = t_tag
+
+                for child in reversed(list(del_elem)):
+                    parent.insert(del_index, child)
+                parent.remove(del_elem)
+
+    def _extract_text_content(self, root):
+        p_tag = f"{{{self.namespaces['w']}}}p"
+        t_tag = f"{{{self.namespaces['w']}}}t"
+
+        paragraphs = []
+        for p_elem in root.findall(f".//{p_tag}"):
+            text_parts = []
+            for t_elem in p_elem.findall(f".//{t_tag}"):
+                if t_elem.text:
+                    text_parts.append(t_elem.text)
+            paragraph_text = "".join(text_parts)
+            if paragraph_text:
+                paragraphs.append(paragraph_text)
+
         return "\n".join(paragraphs)
 
 

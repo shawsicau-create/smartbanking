@@ -1,15 +1,18 @@
-#!/usr/bin/env python3
-# ──────────────────────────────────────────────────────────────────
-# LibreOffice runner with automatic AF_UNIX socket shim.
-#
-# Provides two public entry-points:
-#
-#   get_soffice_env()  → dict   –  environment dict for subprocess calls
-#   run_soffice(args)  → CompletedProcess
-#
-# When the host kernel blocks AF_UNIX sockets (common in sandboxed VMs),
-# a small C shim is compiled on-the-fly and injected via LD_PRELOAD.
-# ──────────────────────────────────────────────────────────────────
+"""
+Helper for running LibreOffice (soffice) in environments where AF_UNIX
+sockets may be blocked (e.g., sandboxed VMs).  Detects the restriction
+at runtime and applies an LD_PRELOAD shim if needed.
+
+Usage:
+    from office.soffice import run_soffice, get_soffice_env
+
+    # Option 1 – run soffice directly
+    result = run_soffice(["--headless", "--convert-to", "pdf", "input.docx"])
+
+    # Option 2 – get env dict for your own subprocess calls
+    env = get_soffice_env()
+    subprocess.run(["soffice", ...], env=env)
+"""
 
 import os
 import socket
@@ -18,58 +21,52 @@ import tempfile
 from pathlib import Path
 
 
-# ── compiled shim location ──
-_COMPILED_SHIM = Path(tempfile.gettempdir()) / "lo_socket_shim.so"
-
-
 def get_soffice_env() -> dict:
-    """Return a copy of os.environ with LibreOffice-specific tweaks."""
-    env = dict(os.environ)
+    env = os.environ.copy()
     env["SAL_USE_VCLPLUGIN"] = "svp"
 
-    if _host_needs_shim():
-        env["LD_PRELOAD"] = str(_build_shim_if_needed())
+    if _needs_shim():
+        shim = _ensure_shim()
+        env["LD_PRELOAD"] = str(shim)
 
     return env
 
 
-def run_soffice(args: list[str], **kw) -> subprocess.CompletedProcess:
-    """Convenience wrapper: call soffice with the patched environment."""
-    return subprocess.run(["soffice"] + args, env=get_soffice_env(), **kw)
+def run_soffice(args: list[str], **kwargs) -> subprocess.CompletedProcess:
+    env = get_soffice_env()
+    return subprocess.run(["soffice"] + args, env=env, **kwargs)
 
 
-# ──────────────────────────────────────────────────────────────────
-# private helpers
-# ──────────────────────────────────────────────────────────────────
 
-def _host_needs_shim() -> bool:
-    """Return True when creating AF_UNIX sockets raises OSError."""
+_SHIM_SO = Path(tempfile.gettempdir()) / "lo_socket_shim.so"
+
+
+def _needs_shim() -> bool:
     try:
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.close()
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.close()
+        return False
     except OSError:
         return True
-    return False
 
 
-def _build_shim_if_needed() -> Path:
-    """Compile the C shim once and cache the .so in /tmp."""
-    if _COMPILED_SHIM.exists():
-        return _COMPILED_SHIM
+def _ensure_shim() -> Path:
+    if _SHIM_SO.exists():
+        return _SHIM_SO
 
-    c_src = Path(tempfile.gettempdir()) / "lo_socket_shim.c"
-    c_src.write_text(_C_SHIM_CODE)
+    src = Path(tempfile.gettempdir()) / "lo_socket_shim.c"
+    src.write_text(_SHIM_SOURCE)
     subprocess.run(
-        ["gcc", "-shared", "-fPIC", "-o", str(_COMPILED_SHIM), str(c_src), "-ldl"],
+        ["gcc", "-shared", "-fPIC", "-o", str(_SHIM_SO), str(src), "-ldl"],
         check=True,
         capture_output=True,
     )
-    c_src.unlink()
-    return _COMPILED_SHIM
+    src.unlink()
+    return _SHIM_SO
 
 
-# ── inline C source for the LD_PRELOAD shim ──
-_C_SHIM_CODE = r"""
+
+_SHIM_SOURCE = r"""
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <errno.h>
@@ -179,7 +176,8 @@ int close(int fd) {
 """
 
 
+
 if __name__ == "__main__":
     import sys
-    rc = run_soffice(sys.argv[1:])
-    sys.exit(rc.returncode)
+    result = run_soffice(sys.argv[1:])
+    sys.exit(result.returncode)

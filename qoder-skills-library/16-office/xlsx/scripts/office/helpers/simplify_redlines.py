@@ -1,14 +1,14 @@
-#!/usr/bin/env python3
-# ──────────────────────────────────────────────────────────────────
-# Merge adjacent tracked-change wrappers (<w:ins> / <w:del>) when they
-# share the same author.  Reduces visual clutter in heavily-redlined
-# DOCX documents without altering semantics.
-#
-# Constraints:
-#   • Only merges elements of the *same* tag (ins↔ins, del↔del)
-#   • Author must match (timestamps are ignored)
-#   • Only merges truly adjacent elements (whitespace-only gap allowed)
-# ──────────────────────────────────────────────────────────────────
+"""Simplify tracked changes by merging adjacent w:ins or w:del elements.
+
+Merges adjacent <w:ins> elements from the same author into a single element.
+Same for <w:del> elements. This makes heavily-redlined documents easier to
+work with by reducing the number of tracked change wrappers.
+
+Rules:
+- Only merges w:ins with w:ins, w:del with w:del (same element type)
+- Only merges if same author (ignores timestamp differences)
+- Only merges if truly adjacent (only whitespace between them)
+"""
 
 import xml.etree.ElementTree as ET
 import zipfile
@@ -16,183 +16,182 @@ from pathlib import Path
 
 import defusedxml.minidom
 
-_WML_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 
 def simplify_redlines(input_dir: str) -> tuple[int, str]:
-    """Merge adjacent tracked changes in word/document.xml."""
-    doc = Path(input_dir) / "word" / "document.xml"
+    doc_xml = Path(input_dir) / "word" / "document.xml"
 
-    if not doc.exists():
-        return 0, "Error: {} not found".format(doc)
+    if not doc_xml.exists():
+        return 0, f"Error: {doc_xml} not found"
 
     try:
-        tree = defusedxml.minidom.parseString(doc.read_text(encoding="utf-8"))
-        top = tree.documentElement
+        dom = defusedxml.minidom.parseString(doc_xml.read_text(encoding="utf-8"))
+        root = dom.documentElement
 
-        total = 0
-        for box in _collect_elements(top, "p") + _collect_elements(top, "tc"):
-            total += _coalesce_tracked(box, "ins")
-            total += _coalesce_tracked(box, "del")
+        merge_count = 0
 
-        doc.write_bytes(tree.toxml(encoding="UTF-8"))
-        return total, "Simplified {} tracked changes".format(total)
+        containers = _find_elements(root, "p") + _find_elements(root, "tc")
 
-    except Exception as ex:
-        return 0, "Error: {}".format(ex)
+        for container in containers:
+            merge_count += _merge_tracked_changes_in(container, "ins")
+            merge_count += _merge_tracked_changes_in(container, "del")
+
+        doc_xml.write_bytes(dom.toxml(encoding="UTF-8"))
+        return merge_count, f"Simplified {merge_count} tracked changes"
+
+    except Exception as e:
+        return 0, f"Error: {e}"
 
 
-# ──────────────────────────────────────────────────────────────────
-# Internal helpers
-# ──────────────────────────────────────────────────────────────────
+def _merge_tracked_changes_in(container, tag: str) -> int:
+    merge_count = 0
 
-def _coalesce_tracked(container, kind: str) -> int:
-    """Merge adjacent <w:ins> or <w:del> elements inside *container*."""
-    nodes = [
-        ch for ch in container.childNodes
-        if ch.nodeType == ch.ELEMENT_NODE and _matches_tag(ch, kind)
+    tracked = [
+        child
+        for child in container.childNodes
+        if child.nodeType == child.ELEMENT_NODE and _is_element(child, tag)
     ]
-    if len(nodes) < 2:
+
+    if len(tracked) < 2:
         return 0
 
-    merged = 0
-    pos = 0
-    while pos < len(nodes) - 1:
-        this, that = nodes[pos], nodes[pos + 1]
-        if _same_author_adjacent(this, that):
-            _move_children(this, that)
-            container.removeChild(that)
-            nodes.pop(pos + 1)
-            merged += 1
+    i = 0
+    while i < len(tracked) - 1:
+        curr = tracked[i]
+        next_elem = tracked[i + 1]
+
+        if _can_merge_tracked(curr, next_elem):
+            _merge_tracked_content(curr, next_elem)
+            container.removeChild(next_elem)
+            tracked.pop(i + 1)
+            merge_count += 1
         else:
-            pos += 1
+            i += 1
 
-    return merged
-
-
-def _matches_tag(nd, local: str) -> bool:
-    tag = nd.localName or nd.tagName
-    return tag == local or tag.endswith(":{}".format(local))
+    return merge_count
 
 
-def _author_of(elem) -> str:
-    """Extract the w:author attribute value from a tracked-change element."""
-    val = elem.getAttribute("w:author")
-    if val:
-        return val
-    for attr in elem.attributes.values():
-        if attr.localName == "author" or attr.name.endswith(":author"):
-            return attr.value
-    return ""
+def _is_element(node, tag: str) -> bool:
+    name = node.localName or node.tagName
+    return name == tag or name.endswith(f":{tag}")
 
 
-def _same_author_adjacent(a, b) -> bool:
-    """True when *a* and *b* share an author and have no elements between them."""
-    if _author_of(a) != _author_of(b):
+def _get_author(elem) -> str:
+    author = elem.getAttribute("w:author")
+    if not author:
+        for attr in elem.attributes.values():
+            if attr.localName == "author" or attr.name.endswith(":author"):
+                return attr.value
+    return author
+
+
+def _can_merge_tracked(elem1, elem2) -> bool:
+    if _get_author(elem1) != _get_author(elem2):
         return False
-    cur = a.nextSibling
-    while cur is not None and cur is not b:
-        if cur.nodeType == cur.ELEMENT_NODE:
+
+    node = elem1.nextSibling
+    while node and node != elem2:
+        if node.nodeType == node.ELEMENT_NODE:
             return False
-        if cur.nodeType == cur.TEXT_NODE and cur.data.strip():
+        if node.nodeType == node.TEXT_NODE and node.data.strip():
             return False
-        cur = cur.nextSibling
+        node = node.nextSibling
+
     return True
 
 
-def _move_children(dst, src):
-    """Transplant every child of *src* into *dst*."""
-    while src.firstChild is not None:
-        kid = src.firstChild
-        src.removeChild(kid)
-        dst.appendChild(kid)
+def _merge_tracked_content(target, source):
+    while source.firstChild:
+        child = source.firstChild
+        source.removeChild(child)
+        target.appendChild(child)
 
 
-def _collect_elements(root, local: str) -> list:
-    """Depth-first collection of elements matching *local*."""
-    out = []
+def _find_elements(root, tag: str) -> list:
+    results = []
 
-    def _dfs(nd):
-        if nd.nodeType == nd.ELEMENT_NODE:
-            tag = nd.localName or nd.tagName
-            if tag == local or tag.endswith(":{}".format(local)):
-                out.append(nd)
-            for ch in nd.childNodes:
-                _dfs(ch)
+    def traverse(node):
+        if node.nodeType == node.ELEMENT_NODE:
+            name = node.localName or node.tagName
+            if name == tag or name.endswith(f":{tag}"):
+                results.append(node)
+            for child in node.childNodes:
+                traverse(child)
 
-    _dfs(root)
-    return out
+    traverse(root)
+    return results
 
 
-# ──────────────────────────────────────────────────────────────────
-# Author-analysis utilities (used by pack.py / infer_author)
-# ──────────────────────────────────────────────────────────────────
-
-def get_tracked_change_authors(xml_path: Path) -> dict[str, int]:
-    """Count tracked-change occurrences per author in an XML file."""
-    if not xml_path.exists():
+def get_tracked_change_authors(doc_xml_path: Path) -> dict[str, int]:
+    if not doc_xml_path.exists():
         return {}
+
     try:
-        parsed = ET.parse(xml_path)
+        tree = ET.parse(doc_xml_path)
+        root = tree.getroot()
     except ET.ParseError:
         return {}
 
-    ns = {"w": _WML_NS}
-    attr_key = "{{{}}}author".format(_WML_NS)
+    namespaces = {"w": WORD_NS}
+    author_attr = f"{{{WORD_NS}}}author"
 
-    counts: dict[str, int] = {}
-    for tag in ("ins", "del"):
-        for el in parsed.getroot().findall(".//w:{}".format(tag), ns):
-            who = el.get(attr_key)
-            if who:
-                counts[who] = counts.get(who, 0) + 1
-    return counts
+    authors: dict[str, int] = {}
+    for tag in ["ins", "del"]:
+        for elem in root.findall(f".//w:{tag}", namespaces):
+            author = elem.get(author_attr)
+            if author:
+                authors[author] = authors.get(author, 0) + 1
+
+    return authors
 
 
-def _get_authors_from_docx(docx: Path) -> dict[str, int]:
-    """Extract author counts from a packed .docx without full unpacking."""
+def _get_authors_from_docx(docx_path: Path) -> dict[str, int]:
     try:
-        with zipfile.ZipFile(docx, "r") as zf:
+        with zipfile.ZipFile(docx_path, "r") as zf:
             if "word/document.xml" not in zf.namelist():
                 return {}
-            with zf.open("word/document.xml") as fh:
-                parsed = ET.parse(fh)
-                ns = {"w": _WML_NS}
-                attr_key = "{{{}}}author".format(_WML_NS)
-                counts: dict[str, int] = {}
-                for tag in ("ins", "del"):
-                    for el in parsed.getroot().findall(".//w:{}".format(tag), ns):
-                        who = el.get(attr_key)
-                        if who:
-                            counts[who] = counts.get(who, 0) + 1
-                return counts
+            with zf.open("word/document.xml") as f:
+                tree = ET.parse(f)
+                root = tree.getroot()
+
+                namespaces = {"w": WORD_NS}
+                author_attr = f"{{{WORD_NS}}}author"
+
+                authors: dict[str, int] = {}
+                for tag in ["ins", "del"]:
+                    for elem in root.findall(f".//w:{tag}", namespaces):
+                        author = elem.get(author_attr)
+                        if author:
+                            authors[author] = authors.get(author, 0) + 1
+                return authors
     except (zipfile.BadZipFile, ET.ParseError):
         return {}
 
 
 def infer_author(modified_dir: Path, original_docx: Path, default: str = "Claude") -> str:
-    """Guess which author introduced new tracked changes."""
-    mod_xml = modified_dir / "word" / "document.xml"
-    mod_counts = get_tracked_change_authors(mod_xml)
+    modified_xml = modified_dir / "word" / "document.xml"
+    modified_authors = get_tracked_change_authors(modified_xml)
 
-    if not mod_counts:
+    if not modified_authors:
         return default
 
-    orig_counts = _get_authors_from_docx(original_docx)
+    original_authors = _get_authors_from_docx(original_docx)
 
-    delta: dict[str, int] = {}
-    for who, n in mod_counts.items():
-        diff = n - orig_counts.get(who, 0)
+    new_changes: dict[str, int] = {}
+    for author, count in modified_authors.items():
+        original_count = original_authors.get(author, 0)
+        diff = count - original_count
         if diff > 0:
-            delta[who] = diff
+            new_changes[author] = diff
 
-    if not delta:
+    if not new_changes:
         return default
 
-    if len(delta) == 1:
-        return next(iter(delta))
+    if len(new_changes) == 1:
+        return next(iter(new_changes))
 
     raise ValueError(
-        "Multiple authors added new changes: {}. "
-        "Cannot infer which author to validate.".format(delta)
+        f"Multiple authors added new changes: {new_changes}. "
+        "Cannot infer which author to validate."
     )
