@@ -43,10 +43,11 @@ dist/
 !智慧银行实验教程chapters/智慧银行实验教程.pdf
 !实验讲义/智慧银行实验讲义_v4.0.pdf
 
-# Python 虚拟环境
+# Python 虚拟环境与缓存
 .venv/
 __pycache__/
 *.pyc
+.ruff_cache/
 
 # 外部技能库内的大文件（虚拟环境、缓存等）
 qoder-skills-library/**/.venv/
