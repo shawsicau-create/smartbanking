@@ -1,0 +1,1036 @@
+% 第7章 BMAD方法论与综合项目实践
+% 智慧银行实验教程——AI驱动的金融科技实践
+% 本章包含BMAD理论框架 + 银行CRM系统完整开发实验（12个实验）
+
+\chapter{第7章\quad BMAD方法论与综合项目实践}
+\chapteroverview{
+本章学习目标：
+\begin{enumerate}
+  \item 理解BMAD方法论的理论基础与五阶段框架
+  \item 掌握BMAD四阶段工作流的流程与产出物
+  \item 通过银行CRM系统案例，完整走通BMAD从需求到部署的全流程
+  \item 了解智能客服等综合项目的开发要点
+  \item 能够参照本章实验步骤完成端到端项目实践
+\end{enumerate}
+}
+
+\keyterms{BMAD方法论、AI驱动开发、头脑风暴、PRD、架构设计、史诗拆分、Sprint规划、CRM系统、智能客服、Vercel部署、CNB}
+
+% ============================================================
+\section{BMAD理论框架}
+% ============================================================
+
+BMAD（Breakthrough Method of Agile AI-Driven Development）是一种AI驱动的敏捷开发方法论，其核心理念是：\textbf{让AI扮演不同角色完成专业工作，人类负责决策与审核}。这种方法将程序员的定位从"代码编写者"提升为"AI团队管理者"。
+
+\subsection{方法论演进背景}
+
+软件开发方法论经历了数十年的演进：从瀑布模型（1970s）到敏捷开发（2001年《敏捷宣言》），再到DevOps（2015年）的自动化流水线。大语言模型（LLM）的突破催生了全新的范式——AI驱动开发（2023年至今）。AI不再只是辅助工具，而是\textbf{承担了团队中专业角色的工作}。BMAD方法论正是这一范式变革的系统性实践框架。
+
+\begin{theorybox}[方法论演进的核心逻辑]
+\begin{itemize}[leftmargin=2em]
+  \item 瀑布$\to$敏捷：从\textbf{抗拒变化}到\textbf{拥抱变化}
+  \item 敏捷$\to$DevOps：从\textbf{手动协作}到\textbf{自动化流水线}
+  \item DevOps$\to$AI驱动：从\textbf{人做所有事}到\textbf{人指挥AI做事}
+\end{itemize}
+每一次演进都不是对前者的否定，而是在前者基础上的能力扩展。BMAD并不排斥敏捷和DevOps，而是在它们的理念上叠加了AI协作的新维度。
+\end{theorybox}
+
+\subsection{BMAD五阶段总览}
+
+BMAD将软件开发的完整流程拆解为五个阶段，每个阶段由AI扮演一个专业角色：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cllll}
+\toprule
+\textbf{字母} & \textbf{阶段} & \textbf{角色} & \textbf{AI身份} & \textbf{产出} \\
+\midrule
+\textbf{B} & Brainstorm（脑暴） & 业务分析师 & AI as Analyst & 功能清单 \\
+\textbf{M} & Model（建模） & 产品经理 & AI as PM & 需求文档 + 数据模型 \\
+\textbf{A} & Architect（架构） & 技术架构师 & AI as Architect & 技术方案 + 架构图 \\
+\textbf{D} & Develop（开发） & 开发者 & AI as Developer & 可运行代码 \\
+\textbf{V} & Verify（验证） & 测试工程师 & AI as QA & 测试报告 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD五阶段总览}
+\end{table}
+
+\textbf{核心价值}：不用自己写所有代码，而是学会\textbf{指挥AI团队}完成工作。在传统开发中，一个人可能需要同时扮演分析师、产品经理、架构师、开发者和测试工程师；而在BMAD中，你只需要扮演"项目经理"——明确目标、分配任务、审核产出。
+
+\subsection{BMAD与传统敏捷开发的区别}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{维度} & \textbf{传统敏捷（Scrum）} & \textbf{BMAD} \\
+\midrule
+团队规模 & 5--9人跨职能团队 & 1人+AI \\
+角色分工 & Product Owner / Scrum Master / Dev Team & 人类=项目经理，AI=所有执行角色 \\
+迭代周期 & 2--4周Sprint & 按阶段顺序推进（小时级） \\
+需求文档 & 用户故事+验收标准 & AI生成功能清单+需求文档 \\
+代码实现 & 开发者手动编码 & AI生成+人类审核 \\
+质量保证 & 测试团队+自动化测试 & AI辅助测试+手动验证 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD与传统敏捷开发对比}
+\end{table}
+
+BMAD的独特优势在于\textbf{极致的效率}——一个人加AI可以在数小时内完成传统团队数天甚至数周的工作。但这种效率是有边界的，它最适合\textbf{中小型项目的原型开发与MVP验证}。
+
+\begin{theorybox}[BMAD方法论的适用边界]
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{适合}：中小型项目原型开发、MVP验证、教学实验、个人项目快速迭代、技术方案可行性验证
+  \item \textbf{不适合}：高安全要求的核心银行系统（需严格审计）、大型团队协作项目（需成熟的项目管理流程）、对可靠性要求极高的生产系统（如交易系统、支付系统）
+\end{itemize}
+BMAD的核心价值在于\textbf{快速验证想法}——用最短的时间和最少的人力，验证一个产品概念是否可行。至于生产级系统的开发，仍需传统软件工程的严谨流程。
+\end{theorybox}
+
+% ============================================================
+\section{BMAD四阶段工作流}
+% ============================================================
+
+BMAD的核心工作流按四个阶段顺序推进，每个阶段有明确的输入、产出和质量检查点。本章后续将以银行CRM系统为案例，完整演示这四个阶段的实操过程。
+
+\subsection{Phase 1——分析/构思}
+
+\textbf{目标}：从一个模糊的想法出发，通过结构化头脑风暴，生成丰富的产品创意。
+
+在AI IDE对话窗口中描述业务背景和目标用户，AI扮演业务分析师（Mary）的角色，引导你进行发散式思考。过程中先进行"脑倾泻"（Brain Dump），把所有想法告诉AI，不必在意格式；AI会使用逆向思维、跨领域类比等创意激发技术帮你产生更多创意。目标是产生10--20个有价值的想法。
+
+产出物保存至\texttt{\_bmad-output/brainstorming/}目录，作为后续PRD的输入。
+
+\subsection{Phase 2——规划/设计}
+
+\textbf{目标}：将头脑风暴的结果转化为结构化的产品需求文档（PRD）。
+
+AI以产品经理（John）的角色与你对话，引导你逐节讨论PRD内容：产品愿景与目标用户、核心功能特性（按优先级排列）、用户旅程（User Journeys）、非功能性需求（性能、安全、兼容性）、成功指标（KPI）。AI提供两种工作模式——快速路径（Fast）和辅导路径（Coach），实验建议选择"辅导路径"以理解PRD的思考过程。
+
+产出物保存至\texttt{\_bmad-output/planning-artifacts/prd.md}。PRD中每个需求都有唯一编号（如FR-1），便于后续追溯。
+
+\subsection{Phase 3——方案细化}
+
+\textbf{目标}：基于PRD完成架构设计、UX设计和史诗拆分，为开发做好准备。
+
+此阶段包含三个子流程：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{架构设计}：AI以系统架构师（Winston）的角色，与你讨论技术选型（前端/后端框架、数据库选型）、系统架构（微服务/单体/Serverless）、关键技术决策。产出\texttt{architecture.md}。
+  \item \textbf{UX设计}：AI以UX设计师（Sally）的角色，讨论信息架构（IA）、关键页面设计、用户旅程细化、设计系统规范（颜色、字体、间距等设计Token）。产出\texttt{DESIGN.md}和\texttt{EXPERIENCE.md}。
+  \item \textbf{史诗与故事拆分}：AI将PRD中的需求按层级拆分：PRD需求$\to$Epic（史诗）$\to$Story（用户故事）$\to$Task（任务）。每个Story包含用户故事描述（As a... I want... So that...）、验收标准（Given/When/Then格式）、技术约束与依赖。产出\texttt{epics.md}。
+\end{enumerate}
+
+完成后可执行"实施就绪检查"，AI会检查所有文档是否完整且一致。
+
+\subsection{Phase 4——实施/交付}
+
+\textbf{目标}：将用户故事逐个转化为可运行的代码。
+
+此阶段包含四个关键环节：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{冲刺规划}：AI根据\texttt{epics.md}生成冲刺状态跟踪文件\texttt{sprint-status.yaml}，记录每个故事的状态流转（backlog $\to$ ready-for-dev $\to$ in-progress $\to$ review $\to$ done）。
+  \item \textbf{创建故事详情}：AI从\texttt{sprint-status.yaml}中找到第一个backlog状态的故事，自动关联架构规范和前序故事的经验，生成详细的故事规格文件（含任务清单、开发注意事项、文件清单、变更日志）。
+  \item \textbf{开发故事}：AI以高级开发者（Amelia）的角色开始编码，按照"红-绿-重构"循环（先写失败的测试，再写最小代码使测试通过，最后优化代码结构）逐任务实施。
+  \item \textbf{代码审查}：AI使用三层对抗式审查——盲点猎人（纯粹从代码质量角度找bug）、边界猎人（遍历每个分支和边界条件）、验收审计（对照验收标准检查实现）。审查结果按严重程度分级（Critical/High/Medium/Low）。
+\end{enumerate}
+
+\subsection{BMAD核心角色一览}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{角色} & \textbf{代号} & \textbf{职责} \\
+\midrule
+Business Analyst & Mary & 业务分析、需求挖掘、利益相关者调研 \\
+Product Manager & John & 产品规划、PRD编写、需求优先级 \\
+UX Designer & Sally & 用户体验设计、交互规范、设计系统 \\
+System Architect & Winston & 技术架构、系统设计、技术选型 \\
+Senior Developer & Amelia & 代码实现、测试编写、代码审查 \\
+Tech Writer & Paige & 技术文档、API文档、用户手册 \\
+\bottomrule
+\end{tabular}
+\caption{BMAD核心角色一览}
+\end{table}
+
+BMAD的核心理念：\textbf{人类决策，AI执行}——所有关键决策由人类做出，AI负责细化、生成和执行；\textbf{渐进式细化}——从粗略构想逐步细化为精确规格，每一步都经人类确认。
+
+% ============================================================
+\section{BMAD实战：银行CRM系统完整开发}
+% ============================================================
+\label{sec:crm-practice}
+
+本节以商业银行CRM系统为案例，通过12个递进式实验，完整演示BMAD从需求到部署的全流程。参照本节步骤操作，即可完成一个具备客户管理、贷款申请、审批流程、即申即贷等功能的CRM系统。
+
+\subsection{实验概览与环境}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{属性} & \textbf{内容} \\
+\midrule
+目标 & 使用BMAD从零开始规划、设计、实现、测试并部署一个商业银行CRM系统 \\
+难度 & 中级 \\
+耗时 & 约3--4小时 \\
+适用课程 & 软件工程 \quad 金融科技 \quad 敏捷开发 \\
+前置要求 & 命令行基础、Node.js/npm、React/Vite基础、Git基础 \\
+\bottomrule
+\end{tabular}
+\caption{CRM实验概览}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{类别} & \textbf{技术选型} \\
+\midrule
+操作系统 & Windows / macOS / Linux \\
+IDE & Qoder / Cursor / Claude Code（任选其一） \\
+Node.js & v18+（推荐v20+） \\
+AI框架 & BMAD v6+ \\
+后端 & Node.js + Express 4 \\
+前端 & React 18 + Vite 4 \\
+数据库 & PostgreSQL（设计目标）/ 内存Map（降级方案） \\
+版本控制 & Git + CNB（cnb.cool） \\
+部署平台 & Vercel（前端静态部署） \\
+\bottomrule
+\end{tabular}
+\caption{实验环境配置}
+\end{table}
+
+\subsection{实验流程总览}
+
+整个CRM开发实验分为12个实验，覆盖BMAD全部阶段：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cll}
+\toprule
+\textbf{序号} & \textbf{实验名称} & \textbf{阶段} \\
+\midrule
+1 & 安装BMAD框架 & 环境准备 \\
+2 & 创建产品需求文档（PRD） & 需求分析 \\
+3 & 创建技术架构设计 & 架构设计 \\
+4 & 创建UX设计 & 交互设计 \\
+5 & 创建Epics和Stories & 需求拆解 \\
+6 & Sprint规划 & 迭代规划 \\
+7 & Sprint 1——客户管理实现 & 代码实现 \\
+8 & Sprint 2-3——迭代开发 & 迭代开发 \\
+9 & 数据库适配与降级方案 & 工程实践 \\
+10 & 功能测试验证 & 质量保证 \\
+11 & 版本控制与CNB推送 & 版本管理 \\
+12 & Vercel部署（前端） & 生产部署 \\
+\bottomrule
+\end{tabular}
+\caption{CRM实验流程}
+\end{table}
+
+\subsection{实验一：安装BMAD框架}
+
+\textbf{目标}：安装BMAD敏捷AI开发框架，为后续的需求分析、架构设计和代码实现提供方法论支撑。
+
+\subsubsection*{场景A：AI IDE已预装BMAD（如Qoder）}
+
+BMAD框架已集成在Qoder IDE中，无需额外安装。通过以下命令验证：
+
+\begin{lstlisting}[style=shell]
+# 查看 BMAD 帮助
+npx bmad-help
+
+# 或在 Qoder 中使用技能
+/bmad-help
+\end{lstlisting}
+
+\subsubsection*{场景B：AI IDE未预装BMAD（如Cursor、Claude Code）}
+
+\textbf{前置要求}：Node.js v18+、npm/npx、AI IDE（Cursor / Claude Code / VS Code + AI插件）、Git。
+
+\textbf{步骤1：安装BMAD框架}
+
+\begin{lstlisting}[style=shell]
+# 在项目根目录运行安装器
+npx bmad-method install
+\end{lstlisting}
+
+安装器会交互式地询问以下内容：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{安装目录}：默认为当前工作目录，直接回车确认
+  \item \textbf{模块选择}：勾选需要的模块（推荐全选核心模块）
+  \begin{itemize}
+    \item \texttt{core}——核心框架（必选，自动添加）
+    \item \texttt{bmm}——BMAD方法论模块（必选）
+    \item \texttt{bmb}——BMAD构建器模块（推荐）
+    \item \texttt{cis}——持续集成支持（可选）
+    \item \texttt{gds}——指导系统（可选）
+    \item \texttt{tea}——测试评估（可选）
+  \end{itemize}
+  \item \textbf{版本确认}：选择Yes接受最新稳定版
+  \item \textbf{AI工具集成}：选择你使用的AI IDE（claude-code / cursor等）
+  \item \textbf{模块配置}：设置项目名称、输出语言（中文）、输出文件夹（默认\texttt{\_bmad-output}）
+\end{enumerate}
+
+\textbf{步骤2：验证安装}
+
+\begin{lstlisting}[style=shell]
+# 查看安装清单
+cat _bmad/_config/manifest.yaml
+
+# 在 AI IDE 中测试技能是否可用
+# Cursor: 输入 /bmad-help
+# Claude Code: 输入 /bmad-help
+\end{lstlisting}
+
+\textbf{步骤3（可选）：非交互式快速安装}
+
+适用于CI/CD环境或批量部署：
+
+\begin{lstlisting}[style=shell]
+# 一键安装核心模块，集成 Claude Code
+npx bmad-method install --yes --modules bmm,bmb --tools claude-code
+
+# 指定中文输出
+npx bmad-method install --yes --modules bmm,bmb --tools claude-code \
+  --set core.communication_language=zh \
+  --set core.document_output_language=zh
+\end{lstlisting}
+
+\begin{notebox}[故障排查]
+如果出现\texttt{API rate limit exceeded}，说明GitHub匿名请求超限，请设置\texttt{GITHUB\_TOKEN}环境变量后重试。
+\end{notebox}
+
+\subsection{实验二：创建产品需求文档（PRD）}
+
+\textbf{目标}：使用BMAD的PRD技能，通过结构化的引导式问答，为商业银行CRM系统生成完整的产品需求文档。
+
+\textbf{操作步骤}：
+
+\begin{enumerate}[leftmargin=2em]
+  \item 启动PRD技能：在AI IDE中输入\texttt{/bmad-prd}
+  \item 选择创建路径：BMAD提供两种选项——A（快速路径）基于预设模板快速生成，适合概念验证；B（深度路径）逐项引导问答，适合正式项目。本实验选择\textbf{A（快速路径）}
+  \item 提供项目主题：\texttt{商业银行CRM系统}
+\end{enumerate}
+
+\textbf{关键提示词}：
+
+\begin{lstlisting}
+请为商业银行CRM系统创建PRD文档。
+系统需要支持：客户管理、贷款申请、额度评估、
+客户等级体系（普通/白银/黄金/钻石/战略伙伴）、
+即申即贷快速审批。
+\end{lstlisting}
+
+BMAD生成\texttt{\_bmad-output/prd.md}，包含\textbf{8大核心章节}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cl}
+\toprule
+\textbf{章节} & \textbf{内容} \\
+\midrule
+1 & 产品概述：系统定位、目标用户、核心价值 \\
+2 & 功能需求：客户管理、贷款申请、审批流程等 \\
+3 & 非功能需求：性能、安全、可用性 \\
+4 & 用户角色：普通客户、客户经理、风控审批员、管理员 \\
+5 & 客户等级体系：普通/白银/黄金/钻石/战略伙伴 \\
+6 & 业务流程：注册$\to$登录$\to$申请$\to$审批$\to$放款 \\
+7 & 技术约束：技术栈选型说明 \\
+8 & 验收标准：功能完成度定义 \\
+\bottomrule
+\end{tabular}
+\caption{PRD文档结构}
+\end{table}
+
+\subsection{实验三：创建技术架构设计}
+
+\textbf{目标}：基于PRD，设计系统的技术架构，确定技术栈、模块划分和集成方案。
+
+\textbf{操作步骤}：在AI IDE中输入\texttt{/bmad-create-architecture}，提供PRD文件路径作为输入，BMAD架构师（Winston）会生成架构文档\texttt{\_bmad-output/architecture.md}。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{层级} & \textbf{技术} & \textbf{选型理由} \\
+\midrule
+前端框架 & React 18 & 组件化、生态成熟 \\
+构建工具 & Vite 4 & 极速HMR、零配置 \\
+后端框架 & Express 4 & 轻量、灵活、社区大 \\
+认证 & JWT & 无状态、易扩展 \\
+数据库 & PostgreSQL & 关系型、支持复杂查询 \\
+\bottomrule
+\end{tabular}
+\caption{CRM技术栈决策}
+\end{table}
+
+系统架构采用前后端分离模式：前端React+Vite负责页面渲染和用户交互，通过HTTP API与后端通信；后端Express提供RESTful API，包含认证中间件（JWT）、客户路由、贷款路由、审批路由等。
+
+\subsection{实验四：创建UX设计}
+
+\textbf{目标}：设计系统的用户体验流程和界面规范。
+
+\textbf{操作步骤}：在AI IDE中输入\texttt{/bmad-ux}，选择\textbf{B}创建完整的UX设计规格。
+
+产出文件\texttt{\_bmad-output/ux/DESIGN.md}和\texttt{EXPERIENCE.md}，包含：
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{用户旅程图}：从注册到贷款发放的完整流程
+  \item \textbf{页面线框图}：各核心页面的布局描述
+  \item \textbf{交互规范}：表单验证、加载状态、错误提示
+  \item \textbf{视觉风格}：银行级专业风格，蓝白配色
+\end{itemize}
+
+\subsection{实验五：创建Epics和Stories}
+
+\textbf{目标}：将PRD中的功能需求拆解为可执行的Epic和User Story。
+
+\textbf{操作步骤}：在AI IDE中输入\texttt{/bmad-create-epics-and-stories}，选择\textbf{B}创建完整列表。
+
+产出\texttt{\_bmad-output/epics-stories.md}，将系统拆分为\textbf{5个Epic、26个Story}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clc}
+\toprule
+\textbf{Epic} & \textbf{内容} & \textbf{Story数} \\
+\midrule
+Epic 1: 客户管理 & 注册、登录、信息管理、等级体系 & 7 \\
+Epic 2: 贷款核心 & 产品管理、申请、审批、抵质押品 & 6 \\
+Epic 3: 即申即贷 & AI预审、快速放款、实时通知 & 5 \\
+Epic 4: 还款管理 & 还款计划、自动扣款、逾期处理 & 4 \\
+Epic 5: 增值服务 & 数据分析、营销、绩效 & 4 \\
+\bottomrule
+\end{tabular}
+\caption{Epic与Story拆分}
+\end{table}
+
+\textbf{Story示例}：
+
+\begin{lstlisting}
+Story 1.1: 用户注册
+作为一位潜在客户，
+我希望能够通过手机号注册账户，
+以便开始使用银行的数字化服务。
+
+验收标准：
+- 输入手机号和密码
+- 手机号格式验证
+- 注册成功后自动登录
+- 返回 JWT 令牌
+\end{lstlisting}
+
+\subsection{实验六：Sprint规划}
+
+\textbf{目标}：将26个Story分配到4个Sprint，制定迭代开发计划。
+
+\textbf{操作步骤}：在AI IDE中输入\texttt{/bmad-sprint-planning}。
+
+产出\texttt{\_bmad-output/sprint-plan.md}：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clcc}
+\toprule
+\textbf{Sprint} & \textbf{主题} & \textbf{Stories} & \textbf{预估人日} \\
+\midrule
+Sprint 1 & 基础服务（客户管理） & 7 & 12 \\
+Sprint 2 & 贷款核心 & 7 & 14 \\
+Sprint 3 & 即申即贷 & 6 & 13 \\
+Sprint 4 & 增值服务 & 6 & 12 \\
+\bottomrule
+\end{tabular}
+\caption{Sprint规划}
+\end{table}
+
+Sprint之间的依赖关系为线性递进：Sprint 1（客户基础）$\to$Sprint 2（贷款核心）$\to$Sprint 3（即申即贷）$\to$Sprint 4（增值服务）。
+
+\subsection{实验七：Sprint 1——客户管理实现}
+
+\textbf{目标}：实现Sprint 1的全部7个Story，搭建项目骨架并完成客户管理全链路。
+
+\subsubsection*{后端实现}
+
+\textbf{步骤1：初始化后端项目}
+
+\begin{lstlisting}[style=shell]
+mkdir backend && cd backend
+npm init -y
+npm install express cors jsonwebtoken
+\end{lstlisting}
+
+\textbf{步骤2：创建项目结构}
+
+\begin{lstlisting}[style=shell]
+backend/
+  src/
+    db/
+      index.js       # 数据库连接
+      migrate.js     # 迁移脚本
+    routes/
+      customers.js   # 客户路由
+      loans.js       # 贷款路由
+      approvals.js   # 审批路由
+      partners.js    # 合作伙伴路由
+    middleware/
+      auth.js        # JWT认证中间件
+    index.js         # Express入口
+  .env               # 环境变量
+  package.json
+\end{lstlisting}
+
+\textbf{步骤3：实现核心API}
+
+\begin{lstlisting}[language=JavaScript]
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// 注册路由
+app.use('/api/customers', require('./routes/customers'));
+app.use('/api/loans', require('./routes/loans'));
+app.use('/api/approvals', require('./routes/approvals'));
+app.use('/api/partners', require('./routes/partners'));
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`CRM后端服务运行在 http://localhost:${PORT}`);
+});
+\end{lstlisting}
+
+\textbf{步骤4：数据库迁移脚本}
+
+\texttt{backend/src/db/migrate.js}创建\textbf{11张核心表}：
+
+\begin{lstlisting}[style=shell]
+-- 核心表结构
+customers (客户表)
+loan_applications (贷款申请表)
+collaterals (抵质押品表)
+repayments (还款记录表)
+customer_tiers (客户等级表)
+loan_products (贷款产品表)
+approvals (审批记录表)
+partners (合作伙伴表)
+notifications (通知表)
+credit_scores (信用评分表)
+audit_logs (审计日志表)
+\end{lstlisting}
+
+\subsubsection*{前端实现}
+
+\textbf{步骤1：初始化前端}
+
+\begin{lstlisting}[style=shell]
+npm create vite@latest frontend -- --template react
+cd frontend && npm install
+npm install react-router-dom
+\end{lstlisting}
+
+\textbf{步骤2：配置Vite代理}
+
+\begin{lstlisting}[language=JavaScript]
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
+  },
+});
+\end{lstlisting}
+
+\textbf{验证}：
+
+\begin{lstlisting}[style=shell]
+# 启动后端
+cd backend && node src/index.js
+
+# 启动前端（新终端）
+cd frontend && npm run dev
+\end{lstlisting}
+
+访问\texttt{http://localhost:5173}，应看到登录页面。
+
+\subsection{实验八：Sprint 2-3——迭代开发}
+
+\textbf{目标}：通过迭代方式完成Sprint 2（贷款核心）和Sprint 3（即申即贷）。
+
+\subsubsection*{Sprint 2新增模块}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{路由文件} & \textbf{功能} \\
+\midrule
+\texttt{collaterals.js} & 抵质押品管理（CRUD+估值） \\
+\texttt{repayments.js} & 还款计划与记录 \\
+\texttt{tiers.js} & 客户等级体系管理 \\
+\bottomrule
+\end{tabular}
+\caption{Sprint 2新增模块}
+\end{table}
+
+前端在\texttt{App.jsx}中新增对应路由入口和导航链接。
+
+\subsubsection*{Sprint 3新增模块}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{路由文件} & \textbf{功能} \\
+\midrule
+\texttt{quick-loan.js} & 即申即贷（AI预审+快速放款） \\
+\texttt{test.js} & 测试账号初始化接口 \\
+\bottomrule
+\end{tabular}
+\caption{Sprint 3新增模块}
+\end{table}
+
+\textbf{关键特性——即申即贷流程}：客户提交申请后，系统先进行AI预审（信用评分+收入验证），预审通过则自动审批并计算额度，随后实时放款；预审拒绝则转人工审核，由人工做出最终决策。
+
+\subsubsection*{测试账号初始化}
+
+为方便测试，\texttt{test.js}路由提供初始化接口：
+
+\begin{lstlisting}[style=shell]
+GET /api/test/init  ->  初始化4个测试账号
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llcc}
+\toprule
+\textbf{手机号} & \textbf{密码} & \textbf{客户等级} & \textbf{信用分} \\
+\midrule
+13800138001 & password123 & 钻石 & 820 \\
+13800138002 & password123 & 黄金 & 750 \\
+13800138003 & password123 & 白银 & 680 \\
+13800138004 & password123 & 普通 & 600 \\
+\bottomrule
+\end{tabular}
+\caption{测试账号列表}
+\end{table}
+
+\subsection{实验九：数据库适配与降级方案}
+
+\textbf{目标}：解决开发环境中PostgreSQL不可用的问题，实现数据库降级方案，确保系统可运行。
+
+当启动后端时，如果PostgreSQL连接失败（\texttt{ECONNREFUSED}），尝试安装SQLite也可能因权限问题失败。此时采用\textbf{内存Map降级方案}：
+
+\begin{lstlisting}[language=JavaScript]
+// 内存Map模拟数据库
+const mockData = {
+  customers: new Map(),
+  loans: new Map(),
+  // ...其他表
+};
+
+const pool = {
+  query: async (sql, params) => {
+    console.log('SQL (模拟):', sql.substring(0, 50));
+    // 模拟查询逻辑
+    return { rows: [] };
+  },
+};
+
+module.exports = { pool };
+\end{lstlisting}
+
+由于\texttt{bcrypt}模块安装失败（EPERM），使用Base64替代进行密码哈希：
+
+\begin{lstlisting}[language=JavaScript]
+// 替代bcrypt的简单哈希
+const hashPassword = (password) => {
+  return Buffer.from(password).toString('base64');
+};
+
+const verifyPassword = (password, hash) => {
+  return hashPassword(password) === hash;
+};
+\end{lstlisting}
+
+\begin{warningbox}[教学要点]
+降级策略是工程实践中的重要技能。当理想方案不可行时，需要快速找到可用的替代方案，保证核心功能可用。生产环境中应使用正式的数据库和加密方案。
+\end{warningbox}
+
+\subsection{实验十：功能测试验证}
+
+\textbf{目标}：验证系统核心功能（登录、客户管理、贷款申请）正常工作。
+
+\subsubsection*{后端API测试}
+
+\begin{lstlisting}[style=shell]
+# 1. 初始化测试数据
+curl http://localhost:3001/api/test/init
+
+# 2. 测试登录
+curl -X POST http://localhost:3001/api/customers/login \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"13800138001","password":"password123"}'
+
+# 3. 获取客户列表（需JWT）
+curl http://localhost:3001/api/customers \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+\end{lstlisting}
+
+\subsubsection*{前端界面测试}
+
+\begin{enumerate}[leftmargin=2em]
+  \item 打开浏览器访问\texttt{http://localhost:5173}
+  \item 使用测试账号登录：\texttt{13800138001} / \texttt{password123}
+  \item 验证仪表盘数据显示
+  \item 测试贷款申请流程
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{问题} & \textbf{原因} & \textbf{解决方案} \\
+\midrule
+登录失败401 & 数据库未连接 & 执行\texttt{/api/test/init} \\
+端口被占用 & 旧进程未关闭 & \texttt{taskkill /f /im node.exe} \\
+bcrypt缺失 & 安装失败 & 使用Base64替代 \\
+CORS错误 & 跨域未配置 & 确认\texttt{cors()}中间件已加载 \\
+\bottomrule
+\end{tabular}
+\caption{常见问题排查}
+\end{table}
+
+\subsection{实验十一：版本控制与CNB推送}
+
+\textbf{目标}：将完整项目代码推送到CNB（cnb.cool）代码托管平台。
+
+\textbf{步骤1：初始化Git仓库}
+
+\begin{lstlisting}[style=shell]
+cd /path/to/project
+git init
+\end{lstlisting}
+
+\textbf{步骤2：创建.gitignore}
+
+\begin{lstlisting}
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+.vercel-tmp/
+.qoder/
+\end{lstlisting}
+
+\textbf{步骤3：添加并提交代码}
+
+\begin{lstlisting}[style=shell]
+git add -A
+git commit -m "feat: 添加完整项目代码（前后端+BMAD文档）"
+\end{lstlisting}
+
+\textbf{步骤4：配置远程仓库并认证}
+
+\begin{lstlisting}[style=shell]
+# 添加CNB远程仓库
+git remote add origin https://cnb.cool/yourname/smartcrb-demo.git
+
+# 方式一：URL内嵌令牌（推荐自动化）
+git remote set-url origin https://cnb:<TOKEN>@cnb.cool/yourname/smartcrb-demo.git
+
+# 方式二：CNB CLI登录
+npm install -g @cnbcool/cnb-cli
+cnb login  # 浏览器授权
+\end{lstlisting}
+
+\textbf{步骤5：推送}
+
+\begin{lstlisting}[style=shell]
+git push -u origin master
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{现象} & \textbf{原因} & \textbf{解决方案} \\
+\midrule
+Credentials have Expired & OAuth token过期 & 使用PAT令牌嵌入URL \\
+ssh: port 22 timeout & SSH端口被封 & 改用HTTPS方式 \\
+Repository Not Found & 仓库未初始化 & 在CNB网页端先创建仓库 \\
+\texttt{cnb status}已登录但API 401 & status不验证API有效性 & 重新\texttt{cnb login}或使用PAT \\
+\bottomrule
+\end{tabular}
+\caption{CNB认证故障排查}
+\end{table}
+
+\subsection{实验十二：Vercel部署（前端）}
+
+\textbf{目标}：将前端项目部署到Vercel平台，获取公开访问URL。
+
+\subsubsection*{前置准备：注册Vercel账户}
+
+访问\url{https://vercel.com/signup}，选择注册方式（GitHub / GitLab / Bitbucket / 邮箱），完成注册并选择Hobby（免费）计划。
+
+\subsubsection*{安装Vercel CLI}
+
+\begin{lstlisting}[style=shell]
+# 使用 npm 全局安装
+npm install -g vercel
+
+# 验证安装
+vercel --version
+\end{lstlisting}
+
+\begin{notebox}[Windows权限问题]
+如果出现\texttt{EPERM}或\texttt{EACCES}错误，以管理员身份打开PowerShell后重试，或使用\texttt{npx vercel}替代全局安装。
+\end{notebox}
+
+\subsubsection*{登录Vercel账户}
+
+\begin{lstlisting}[style=shell]
+vercel login
+\end{lstlisting}
+
+选择登录方式（GitHub / GitLab / Bitbucket / Email），完成授权。执行\texttt{vercel whoami}验证登录状态。
+
+\textbf{非交互式登录（CI/CD环境）}：在\url{https://vercel.com/account/tokens}创建Token，然后使用：
+
+\begin{lstlisting}[style=shell]
+export VERCEL_TOKEN=<YOUR_VERCEL_TOKEN>
+vercel --prod --yes
+\end{lstlisting}
+
+\subsubsection*{部署前端项目}
+
+\begin{lstlisting}[style=shell]
+# 进入前端目录
+cd frontend
+
+# 生产部署
+vercel --prod --yes
+\end{lstlisting}
+
+首次部署时的交互提示：确认部署（Y）$\to$选择账户scope$\to$新项目（N）$\to$输入项目名$\to$确认代码目录。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{信息项} & \textbf{说明} \\
+\midrule
+生产URL & \texttt{https://frontend-xxx.vercel.app} \\
+构建方式 & Vite自动识别 \\
+输出目录 & \texttt{dist/} \\
+构建时间 & $\sim$16s（含依赖安装） \\
+\bottomrule
+\end{tabular}
+\caption{Vercel部署结果}
+\end{table}
+
+\subsection{项目交付物清单}
+
+完成全部12个实验后，项目产出包括：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{类别} & \textbf{文件/模块} & \textbf{说明} \\
+\midrule
+BMAD文档 & \texttt{prd.md} & 8大章节PRD \\
+ & \texttt{architecture.md} & 技术栈+模块设计 \\
+ & \texttt{DESIGN.md} & 用户旅程+界面规范 \\
+ & \texttt{epics-stories.md} & 5 Epic / 26 Story \\
+ & \texttt{sprint-plan.md} & 4 Sprint路线图 \\
+\midrule
+后端代码 & 9个路由文件 & 完整API \\
+ & 3个基础设施文件 & index.js / db / migrate \\
+\midrule
+前端代码 & App.jsx & 集成所有页面 \\
+ & 4个配置文件 & package.json / vite.config等 \\
+\midrule
+数据库 & 11张核心表 & 完整银行业务域 \\
+\bottomrule
+\end{tabular}
+\caption{项目交付物清单}
+\end{table}
+
+\subsection{关键提示词汇总}
+
+以下是在整个CRM开发过程中使用的\textbf{核心提示词}，可供复现实验：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clp{8cm}}
+\toprule
+\textbf{序号} & \textbf{阶段} & \textbf{提示词} \\
+\midrule
+1 & 启动BMAD & \texttt{请使用BMAD框架为商业银行CRM系统创建完整的开发文档。} \\
+2 & 创建PRD & \texttt{/bmad-prd} + 主题描述，选择A（快速路径） \\
+3 & 架构设计 & \texttt{/bmad-create-architecture} \\
+4 & UX设计 & \texttt{/bmad-ux}，选择B \\
+5 & Epic拆分 & \texttt{/bmad-create-epics-and-stories}，选择B \\
+6 & Sprint规划 & \texttt{/bmad-sprint-planning} \\
+7 & 实现Stories & \texttt{实现全部story} \\
+8 & 迭代推进 & \texttt{A}（选择继续下一个Sprint） \\
+9 & 数据库适配 & \texttt{A}（选择配置数据库连接） \\
+10 & 测试登录 & \texttt{使用13800138001登陆一下前端} \\
+11 & 推送CNB & \texttt{给项目写一个readme，然后推送到cnb} \\
+\bottomrule
+\end{tabular}
+\caption{BMAD核心提示词汇总}
+\end{table}
+
+% ============================================================
+\section{其他综合项目要点}
+% ============================================================
+
+\subsection{智能客服系统开发}
+
+银行智能客服系统将自然语言处理（NLP）应用于银行业务问答场景，核心包括：FAQ知识库构建（将银行产品规则、业务流程转化为可检索的知识条目）、多轮对话流程设计（通过状态机管理对话上下文）、业务办理自动化（从咨询到办理的闭环）、合规话术管理（确保所有回复符合监管要求）。
+
+开发要点在于\textbf{知识库的质量决定客服质量}——需要将银行业务知识结构化，并为AI提供充足的上下文。系统设计应遵循"先检索后生成"（RAG）的范式，避免AI产生幻觉。项目选题、团队管理与竞赛指南详见第8章。
+
+\subsection{综合项目选题原则}
+
+对于自主创新项目，好的选题应满足四个原则：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{原则} & \textbf{判断标准} \\
+\midrule
+可行性 & 能否在4周内、2--4人团队、使用课程所学工具完成MVP？ \\
+创新性 & 是否有至少一个创新点（技术新组合/业务新场景/方法新尝试）？ \\
+金融相关性 & 是否解决了真实的金融/银行问题？ \\
+技术适配性 & 是否需要AI参与并发挥MCP+Skill+CLI的技术栈优势？ \\
+\bottomrule
+\end{tabular}
+\caption{综合项目选题四原则}
+\end{table}
+
+\subsection{三种实现路径概览}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llp{8cm}}
+\toprule
+\textbf{路径} & \textbf{适用场景} & \textbf{特点} \\
+\midrule
+Quick Dev模式 & 小型功能、原型验证、Bug修复 & 跳过完整BMAD流程，AI直接分析需求生成简化规格后编码 \\
+标准BMAD流程 & 中型项目、教学实验 & 走完B-M-A-D-V五阶段，产出完整文档+代码 \\
+团队协作模式 & 大型综合项目、期末大作业 & 多人分工，每人负责不同Epic，Git协作管理 \\
+\bottomrule
+\end{tabular}
+\caption{三种实现路径对比}
+\end{table}
+
+% ============================================================
+\section{本章小结}
+% ============================================================
+
+本章系统介绍了BMAD方法论与综合项目开发实践：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{BMAD理论框架}：AI驱动的敏捷开发方法论，核心是``让AI扮演专业角色，人类负责决策审核''，通过B-M-A-D-V五阶段覆盖从需求到验证的完整流程
+
+  \item \textbf{四阶段工作流}：分析/构思$\to$规划/设计$\to$方案细化$\to$实施/交付，每个阶段有明确的AI角色、输入和产出物
+
+  \item \textbf{银行CRM系统完整开发}：通过12个递进式实验，完整走通了从BMAD安装、PRD创建、架构设计、UX设计、Epic拆分、Sprint规划、代码实现、数据库适配、功能测试、CNB推送到Vercel部署的全流程，产出了一个具备客户管理、贷款申请、即申即贷等功能的完整CRM系统
+
+  \item \textbf{其他综合项目}：智能客服系统的开发要点与RAG范式，综合项目选题四原则与三种实现路径
+
+  \item \textbf{关键提示词汇总}：提供了完整的提示词序列，按顺序执行即可复现全部实验流程
+\end{enumerate}
+
+BMAD的精髓不在于五个阶段的名称，而在于\textbf{人机协作的新范式}——这种模式将程序员从"逐行编写代码"的执行者，转变为"描述需求、审核产出、协调AI团队"的管理者。掌握这一范式，是AI时代金融科技人才的核心竞争力。
+
+% ============================================================
+\section{关键术语}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{术语} & \textbf{定义} \\
+\midrule
+BMAD & Breakthrough Method of Agile AI-Driven Development，AI驱动敏捷开发方法论 \\
+PRD & Product Requirements Document，产品需求文档 \\
+Epic & 史诗，一组相关用户故事的集合 \\
+Story & 用户故事，用"As a [角色], I want [功能], so that [价值]"格式表达需求 \\
+MoSCoW & 功能优先级分类法：Must/Should/Could/Won't \\
+Sprint & 冲刺，敏捷开发中的短周期迭代单元 \\
+Quick Dev & BMAD的快速开发模式，跳过完整流程直接编码 \\
+Vercel & 面向前端框架的云端部署平台 \\
+CNB & cnb.cool代码托管平台 \\
+JWT & JSON Web Token，无状态认证令牌 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{思考题}
+% ============================================================
+
+\begin{exercisebox}[思考与讨论]
+\begin{enumerate}[leftmargin=2em]
+  \item BMAD的"人类决策，AI执行"理念在实践中可能遇到哪些挑战？当AI的产出与你的预期不符时，应该如何调整提示词和上下文？
+
+  \item 本章CRM实验中的Sprint依赖关系（线性递进）如何影响交付节奏？如果改为并行Sprint，需要满足什么条件？
+
+  \item 数据库降级方案（内存Map）在什么场景下是合理的？生产环境应如何改进？密码哈希用Base64替代bcrypt有哪些安全风险？
+
+  \item 即申即贷的AI预审模块，需要哪些数据输入？如何设计评分模型？信用分阈值应如何确定？
+
+  \item CNB的OAuth登录和PAT令牌两种认证方式，各有什么优缺点？如果要将后端也部署到云端（而非仅前端部署Vercel），有哪些方案？
+
+  \item 如果将BMAD应用于一个你熟悉的非软件项目（如组织一次学术会议、策划一次金融产品营销活动），五个阶段分别对应什么工作？
+
+  \item 本章提到BMAD"不适合高安全要求的核心银行系统"。如果要开发一个真实的银行核心交易系统，应该在BMAD的哪些阶段增加哪些额外的工程环节？
+\end{enumerate}
+\end{exercisebox}
+
+% ============================================================
+\section{参考资源}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{资源} & \textbf{链接} \\
+\midrule
+BMAD Method 官网 & \url{https://bmadcodes.com/} \\
+BMAD GitHub & \url{https://github.com/bmad-code-org/BMAD-METHOD} \\
+BMAD 安装指南 & \url{https://docs.bmad-method.org/how-to/install-bmad/} \\
+Express.js 最佳实践 & \url{https://expressjs.com/} \\
+Vite 部署指南 & \url{https://vitejs.dev/guide/build.html} \\
+Vercel CLI 文档 & \url{https://vercel.com/docs/cli} \\
+CNB 平台文档 & \url{https://docs.cnb.cool/} \\
+JWT 安全最佳实践 & \url{https://datatracker.ietf.org/doc/html/rfc7519} \\
+\bottomrule
+\end{tabular}
+\caption{第7章参考资源}
+\end{table}
