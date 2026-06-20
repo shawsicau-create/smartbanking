@@ -20,7 +20,7 @@ main:
         - name: 安装 pnpm
           script: corepack enable && corepack prepare pnpm@latest --activate
         - name: 安装依赖
-          script: cd webversion && pnpm install --frozen-lockfile
+          script: cd webversion && pnpm install
         - name: 构建网站
           script: cd webversion && pnpm build
         - name: 部署到 Vercel
