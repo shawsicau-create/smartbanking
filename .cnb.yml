@@ -1,0 +1,29 @@
+# CNB 云原生构建配置 —— webversion 自动部署到 Vercel
+# 文档: https://docs.cnb.cool/zh/build/configuration.html
+#
+# 前置步骤（仅需执行一次）:
+#   1. 在 https://cnb.cool 创建一个「密钥仓库」(如 xiaosicau/secrets)
+#   2. 在密钥仓库中创建文件 vercel.yml，内容为:
+#        VERCEL_TOKEN: "你的Vercel API Token"
+#      (在 https://vercel.com/account/tokens 创建 Token)
+#   3. 修改下方 imports 中的仓库地址为你的密钥仓库地址
+
+main:
+  push:
+    - name: deploy-webversion-to-vercel
+      docker:
+        image: node:22
+      imports:
+        # 引用密钥仓库中的 Vercel Token（修改为你的密钥仓库地址）
+        - https://cnb.cool/xiaosicau/secrets/-/blob/main/vercel.yml
+      stages:
+        - name: 安装 pnpm
+          script: corepack enable && corepack prepare pnpm@latest --activate
+        - name: 安装依赖
+          script: cd webversion && pnpm install --frozen-lockfile
+        - name: 构建网站
+          script: cd webversion && pnpm build
+        - name: 部署到 Vercel
+          script: |
+            cd webversion
+            npx vercel deploy --prod --token=$VERCEL_TOKEN --yes

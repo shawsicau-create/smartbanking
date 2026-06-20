@@ -19,4 +19,7 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
-.vercel
+
+# Vercel: 只保留 project.json（用于CI部署），忽略其他
+.vercel/*
+!.vercel/project.json
