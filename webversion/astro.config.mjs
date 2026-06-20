@@ -68,6 +68,7 @@ export default defineConfig({
 						{ label: 'BMAD代码云端部署', slug: 'labs/bmad-deploy' },
 						{ label: 'BMAD方法论实战', slug: 'labs/bmad-practice' },
 						{ label: 'CNB同步项目库', slug: 'labs/cnb-sync' },
+						{ label: 'CNB流水线自动部署', slug: 'labs/vercel-deploy' },
 					],
 				},
 			],
