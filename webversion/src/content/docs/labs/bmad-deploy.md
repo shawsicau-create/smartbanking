@@ -325,19 +325,29 @@ PinMe 的核心优势：
   你：我已经完成了智能排队系统的开发，现在请帮我部署到云端
 
   AI：我来帮你部署。首先检查一下环境...
-      ✓ Node.js v20.x 已安装
-      ✓ PinMe CLI 已安装
-      ✓ 已登录 PinMe 账户
+```text
+✓ Node.js v20.x 已安装
+✓ PinMe CLI 已安装
+✓ 已登录 PinMe 账户
+```
 
-      发现项目中有 dist/ 目录，包含构建好的前端文件。
-      正在上传到 IPFS...
+```text
+发现项目中有 dist/ 目录，包含构建好的前端文件。
+正在上传到 IPFS...
+```
 
-      执行命令：pinme upload dist
+```text
+执行命令：pinme upload dist
+```
 
-      ✓ 上传完成！
-      访问链接：https://pinme.eth.limo/#/preview/U2FsdGVkX1...
+```
+✓ 上传完成！
+访问链接：https://pinme.eth.limo/#/preview/U2FsdGVkX1...
+```
 
-      你可以点击上面的链接在浏览器中查看你的排队系统。
+```text
+你可以点击上面的链接在浏览器中查看你的排队系统。
+```
 
 ========================================
 验收清单（BMAD + 云端部署）
@@ -383,25 +393,31 @@ PinMe 的核心优势：
   类别          命令                                  说明
   ──────────  ──────────────────────────────────────  ────────────────────────────
   安装认证      npm install -g pinme                  全局安装 CLI
-               pinme login                            登录账户
-               pinme logout                           退出登录
-               pinme set-appkey <AppKey>              使用 AppKey 认证（自动化场景）
+| pinme login | 登录账户 |
+|---|---|
+| pinme logout | 退出登录 |
+| pinme set-appkey <AppKey> | 使用 AppKey 认证（自动化场景） |
 
   静态部署      pinme upload dist                     上传 dist 目录到 IPFS
-               pinme upload dist --domain my-app      上传并绑定 PinMe 子域名
-               pinme upload dist --domain a.com       上传并绑定自定义 DNS 域名
+| pinme upload dist --domain my-app | 上传并绑定 PinMe 子域名 |
+|---|---|
+| pinme upload dist --domain a.com | 上传并绑定自定义 DNS 域名 |
 
   全栈项目      pinme create <name>                   创建全栈项目
-               pinme save                             全量部署（Worker + DB + 前端）
-               pinme save --domain my-app             全量部署并绑定域名
-               pinme update-worker                    只更新后端 Worker
-               pinme update-db                        只更新数据库
-               pinme update-web                       只更新前端
+| pinme save | 全量部署（Worker + DB + 前端） |
+|---|---|
+| pinme save --domain my-app | 全量部署并绑定域名 |
+| pinme update-worker | 只更新后端 Worker |
+| pinme update-db | 只更新数据库 |
+| pinme update-web | 只更新前端 |
 
   管理          pinme list                            查看上传历史
-               pinme my-domains                       查看已绑定域名
-               pinme wallet                           查看钱包余额
-               pinme delete <name>                    删除项目
+| pinme my-domains | 查看已绑定域名 |
+|---|---|
+| pinme wallet | 查看钱包余额 |
+| pinme delete <name> | 删除项目 |
 
   信息          pinme --version                       查看版本
-               pinme help                             查看帮助
+```text
+| pinme help | 查看帮助 |
+```

@@ -40,17 +40,19 @@ description: '从零到部署的完整全栈工程实战指南'
 
 ```mermaid
 graph LR
-    A[实验一: BMAD安装] --> B[实验二: PRD创建]
-    B --> C[实验三: 架构设计]
-    C --> D[实验四: UX设计]
-    D --> E[实验五: Epics与Stories]
-    E --> F[实验六: Sprint规划]
-    F --> G[实验七: Sprint 1实现]
-    G --> H[实验八: Sprint 2-3迭代]
-    H --> I[实验九: 数据库适配]
-    I --> J[实验十: 测试验证]
-    J --> K[实验十一: Git推送CNB]
-    K --> L[实验十二: Vercel部署]
+```text
+A[实验一: BMAD安装] --> B[实验二: PRD创建]
+B --> C[实验三: 架构设计]
+C --> D[实验四: UX设计]
+D --> E[实验五: Epics与Stories]
+E --> F[实验六: Sprint规划]
+F --> G[实验七: Sprint 1实现]
+G --> H[实验八: Sprint 2-3迭代]
+H --> I[实验九: 数据库适配]
+I --> J[实验十: 测试验证]
+J --> K[实验十一: Git推送CNB]
+K --> L[实验十二: Vercel部署]
+```
 ```
 
 ---
@@ -279,22 +281,24 @@ BMAD 生成 `_bmad-output/prd.md`，包含 **8 大核心章节**：
 
 ```mermaid
 graph TB
-    subgraph 前端
-        A[React + Vite] --> B[页面路由]
-        B --> C[登录/注册]
-        B --> D[客户仪表盘]
-        B --> E[贷款申请]
-        B --> F[快速贷款]
-    end
-    subgraph 后端
-        G[Express API] --> H[认证中间件 JWT]
-        G --> I[客户路由]
-        G --> J[贷款路由]
-        G --> K[审批路由]
-        G --> L[抵质押品路由]
-        G --> M[快速贷款路由]
-    end
-    C & D & E & F -->|HTTP API| G
+```text
+subgraph 前端
+A[React + Vite] --> B[页面路由]
+B --> C[登录/注册]
+B --> D[客户仪表盘]
+B --> E[贷款申请]
+B --> F[快速贷款]
+end
+subgraph 后端
+G[Express API] --> H[认证中间件 JWT]
+G --> I[客户路由]
+G --> J[贷款路由]
+G --> K[审批路由]
+G --> L[抵质押品路由]
+G --> M[快速贷款路由]
+end
+C & D & E & F -->|HTTP API| G
+```
 ```
 
 **技术栈决策**：
@@ -404,9 +408,11 @@ Story 1.1: 用户注册
 
 ```mermaid
 graph LR
-    S1[Sprint 1<br/>客户基础] --> S2[Sprint 2<br/>贷款核心]
-    S2 --> S3[Sprint 3<br/>即申即贷]
-    S3 --> S4[Sprint 4<br/>增值服务]
+```text
+S1[Sprint 1<br/>客户基础] --> S2[Sprint 2<br/>贷款核心]
+S2 --> S3[Sprint 3<br/>即申即贷]
+S3 --> S4[Sprint 4<br/>增值服务]
+```
 ```
 
 ---
@@ -520,13 +526,15 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
+```
+port: 5173,
+proxy: {
+'/api': {
+target: 'http://localhost:3001',
+changeOrigin: true,
+},
+},
+```
   },
 });
 ```
@@ -572,11 +580,13 @@ cd frontend && npm run dev
 
 ```mermaid
 graph LR
-    A[客户申请] --> B[AI预审<br/>信用评分+收入验证]
-    B -->|通过| C[自动审批<br/>额度计算]
-    B -->|拒绝| D[转人工审核]
-    C --> E[实时放款]
-    D --> F[人工决策]
+```text
+A[客户申请] --> B[AI预审<br/>信用评分+收入验证]
+B -->|通过| C[自动审批<br/>额度计算]
+B -->|拒绝| D[转人工审核]
+C --> E[实时放款]
+D --> F[人工决策]
+```
 ```
 
 ### 8.4 测试账号初始化
@@ -606,12 +616,14 @@ GET /api/test/init  → 初始化4个测试账号
 
 ```mermaid
 graph TD
-    A[启动后端] --> B{数据库连接?}
-    B -->|PostgreSQL可用| C[正常模式]
-    B -->|连接失败 ECONNREFUSED| D[错误: pg:5432拒绝]
-    D --> E[尝试安装SQLite]
-    E -->|npm install失败 EPERM| F[权限/锁冲突]
-    F --> G[降级方案: 内存Map]
+```
+A[启动后端] --> B{数据库连接?}
+B -->|PostgreSQL可用| C[正常模式]
+B -->|连接失败 ECONNREFUSED| D[错误: pg:5432拒绝]
+D --> E[尝试安装SQLite]
+E -->|npm install失败 EPERM| F[权限/锁冲突]
+F --> G[降级方案: 内存Map]
+```
 ```
 
 ### 9.3 降级方案实现
@@ -628,9 +640,11 @@ const mockData = {
 
 const pool = {
   query: async (sql, params) => {
-    console.log('SQL (模拟):', sql.substring(0, 50));
-    // 模拟查询逻辑
-    return { rows: [] };
+```
+console.log('SQL (模拟):', sql.substring(0, 50));
+// 模拟查询逻辑
+return { rows: [] };
+```
   },
 };
 
@@ -933,16 +947,18 @@ vercel --prod --yes
 
 ```mermaid
 graph TB
-    C[customers<br/>客户表] --> LA[loan_applications<br/>贷款申请]
-    C --> CS[credit_scores<br/>信用评分]
-    C --> CT[customer_tiers<br/>客户等级]
-    LA --> CO[collaterals<br/>抵质押品]
-    LA --> AP[approvals<br/>审批记录]
-    LA --> RP[repayments<br/>还款记录]
-    LP[loan_products<br/>贷款产品] --> LA
-    PA[partners<br/>合作伙伴] --> C
-    NO[notifications<br/>通知表] --> C
-    AL[audit_logs<br/>审计日志] --> C
+```text
+C[customers<br/>客户表] --> LA[loan_applications<br/>贷款申请]
+C --> CS[credit_scores<br/>信用评分]
+C --> CT[customer_tiers<br/>客户等级]
+LA --> CO[collaterals<br/>抵质押品]
+LA --> AP[approvals<br/>审批记录]
+LA --> RP[repayments<br/>还款记录]
+LP[loan_products<br/>贷款产品] --> LA
+PA[partners<br/>合作伙伴] --> C
+NO[notifications<br/>通知表] --> C
+AL[audit_logs<br/>审计日志] --> C
+```
 ```
 
 ---

@@ -147,9 +147,11 @@ curl http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer omlx-local-key" \
   -d '{
-    "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
-    "messages": [{"role": "user", "content": "你好，请用一句话介绍智慧银行"}],
-    "max_tokens": 200
+```
+"model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+"messages": [{"role": "user", "content": "你好，请用一句话介绍智慧银行"}],
+"max_tokens": 200
+```
   }'
 ```
 
@@ -276,17 +278,21 @@ brew services list           # 查看所有服务状态
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="omlx-local-key"
+```
+base_url="http://localhost:8000/v1",
+api_key="omlx-local-key"
+```
 )
 
 response = client.chat.completions.create(
-    model="mlx-community/Qwen2.5-7B-Instruct-4bit",
-    messages=[
-        {"role": "system", "content": "你是一个智慧银行领域的助手。"},
-        {"role": "user", "content": "请简述商业银行数字化转型的三个关键方向。"}
-    ],
-    max_tokens=500
+```
+model="mlx-community/Qwen2.5-7B-Instruct-4bit",
+messages=[
+{"role": "system", "content": "你是一个智慧银行领域的助手。"},
+{"role": "user", "content": "请简述商业银行数字化转型的三个关键方向。"}
+],
+max_tokens=500
+```
 )
 
 print(response.choices[0].message.content)
