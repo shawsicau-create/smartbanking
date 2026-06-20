@@ -8,6 +8,12 @@
 
 全书共 **8 章**，分为基础模块、进阶模块和综合模块三个层次，支持 16/32/48/64 学时四种教学方案灵活组合。
 
+## 🌐 课程在线网站
+
+> **在线阅读（含交互式目录、公式渲染、表格、实验手册）：** [https://webversion-alpha.vercel.app](https://webversion-alpha.vercel.app)
+
+网站由 Astro + Starlight 构建，源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)，通过云原生流水线（`.cnb.yml`）自动部署到 Vercel，每次 `git push` 后约 1-2 分钟自动更新。
+
 ## 文件结构
 
 ```
