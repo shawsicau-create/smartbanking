@@ -1,0 +1,270 @@
+---
+title: '使用CNB同步项目库'
+description: '使用 CNB 平台同步和管理项目代码库'
+---
+
+实验步骤：环境准备与CNB项目同步
+
+本实验帮助学生完成开发环境搭建，并将课程仓库同步到个人CNB空间。
+
+========================================
+第一部分：环境准备
+========================================
+
+一、安装 Trae CN
+
+(1) 访问 https://www.trae.cn/ide/download
+(2) 根据你的电脑系统选择对应版本下载：
+    - Windows 用户：点击 Windows (x64) 下载
+    - macOS 用户：点击 macOS (Apple Silicon) 下载
+(3) 安装完成后打开，首次启动选择「简体中文」
+(4) 使用手机号登录
+
+----------------------------------------
+
+二、安装基础运行时
+
+winget 是 Windows 10/11 自带的包管理器。如果你的电脑上没有 winget，请使用下方「方式二」从官网下载安装。
+
+如何打开 PowerShell（管理员）：右键点击屏幕左下角「开始」按钮 → 选择「终端(管理员)」或「Windows PowerShell(管理员)」
+
+【方式一】winget 一键安装（Windows 10/11 推荐）
+
+在打开的 PowerShell（管理员）窗口中，逐条复制粘贴执行以下命令：
+
+  安装 Python 3.12
+  winget install --id Python.Python.3.12 -e --source winget
+
+  安装 Node.js LTS（长期支持版，不要选 Current）
+  winget install --id OpenJS.NodeJS.LTS -e --source winget
+
+  安装 Git
+  winget install --id Git.Git -e --source winget
+
+【方式二】官网下载安装（备选方案，适用于所有 Windows 版本）
+
+  软件         下载地址                           安装注意事项
+  Python 3.12  https://www.python.org/downloads/   务必勾选「Add Python to PATH」
+  Node.js LTS  https://nodejs.org/                 选 LTS 版本，一路 Next
+  Git          https://git-scm.com/download/win    务必勾选「Add Git to PATH」
+
+macOS 用户：
+
+  如果终端提示 brew: command not found，说明尚未安装 Homebrew。先在终端执行：
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  brew install python@3.12 node git
+
+⚠️ 安装完成后，必须关闭当前终端窗口，重新打开一个新终端，才能识别 python、node、git 命令。
+
+----------------------------------------
+
+三、安装 Python 包管理工具
+
+前提：确保第二步中的三个软件已安装完成，并且已重启终端（关闭再重新打开）。
+
+  升级 pip
+  python -m pip install --upgrade pip
+
+  安装 uv（MCP 服务运行必需）
+  pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+  安装课程依赖库
+  pip install flask pandas openpyxl pypdf -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+----------------------------------------
+
+四、安装 CNB CLI 与 Skills
+
+前提：确保 node --version 有输出。如果报 command not found，回到第二步确认 Node.js 已安装并重启终端。
+
+  安装 CNB 命令行工具（管理仓库、组织等）
+  npm install @cnbcool/cnb-cli -g
+
+  安装 Skills 技能管理工具（实验三 Skill 体系的前置依赖）
+  npm install skills -g
+
+  添加 CNB Skill（增强 IDE 中的 AI 功能）
+  npx skills add https://cnb.cool/cnb/skills/cnb-skill.git --agent trae -y --copy
+
+----------------------------------------
+
+五、验证环境
+
+在 Trae CN 终端（按 Ctrl + ` 打开）中逐条执行：
+
+  python --version     应显示 3.12.x
+  node --version       应显示 v20.x 或更高
+  git --version        应显示 git version x.x
+  uvx --version        应显示版本号
+  cnb --version        应显示版本号
+  skills list          应显示已安装的技能列表（含 cnb-api 等）
+
+如果某条命令报 command not found，说明该软件未正确安装或未加入 PATH。请回到对应步骤重新安装，然后重启终端再验证。
+
+========================================
+第二部分：CNB 项目同步
+========================================
+
+步骤 1：注册 CNB 账户并创建访问令牌
+
+(1) 浏览器打开 https://cnb.cool
+(2) 点击「注册」→ 微信扫码登录
+(3) 登录后，点击右上角头像 →「个人设置」→ 左侧菜单「访问令牌」
+(4) 在「令牌名」处填写：smartbanking
+(5) 授权范围设置（两种方式任选其一）：
+    方式 A（推荐）：在「常见场景」区域勾选「Git 客户端凭据」
+    方式 B：在下方「授权范围」中找到 repo-code → 选择「读写」
+(6) 点击页面底部「创建」按钮
+(7) 立即复制 Token
+
+⚠️ 重要：Token 仅显示一次，关闭页面后无法再次查看！
+建议将 Token 粘贴到记事本或备忘录中保存。
+
+----------------------------------------
+
+步骤 2：在 CNB 新建空仓库
+
+(1) 登录后点击页面左上角「+」按钮 → 选择「创建仓库」
+(2) 「仓库归属」改为你的个人命名空间（点击下拉框选择自己的用户名)
+(3) 「仓库名称」填写：smartbanking
+(4) 「公开性」选择：公开（默认即是公开）
+(5) 点击「创建」按钮
+
+----------------------------------------
+
+步骤 3：登录 CNB CLI
+
+在 Trae CN 终端执行：
+
+  cnb login
+
+终端会显示一个授权链接和一个 user_code（如 bUp4WV3u），并自动打开浏览器。
+
+操作步骤：
+(1) 终端显示链接后，浏览器会自动打开授权页面
+(2) 如果浏览器没有自动打开，手动复制终端中的链接到浏览器
+(3) 在授权页面确认 user_code 与终端显示的一致，点击「授权」
+(4) 终端显示登录成功信息即可
+
+如果 cnb login 报错或超时，可以跳过此步骤，在步骤 6 中改用 Token URL 方式推送（见步骤 6 下方说明）。
+
+----------------------------------------
+
+步骤 4：克隆课程仓库到本地
+
+  克隆教师仓库（完整课程资料）
+  git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
+  cd smartbanking-work
+
+----------------------------------------
+
+步骤 5：配置 Git 用户信息
+
+  替换为你的真实姓名和邮箱（用于提交记录显示）
+  git config --global user.name "你的姓名"
+  git config --global user.email "你的邮箱@example.com"
+
+----------------------------------------
+
+步骤 6：关联并推送到你的 CNB 仓库
+
+  添加你自己的 CNB 仓库为远程地址
+  将 <你的用户名> 替换为你的 CNB 用户名（登录后首页可见）
+  git remote add myrepo https://cnb.cool/<你的用户名>/smartbanking.git
+
+  推送所有代码到你的 CNB 仓库
+  git push myrepo main
+
+如果步骤 3 中 cnb login 成功，此步骤无需再输入密码。
+
+如果 git push 提示输入用户名密码或认证失败，改用以下命令（将 <你的Token> 替换为步骤 1 保存的令牌）：
+  git remote set-url myrepo https://cnb:<你的Token>@cnb.cool/<你的用户名>/smartbanking.git
+  git push myrepo main
+
+----------------------------------------
+
+步骤 7：验证同步结果
+
+(1) 打开浏览器访问 https://cnb.cool/你的用户名/smartbanking
+(2) 确认页面显示以下目录结构：
+
+  smartbanking/
+  ├── .agents/                     # Qoder AI 技能配置
+  ├── 智慧银行实验教程chapters/    # 教程主体（12章 + 附录）
+  │   ├── 智慧银行实验教程.tex
+  │   ├── preface.tex ~ ch12.tex
+  │   ├── appendix.tex
+  │   └── ...
+  ├── 实验讲义 /                   # 实验讲义文档
+  ├── .gitignore
+  ├── cnb-smartbanking.png
+  └── README.md
+
+========================================
+附加练习：安装 PPT Master（AI 生成 PPT 工具）
+========================================
+
+PPT Master 是一个开源项目，可以用 AI 从任意文档生成原生可编辑的 PPT。
+
+项目地址（任选其一，优先选国内镜像，速度快）：
+  GitHub（官方）：https://github.com/hugohe3/ppt-master
+  AtomGit（国内镜像）：https://atomgit.com/hugohe3/ppt-master
+  Gitee AI（国内）：https://ai.gitee.com/apps/66b932ba-9844-4184-adf6-aa567b2b8788
+
+安装步骤：
+
+(1) 克隆项目到本地（国内推荐用 AtomGit）
+  方式 A（AtomGit 国内镜像，推荐）：
+    git clone https://atomgit.com/hugohe3/ppt-master.git
+  方式 B（GitHub 官方）：
+    git clone https://github.com/hugohe3/ppt-master.git
+  方式 C（无需 Git，直接下载 ZIP）：
+    AtomGit：打开 https://atomgit.com/hugohe3/ppt-master → 点击「克隆/下载」→「下载 ZIP」
+    GitHub：打开 https://github.com/hugohe3/ppt-master → 点击「Code」→「Download ZIP」
+  进入目录：
+    cd ppt-master
+
+(2) 安装 Python 依赖
+  pip install -r requirements.txt
+
+(3) 验证安装
+  python -c "import pptx; print('python-pptx 版本:', pptx.__version__)"
+
+(4) 浏览示例（可选）
+  打开 examples/ 目录，查看各种风格的 PPT 示例
+  也可以在线预览：https://hugohe3.github.io/ppt-master/
+
+使用方法：在 Trae CN 中打开 ppt-master 项目，将源材料放入 projects/ 目录，
+然后在 AI 对话中告诉它要把什么内容做成 PPT 即可。
+
+========================================
+验收清单（1A）
+========================================
+
+完成以下全部检查项，截图保存作为实验报告交付物：
+
+[ ] Trae CN 已安装并登录
+[ ] python --version >= 3.10
+[ ] node --version >= v20
+[ ] git --version 有输出
+[ ] cnb --version 有输出
+[ ] cnb login 登录成功
+[ ] 项目已成功推送到自己的 CNB 仓库
+[ ] 在 CNB 网页能看到项目文件列表
+
+========================================
+常见问题速查
+========================================
+
+  报错信息                            原因                          解决方法
+  command not found（pip/node等）     安装后未重启终端              关闭终端窗口，重新打开再试。仍报错则回到第二步确认安装
+  cnb login 超时                      网络问题或 Token 错误         检查网络；确认 Token 未过期；或跳过 cnb login，在步骤6改用 Token URL
+  git push 要求输入密码               cnb login 未生效或未执行      改用 Token URL：git remote set-url myrepo https://cnb:<Token>@cnb.cool/<用户名>/smartbanking.git
+  Authentication failed               Token 未复制完整或已过期      回步骤1重新创建令牌，注意勾选 repo-code:rw 权限
+  403 Forbidden                       推送的是 origin（教师仓库）   确认执行 git push myrepo main
+  updates were rejected               自己的仓库已有内容（非空）    回步骤2删除仓库重建空仓库；或执行 git push myrepo main --force
+  skills add 报错                     npm 镜像问题                  执行 npm config set registry https://registry.npmmirror.com 后重试
+  uvx: command not found              uv 未安装                     运行 pip install uv
+  Token 忘记保存                      Token 仅显示一次              回步骤1重新创建新令牌
+  中文文件名乱码                      终端编码非 UTF-8              Trae CN 设置中将终端编码改为 UTF-8

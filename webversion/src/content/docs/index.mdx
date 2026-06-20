@@ -1,0 +1,86 @@
+---
+title: 智慧银行实验教程
+description: AI驱动的金融科技实践
+template: splash
+hero:
+  tagline: AI驱动的金融科技实践 —— 四川农业大学经济学院
+  actions:
+    - text: 开始阅读
+      link: /preface/
+      icon: right-arrow
+      variant: primary
+    - text: 第1章 绪论
+      link: /ch01/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/xiaosicau/smartbanking
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## 课程简介
+
+本书定位于金融学专业本科生的**AI工具实践教材**，采用"低代码、高集成"的技术路线——学生不需要从零编写AI程序，而是通过配置IDE、接入MCP协议、编写Skill的方式，像搭积木一样组装出面向金融业务的智能系统。
+
+## 章节导航
+
+<CardGrid stagger>
+	<Card title="前言" icon="document" href="/preface/">
+		编者前言、教学路线图与能力矩阵
+	</Card>
+	<Card title="第1章 绪论" icon="seti:javascript" href="/ch01/">
+		AI驱动的银行数字化转型全景
+	</Card>
+	<Card title="第2章 环境搭建" icon="seti:settings" href="/ch02/">
+		IDE安装配置、MCP服务器接入
+	</Card>
+	<Card title="第3章 MCP协议" icon="seti:api" href="/ch03/">
+		MCP架构原理与服务器开发
+	</Card>
+</CardGrid>
+
+<CardGrid stagger>
+	<Card title="第4章 Skill体系" icon="seti:python" href="/ch04/">
+		Skill编写规范与金融实例
+	</Card>
+	<Card title="第5章 CLI工具实战" icon="seti:terminal" href="/ch05/">
+		CNB/Skills CLI、AI编程助手
+	</Card>
+	<Card title="第6章 金融数据分析" icon="seti:chart" href="/ch06/">
+		面板回归、时间序列、因果推断
+	</Card>
+	<Card title="第7章 BMAD综合项目" icon="seti:rocket" href="/ch07/">
+		CRM系统12个完整实验
+	</Card>
+</CardGrid>
+
+<CardGrid stagger>
+	<Card title="第8章 综合项目与创新" icon="seti:lightbulb" href="/ch08/">
+		项目选题、团队管理、竞赛指南
+	</Card>
+	<Card title="附录" icon="seti:book" href="/appendix/">
+		环境配置速查与模板库
+	</Card>
+	<Card title="BMAD-CRM实验手册" icon="seti:lab" href="/labs/bmad-crm/">
+		从零到部署的完整全栈实战
+	</Card>
+	<Card title="本地大模型部署" icon="seti:server" href="/labs/local-llm-deploy/">
+		oMLX + Chatbox 本地部署指南
+	</Card>
+</CardGrid>
+
+## 教学特色
+
+:::tip[双线并行]
+全书贯穿两条主线——**AI工具线**（IDE操作、MCP协议、Skill编写、BMAD方法论）和**金融业务线**（零售银行、公司银行、风控合规、数据分析），每一章都是"工具+场景"的有机融合。
+:::
+
+:::note[三层递进]
+全书分为**基础模块**（第1—5章）、**进阶模块**（第6章）和**综合模块**（第7—8章），形成"认知→应用→创造"的能力递进路径。
+:::
+
+:::tip[理论实操并重]
+每一章均包含理论讲解和实操练习两部分。理论部分提供必要的知识框架，实操部分给出分步操作指引，确保"学了就能用、用了就有效"。
+:::
