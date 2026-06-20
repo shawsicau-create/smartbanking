@@ -1,0 +1,55 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'webversion/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'webversion/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    
+    - name: Install pnpm
+      run: corepack enable && corepack prepare pnpm@latest
+    
+    - name: Cache pnpm dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('webversion/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+    
+    - name: Install dependencies
+      run: cd webversion && pnpm install
+    
+    - name: Build
+      run: cd webversion && pnpm build
+    
+    - name: Deploy to Vercel
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        cd webversion
+        npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: webversion-build
+        path: webversion/dist/
+        retention-days: 30

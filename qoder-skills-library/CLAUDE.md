@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A curated library of **165 AI skills** for QoderWork, oriented around economics academic research. Each skill is a `SKILL.md` file that teaches an AI agent how to perform a specific task. The repo is pure content — no build system, no tests, no linting.
+A curated library of **175 AI skills** for QoderWork, oriented around economics academic research. Each skill is a `SKILL.md` file that teaches an AI agent how to perform a specific task. The repo is pure content — no build system, no tests, no linting.
 
 ## Repository Layout
 
@@ -18,9 +18,9 @@ NN-category-name/       # 20 numbered directories (01-ideation through 20-messag
     examples/           # Optional — example data or sub-skills
 _archived/              # Deprecated skills (frontmatter `disable: true`)
 meta/
-  _index.yaml           # Master index of all 165 skills — must stay in sync
+  _index.yaml           # Master index of all 175 skills — must stay in sync
 SKILL_TEMPLATE.md       # Canonical template for new skills
-mcp_config.json         # MCP server configs (email, playwright, maps, Stata, etc.)
+.mcp.json               # MCP server configs (email, playwright, maps, Stata, etc.)
 ```
 
 ## SKILL.md Frontmatter Schema

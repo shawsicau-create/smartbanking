@@ -21,7 +21,7 @@
                 "@amap/amap-maps-mcp-server"
             ],
             "env": {
-                "AMAP_MAPS_API_KEY": "63f93d2223f744affebade9ef7982732"
+                "AMAP_MAPS_API_KEY": "${AMAP_MAPS_API_KEY}"
             }
         },
         "stata-mcp": {

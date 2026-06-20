@@ -3,6 +3,11 @@
 Thumbs.db
 .~lock.*
 
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
 # LaTeX 编译中间文件
 *.aux
 *.log
@@ -19,8 +24,12 @@ Thumbs.db
 *.snm
 *.vrb
 
-# 依赖锁定
-*.lock
+# 依赖锁定 (selective)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+Pipfile.lock
+poetry.lock
 
 # 测试文件
 test_ch04.pdf

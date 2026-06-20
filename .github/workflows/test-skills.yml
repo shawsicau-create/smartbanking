@@ -1,0 +1,80 @@
+name: Test Skills
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'qoder-skills-library/**'
+      - '.agents/skills/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'qoder-skills-library/**'
+      - '.agents/skills/**'
+
+jobs:
+  test-skills:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        skill:
+          - finance-news
+          - nsfc-justification-writer
+          - transfer_old_latex_to_new
+          - cli-anything-libreoffice
+          - make_latex_model
+        python-version: ['3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        
+        # 安装技能特定依赖
+        if [ -f "qoder-skills-library/12-finance/finance-news/requirements.txt" ]; then
+          pip install -r qoder-skills-library/12-finance/finance-news/requirements.txt
+        fi
+        if [ -f "qoder-skills-library/12-finance/finance-news/requirements-test.txt" ]; then
+          pip install -r qoder-skills-library/12-finance/finance-news/requirements-test.txt
+        fi
+        
+        if [ -f "qoder-skills-library/08-funding/nsfc-justification-writer/requirements.txt" ]; then
+          pip install -r qoder-skills-library/08-funding/nsfc-justification-writer/requirements.txt
+        fi
+        if [ -f "qoder-skills-library/08-funding/nsfc-justification-writer/requirements-test.txt" ]; then
+          pip install -r qoder-skills-library/08-funding/nsfc-justification-writer/requirements-test.txt
+        fi
+    
+    - name: Run tests
+      run: |
+        # 运行finance-news测试
+        if [ -d "qoder-skills-library/12-finance/finance-news/tests" ]; then
+          cd qoder-skills-library/12-finance/finance-news
+          pytest tests/ -v --cov=scripts --cov-report=term-missing
+          cd ../../..
+        fi
+        
+        # 运行nsfc-justification-writer测试
+        if [ -d "qoder-skills-library/08-funding/nsfc-justification-writer/tests" ]; then
+          cd qoder-skills-library/08-funding/nsfc-justification-writer
+          pytest tests/ -v --cov=core --cov-report=term-missing
+          cd ../../..
+        fi
+    
+    - name: Upload coverage reports
+      if: matrix.python-version == '3.12'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-${{ matrix.skill }}
+        path: |
+          qoder-skills-library/12-finance/finance-news/htmlcov/
+          qoder-skills-library/08-funding/nsfc-justification-writer/htmlcov/
+        retention-days: 30
