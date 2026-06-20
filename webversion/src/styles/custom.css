@@ -104,3 +104,24 @@ table {
 [data-callout] {
     border-radius: 8px;
 }
+
+/* KaTeX 数学公式样式 */
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5rem 0;
+}
+
+.katex-display::-webkit-scrollbar {
+    height: 4px;
+}
+
+.katex-display::-webkit-scrollbar-thumb {
+    background: var(--sl-color-gray-4);
+    border-radius: 2px;
+}
+
+/* 行内公式不换行 */
+.katex {
+    font-size: 1.05em;
+}

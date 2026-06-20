@@ -1,9 +1,12 @@
 ---
 title: 智慧银行实验教程
-description: AI驱动的金融科技实践
+description: AI驱动的金融科技实验课程网站 —— 数字经济系 肖诗顺 教授
 template: splash
 hero:
-  tagline: AI驱动的金融科技实践 —— 四川农业大学经济学院
+  tagline: AI驱动的金融科技实践 · 金融学专业实验课程网站
+  image:
+    file: ../../assets/logo.svg
+    alt: 智慧银行实验教程
   actions:
     - text: 开始阅读
       link: /preface/
@@ -12,13 +15,40 @@ hero:
     - text: 第1章 绪论
       link: /ch01/
       icon: right-arrow
-    - text: GitHub
-      link: https://github.com/xiaosicau/smartbanking
+    - text: 参考文献
+      link: /references/
+      icon: right-arrow
+    - text: CNB
+      link: https://cnb.cool/xiaosicau/smartbanking
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, Link } from '@astrojs/starlight/components';
+
+## 课程信息
+
+<CardGrid stagger>
+	<Card title="课程性质" icon="seti:book">
+		金融学专业**实验课程**，面向AI时代的金融科技实践
+	</Card>
+	<Card title="授课教师" icon="seti:user">
+		**肖诗顺 教授** · 数字经济系
+	</Card>
+</CardGrid>
+
+<CardGrid stagger>
+	<Card title="课程定位" icon="seti:rocket">
+		面向金融本科生的**AI工具实践教材**，低代码、高集成
+	</Card>
+	<Card title="参考学时" icon="seti:clock">
+		16 / 32 / 48 / 64 学时四种方案，灵活组合
+	</Card>
+</CardGrid>
+
+:::tip[关于本网站]
+本网站是《智慧银行实验教程》课程的**官方实验课程网站**，由**数字经济系 肖诗顺 教授**主讲并维护。全书以"低代码、高集成"为技术路线，学生通过配置IDE、接入MCP协议、编写Skill的方式，像搭积木一样组装出面向金融业务的智能系统。
+:::
 
 ## 课程简介
 
@@ -68,6 +98,21 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	</Card>
 	<Card title="本地大模型部署" icon="seti:server" href="/labs/local-llm-deploy/">
 		oMLX + Chatbox 本地部署指南
+	</Card>
+</CardGrid>
+
+<CardGrid stagger>
+	<Card title="参考文献" icon="seti:book" href="/references/">
+		行业报告、学术论文与教材文献汇总
+	</Card>
+	<Card title="BMAD代码云端部署" icon="seti:rocket" href="/labs/bmad-deploy/">
+		CNB推送与Vercel部署实战
+	</Card>
+	<Card title="BMAD方法论实战" icon="seti:lab" href="/labs/bmad-practice/">
+		BMAD方法论操作详解
+	</Card>
+	<Card title="CNB同步项目库" icon="seti:git" href="/labs/cnb-sync/">
+		开发环境搭建与项目同步
 	</Card>
 </CardGrid>
 

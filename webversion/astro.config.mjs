@@ -1,9 +1,15 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
+	markdown: {
+		remarkPlugins: [remarkMath],
+		rehypePlugins: [rehypeKatex],
+	},
 	integrations: [
 		starlight({
 			title: '智慧银行实验教程',
@@ -14,9 +20,12 @@ export default defineConfig({
 			},
 			defaultLocale: 'zh-CN',
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/xiaosicau/smartbanking' },
+				{ icon: 'github', label: 'CNB', href: 'https://cnb.cool/xiaosicau/smartbanking' },
 			],
-			customCss: ['./src/styles/custom.css'],
+			customCss: [
+				'katex/dist/katex.min.css',
+				'./src/styles/custom.css',
+			],
 			sidebar: [
 				{
 					label: '前言',
@@ -53,6 +62,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: '附录', slug: 'appendix' },
+						{ label: '参考文献', slug: 'references' },
 						{ label: 'BMAD-CRM实验手册', slug: 'labs/bmad-crm' },
 						{ label: '本地大模型部署', slug: 'labs/local-llm-deploy' },
 						{ label: 'BMAD代码云端部署', slug: 'labs/bmad-deploy' },
