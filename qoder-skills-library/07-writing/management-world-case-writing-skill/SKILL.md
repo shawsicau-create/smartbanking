@@ -1,17 +1,17 @@
 ---
-name: management-world-case-writing
-description: 用于《管理世界》期刊案例研究论文写作、修改、选题评估、理论贡献建构、研究方法呈现和审稿模拟。当用户提到《管理世界》、案例研究、质性研究、理论建构、审稿意见、论文修改、公共管理或管理学案例论文时，应优先使用本技能。
+name: management-world-case-writing-skill
+description: 《管理世界》案例研究论文写作、修改、选题评估、理论建构与审稿模拟。
 workflow_stage: writing
 compatibility:
-- claude-code
-- cursor
-- codex
+  - claude-code
+  - cursor
+  - codex
 author: Qoder Skills Library
 version: 1.0.0
 tags:
-- management
-- world
-- case
+  - management
+  - world
+  - case
 ---
 
 

@@ -1,6 +1,6 @@
 ---
 name: news-read
-description: Search today's news and auto-read aloud via edge-tts natural voice. Combines WebSearch with voice synthesis.
+description: "Search today's news and read aloud via edge-tts natural voice."
 description_zh: 搜索今日新闻并用自然语音播报，支持中英文切换和多种音色。
 workflow_stage: communication
 compatibility:

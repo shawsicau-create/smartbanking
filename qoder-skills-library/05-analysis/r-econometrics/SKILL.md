@@ -10,7 +10,7 @@ compatibility:
 author: Awesome Econ AI Community
 version: 1.0.0
 tags:
-  - R
+  - r
   - econometrics
   - causal-inference
   - fixest

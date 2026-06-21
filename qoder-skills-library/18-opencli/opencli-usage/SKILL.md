@@ -19,7 +19,7 @@ tags:
 - xiaohongshu
 - github
 - youtube
-- AI
+- ai
 - agent
 - automation
 workflow_stage: communication

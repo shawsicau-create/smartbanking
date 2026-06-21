@@ -1,6 +1,6 @@
 ---
 name: economist-analyst
-description: Apply economist reasoning frameworks to analyze economic phenomena, policy impacts, and market dynamics.
+description: Apply economist reasoning to analyze phenomena, policy, and markets.
 workflow_stage: analysis
 compatibility:
   - claude-code

@@ -1,6 +1,6 @@
 ---
 name: commit-push-pr
-description: Commit changes, push to remote, and create a pull request. Use for completing features or fixes ready for review.
+description: Commit changes, push to remote, and create a pull request.
 workflow_stage: engineering
 compatibility:
   - claude-code

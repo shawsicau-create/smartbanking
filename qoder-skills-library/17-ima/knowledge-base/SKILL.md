@@ -1,3 +1,18 @@
+---
+name: knowledge-base
+description: IMA 知识库管理：上传文件/网页、搜索知识库、浏览内容列表。当用户提到知识库时使用。
+workflow_stage: communication
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+author: Qoder Skills Library
+version: 1.0.0
+tags:
+  - ima
+  - knowledge-base
+---
+
 # Knowledge Base (知识库)
 
 API base path: `openapi/wiki/v1` — 完整数据结构和接口参数详见 `references/api.md`。

@@ -1,40 +1,19 @@
 ---
-name: migrating-latex-templates
+name: transfer_old_latex_to_new
 version: 1.4.1
-description: 当用户明确要求"迁移标书""升级模板""跨版本迁移""旧标书转新模板"时使用。智能迁移NSFC LaTeX标书到新版模板，基于五阶段工作流（分析→映射→规划→执行→验证），自动处理结构变化、内容重组、引用更新；支持AI驱动语义匹配与启发式回退，并提供
-  runs 输出隔离与一键迁移脚本。
+description: 智能迁移NSFC LaTeX标书到新版模板，五阶段工作流处理结构变化与引用更新。
 author: AI Agent (Claude Code)
-metadata:
-  short-description: NSFC LaTeX标书跨版本智能迁移
-  keywords:
-  - latex
-  - nsfc
-  - proposal migration
-  - template upgrade
-  - cross-version migration
-  - structure reorganization
-  triggers:
-  - 迁移标书
-  - 升级模板
-  - 跨版本迁移
-  - 旧标书转新模板
-  - 模板结构变化
-  - 内容重组
-dependencies:
-- python: '>=3.8'
-- latex: texlive-full
-- scripts/run.py
-- scripts/core/
-entry_point: python skills/transfer_old_latex_to_new/scripts/run.py
-config: skills/transfer_old_latex_to_new/config.yaml
-references: skills/transfer_old_latex_to_new/references/
 workflow_stage: communication
 compatibility:
-- claude-code
-- cursor
-- codex
+  - claude-code
+  - cursor
+  - codex
 tags:
-- transfer_old_latex_to_new
+  - transfer-latex
+  - nsfc
+  - migration
+metadata:
+  short-description: NSFC LaTeX标书跨版本智能迁移
 ---
 
 

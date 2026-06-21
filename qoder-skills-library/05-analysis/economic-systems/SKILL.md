@@ -1,6 +1,6 @@
 ---
 name: economic-systems
-description: Analyze economic systems and institutional structures using comparative economics and institutional analysis frameworks.
+description: Analyze economic systems via comparative and institutional frameworks.
 workflow_stage: analysis
 compatibility:
   - claude-code

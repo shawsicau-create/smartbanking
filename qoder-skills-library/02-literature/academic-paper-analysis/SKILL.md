@@ -1,6 +1,6 @@
 ---
 name: academic-paper-analysis
-description: 深度分析学术文献（PDF格式），提取核心内容并转换为结构化Markdown文档。适用于分析期刊论文、综述文章、学位论文等学术文献，生成包含写作技巧分析、论证结构解析、文献综述方法总结和完整内容转换的Markdown文档。当用户需要分析PDF论文、提取文献信息、学习学术写作技巧或转换论文格式时调用此技能。
+description: 深度分析学术PDF文献，提取核心内容生成结构化Markdown，含写作与论证解析。
 workflow_stage: literature
 compatibility:
 - claude-code

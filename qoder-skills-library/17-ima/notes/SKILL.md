@@ -1,3 +1,18 @@
+---
+name: notes
+description: IMA 笔记管理：搜索/浏览/新建/追加笔记内容。当用户提到笔记、备忘录时使用。
+workflow_stage: communication
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+author: Qoder Skills Library
+version: 1.0.0
+tags:
+  - ima
+  - notes
+---
+
 # Notes (笔记)
 
 > ⛔ Before ANY write (`import_doc`/`append_doc`): validate ALL string fields (`content`, `title`) are legal UTF-8.

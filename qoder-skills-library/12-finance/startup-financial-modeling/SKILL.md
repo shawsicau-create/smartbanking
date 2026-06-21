@@ -1,6 +1,6 @@
 ---
 name: startup-financial-modeling
-description: Build financial models for startups including runway calculation, fundraising scenarios, and growth projections.
+description: "Build startup financial models: runway, fundraising, growth projections."
 workflow_stage: analysis
 compatibility:
   - claude-code

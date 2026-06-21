@@ -2,51 +2,18 @@
 name: make_latex_model
 version: 2.9.0
 author: ChineseResearchLaTeX Project
-maintainer: project-maintainers
-status: stable
-category: normal
-description: 当用户明确要求"LaTeX 模板优化""样式参数对齐""make_latex_model"时使用。支持任意 LaTeX 模板的样式参数对齐、标题文字对齐、标题格式对比（加粗）、HTML
-  可视化报告、LaTeX 自动修复建议和像素级 PDF 对比验证。
-tags:
-- latex
-- template
-- optimization
-- nsfc
-- pdf-analysis
-- style-alignment
-- iterative-optimization
-dependencies:
-  python: '>=3.8'
-  packages:
-  - name: PyMuPDF
-    version: '>=1.23.0'
-    purpose: PDF 样式参数提取
-  - name: python-docx
-    version: '>=0.8.11'
-    purpose: Word 标题提取（兼容旧流程，可选）
-  - name: Pillow
-    version: '>=9.0.0'
-    purpose: 图像处理和像素对比
-  - name: PyYAML
-    version: '>=6.0'
-    purpose: 配置文件解析
-requires:
-- xelatex
-- pdflatex
-- bibtex
-compatibility:
-  platforms:
-  - macos
-  - windows
-  - linux
-  latex_templates:
-  - NSFC_Young
-  - NSFC_General
-  - NSFC_Local
-  - generic
-last_updated: 2026-01-27
-changelog: ../../CHANGELOG.md
+description: LaTeX模板样式优化：参数对齐、标题格式对比、HTML报告与PDF像素级验证。
 workflow_stage: theory
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+tags:
+  - latex
+  - template
+  - optimization
+  - nsfc
+  - pdf-analysis
 ---
 
 

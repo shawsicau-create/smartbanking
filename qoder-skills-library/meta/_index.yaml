@@ -135,7 +135,7 @@ categories:
       - literature
       - hypothesis
       directory: 02-literature/academic-researcher
-    - name: 文献导读助手
+    - name: academic-literature-guide
       description: 学术文献渐进式理解专家，服务科研小白/进阶人员/资深学者等多级别读者。将复杂的中英文学术内容转化为由浅入深、脉络清晰的知识架构（直觉层→概念层→技术层→批判层）。**首次使用时必须先询问读者背景**（科研小白/进阶人员/资深学者），然后根据
       workflow_stage: literature
       compatibility: 需要 web_fetch 或 browser 工具进行 Web Search 验证；需要 write 工具保存输出
@@ -219,7 +219,7 @@ categories:
       - academic
       - paper
       directory: 02-literature/academic-paper-analysis
-    - name: comm-lit-review-claude-single
+    - name: comm-lit-review
       description: Communications-domain literature review with Claude-style knowledge-base-first
         retrieval. Use when the task is about com
       workflow_stage: literature
@@ -635,7 +635,7 @@ categories:
       - paper
       - write
       directory: 07-writing/paper-write
-    - name: management-world-case-writing
+    - name: management-world-case-writing-skill
       description: 用于《管理世界》期刊案例研究论文写作、修改、选题评估、理论贡献建构、研究方法呈现和审稿模拟。当用户提到《管理世界》、案例研究、质性研究、理论建构、审稿意见、论文修改、公共管理或管理学案例论文时，应优先使用本技能。
       workflow_stage: writing
       compatibility:
@@ -1110,7 +1110,7 @@ categories:
       - rural-finance
       - marxist-economics
       directory: 11-perspective/china-finance-knowledge-system-v6
-    - name: huashu-nuwa
+    - name: nuwa-skill
       description: '女娲造人：输入人名/主题/甚至只是模糊需求，自动深度调研→思维框架提炼→生成可运行的人物Skill。
 
         两种入口：(1)明确人名→直接蒸馏 (2)模糊需求→诊断推荐→再蒸馏。
@@ -2055,7 +2055,7 @@ categories:
       - qoderwork
       - ppt
       directory: 16-office/qoderwork-ppt
-    - name: migrating-latex-templates
+    - name: transfer_old_latex_to_new
       description: 当用户明确要求"迁移标书""升级模板""跨版本迁移""旧标书转新模板"时使用。智能迁移NSFC LaTeX标书到新版模板，基于五阶段工作流（分析→映射→规划→执行→验证），自动处理结构变化、内容重组、引用更新；支持AI驱动语义匹配与启发式回
       workflow_stage: communication
       compatibility:

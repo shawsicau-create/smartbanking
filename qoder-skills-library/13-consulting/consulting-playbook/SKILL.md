@@ -1,6 +1,6 @@
 ---
 name: consulting-playbook
-description: Apply consulting engagement methodology from problem definition to recommendation delivery for strategy projects.
+description: Consulting methodology from problem definition to recommendation delivery.
 workflow_stage: analysis
 compatibility:
   - claude-code

@@ -1,6 +1,6 @@
 ---
 name: literature-toolkit
-description: Academic literature analysis toolkit with CLI interface for searching, parsing, and analyzing research papers.
+description: "Academic literature CLI: search, parse, and analyze research papers."
 workflow_stage: literature
 compatibility:
   - claude-code

@@ -10,8 +10,8 @@ compatibility:
 author: Awesome Econ AI Community
 version: 1.0.0
 tags:
-  - LaTeX
-  - Beamer
+  - latex
+  - beamer
   - presentations
   - slides
 ---

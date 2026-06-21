@@ -1,22 +1,15 @@
 ---
 name: stata
-description: 'Comprehensive Stata reference for writing correct .do files, data management,
-  econometrics, causal inference, graphics, Mata programming, and 20 community packages
-  (reghdfe, estout, did, rdrobust, etc.). Covers syntax, options, gotchas, and idiomatic
-  patterns. Use this skill whenever the user asks you to write, debug, or explain
-  Stata code.
-
-  '
-compatibility: 'Requires Stata 15+ installed. For Chinese graphics support, ensure
-  SimHei or similar Chinese font is available on the system. When creating graphics,
-  always ask user if they want Chinese labels/titles before proceeding.
-
-  '
+description: Comprehensive Stata reference: .do files, econometrics, graphics, packages.
+compatibility:
+  - claude-code
+  - cursor
+  - codex
 workflow_stage: analysis
 author: Qoder Skills Library
 version: 1.0.0
 tags:
-- stata
+  - stata
 ---
 
 

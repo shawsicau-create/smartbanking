@@ -1,6 +1,6 @@
 ---
 name: imap-smtp-email
-description: Send and receive emails via IMAP/SMTP protocols for automated research communication and notification workflows.
+description: Send/receive emails via IMAP/SMTP for automated notifications.
 workflow_stage: communication
 compatibility:
   - claude-code
@@ -11,8 +11,8 @@ version: 1.0.0
 tags:
   - messaging
   - email
-  - IMAP
-  - SMTP
+  - imap
+  - smtp
 ---
 
 # Imap Smtp Email

@@ -1,6 +1,6 @@
 ---
 name: techdebt
-description: Find and fix technical debt including duplicated code, dead code, outdated patterns, and code smells. Run at the end of sessions to clean up.
+description: "Find and fix tech debt: duplicated code, dead code, outdated patterns."
 workflow_stage: engineering
 compatibility:
   - claude-code

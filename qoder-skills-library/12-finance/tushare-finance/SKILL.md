@@ -1,6 +1,6 @@
 ---
 name: tushare-finance
-description: Fetch Chinese financial market data via tushare Pro API for A-share research and quantitative analysis.
+description: Fetch Chinese A-share data via tushare Pro API for quant research.
 workflow_stage: data
 compatibility:
   - claude-code
@@ -11,7 +11,7 @@ version: 1.0.0
 tags:
   - finance
   - tushare
-  - A-share
+  - a-share
   - data
 ---
 

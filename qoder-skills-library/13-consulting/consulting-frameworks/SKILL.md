@@ -1,15 +1,18 @@
 ---
 name: consulting-frameworks
-description: >
-  Core consulting thinking frameworks and methodologies for structuring
-  business problems, communicating findings, analyzing strategy, building
-  financial models, and designing operations. Use when any agent or command
-  needs to apply MECE decomposition, pyramid principle, hypothesis-driven
-  analysis, issue trees, SCR communication, Porter's Five Forces,
-  TAM/SAM/SOM market sizing, value chain analysis, NPV/IRR decision
-  criteria, build/buy/partner evaluation, RACI matrices, or any standard
-  consulting framework. This skill provides procedural guidance — not just
-  framework names, but how to apply them correctly.
+description: Consulting frameworks: MECE, pyramid, Porter's, TAM/SAM/SOM, NPV/IRR, RACI.
+workflow_stage: analysis
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+author: Qoder Skills Library
+version: 1.0.0
+tags:
+  - consulting
+  - frameworks
+  - strategy
+  - mckinsey
 ---
 
 # Consulting Frameworks

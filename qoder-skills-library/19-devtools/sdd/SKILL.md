@@ -1,10 +1,6 @@
 ---
 name: sdd
-description: >
-  Implements the Spec-Driven Development lifecycle (Intent, Requirements, Design, Tasks, Build)
-  for structured feature development. Use when the user wants to scaffold a new feature spec,
-  generate EARS requirements, create a technical design, break work into tasks, or check spec status.
-  Trigger on keywords: sdd, spec-driven, ears requirements, feature spec.
+description: Spec-Driven Development lifecycle for structured feature scaffolding.
 workflow_stage: engineering
 compatibility:
   - claude-code

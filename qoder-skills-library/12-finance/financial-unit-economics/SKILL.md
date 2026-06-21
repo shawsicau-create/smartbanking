@@ -1,6 +1,6 @@
 ---
 name: financial-unit-economics
-description: Calculate and analyze unit economics metrics (CAC, LTV, ARPU, payback period) for business viability assessment.
+description: Calculate unit economics metrics (CAC, LTV, ARPU, payback period).
 workflow_stage: analysis
 compatibility:
   - claude-code
@@ -11,7 +11,7 @@ version: 1.0.0
 tags:
   - finance
   - unit-economics
-  - SaaS
+  - saas
   - metrics
 ---
 

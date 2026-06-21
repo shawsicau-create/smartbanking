@@ -1,6 +1,6 @@
 ---
 name: cli-anything
-description: "Build powerful, stateful CLI interfaces for any GUI application using the cli-anything harness methodology."
+description: Build stateful CLI interfaces for GUI apps via cli-anything methodology.
 workflow_stage: communication
 compatibility:
   - claude-code

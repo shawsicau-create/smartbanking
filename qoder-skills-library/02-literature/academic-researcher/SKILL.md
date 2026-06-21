@@ -1,6 +1,6 @@
 ---
 name: academic-researcher
-description: Conduct systematic academic research from topic identification to literature synthesis and hypothesis development.
+description: Systematic academic research from topic to literature synthesis.
 workflow_stage: ideation
 compatibility:
   - claude-code

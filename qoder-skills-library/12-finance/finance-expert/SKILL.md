@@ -1,9 +1,21 @@
 ---
 name: finance-expert
 version: 1.0.0
-description: Expert-level financial systems, FinTech, banking, payments, and financial technology
+description: Expert-level financial systems, FinTech, banking, payments, and trading.
 category: domains
-tags: [finance, fintech, banking, payments, trading, accounting]
+workflow_stage: analysis
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+author: Qoder Skills Library
+tags:
+  - finance
+  - fintech
+  - banking
+  - payments
+  - trading
+  - accounting
 allowed-tools:
   - Read
   - Write

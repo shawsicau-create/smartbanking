@@ -10,7 +10,7 @@ compatibility:
 author: Awesome Econ AI Community
 version: 1.0.0
 tags:
-  - Stata
+  - stata
   - data-cleaning
   - data-wrangling
   - reproducibility

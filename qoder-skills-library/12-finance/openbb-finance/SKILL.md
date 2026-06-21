@@ -1,6 +1,6 @@
 ---
 name: openbb-finance
-description: Fetches and integrates financial data from OpenBB platform for AI agents and quantitative analysis. Use when retrieving stock prices, options data, cryptocurrency, macroeconomic indicators, or fundamental data. Supports multiple data providers and formats.
+description: "Fetch financial data from OpenBB: stocks, options, crypto, macro."
 workflow_stage: data
 compatibility:
   - claude-code

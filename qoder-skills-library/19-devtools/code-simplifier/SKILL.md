@@ -1,6 +1,6 @@
 ---
 name: code-simplifier
-description: Simplify and clean up code after changes are complete. Reduces complexity, improves readability, and ensures consistency.
+description: "Simplify and clean up code: reduce complexity, improve readability."
 workflow_stage: engineering
 compatibility:
   - claude-code

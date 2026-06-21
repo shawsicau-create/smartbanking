@@ -10,10 +10,10 @@ compatibility:
 author: Awesome Econ AI Community
 version: 1.0.0
 tags:
-  - Python
-  - API
-  - FRED
-  - World-Bank
+  - python
+  - api
+  - fred
+  - world-bank
   - data-collection
 ---
 

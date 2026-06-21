@@ -1,6 +1,6 @@
 ---
 name: everything-search
-description: Fast file system search using Everything SDK for Windows or spotlight/find for macOS to locate research files and data.
+description: Fast file search via Everything (Win) or spotlight/find (macOS).
 workflow_stage: data
 compatibility:
   - claude-code

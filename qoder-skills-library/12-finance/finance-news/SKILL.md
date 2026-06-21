@@ -1,6 +1,18 @@
 ---
 name: finance-news
-description: "Market news briefings with AI summaries. Use when asked about stock news, market updates, portfolio performance, morning/evening briefings, financial headlines, or price alerts. Supports US/Europe/Japan markets, WhatsApp delivery, and English/German output."
+description: Market news briefings with AI summaries for stocks, portfolios, and alerts.
+workflow_stage: analysis
+compatibility:
+  - claude-code
+  - cursor
+  - codex
+author: Qoder Skills Library
+version: 1.0.0
+tags:
+  - finance
+  - news
+  - market
+  - briefing
 ---
 
 # Finance News Skill

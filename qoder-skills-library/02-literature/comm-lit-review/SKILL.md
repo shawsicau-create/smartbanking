@@ -1,25 +1,18 @@
 ---
-name: comm-lit-review-claude-single
-description: Communications-domain literature review with Claude-style knowledge-base-first
-  retrieval. Use when the task is about communications, wireless, networking, satellite/NTN,
-  Wi-Fi, cellular, transport protocols, congestion control, routing, scheduling, MAC/PHY,
-  rate adaptation, channel estimation, beamforming, or communication-system research
-  and the user wants papers, related work, a survey, or a landscape summary. Search
-  Zotero, Obsidian, and local paper folders first when available, then search IEEE
-  Xplore, ScienceDirect, ACM Digital Library, and broader web in that order.
-allowed-tools: Bash(*), Read, Glob, Grep, WebSearch, WebFetch, Write, Agent, mcp__zotero__*,
-  mcp__obsidian-vault__*
+name: comm-lit-review
+description: Communications-domain literature review with knowledge-base-first retrieval.
+allowed-tools: Bash(*), Read, Glob, Grep, WebSearch, WebFetch, Write, Agent
 workflow_stage: literature
 compatibility:
-- claude-code
-- cursor
-- codex
+  - claude-code
+  - cursor
+  - codex
 author: Qoder Skills Library
 version: 1.0.0
 tags:
-- comm
-- lit
-- review
+  - comm
+  - lit
+  - review
 ---
 
 

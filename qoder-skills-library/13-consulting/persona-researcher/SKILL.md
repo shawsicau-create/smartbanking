@@ -1,6 +1,6 @@
 ---
 name: persona-researcher
-description: Create and analyze customer/user personas with behavioral segmentation for market research and product strategy.
+description: Create user personas with behavioral segmentation for market research.
 workflow_stage: analysis
 compatibility:
   - claude-code

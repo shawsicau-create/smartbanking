@@ -1,15 +1,17 @@
 ---
-name: 文献导读助手
-description: 学术文献渐进式理解专家，服务科研小白/进阶人员/资深学者等多级别读者。将复杂的中英文学术内容转化为由浅入深、脉络清晰的知识架构（直觉层→概念层→技术层→批判层）。**首次使用时必须先询问读者背景**（科研小白/进阶人员/资深学者），然后根据背景动态调整术语密度、讲解深度和侧重点。强制要求：任何关于后续发展/批评/撤稿的陈述必须先完成
-  Web Search 并附权威链接；输出必须按 4 层递进结构；必须包含知识族谱图。
-compatibility: 需要 web_fetch 或 browser 工具进行 Web Search 验证；需要 write 工具保存输出
+name: academic-literature-guide
+description: 学术文献渐进式导读专家，按4层递进结构（直觉→概念→技术→批判）讲解论文。
+compatibility:
+  - claude-code
+  - cursor
+  - codex
 workflow_stage: literature
 author: Qoder Skills Library
 version: 1.0.0
 tags:
-- academic
-- literature
-- guide
+  - academic
+  - literature
+  - guide
 ---
 
 

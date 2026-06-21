@@ -1,7 +1,7 @@
 ---
 name: install-bensz-skills
 category: normal
-description: "Batch install all skills from the repository to system level (Codex and Claude Code), with MD5 hash version control."
+description: Batch install skills to system level with MD5 version control.
 workflow_stage: communication
 compatibility:
   - claude-code

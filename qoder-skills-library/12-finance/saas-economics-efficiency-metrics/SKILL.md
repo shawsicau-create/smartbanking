@@ -1,6 +1,6 @@
 ---
 name: saas-economics-efficiency-metrics
-description: Analyze SaaS-specific efficiency metrics (Rule of 40, burn multiple, payback period, net retention) for growth-stage evaluation.
+description: "Analyze SaaS metrics: Rule of 40, burn multiple, net retention."
 workflow_stage: analysis
 compatibility:
   - claude-code
@@ -10,9 +10,9 @@ author: Qoder Skills Library
 version: 1.0.0
 tags:
   - finance
-  - SaaS
+  - saas
   - efficiency
-  - Rule-of-40
+  - rule-of-40
 ---
 
 # Saas Economics Efficiency Metrics

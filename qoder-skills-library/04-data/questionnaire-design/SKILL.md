@@ -1,6 +1,6 @@
 ---
 name: questionnaire-design
-description: "Design and analyze academic survey questionnaires for economics, finance, and rural development research."
+description: Design academic survey questionnaires for economics and rural development.
 workflow_stage: data
 compatibility:
   - claude-code

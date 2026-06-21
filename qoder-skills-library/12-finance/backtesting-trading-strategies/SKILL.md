@@ -1,6 +1,6 @@
 ---
 name: backtesting-trading-strategies
-description: Backtest quantitative trading strategies against historical market data with performance metrics and risk analysis.
+description: Backtest quantitative trading strategies with performance and risk metrics.
 workflow_stage: analysis
 compatibility:
   - claude-code

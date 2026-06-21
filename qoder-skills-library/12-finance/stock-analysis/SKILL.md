@@ -1,6 +1,6 @@
 ---
 name: stock-analysis
-description: Perform comprehensive stock analysis with technical, fundamental, and quantitative approaches for investment research.
+description: "Comprehensive stock analysis: technical, fundamental, quantitative."
 workflow_stage: analysis
 compatibility:
   - claude-code

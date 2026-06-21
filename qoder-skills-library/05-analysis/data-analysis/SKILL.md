@@ -1,6 +1,6 @@
 ---
 name: data-analysis
-description: Perform exploratory data analysis, statistical testing, and pattern discovery for research data insights.
+description: Exploratory data analysis, statistical testing, and pattern discovery.
 workflow_stage: analysis
 compatibility:
   - claude-code
@@ -10,7 +10,7 @@ author: Qoder Skills Library
 version: 1.0.0
 tags:
   - analysis
-  - EDA
+  - eda
   - statistics
   - data
 ---

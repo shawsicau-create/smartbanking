@@ -1,6 +1,6 @@
 ---
 name: yahoo-finance
-description: Fetch global financial market data via yfinance API for international market research and cross-border analysis.
+description: Fetch global market data via yfinance for cross-border analysis.
 workflow_stage: data
 compatibility:
   - claude-code
