@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 任务名称（macOS launchd 唯一标识） -->
+    <key>Label</key>
+    <string>com.smartbanking.refresh-edgeone-url</string>
+
+    <!-- 执行脚本 -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/xiaoshiishun/微云同步助手(275531137)/qoder工作目录。cnb代码/smartbanking/scripts/refresh-edgeone-url.sh</string>
+    </array>
+
+    <!-- 每 2 小时执行一次（在 3 小时有效期之前刷新） -->
+    <key>StartInterval</key>
+    <integer>7200</integer>
+
+    <!-- 启动时立即执行一次 -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- 日志输出（方便排查问题） -->
+    <key>StandardOutPath</key>
+    <string>/Users/xiaoshiishun/微云同步助手(275531137)/qoder工作目录。cnb代码/smartbanking/scripts/refresh.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/xiaoshiishun/微云同步助手(275531137)/qoder工作目录。cnb代码/smartbanking/scripts/refresh.err</string>
+</dict>
+</plist>

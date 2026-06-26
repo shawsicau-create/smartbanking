@@ -1,0 +1,14 @@
+# robots.txt for smartbanking.edgeone.app
+# 由 EdgeOne Pages 静态托管，文件位于 webversion/public/robots.txt
+
+# 默认规则：允许所有爬虫访问全站
+User-agent: *
+Allow: /
+
+# 屏蔽常见的非内容路径，避免被错误索引
+Disallow: /404.html
+Disallow: /latest-url.txt
+Disallow: /latest-url.json
+
+# Sitemap 位置（搜索引擎抓取后会主动获取）
+Sitemap: https://smartbanking.edgeone.app/sitemap-index.xml
