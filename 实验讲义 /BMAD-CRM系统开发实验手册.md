@@ -29,7 +29,7 @@
 | **前端** | React 18 + Vite 4 |
 | **数据库** | PostgreSQL（设计目标） / 内存 Map（降级方案） |
 | **版本控制** | Git + CNB（cnb.cool） |
-| **部署平台** | Vercel（前端静态部署） |
+| **部署平台** | EdgeOne Pages（前端静态部署） |
 
 ---
 
@@ -47,7 +47,7 @@ graph LR
     H --> I[实验九: 数据库适配]
     I --> J[实验十: 测试验证]
     J --> K[实验十一: Git推送CNB]
-    K --> L[实验十二: Vercel部署]
+    K --> L[实验十二: EdgeOne Pages部署]
 ```
 
 ---
@@ -67,7 +67,7 @@ graph LR
 | 9 | 数据库适配与降级方案 | 工程实践 | [跳转](#实验九数据库适配与降级方案) |
 | 10 | 功能测试验证 | 质量保证 | [跳转](#实验十功能测试验证) |
 | 11 | 版本控制与 CNB 推送 | 版本管理 | [跳转](#实验十一版本控制与-cnb-推送) |
-| 12 | Vercel 部署（前端） | 生产部署 | [跳转](#实验十二vercel-部署前端) |
+| 12 | EdgeOne Pages 部署（前端） | 生产部署 | [跳转](#实验十二edgeone-pages-部署前端) |
 
 > **附录**：[项目交付物清单](#项目交付物清单) · [关键提示词汇总](#关键提示词汇总) · [总结](#总结) · [思考题](#思考题) · [扩展学习](#扩展学习)
 
@@ -721,7 +721,7 @@ build/
 *.log
 .DS_Store
 Thumbs.db
-.vercel-tmp/
+.edgeone-tmp/
 .qoder/
 ```
 
@@ -781,96 +781,48 @@ git push -u origin master
 
 ---
 
-## 实验十二：Vercel 部署（前端） `生产部署`
+## 实验十二：EdgeOne Pages 部署（前端） `生产部署`
 
-> 详细步骤请参考 **[Vercel部署实验手册.md](Vercel部署实验手册.md)**
+> 详细步骤请参考 **[CNB流水线自动部署到EdgeOne.md](实验详细步骤%20CNB流水线自动部署到EdgeOne.md)**
 
-### 12.1 前置准备：注册 Vercel 账户
+### 12.1 前置准备：创建 EdgeOne Pages 项目
 
-Vercel 部署需要一个已注册的账户。以下是完整的注册流程：
+EdgeOne Pages 部署需要先在控制台创建项目。以下是完整的操作流程：
 
-**方式一：通过网页注册（推荐新手）**
+1. 打开浏览器，访问 **https://console.cloud.tencent.com/edgeone/pages**
+2. 点击「创建项目」，选择「直接上传」类型
+3. 上传任意一个文件（如空的 index.html），系统会自动部署
+4. 记住项目名称（如 `smartbanking`）
 
-1. 打开浏览器，访问 **https://vercel.com/signup**
-2. 选择注册方式：
-   - **GitHub 账户登录**（推荐）：点击 `Continue with GitHub`，授权 Vercel 访问
-   - **GitLab 账户登录**：点击 `Continue with GitLab`
-   - **Bitbucket 账户登录**：点击 `Continue with Bitbucket`
-   - **邮箱注册**：输入邮箱，点击 `Continue with Email`
-3. 填写用户名和密码（邮箱注册方式）
-4. 验证邮箱：收到的验证邮件，点击确认链接
-5. 完善信息：填写团队名称（可选），选择 Hobby（免费）计划
-6. 注册完成，进入 Vercel Dashboard
+> **提示**：EdgeOne Pages 是腾讯云提供的全球 CDN 静态网站托管服务，国内访问速度快，免费额度充足。
 
-> **提示**：Hobby（免费）计划支持个人项目部署，满足本实验需求。如需团队协作或商业用途，可升级到 Pro 计划。
+### 12.2 获取 API Token
 
-**方式二：通过 CLI 首次登录时自动引导注册**
+1. 访问 **https://pages.edgeone.ai/document/api-token**
+2. 点击「Create Token」，填写名称和范围
+3. 点击「Create」，**立即复制**生成的 Token（仅显示一次）
 
-如果尚未注册，执行 `vercel login` 时会引导你完成注册（见下方 12.3 节）。
+### 12.3 安装 EdgeOne CLI
 
-### 12.2 安装 Vercel CLI
-
-Vercel CLI 是与 Vercel 平台交互的命令行工具，用于本地部署、项目管理、日志查看等。
+EdgeOne CLI 是与 EdgeOne Pages 平台交互的命令行工具，用于本地部署、项目管理等。
 
 **前置要求**：Node.js v18+ 已安装
 
 ```bash
 # 使用 npm 全局安装（最常用）
-npm install -g vercel
+npm install -g edgeone
 
 # 或使用 pnpm
-pnpm add -g vercel
+pnpm add -g edgeone
 
 # 或使用 yarn
-yarn global add vercel
+yarn global add edgeone
 
 # 验证安装
-vercel --version
+edgeone -v
 ```
 
-> **Windows 权限问题**：如果出现 `EPERM` 或 `EACCES` 错误，以管理员身份打开 PowerShell 后重试，或使用 `npx vercel` 替代全局安装。
-
-### 12.3 登录 Vercel 账户
-
-```bash
-vercel login
-```
-
-CLI 会提示你选择登录方式：
-
-```
-> Log in to Vercel
-  Continue with GitHub
-  Continue with GitLab
-  Continue with Bitbucket
-❯ Continue with Email
-```
-
-**操作步骤**：
-
-1. 使用键盘上下键选择登录方式，按 Enter 确认
-2. **GitHub / GitLab / Bitbucket** 方式：浏览器会自动打开授权页面，点击 `Authorize Vercel` 完成授权
-3. **Email** 方式：
-   - 输入注册邮箱
-   - CLI 会发送一个验证码到你的邮箱
-   - 在终端输入收到的验证码
-4. 终端显示 `Congratulations! You are now logged in.` 表示登录成功
-
-**非交互式登录（CI/CD 环境）**：
-
-```bash
-# 方式一：使用 Token（推荐自动化）
-# 1. 在浏览器中访问 https://vercel.com/account/tokens 创建 Token
-# 2. 在终端中使用 Token
-vercel login --token <YOUR_VERCEL_TOKEN>
-
-# 方式二：设置环境变量（推荐 CI/CD）
-# 在 CI/CD 的 Secrets 中设置 VERCEL_TOKEN
-export VERCEL_TOKEN=<YOUR_VERCEL_TOKEN>
-vercel --prod --yes
-```
-
-> **登录状态验证**：执行 `vercel whoami` 查看当前登录的账户名。
+> **Windows 权限问题**：如果出现 `EPERM` 或 `EACCES` 错误，以管理员身份打开 PowerShell 后重试，或使用 `npx edgeone` 替代全局安装。
 
 ### 12.4 部署前端项目
 
@@ -878,28 +830,21 @@ vercel --prod --yes
 # 1. 进入前端目录
 cd frontend
 
-# 2. 生产部署（--prod 部署到生产环境，--yes 使用默认配置）
-vercel --prod --yes
+# 2. 生产部署
+npx edgeone pages deploy ./dist -n smartbanking -t $EDGEONE_PAGES_API_TOKEN
 ```
 
-**首次部署时的交互提示**：
-
-```
-? Set up and deploy "frontend"? [Y/n]        # 输入 Y
-? Which scope do you want to deploy to?       # 选择你的账户
-? Link to existing project? [y/N]            # 输入 N（新项目）
-? What's your project's name?                # 输入项目名，如 smart-crm-frontend
-? In which directory is your code located?    # 默认 ./ ，按 Enter
-```
+首次部署时，EdgeOne CLI 会自动将 `dist/` 目录下的所有静态文件上传到 EdgeOne CDN。
 
 ### 12.5 部署结果
 
 | 信息项 | 说明 |
 |--------|------|
-| 生产 URL | `https://frontend-xxx.vercel.app` |
+| 生产 URL | `https://smartbanking-xxx.edgeone.app` |
 | 构建方式 | Vite 自动识别 |
 | 输出目录 | `dist/` |
 | 构建时间 | ~16s（含依赖安装） |
+| CDN 节点 | EdgeOne 全球边缘节点（国内访问优势） |
 
 ---
 
@@ -996,7 +941,7 @@ graph TB
 | 2 | **渐进式交付** | Sprint by Sprint，持续可见进展 |
 | 3 | **降级思维** | 生产级方案不可行时，快速找到替代方案 |
 | 4 | **版本控制** | 代码、文档统一纳入 Git 管理 |
-| 5 | **自动化部署** | Vercel 一键部署 + CI/CD 集成 |
+| 5 | **自动化部署** | EdgeOne Pages 一键部署 + CI/CD 集成 |
 
 ---
 
@@ -1011,7 +956,7 @@ graph TB
 | 3 | 数据库降级方案（内存 Map）在什么场景下是合理的？生产环境应如何改进？ |
 | 4 | 即申即贷的 AI 预审模块，需要哪些数据输入？如何设计评分模型？ |
 | 5 | CNB 的 OAuth 登录和 PAT 令牌两种认证方式，各有什么优缺点？ |
-| 6 | 如果要将后端也部署到云端（而非仅前端部署 Vercel），有哪些方案？ |
+| 6 | 如果要将后端也部署到云端（而非仅前端部署 EdgeOne Pages），有哪些方案？ |
 
 ---
 
@@ -1025,8 +970,8 @@ graph TB
 | Vite 部署指南 | https://vitejs.dev/guide/build.html |
 | JWT 安全最佳实践 | https://datatracker.ietf.org/doc/html/rfc7519 |
 | CNB 平台文档 | https://docs.cnb.cool/ |
-| Vercel CLI 文档 | https://vercel.com/docs/cli |
-| 本项目部署手册 | [Vercel部署实验手册.md](./Vercel部署实验手册.md) |
+| EdgeOne Pages 文档 | https://pages.edgeone.ai/document |
+| 本项目部署手册 | [CNB流水线自动部署到EdgeOne.md](./实验详细步骤%20CNB流水线自动部署到EdgeOne.md) |
 
 ---
 

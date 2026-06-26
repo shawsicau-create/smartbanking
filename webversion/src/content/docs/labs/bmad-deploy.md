@@ -1,6 +1,6 @@
 ---
 title: 'BMAD代码云端部署'
-description: 'BMAD项目部署到 Vercel 的详细步骤'
+description: 'BMAD项目部署到 EdgeOne Pages 的详细步骤'
 ---
 
 实验步骤：BMAD 生成代码的云端部署

@@ -10,9 +10,9 @@
 
 ## 🌐 课程在线网站
 
-> **在线阅读（含交互式目录、公式渲染、表格、实验手册）：** [https://webversion-alpha.vercel.app](https://webversion-alpha.vercel.app)
+> **在线阅读（含交互式目录、公式渲染、表格、实验手册）：** [https://smartbanking.edgeone.app](https://smartbanking.edgeone.app)
 
-网站由 Astro + Starlight 构建，源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)，通过云原生流水线（`.cnb.yml`）自动部署到 Vercel，每次 `git push` 后约 1-2 分钟自动更新。
+网站由 Astro + Starlight 构建，源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)，通过云原生流水线（`.cnb.yml`）自动部署到 EdgeOne Pages，每次 `git push` 后约 1-2 分钟自动更新。
 
 ## 文件结构
 
@@ -36,7 +36,7 @@ smartbanking/
 ├── 实验讲义/                              # 配套实验讲义与操作指南
 │   ├── BMAD-CRM系统开发实验手册.md        # 银行CRM系统12个完整实验
 │   ├── 实验详细步骤 BMAD方法论实战.txt     # BMAD安装到开发全流程（651行）
-│   ├── 实验详细步骤 BMAD代码云端部署.txt   # PinMe/Vercel部署实操（403行）
+│   ├── 实验详细步骤 BMAD代码云端部署.txt   # PinMe/EdgeOne部署实操（403行）
 │   ├── 实验详细步骤 使用cnm同步项目库.txt   # 环境准备与CNB同步指南
 │   ├── 本地大模型部署指南.md              # 本地 LLM 部署参考
 │   └── mcp.json                          # MCP 服务配置文件
@@ -83,7 +83,7 @@ smartbanking/
 |    9    | 数据库适配与降级方案     | 工程实践 |
 |    10    | 功能测试验证             | 质量保证 |
 |    11    | 版本控制与CNB推送        | 版本管理 |
-|    12    | Vercel部署（前端）       | 生产部署 |
+|    12    | EdgeOne Pages部署（前端） | 生产部署 |
 
 ## 附录目录
 
@@ -111,7 +111,7 @@ smartbanking/
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）  |
 | 数据分析    | Stata / Python（pandas, statsmodels）                       |
 | 全栈开发    | React + Vite + Express + JWT                                |
-| 部署平台    | Vercel / CNB 云开发平台                                     |
+| 部署平台    | EdgeOne Pages / CNB 云开发平台                                     |
 | 版本控制    | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking) |
 
 ## 快速开始
