@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>智慧银行实验教程 · EdgeOne MCP 部署展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero .meta {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            margin: 3rem 0;
+        }
+
+        .section h2 {
+            font-size: 1.75rem;
+            color: #93c5fd;
+            border-left: 4px solid #6366f1;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .card .chapter-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .card h3 {
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .stat .num {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat .label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid #6366f1;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info-box strong {
+            color: #c7d2fe;
+        }
+
+        .code {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: "SF Mono", Monaco, monospace;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            overflow-x: auto;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            margin-top: 3rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <h1>📚 智慧银行实验教程</h1>
+        <p class="subtitle">AI驱动的金融科技实践</p>
+        <p class="meta">四川农业大学经济学院 · 数字经济系 | 2026 春季学期</p>
+        <div class="btn-group">
+            <a href="#chapters" class="btn">📖 查看章节</a>
+            <a href="https://cnb.cool/xiaosicau/smartbanking" class="btn btn-secondary">🔗 访问仓库</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="num">8</div>
+                <div class="label">章</div>
+            </div>
+            <div class="stat">
+                <div class="num">253</div>
+                <div class="label">页 PDF</div>
+            </div>
+            <div class="stat">
+                <div class="num">19</div>
+                <div class="label">在线页面</div>
+            </div>
+            <div class="stat">
+                <div class="num">12</div>
+                <div class="label">CRM实验</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 课程简介</h2>
+            <div class="info-box">
+                本教程以 <strong>AI 编程工具（Qoder 等）</strong>为核心实验平台，系统讲授 <strong>MCP + Skill + CLI</strong> 技术栈在银行业务场景中的应用，通过
+                <strong>BMAD 方法论</strong>驱动从需求到部署的全流程项目实践。
+            </div>
+            <div class="info-box">
+                <strong>本书定位</strong>：金融学专业本科生的 AI 工具实践教材。采用"低代码、高集成"的技术路线 —— 学生不需要从零编写 AI 程序，而是通过配置 IDE、接入 MCP 协议、编写
+                Skill 的方式，像搭积木一样组装出面向金融业务的智能系统。
+            </div>
+        </div>
+
+        <div class="section" id="chapters">
+            <h2>📖 章节导览</h2>
+            <div class="cards">
+                <div class="card"><span class="chapter-num">基础模块</span>
+                    <h3>第1章 绪论</h3>
+                    <p>AI 驱动的银行数字化转型全景</p>
+                </div>
+                <div class="card"><span class="chapter-num">基础模块</span>
+                    <h3>第2章 环境搭建</h3>
+                    <p>IDE 安装配置、MCP 服务器接入</p>
+                </div>
+                <div class="card"><span class="chapter-num">基础模块</span>
+                    <h3>第3章 MCP 协议</h3>
+                    <p>MCP 架构原理与服务器开发</p>
+                </div>
+                <div class="card"><span class="chapter-num">基础模块</span>
+                    <h3>第4章 Skill 体系</h3>
+                    <p>Skill 编写规范与金融实例</p>
+                </div>
+                <div class="card"><span class="chapter-num">基础模块</span>
+                    <h3>第5章 CLI 工具实战</h3>
+                    <p>CNB/Skills CLI、AI 编程助手</p>
+                </div>
+                <div class="card"><span class="chapter-num">进阶模块</span>
+                    <h3>第6章 金融数据分析</h3>
+                    <p>面板回归、时间序列、因果推断</p>
+                </div>
+                <div class="card"><span class="chapter-num">综合模块</span>
+                    <h3>第7章 BMAD 综合项目</h3>
+                    <p>CRM 系统 12 个完整实验</p>
+                </div>
+                <div class="card"><span class="chapter-num">综合模块</span>
+                    <h3>第8章 综合项目与创新</h3>
+                    <p>项目选题、团队管理、竞赛指南</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ 技术栈</h2>
+            <div class="info-box"><strong>文档排版</strong>：LaTeX (XeLaTeX + ctexbook)</div>
+            <div class="info-box"><strong>教学网站</strong>：Astro 6 + Starlight + Pagefind</div>
+            <div class="info-box"><strong>AI 教学工具</strong>：Qoder / Trae CN / Cursor</div>
+            <div class="info-box"><strong>工具协议</strong>：MCP (Model Context Protocol)</div>
+            <div class="info-box"><strong>部署平台</strong>：EdgeOne Pages (腾讯云全球 CDN)</div>
+            <div class="info-box"><strong>CI/CD</strong>：CNB 云原生流水线 (.cnb.yml)</div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 本页面的部署方式</h2>
+            <p>本页面是使用 <strong>edgeone-makers-mcp-server</strong> 的 <code>deploy-html</code> 工具部署的演示页面。</p>
+            <div class="info-box"><strong>📦 部署命令</strong>（伪代码）：</div>
+            <div class="code">CallMcpTool(
+                server="edgeone-makers-mcp-server",
+                tool="deploy-html",
+                args={ value: "&lt;html content&gt;" }
+                )</div>
+
+            <div class="info-box" style="margin-top: 1.5rem;"><strong>🌐 完整部署（多页面）</strong>使用 CLI：</div>
+            <div class="code">cd webversion/
+                pnpm install && pnpm build
+                source ../.env
+                npx edgeone makers deploy ./dist -n smartbanking \
+                -t $EDGEONE_PAGES_API_TOKEN</div>
+        </div>
+
+        <div class="section">
+            <h2>📊 部署对比</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>🤖 MCP 部署</h3>
+                    <p>✅ 单 HTML 快速分享<br>❌ 不支持多页面路由<br>✅ 适合原型/Demo<br>📍 即开即用</p>
+                </div>
+                <div class="card">
+                    <h3>🛠️ CLI 部署</h3>
+                    <p>✅ 完整多页面站点<br>✅ 保留路由结构<br>✅ 适合生产环境<br>📍 自动化部署</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>智慧银行实验教程 © 2026 四川农业大学经济学院</p>
+        <p>本页由 EdgeOne makers-mcp-server deploy-html 部署</p>
+    </div>
+</body>
+
+</html>
