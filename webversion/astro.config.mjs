@@ -1,19 +1,62 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
+//
+// 多平台部署支持：同一份代码可同时产出 EdgeOne / Vercel / GitHub Pages 三套产物。
+// 区分依据是构建时环境变量：
+//   GITHUB_PAGES === 'true'   → 走 GitHub Pages（项目页：base='/仓库名/'）
+//   否则                       → 走 EdgeOne / Vercel（根路径部署）
+//
+// 在 GitHub Actions 中：
+//   - GITHUB_PAGES 由 workflow 显式设置
+//   - GITHUB_REPOSITORY 由 runner 自动提供（格式：owner/repo）
+//   - GITHUB_REPOSITORY_OWNER 由 runner 自动提供
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+const ghOwner = process.env.GITHUB_REPOSITORY_OWNER || 'xiaosicau';
+const ghRepoName = (process.env.GITHUB_REPOSITORY || `${ghOwner}/smartbanking`).split('/')[1];
+const siteUrl = isGitHubPages
+	? `https://${ghOwner}.github.io`
+	: 'https://smartbanking.edgeone.app';
+const basePath = isGitHubPages ? `/${ghRepoName}/` : '/';
+
 export default defineConfig({
+	site: siteUrl,
+	base: basePath,
 	markdown: {
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [rehypeKatex],
 	},
 	integrations: [
+		// @astrojs/sitemap 自动读取 site 字段，生成 /sitemap-index.xml
+		// 配合 robots.txt 中的 Sitemap 声明，主动提交给 Google / 百度
+		sitemap(),
 		starlight({
 			title: '智慧银行实验教程',
 			description: 'AI驱动的金融科技实践',
+			head: [
+				{
+					tag: 'script',
+					attrs: { type: 'application/ld+json' },
+					content: JSON.stringify({
+						'@context': 'https://schema.org',
+						'@type': 'Course',
+						name: '智慧银行实验教程',
+						description: 'AI驱动的金融科技实践',
+						provider: {
+							'@type': 'Organization',
+							name: '智能银行实验室',
+							url: 'https://smartbanking.edgeone.app',
+						},
+						inLanguage: 'zh-CN',
+						isAccessibleForFree: true,
+					}),
+				},
+			],
 			logo: {
 				src: './src/assets/logo.svg',
 				replacesTitle: false,

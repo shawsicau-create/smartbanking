@@ -1,15 +1,32 @@
-# CNB 云原生构建配置 —— webversion 自动部署到 EdgeOne Pages
+# CNB 云原生构建配置 —— webversion 自动部署
 # 文档: https://docs.cnb.cool/zh/build/configuration.html
 #
-# 前置步骤（仅需执行一次）:
+# 包含两条并行流水线：
+#   - deploy-webversion-to-edgeone（推荐 + SEO 加速）
+#   - deploy-webversion-to-vercel（备选）
+#
+# 另：GitHub Pages 部署走 .github/workflows/deploy-web.yml（独立于本配置）
+#     仅在代码推送到 GitHub 镜像仓时触发；输出 https://<owner>.github.io/<repo>/
+#     国内访问慢（≈ 1000-5000 ms），仅作海外镜像 / 备份 / GitHub SEO 用途
+#
+# EdgeOne 前置步骤（仅需执行一次）:
 #   1. 在 EdgeOne Pages 控制台创建一个「直接上传」类型的项目（如 smartbanking）
 #      控制台地址: https://console.cloud.tencent.com/edgeone/pages
 #   2. 获取 EdgeOne Pages API Token:
 #      访问 https://pages.edgeone.ai/document/api-token 创建 Token
 #   3. 在 https://cnb.cool 创建一个「密钥仓库」(如 xiaosicau/secrets)
-#   4. 在密钥仓库中创建文件 edgeone.yml，内容为:
-#        EDGEONE_PAGES_API_TOKEN: "你的EdgeOne Pages API Token"
+#   4. 在密钥仓库中创建以下两个文件：
+#        a) edgeone.yml: EDGEONE_PAGES_API_TOKEN: "你的EdgeOne Pages API Token"
+#        b) baidu.yml:   BAIDU_PUSH_TOKEN: "百度站长平台主动推送 token"
+#                       SITE_URL: "https://smartbanking.edgeone.app"
+#      (百度 token 获取: https://ziyuan.baidu.com/ → 链接提交 → 主动推送)
 #   5. 修改下方 imports 中的仓库地址为你的密钥仓库地址
+#
+# Vercel 前置步骤（仅需执行一次）:
+#   1. 在 https://cnb.cool 创建一个「密钥仓库」(如 xiaosicau/secrets)
+#   2. 在密钥仓库中创建文件 vercel.yml，内容为:
+#        VERCEL_TOKEN: "你的Vercel API Token"
+#      (在 https://vercel.com/account/tokens 创建 Token)
 
 main:
   push:
@@ -19,6 +36,8 @@ main:
       imports:
         # 引用密钥仓库中的 EdgeOne Pages API Token（修改为你的密钥仓库地址）
         - https://cnb.cool/xiaosicau/secrets/-/blob/main/edgeone.yml
+        # 百度主动推送 SEO 加速所需的 token + 站点 URL
+        - https://cnb.cool/xiaosicau/secrets/-/blob/main/baidu.yml
       stages:
         - name: 安装 pnpm
           script: corepack enable && corepack prepare pnpm@latest --activate
@@ -30,18 +49,24 @@ main:
           script: |
             cd webversion
             npx edgeone pages deploy ./dist -n smartbanking -t $EDGEONE_PAGES_API_TOKEN
-# CNB 云原生构建配置 —— webversion 自动部署到 Vercel
-# 文档: https://docs.cnb.cool/zh/build/configuration.html
-#
-# 前置步骤（仅需执行一次）:
-#   1. 在 https://cnb.cool 创建一个「密钥仓库」(如 xiaosicau/secrets)
-#   2. 在密钥仓库中创建文件 vercel.yml，内容为:
-#        VERCEL_TOKEN: "你的Vercel API Token"
-#      (在 https://vercel.com/account/tokens 创建 Token)
-#   3. 修改下方 imports 中的仓库地址为你的密钥仓库地址
+        - name: 百度主动推送（SEO 加速）
+          script: |
+            SITE_URL="${SITE_URL:-https://smartbanking.edgeone.app}"
+            if [[ -n "${BAIDU_PUSH_TOKEN:-}" ]]; then
+              echo "▶ 推送首页与 sitemap 到百度：${SITE_URL}"
+              RESP=$(curl -sS -X POST \
+                "https://data.zz.baidu.com/urls?site=${SITE_URL}&token=${BAIDU_PUSH_TOKEN}" \
+                --data-urlencode "url=${SITE_URL}/" \
+                --data-urlencode "url=${SITE_URL}/sitemap-index.xml") || {
+                  echo "[WARN] 百度推送失败（不影响部署）" >&2
+                  echo "$RESP" >&2
+                }
+              echo "百度响应: $RESP"
+            else
+              echo "[WARN] BAIDU_PUSH_TOKEN 未配置，跳过百度推送"
+              echo "       配置方式: 在密钥仓库 baidu.yml 中添加 BAIDU_PUSH_TOKEN"
+            fi
 
-main:
-  push:
     - name: deploy-webversion-to-vercel
       docker:
         image: node:22
