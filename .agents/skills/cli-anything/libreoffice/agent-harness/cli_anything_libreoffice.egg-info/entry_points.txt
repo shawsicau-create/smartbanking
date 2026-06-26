@@ -1,0 +1,2 @@
+[console_scripts]
+cli-anything-libreoffice = cli_anything.libreoffice.libreoffice_cli:cli

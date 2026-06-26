@@ -1,0 +1,8 @@
+click>=8.0.0
+prompt-toolkit>=3.0.0
+
+[magic]
+python-magic>=0.4.0
+
+[merge]
+pypdf>=3.0.0
