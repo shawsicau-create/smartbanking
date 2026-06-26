@@ -20,6 +20,8 @@
 - 通过 `.cnb.yml` 云原生流水线自动部署到 **EdgeOne Pages**
 - 每次 `git push` 后约 1-2 分钟自动更新
 
+> 🌐 **GitHub Pages 镜像**：[https://shawsicau-create.github.io/smartbanking/](https://shawsicau-create.github.io/smartbanking/)（海外访问，GitHub Actions 自动部署）
+
 > ⚠️ **中国大陆用户访问提示**：本项目部署在 EdgeOne Pages 的 Global 区域。如在中国大陆网络下访问出现 401 UNAUTHORIZED，请到 [EdgeOne 控制台](https://console.cloud.tencent.com/edgeone/pages) 项目设置中启用"中国大陆加速"，然后重新部署。
 
 ## 📘 教程 PDF
@@ -291,7 +293,9 @@ git push origin feature/新功能名称
 - **PDF 页数**: 253 页
 - **所属院系**: 四川农业大学经济学院 · 数字经济系
 - **CNB 仓库**: https://cnb.cool/xiaosicau/smartbanking
+- **GitHub 仓库**: https://github.com/shawsicau-create/smartbanking
 - **在线网站**: https://smartbanking-wmacgcua.edgeone.run
+- **GitHub Pages**: https://shawsicau-create.github.io/smartbanking/
 
 ## 相关文档
 
