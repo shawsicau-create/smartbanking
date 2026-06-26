@@ -1,100 +1,78 @@
 {
-    "mcpServers": {
-        "sequential-thinking": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/server-sequential-thinking"
-            ]
-        },
-        "context7": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@upstash/context7-mcp@latest"
-            ]
-        },
-        "amap-maps": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@amap/amap-maps-mcp-server"
-            ],
-            "env": {
-                "AMAP_MAPS_API_KEY": "${AMAP_MAPS_API_KEY}"
-            }
-        },
-        "stata-mcp": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "mcp-remote",
-                "http://localhost:4000/mcp-streamable"
-            ]
-        },
-        "chrome-devtools": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "chrome-devtools-mcp@latest"
-            ]
-        },
-        "automation-mcp": {
-            "command": "/Users/xiaoshiishun/.bun/bin/bun",
-            "args": [
-                "run",
-                "/Users/xiaoshiishun/automation-mcp/index.ts",
-                "--stdio"
-            ]
-        },
-        "macos-automator": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "--package",
-                "@steipete/macos-automator-mcp",
-                "macos-automator-mcp"
-            ]
-        },
-        "excel": {
-            "command": "npx",
-            "args": [
-                "--yes",
-                "@negokaz/excel-mcp-server"
-            ],
-            "env": {
-                "EXCEL_MCP_PAGING_CELLS_LIMIT": "4000"
-            }
-        },
-        "office-word": {
-            "command": "/Users/xiaoshiishun/Library/Python/3.9/bin/uvx",
-            "args": [
-                "--from",
-                "Office-Word-MCP-Server",
-                "word_mcp_server"
-            ],
-            "env": {
-                "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
-            }
-        },
-        "office-powerpoint": {
-            "command": "/Users/xiaoshiishun/Library/Python/3.9/bin/uvx",
-            "args": [
-                "--from",
-                "office-powerpoint-mcp-server",
-                "--python",
-                "3.11",
-                "ppt_mcp_server"
-            ],
-            "env": {
-                "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
-            }
-        },
-        "scansci-pdf": {
-            "command": "/opt/homebrew/bin/scansci-pdf",
-            "args": [
-                "run"
-            ]
-        }
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "amap-maps": {
+      "command": "npx",
+      "args": ["-y", "@amap/amap-maps-mcp-server"],
+      "env": {
+        "AMAP_MAPS_API_KEY": "63f93d2223f744affebade9ef7982732"
+      }
+    },
+    "stata-mcp": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:4000/mcp-streamable"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "automation-mcp": {
+      "command": "/Users/xiaoshiishun/.bun/bin/bun",
+      "args": [
+        "run",
+        "/Users/xiaoshiishun/automation-mcp/index.ts",
+        "--stdio"
+      ]
+    },
+    "macos-automator": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "--package",
+        "@steipete/macos-automator-mcp",
+        "macos-automator-mcp"
+      ]
+    },
+    "excel": {
+      "command": "npx",
+      "args": ["--yes", "@negokaz/excel-mcp-server"],
+      "env": {
+        "EXCEL_MCP_PAGING_CELLS_LIMIT": "4000"
+      }
+    },
+    "office-word": {
+      "command": "/Users/xiaoshiishun/Library/Python/3.9/bin/uvx",
+      "args": ["--from", "Office-Word-MCP-Server", "word_mcp_server"],
+      "env": {
+        "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+      }
+    },
+    "office-powerpoint": {
+      "command": "/Users/xiaoshiishun/Library/Python/3.9/bin/uvx",
+      "args": [
+        "--from",
+        "office-powerpoint-mcp-server",
+        "--python",
+        "3.11",
+        "ppt_mcp_server"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
+      }
+    },
+    "scansci-pdf": {
+      "command": "/opt/homebrew/bin/scansci-pdf",
+      "args": ["run"]
+    },
+    "edgeone-makers-mcp-server": {
+      "url": "https://mcp-on-edge.edgeone.site/mcp-server"
     }
+  }
 }
