@@ -1,0 +1,8 @@
+name = "smartbanking"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "webversion/dist"
+
+# Cloudflare Pages 构建配置
+# 当通过 `wrangler pages deploy` 或 Git 集成部署时使用
+[build]
+command = "cd webversion && pnpm install --frozen-lockfile && pnpm build"
