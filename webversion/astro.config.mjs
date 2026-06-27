@@ -16,12 +16,16 @@ import rehypeKatex from 'rehype-katex';
 //   - GITHUB_PAGES 由 workflow 显式设置
 //   - GITHUB_REPOSITORY 由 runner 自动提供（格式：owner/repo）
 //   - GITHUB_REPOSITORY_OWNER 由 runner 自动提供
+// 多平台部署：GitHub Pages / Cloudflare Pages / EdgeOne
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+const isCloudflarePages = process.env.CLOUDFLARE_PAGES === 'true';
 const ghOwner = process.env.GITHUB_REPOSITORY_OWNER || 'xiaosicau';
 const ghRepoName = (process.env.GITHUB_REPOSITORY || `${ghOwner}/smartbanking`).split('/')[1];
 const siteUrl = isGitHubPages
 	? `https://${ghOwner}.github.io`
-	: 'https://smartbanking.edgeone.app';
+	: isCloudflarePages
+		? 'https://smartbanking.pages.dev'
+		: 'https://smartbanking.edgeone.app';
 const basePath = isGitHubPages ? `/${ghRepoName}/` : '/';
 
 export default defineConfig({
