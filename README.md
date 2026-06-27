@@ -13,14 +13,17 @@
 ## 🌐 课程在线网站
 
 > **在线阅读（含交互式目录、公式渲染、表格、实验手册）：**
-> [https://smartbanking-wmacgcua.edgeone.run](https://smartbanking-wmacgcua.edgeone.run)
+>
+> | 部署平台 | 访问地址 | 说明 |
+> |---|---|---|
+> | **Cloudflare Pages** | [https://smartbanking.pages.dev](https://smartbanking.pages.dev) | 全球 CDN，国内访问速度快 |
+> | EdgeOne Pages | [https://smartbanking-wmacgcua.edgeone.run](https://smartbanking-wmacgcua.edgeone.run) | 腾讯云全球 CDN |
+> | GitHub Pages | [https://shawsicau-create.github.io/smartbanking/](https://shawsicau-create.github.io/smartbanking/) | 海外镜像，GitHub Actions 自动部署 |
 
 - 网站由 **Astro + Starlight** 构建
 - 源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)
 - 通过 `.cnb.yml` 云原生流水线自动部署到 **EdgeOne Pages**
 - 每次 `git push` 后约 1-2 分钟自动更新
-
-> 🌐 **GitHub Pages 镜像**：[https://shawsicau-create.github.io/smartbanking/](https://shawsicau-create.github.io/smartbanking/)（海外访问，GitHub Actions 自动部署）
 
 > ⚠️ **中国大陆用户访问提示**：本项目部署在 EdgeOne Pages 的 Global 区域。如在中国大陆网络下访问出现 401 UNAUTHORIZED，请到 [EdgeOne 控制台](https://console.cloud.tencent.com/edgeone/pages) 项目设置中启用"中国大陆加速"，然后重新部署。
 
@@ -143,7 +146,7 @@ smartbanking/
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）          |
 | 数据分析    | Stata / Python（pandas, statsmodels）                               |
 | 全栈开发    | React + Vite + Express + JWT                                        |
-| 部署平台    | **EdgeOne Pages**（腾讯云全球 CDN）+ CNB 云开发平台               |
+| 部署平台    | **Cloudflare Pages** + EdgeOne Pages（腾讯云全球 CDN）+ GitHub Pages |
 | 版本控制    | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking)     |
 
 ## 快速开始
@@ -294,7 +297,8 @@ git push origin feature/新功能名称
 - **所属院系**: 四川农业大学经济学院 · 数字经济系
 - **CNB 仓库**: https://cnb.cool/xiaosicau/smartbanking
 - **GitHub 仓库**: https://github.com/shawsicau-create/smartbanking
-- **在线网站**: https://smartbanking-wmacgcua.edgeone.run
+- **在线网站（Cloudflare Pages）**: https://smartbanking.pages.dev
+- **在线网站（EdgeOne Pages）**: https://smartbanking-wmacgcua.edgeone.run
 - **GitHub Pages**: https://shawsicau-create.github.io/smartbanking/
 
 ## 相关文档
