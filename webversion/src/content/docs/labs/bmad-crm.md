@@ -863,6 +863,78 @@ npx edgeone pages deploy ./dist -n smartbanking -t $EDGEONE_PAGES_API_TOKEN
 | 构建时间 | ~16s（含依赖安装） |
 | CDN 节点 | EdgeOne 全球边缘节点（国内访问优势） |
 
+### 12.6 多平台部署扩展：Cloudflare Pages
+
+除了 EdgeOne Pages，本课程还支持将网站部署到 **Cloudflare Pages**——Cloudflare 提供的全球 CDN 静态网站托管服务。Cloudflare Pages 的优势在于全球节点覆盖广、免费额度充足，且提供 `wrangler` CLI 工具实现命令行直传部署。
+
+#### 安装 wrangler CLI
+
+```bash
+# 使用 npm 全局安装
+npm install -g wrangler
+
+# 验证安装
+wrangler --version
+# 预期输出: wrangler 4.x.x
+```
+
+#### 登录 Cloudflare
+
+```bash
+wrangler login
+```
+
+执行后浏览器会自动打开授权页面，点击 **Allow** 完成 OAuth 授权。随后通过 `wrangler whoami` 验证登录状态。
+
+#### 配置 wrangler.toml
+
+在项目根目录创建 `wrangler.toml` 文件：
+
+```toml
+name = "smartbanking"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "webversion/dist"
+```
+
+:::caution[wrangler.toml 配置禁忌]
+Cloudflare Pages 项目 **不支持** `[build]` 配置段。如果在 wrangler.toml 中写入 `[build]` 和 `command = "..."`，部署时会报错：`Configuration file for Pages projects does not support "build"`。正确做法是仅声明 `pages_build_output_dir`，构建步骤在本地或 CI 中完成。
+:::
+
+#### 构建与部署
+
+由于 Astro 需要根据部署平台动态生成 sitemap 和 canonical URL，构建时需设置 `CLOUDFLARE_PAGES` 环境变量：
+
+```bash
+# 进入网站源码目录
+cd webversion
+
+# 设置环境变量后构建（sitemap 将指向 smartbanking.pages.dev）
+CLOUDFLARE_PAGES=true pnpm build
+
+# 部署到 Cloudflare Pages
+wrangler pages deploy ./dist \
+    --project-name=smartbanking \
+    --branch=main \
+    --commit-dirty=true
+```
+
+部署成功后会返回形如 `https://smartbanking.pages.dev` 的访问链接。
+
+#### 三平台部署对比
+
+| 平台 | 访问域名 | 国内速度 | 特点 |
+|------|----------|----------|------|
+| EdgeOne Pages | `*.edgeone.app` | 快 | 腾讯云 CDN，中国大陆加速需控制台启用 |
+| Cloudflare Pages | `*.pages.dev` | 中 | 全球节点覆盖最广，wrangler CLI 直传 |
+| GitHub Pages | `*.github.io` | 慢 | 与 Git 仓库集成，GitHub Actions 自动部署 |
+
+:::note[日常更新流程]
+每次更新网站内容后，执行以下三步即可完成部署：
+1. `cd webversion`
+2. `CLOUDFLARE_PAGES=true pnpm build`
+3. `wrangler pages deploy ./dist --project-name=smartbanking --branch=main`
+:::
+
 ---
 
 ## 项目交付物清单 `附录`
@@ -990,6 +1062,8 @@ AL[audit_logs<br/>审计日志] --> C
 | JWT 安全最佳实践 | https://datatracker.ietf.org/doc/html/rfc7519 |
 | CNB 平台文档 | https://docs.cnb.cool/ |
 | EdgeOne Pages 文档 | https://pages.edgeone.ai/document |
+| Cloudflare Pages 文档 | https://developers.cloudflare.com/pages/ |
+| wrangler CLI 文档 | https://developers.cloudflare.com/workers/wrangler/ |
 | 本项目部署手册 | [CNB流水线自动部署到EdgeOne](/labs/edgeone-deploy/) |
 
 ---
