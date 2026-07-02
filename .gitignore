@@ -44,6 +44,7 @@ test_ch04.pdf
 *.tmp
 *.temp
 *~
+~$*
 
 # 编译输出目录
 build/
@@ -51,6 +52,7 @@ dist/
 *.pdf
 !智慧银行实验教程chapters/智慧银行实验教程.pdf
 !实验讲义/智慧银行实验讲义_v4.0.pdf
+!实验报告及评分/**/*.pdf
 
 # Python 虚拟环境与缓存
 .venv/
