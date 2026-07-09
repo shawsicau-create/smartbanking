@@ -7,8 +7,12 @@
 \begin{enumerate}
   \item 深入理解MCP协议的三层架构与通信机制
   \item 掌握浏览器组MCP在金融数据采集中的应用
+  \item 掌握金融数据组MCP（Tushare / 同花顺iFinD / Yahoo Finance）在投研分析中的应用
+  \item 掌握经济数据组MCP（OECD / World Bank / OpenEcon）在宏观研究中的应用
   \item 掌握Office组MCP在金融文档自动化中的应用
+  \item 掌握图表可视化MCP（AntV Chart）在金融图表生成中的应用
   \item 掌握Stata MCP在计量经济学分析中的应用
+  \item 了解地图、PDF文献、系统自动化、AI辅助等辅助MCP的使用
   \item 学会MCP组合编排完成复杂金融工作流
 \end{enumerate}
 }
@@ -384,31 +388,91 @@ MCP协议本身仍在快速迭代。2025年发布了Streamable HTTP传输规范�
 
 MCP安全模型正在从"本地信任"向"零信任"演进。关键进展包括：Server身份验证（防止恶意Server冒充合法工具）、调用签名（确保AI发出的工具调用未被篡改）、沙箱隔离（限制Server的文件系统与网络访问范围）。
 
-\subsection{本课程使用的8组MCP全景}
+\subsection{本课程使用的全部MCP全景}
+
+截至2026年7月，本机Qoder共配置了30+个MCP服务，按金融从业场景分为10个组别。下方表格是讲师机实测可用的完整清单，所有MCP均使用本机默认配置即可启动。
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lllp{4.5cm}}
+\small
+\begin{tabular}{llllp{4cm}}
 \toprule
-\textbf{组别} & \textbf{MCP名称} & \textbf{启动方式} & \textbf{主要能力} \\
+\textbf{组别} & \textbf{MCP名称} & \textbf{类型} & \textbf{官方/GitHub项目} & \textbf{主要能力} \\
 \midrule
-浏览器组 & playwright & npx @playwright/mcp@latest & 操作Chromium / Firefox / WebKit \\
-浏览器组 & chrome-devtools & npx -y chrome-devtools-mcp@latest & 调用Chrome DevTools（Lighthouse等） \\
-浏览器组 & fetch & uvx mcp-server-fetch & 直接抓网页/JSON API \\
-Office组 & excel & npx --yes @negokaz/excel-mcp-server & Excel读写、表格、格式、截图 \\
-Office组 & word & uvx --from office-word-mcp-server word\_mcp\_server & Word读写、样式、目录、页码 \\
-Office组 & ppt & uvx --from office-powerpoint-mcp-server ppt\_mcp\_server & PPT生成、模板、批量改稿 \\
-系统组 & WindowsMCP.Net & Windows-MCP.Net.exe & Windows原生UI操作（窗口/键鼠） \\
-数据分析组 & stata-mcp & uvx stata-mcp & 调用本机Stata跑计量回归 \\
+\multicolumn{5}{l}{\textit{\textbf{1. 浏览器组}}} \\
+\midrule
+浏览器 & playwright & stdio & (Microsoft) & 操作Chromium / Firefox / WebKit \\
+浏览器 & chrome-devtools & stdio & (Google) & Chrome DevTools (Lighthouse等) \\
+浏览器 & browser-use & stdio & (Magnitude) & AI驱动浏览器自动化 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{2. 金融数据组}}} \\
+\midrule
+金融数据 & tushareMcp & SSE远程 & \url{https://tushare.pro/document/1?doc_id=463} & A股/港股/美股/基金/期货/期权/宏观200+接口 \\
+金融数据 & china-stock-mcp & stdio & \url{https://github.com/xinkuang/china-stock-mcp} & A股行情/财务/资金流/技术指标 \\
+金融数据 & yahoo-finance & stdio & \url{https://github.com/sdpa/yahoo-finance-mcp} & 全球股票/ETF/期权/加密货币 \\
+金融数据 & finance-mcp & SSE远程 & \url{https://finvestai.top/mcp} & 基于Tushare的AI金融数据 \\
+金融数据 & hexin-ifind-ds-stock-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD股票数据 \\
+金融数据 & hexin-ifind-ds-bond-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD债券数据 \\
+金融数据 & hexin-ifind-ds-fund-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD基金数据 \\
+金融数据 & hexin-ifind-ds-edb-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD宏观经济数据库 \\
+金融数据 & hexin-ifind-ds-index-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD指数数据 \\
+金融数据 & hexin-ifind-ds-global-stock-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD全球股票数据 \\
+金融数据 & hexin-ifind-ds-news-mcp & SSE远程 & \url{https://mcp.51ifind.com/} & 同花顺iFinD财经新闻 \\
+金融数据 & openbb-mcp & HTTP & \url{https://github.com/OpenBB-finance/OpenBB} & 开放金融研究平台 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{3. 经济数据组}}} \\
+\midrule
+经济数据 & oecd-mcp & stdio & \url{https://github.com/isakskogstad/OECD-MCP} & OECD 38国经济/教育/环境数据 \\
+经济数据 & worldbank-data360 & SSE远程 & \url{https://github.com/worldbank/data360-mcp} & 世界银行200+国家发展指标 \\
+经济数据 & openecon-data & SSE远程 & \url{https://github.com/hanlulong/openecon-data} & 330K+指标(FRED/WB/IMF/Eurostat) \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{4. Office组}}} \\
+\midrule
+Office & excel & stdio & \url{https://github.com/negokaz/excel-mcp-server} & Excel读写/表格/图表/截图 \\
+Office & word & stdio & (Office-Word-MCP-Server) & Word读写/样式/目录/页码 \\
+Office & office-powerpoint & stdio & (office-powerpoint-mcp-server) & PPT生成/模板/批量改稿 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{5. 图表可视化组}}} \\
+\midrule
+图表可视化 & mcp-server-chart & stdio & \url{https://github.com/antvis/mcp-server-chart} & AntV 25+图表类型 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{6. 地图地理组}}} \\
+\midrule
+地图 & amap-maps & stdio & \url{https://lbs.amap.com/api/mcp-server/summary} & 高德地理编码/路径/POI/天气 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{7. PDF文献组}}} \\
+\midrule
+PDF & scansci-pdf & stdio & \url{https://github.com/Rimagination/scansci-pdf} & 学术论文PDF搜索/下载 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{8. 系统自动化组}}} \\
+\midrule
+系统 & WindowsMCP.Net & stdio & (Windows专用) & Windows原生UI操作 \\
+系统 & automation-mcp & stdio & \url{https://github.com/ashwwwin/automation-mcp} & macOS键鼠/窗口/截图 \\
+系统 & macos-automator & stdio & \url{https://github.com/steipete/macos-automator-mcp} & macOS AppleScript/JXA脚本 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{9. AI辅助组}}} \\
+\midrule
+AI辅助 & sequential-thinking & stdio & \url{https://github.com/modelcontextprotocol/servers} & 结构化逐步推理 \\
+AI辅助 & context7 & stdio & \url{https://github.com/upstash/context7-mcp} & 实时库文档查询 \\
+\midrule
+\multicolumn{5}{l}{\textit{\textbf{10. 云部署组}}} \\
+\midrule
+云部署 & vercel & SSE远程 & \url{https://mcp.vercel.com} & Vercel部署/项目管理 \\
+云部署 & cloudflare-api & SSE远程 & \url{https://mcp.cloudflare.com} & Cloudflare账户管理 \\
+云部署 & cloudflare-builds & SSE远程 & \url{https://builds.mcp.cloudflare.com} & Cloudflare Workers构建 \\
+云部署 & cloudflare-bindings & SSE远程 & \url{https://bindings.mcp.cloudflare.com} & Cloudflare KV/R2/D1绑定 \\
+云部署 & cloudflare-observability & SSE远程 & \url{https://observability.mcp.cloudflare.com} & Cloudflare日志/分析 \\
+云部署 & cloudflare-docs & SSE远程 & \url{https://docs.mcp.cloudflare.com} & Cloudflare文档实时查询 \\
+云部署 & edgeone-makers & SSE远程 & \url{https://mcp-on-edge.edgeone.site} & 腾讯EdgeOne HTML部署 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{warningbox}[macOS注意]
-WindowsMCP.Net仅支持Windows系统。macOS用户可跳过此MCP，不影响其他实验内容。
+WindowsMCP.Net仅支持Windows系统。macOS用户可使用 automation-mcp 与 macos-automator 替代完成本地UI自动化任务。
 \end{warningbox}
 
-这8组MCP覆盖了金融从业者最常见的四类操作：数据采集（浏览器组）、文档处理（Office组）、系统操作（系统组）、数据分析（数据分析组）。后续各节将逐一详解。
+这30+个MCP覆盖了金融从业者最常见的四类操作：数据采集（浏览器组）、金融数据（金融数据组）、宏观研究（经济数据组）、文档处理（Office组）、可视化（图表组）、空间分析（地图组）、文献调研（PDF组）、系统操作（系统组）、AI增强（AI辅助组）、项目上线（云部署组）。后续各节将按组别逐一详解，其中金融数据组和经济数据组是本课程的核心新增内容。
 
 % ============================================================
 \section{MCP配置实操}
@@ -439,9 +503,9 @@ MCP的配置通过一个JSON文件完成，不同IDE的配置文件路径不同�
 如果不确定配置文件在哪里，可以在IDE的Builder模式中输入：「请帮我找到mcp.json配置文件的路径」，AI会自动搜索并显示完整路径。
 \end{practicebox}
 
-\subsection{课程标准配置}
+\subsection{课程标准配置（讲师机实测版）}
 
-把\texttt{mcp.json}内容替换为下列JSON（与本机讲师机一致）：
+把\texttt{mcp.json}内容替换为下列JSON（与本机讲师机一致）。下面同时展示本地stdio与远程SSE两种配置方式。
 
 \begin{lstlisting}[style=json]
 {
@@ -461,9 +525,7 @@ MCP的配置通过一个JSON文件完成，不同IDE的配置文件路径不同�
     "excel": {
       "command": "npx",
       "args": ["--yes", "@negokaz/excel-mcp-server"],
-      "env": {
-        "EXCEL_MCP_PAGING_CELLS_LIMIT": "10000"
-      }
+      "env": { "EXCEL_MCP_PAGING_CELLS_LIMIT": "10000" }
     },
     "word": {
       "command": "uvx",
@@ -484,18 +546,89 @@ MCP的配置通过一个JSON文件完成，不同IDE的配置文件路径不同�
         "STATA_PATH": "C:\\Program Files\\Stata18\\StataMP-64.exe",
         "MCP_STATA_LOGLEVEL": "INFO"
       }
+    },
+    "tushareMcp": {
+      "url": "https://api.tushare.pro/mcp/?token=<YOUR_TUSHARE_TOKEN>",
+      "disabled": false
+    },
+    "china-stock-mcp": {
+      "command": "uvx",
+      "args": ["china-stock-mcp"]
+    },
+    "yahoo-finance": {
+      "command": "npx",
+      "args": ["-y", "yahoo-finance-mcp-server"]
+    },
+    "mcp-server-chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"]
+    },
+    "oecd-mcp": {
+      "command": "npx",
+      "args": ["-y", "oecd-mcp"]
+    },
+    "worldbank-data360": {
+      "url": "https://maimcpext.worldbank.org/ext/data360/mcp"
+    },
+    "amap-maps": {
+      "command": "npx",
+      "args": ["-y", "@amap/amap-maps-mcp-server"],
+      "env": { "AMAP_MAPS_API_KEY": "<YOUR_AMAP_KEY>" }
+    },
+    "scansci-pdf": {
+      "command": "scansci-pdf",
+      "args": ["run"]
+    },
+    "automation-mcp": {
+      "command": "bun",
+      "args": ["run", "/Users/<你的用户名>/automation-mcp/index.ts", "--stdio"]
+    },
+    "macos-automator": {
+      "command": "npx",
+      "args": ["-y", "--package", "@steipete/macos-automator-mcp", "macos-automator-mcp"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "openbb-mcp": {
+      "url": "http://127.0.0.1:8001/mcp"
     }
   }
 }
 \end{lstlisting}
 
-\begin{warningbox}[路径替换提醒]
+\begin{warningbox}[路径与凭证替换提醒]
 \begin{itemize}[leftmargin=1em]
-  \item 将\texttt{<用户名>}替换为你的Windows实际用户名
+  \item 将\texttt{<用户名>}替换为你的Windows/macOS实际用户名
   \item \texttt{STATA\_PATH}必须与本机Stata实际安装路径一致
+  \item \texttt{<YOUR\_TUSHARE\_TOKEN>}为Tushare个人Token（在 \url{https://tushare.pro} 注册后于个人中心获取）
+  \item \texttt{<YOUR\_AMAP\_KEY>}为高德开放平台API Key（在 \url{https://lbs.amap.com} 申请）
   \item JSON中反斜杠必须写成\texttt{\textbackslash\textbackslash}
 \end{itemize}
 \end{warningbox}
+
+\textbf{同花顺iFinD与finance-mcp等远程MCP配置}（在浏览器组SSE配置区中追加即可）：
+
+\begin{lstlisting}[style=json]
+"hexin-ifind-ds-stock-mcp":   { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-stock-mcp" },
+"hexin-ifind-ds-bond-mcp":   { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-bond-mcp" },
+"hexin-ifind-ds-fund-mcp":   { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-fund-mcp" },
+"hexin-ifind-ds-edb-mcp":    { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-edb-mcp" },
+"hexin-ifind-ds-index-mcp":  { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-index-mcp" },
+"hexin-ifind-ds-global-stock-mcp": { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-global-stock-mcp" },
+"hexin-ifind-ds-news-mcp":   { "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-news-mcp" },
+"finance-mcp": { "url": "https://finvestai.top/mcp" },
+"openecon-data": { "url": "https://data.openecon.ai/mcp" },
+"vercel": { "url": "https://mcp.vercel.com" },
+"cloudflare-api": { "url": "https://mcp.cloudflare.com/mcp" },
+"cloudflare-docs": { "url": "https://docs.mcp.cloudflare.com/mcp" },
+"edgeone-makers-mcp-server": { "url": "https://mcp-on-edge.edgeone.site/mcp-server" }
+\end{lstlisting}
 
 \textbf{macOS Stata路径示例}：
 
@@ -509,6 +642,8 @@ MCP的配置通过一个JSON文件完成，不同IDE的配置文件路径不同�
   }
 }
 \end{lstlisting}
+
+\textbf{配置差异总结}：本地stdio MCP需要\texttt{command}字段指定启动命令；远程SSE MCP只需\texttt{url}字段指向服务地址。Tushare/iFinD/finance-mcp等远程服务需要额外的API Key或Token才能调用付费接口。
 
 \subsection{字段含义}
 
@@ -761,6 +896,384 @@ Fetch MCP本质上是AI驱动的HTTP客户端——它可以根据自然语言�
 \end{casebox}
 
 % ============================================================
+\section{金融数据组MCP：投资研究数据中枢}
+% ============================================================
+
+金融数据组是本课程\textbf{最重要的新增内容}。浏览器组只能访问公开网页，调用频率高时易被反爬。金融数据组MCP通过官方授权的API（TuShare、Yahoo Finance、同花顺iFinD等）提供高频、稳定、合规的结构化金融数据，是构建可复现量化研究的基础。本节详解六个主要金融数据MCP：Tushare、同花顺iFinD系列、Yahoo Finance、China Stock、Finance-MCP、OpenBB。
+
+\subsection{Tushare MCP}
+
+\textbf{官方项目}：\url{https://tushare.pro/document/1?doc_id=463}（Tushare官方MCP文档）
+
+Tushare是国内最流行的金融数据接口平台之一，提供了200+个数据接口，覆盖股票、基金、债券、期货、期权、指数、外汇、行业、宏观经济等几乎所有金融领域。Tushare MCP将所有接口以\textbf{工具函数}的形式暴露给AI，AI可以像调用Python函数一样调用Tushare的全部能力。
+
+\subsubsection{主要数据能力清单}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{数据类别} & \textbf{主要工具（示例）} \\
+\midrule
+股票基础信息 & \texttt{stock\_basic}（股票列表）、\texttt{stock\_company}（公司概况） \\
+行情数据 & \texttt{daily}（日线）、\texttt{weekly}（周线）、\texttt{monthly}（月线） \\
+财务数据 & \texttt{income}（利润表）、\texttt{balancesheet}（资产负债表）、\texttt{cashflow}（现金流量表） \\
+财务指标 & \texttt{fina\_indicator}（主要财务指标）、\texttt{fina\_audit}（审计意见） \\
+资金流向 & \texttt{moneyflow}（个股资金流）、\texttt{moneyflow\_hsgt}（沪深港通资金） \\
+股东与机构 & \texttt{top10\_holders}（前十大股东）、\texttt{top\_inst}（龙虎榜机构） \\
+基金 & \texttt{fund\_basic}（基金列表）、\texttt{fund\_nav}（基金净值） \\
+指数 & \texttt{index\_basic}（指数列表）、\texttt{index\_daily}（指数日线） \\
+期货与期权 & \texttt{fut\_basic}、\texttt{fut\_daily}、\texttt{opt\_daily} \\
+宏观与利率 & \texttt{shibor}、\texttt{libor}、\texttt{cn\_gdp}、\texttt{cn\_cpi}、\texttt{cn\_pmi} \\
+新闻公告 & \texttt{news}、\texttt{anns\_d}（公告查询） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{L1任务提示词：股票多因子分析}
+
+\begin{lstlisting}
+任务：使用 tushareMcp 完成招商银行（600036）多因子分析
+
+【1】数据获取
+1. 调用 stock_basic 获取所有 A 股银行股列表
+2. 调用 daily 获取招商银行 2024 年全年日线行情
+3. 调用 fina_indicator 获取招商银行 2020-2024 年主要财务指标
+4. 调用 moneyflow_hsgt 获取同期沪深港通资金流向
+
+【2】数据处理
+1. 计算招商银行 2024 年月度收益率、波动率、最大回撤
+2. 提取年报中的 ROE、ROA、不良贷款率、拨备覆盖率
+3. 汇总北向资金对招商银行的净买入金额
+
+【3】报告输出
+1. 使用 Excel MCP 将数据保存为 reports/cmb_factor_2024.xlsx
+2. 撰写 300 字投研摘要：招商银行基本面与资金面表现
+\end{lstlisting}
+
+\begin{theorybox}[Tushare积分制与Token管理]
+Tushare采用积分制管理API调用权限：注册用户默认100积分，可调用基础接口；高级接口（如分钟线、龙虎榜）需要5000以上积分。Token可在Tushare官网个人中心获取，配置到MCP的\texttt{url}字段中。每个Token对应一个用户身份，**请勿在公开仓库中泄露Token**。
+\end{theorybox}
+
+\subsection{同花顺iFinD系列MCP}
+
+\textbf{官方项目}：\url{https://mcp.51ifind.com/}（同花顺iFinD官方MCP服务）
+
+同花顺iFinD是国内金融机构使用最广泛的金融数据终端之一。2026年3月，同花顺正式推出iFinD MCP服务（\textit{《iFinD金融MCP正式上线，给OpenClaw们配上专业的金融数据》}，新浪财经报道），将iFinD的7大数据子库通过MCP协议开放给AI智能体：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{8cm}}
+\toprule
+\textbf{MCP名称} & \textbf{对应数据子库} & \textbf{核心能力} \\
+\midrule
+\texttt{hexin-ifind-ds-stock-mcp} & 股票 & A股/港股/美股行情、财务数据、估值指标、股东信息 \\
+\texttt{hexin-ifind-ds-bond-mcp} & 债券 & 利率债、信用债、可转债行情与估值 \\
+\texttt{hexin-ifind-ds-fund-mcp} & 基金 & 公募/私募基金净值、持仓、业绩归因 \\
+\texttt{hexin-ifind-ds-edb-mcp} & 宏观数据库 & GDP/CPI/PMI/M2/社融/信贷等宏观指标 \\
+\texttt{hexin-ifind-ds-index-mcp} & 指数 & 中证/国证/申万等行业指数与风格指数 \\
+\texttt{hexin-ifind-ds-global-stock-mcp} & 全球股票 & 美股/港股/欧股/日股基本面与行情 \\
+\texttt{hexin-ifind-ds-news-mcp} & 财经新闻 & 实时财经新闻、公告、研报摘要 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{L2任务提示词：债券信用利差分析}
+
+\begin{lstlisting}
+任务：使用 hexin-ifind-ds-bond-mcp 与 hexin-ifind-ds-edb-mcp 完成宏观利率分析
+
+【1】利率数据获取
+1. 使用 edb MCP 获取 2024 年 10 年期国债收益率、1 年期国债收益率
+2. 计算期限利差（10Y-1Y）月度均值与波动率
+3. 使用 edb MCP 获取 CPI、PPI、PMI 月度数据
+
+【2】信用债数据获取
+1. 使用 bond MCP 获取 2024 年 AA+ 级 3 年期公司债收益率
+2. 使用 bond MCP 获取同期限国开债收益率
+3. 计算信用利差（公司债 - 国开债）
+
+【3】分析报告
+1. 使用 Excel MCP 输出利率-利差-CPI 三图对比
+2. 撰写 300 字分析：当前宏观环境对城投债投资的影响
+\end{lstlisting}
+
+\subsubsection{L3任务提示词：基金持仓归因}
+
+\begin{lstlisting}
+任务：使用 hexin-ifind-ds-fund-mcp 分析某明星基金经理持仓
+
+【1】基金数据
+1. 获取易方达蓝筹精选（005827）2024 年 4 个季度前十大重仓股
+2. 获取基金日净值与基准（沪深300）日行情
+
+【2】持仓分析
+1. 使用 Excel MCP 计算行业分布、市值分布、估值分位
+2. 使用 Excel MCP 绘制 Brinson 业绩归因表
+3. 导出 reports/fund_holding_2024.xlsx
+\end{lstlisting}
+
+\subsection{Yahoo Finance MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/sdpa/yahoo-finance-mcp}
+
+Yahoo Finance是全球最全面的免费金融数据源之一，覆盖美股、港股、欧股、日股、ETF、期权、期货、外汇、加密货币。Yahoo Finance MCP基于\texttt{yahoo-finance2}库，通过非官方API获取数据（与Tushare/iFinD的官方授权不同，Yahoo Finance数据**仅供学术研究使用**）。
+
+\subsubsection{主要数据能力清单}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{数据类别} & \textbf{代表工具} \\
+\midrule
+股票行情 & \texttt{get\_stock\_summary}、\texttt{get\_stock\_info}、\texttt{get\_stock\_performance} \\
+财务报表 & \texttt{get\_stock\_financials} \\
+股东信息 & \texttt{get\_stock\_shareholders} \\
+风险指标 & \texttt{get\_risk\_indicators} \\
+事件日历 & \texttt{get\_stock\_events} \\
+ESG数据 & \texttt{get\_esg\_data} \\
+高频行情 & \texttt{stock\_highfreq\_quotes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{L4任务提示词：中美银行股估值对比}
+
+\begin{lstlisting}
+任务：使用 yahoo-finance 完成中美头部银行股估值对比
+
+【1】美股银行（5家）
+1. 摩根大通 (JPM)、美国银行 (BAC)、富国银行 (WFC)、花旗集团 (C)、高盛 (GS)
+2. 获取 P/E、P/B、ROE、股息率、营收增速
+
+【2】A股银行（5家）
+1. 招商银行 (600036)、兴业银行 (601166)、宁波银行 (002142)、工商银行 (601398)、平安银行 (000001)
+2. 通过 tushareMcp 获取相同指标
+
+【3】对比报告
+1. 使用 Excel MCP 生成 10 行对比表
+2. 使用 mcp-server-chart 生成雷达图
+3. 撰写 400 字分析：中美银行估值差异成因
+\end{lstlisting}
+
+\subsection{China Stock MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/xinkuang/china-stock-mcp}
+
+China Stock MCP是基于\texttt{akshare}库的A股专业数据MCP，提供行情、财务、资金流、技术指标、股东户数、龙虎榜等A股特色数据。与Tushare的差异在于：China Stock完全免费且无需Token，Tushare高阶接口需要积分但数据更稳定。
+
+\subsubsection{特色能力}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{特色能力} & \textbf{说明} \\
+\midrule
+实时行情 & 通过新浪/东财接口抓取实时报价（频率高于Tushare免费档） \\
+龙虎榜 & 个股/游资/机构席位明细 \\
+涨停板 & 涨停强度、连板数、炸板率统计 \\
+资金流 & 北向/南向/大单/中单/小单分类资金流 \\
+股东户数 & A股股东户数变化趋势 \\
+技术指标 & MACD/KDJ/BOLL等通过\texttt{stock\_technical\_rank}直接调用 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[Tushare与China Stock的互补策略]
+\textbf{策略1}：日常行情监控用China Stock（免费、高频、实时），财务深度分析用Tushare（稳定、字段全、含历史财报）；
+
+\textbf{策略2}：龙虎榜、涨停板、连板等A股特色数据用China Stock（Tushare无对应接口）；
+
+\textbf{策略3}：分钟级回测用Tushare+积分制（2000积分以上可用1/5/15/30/60分钟线），低频分析用China Stock。
+\end{notebox}
+
+\subsection{Finance-MCP}
+
+\textbf{官方服务}：\url{https://finvestai.top/mcp}
+
+Finance-MCP是FinvestAI团队基于Tushare API封装的金融数据MCP，与Tushare MCP的区别在于：Finance-MCP将多个相关接口组合为\textbf{复合工具}（如\texttt{get\_stock\_fundamental\_analysis}一次性返回估值、财务、机构持仓），适合AI直接产出\textbf{结构化研报}而非原始数据。
+
+\begin{lstlisting}
+任务：使用 finance-mcp 生成贵州茅台（600519）深度分析报告
+
+1. 调用 get_stock_fundamental_analysis 获取茅台估值与财务全貌
+2. 调用 get_analyst_consensus 获取一致预期与目标价
+3. 调用 get_industry_comparison 获取白酒行业可比公司估值
+4. 调用 word MCP 生成 maotai_report_2024.docx，包含估值表+业务亮点+风险提示
+\end{lstlisting}
+
+\subsection{OpenBB MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/OpenBB-finance/OpenBB}（OpenBB官方）
+
+\textbf{PyPI}：\url{https://pypi.org/project/openbb-mcp-server/}
+
+OpenBB是开源金融研究平台的代表项目，前身为Gamestonk Terminal。OpenBB MCP通过MCP协议暴露了OpenBB Platform的全部REST API，覆盖股票、期权、期货、外汇、加密货币、经济数据、新闻等。OpenBB的优势在于\textbf{数据源聚合}——同一指标可从Yahoo、FRED、SEC、Quandl等多个源获取，并提供交叉验证。
+
+\begin{notebox}[金融数据MCP的选型决策树]
+需要\textbf{官方授权、稳定、合规}的金融数据 → \textbf{Tushare MCP}（A股为主）或\textbf{同花顺iFinD}（机构级数据）
+
+需要\textbf{全球跨市场}数据（美股/港股/欧股） → \textbf{Yahoo Finance MCP}
+
+需要\textbf{A股特色数据}（龙虎榜/涨停板/资金流） → \textbf{China Stock MCP}
+
+需要\textbf{复合研报数据}（一次返回多维度） → \textbf{Finance-MCP}
+
+需要\textbf{多源交叉验证} → \textbf{OpenBB MCP}
+\end{notebox}
+
+% ============================================================
+\section{经济数据组MCP：宏观研究数据源}
+% ============================================================
+
+经济数据组MCP专注于宏观与跨国数据，是开展货币政策、汇率、跨境资本流动、金融开放等宏观研究的基础。本节详解三个核心MCP：OECD、World Bank Data360、OpenEcon。
+
+\subsection{OECD MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/isakskogstad/OECD-MCP}
+
+\textbf{npm包}：\url{https://www.npmjs.com/package/oecd-mcp}
+
+OECD MCP由社区开发者isakskogstad维护，封装了OECD的SDMX API，覆盖38个成员国及部分非成员国的经济、教育、健康、环境、就业、金融等17个类别的\textbf{1500+数据集}。
+
+\subsubsection{典型数据集}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{数据集代码} & \textbf{名称} & \textbf{金融研究应用} \\
+\midrule
+\texttt{EO} & Economic Outlook & GDP增速、通胀预测 \\
+\texttt{KEI} & Key Economic Indicators & 利率、失业率、贸易差额 \\
+\texttt{SNA\_TABLE1} & GDP by Industry & 三次产业结构分析 \\
+\texttt{CPI} & Consumer Prices & 跨国通胀比较 \\
+\texttt{IRLT} & Long-term Interest Rates & 主权债收益率 \\
+\texttt{BSCI} & Bank Soundness Indicators & 跨国银行稳健性指标 \\
+\texttt{FDI} & FDI Flows & 跨境投资分析 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{L5任务提示词：跨国银行业稳健性对比}
+
+\begin{lstlisting}
+任务：使用 oecd-mcp 完成 G7 国家银行业稳健性对比
+
+【1】数据获取
+1. 调用 oecd-mcp 获取 BSCI 数据库中 G7 国家 2010-2024 年数据
+2. 提取指标：资本充足率（CAR）、不良贷款率（NPL）、ROE、拨备覆盖率
+
+【2】跨国比较
+1. 使用 Excel MCP 计算各国均值、标准差
+2. 使用 mcp-server-chart 生成多国 CAR 趋势折线图
+3. 生成 NPL 与 GDP 增速散点图
+
+【3】报告输出
+1. 撰写 500 字分析：G7 银行体系稳健性差异
+2. 使用 word MCP 输出 reports/g7_bank_soundness.docx
+\end{lstlisting}
+
+\subsection{World Bank Data360 MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/worldbank/data360-mcp}（世界银行官方）
+
+\textbf{官方文档}：\url{https://worldbank.github.io/data360-mcp/}
+
+World Bank Data360是世界银行在2024年推出的新一代数据平台，整合了World Development Indicators、International Debt Statistics、Doing Business等10+个数据库。Data360 MCP是世界银行官方维护的MCP服务，提供\textbf{200+国家、5000+指标}的访问。
+
+\subsubsection{核心能力}
+
+\begin{itemize}[leftmargin=2em]
+  \item \texttt{data360\_search\_indicators}：按关键词搜索指标（如"financial inclusion"）
+  \item \texttt{data360\_search\_datasets}：搜索数据集
+  \item \texttt{data360\_get\_data}：获取指标时间序列数据
+  \item \texttt{data360\_rank\_countries}：跨国排名
+  \item \texttt{data360\_compare\_countries}：多国对比
+  \item \texttt{data360\_summarize\_data}：数据汇总统计
+\end{itemize}
+
+\subsubsection{L6任务提示词：全球金融包容性分析}
+
+\begin{lstlisting}
+任务：使用 worldbank-data360 完成全球金融包容性分析
+
+【1】指标获取
+1. 检索"Account at a financial institution"指标
+2. 获取 2010-2023 年中国、印度、美国、德国、肯尼亚年度数据
+3. 检索"Domestic credit to private sector"指标
+4. 获取 5 国同期数据
+
+【2】对比分析
+1. 使用 Excel MCP 计算各国金融包容性变化幅度
+2. 使用 mcp-server-chart 生成双轴折线图
+3. 输出金融包容性与私人部门信贷占比的散点图
+
+【3】报告输出
+1. 撰写 500 字分析：金融科技对发展中国家的影响
+2. 使用 word MCP 输出 reports/fin_inclusion.docx
+\end{lstlisting}
+
+\subsection{OpenEcon Data MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/hanlulong/openecon-data}
+
+\textbf{官方网站}：\url{https://openecon.ai}
+
+OpenEcon Data MCP是hanlulong（同时也是stata-mcp作者）开发的经济数据聚合服务，将\textbf{10+数据源}统一为一个MCP接口：
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{数据源} & \textbf{说明} \\
+\midrule
+FRED & 美联储经济数据库（80万+时间序列） \\
+World Bank & 世界银行指标 \\
+IMF & 国际货币基金组织（国际金融统计） \\
+Eurostat & 欧盟统计局 \\
+BIS & 国际清算银行 \\
+OECD & 经合组织 \\
+Census & 美国人口普查局 \\
+BEA & 美国经济分析局 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{lstlisting}
+任务：使用 openecon-data 完成美联储加息周期对新兴市场影响分析
+
+【1】数据获取
+1. 查询"Federal Funds Rate"（联邦基金利率）2022-2024 月度数据
+2. 查询"EMBI Global"（新兴市场债券利差）月度数据
+3. 查询"Argentina CPI"、"Turkey CPI"、"Brazil CPI"
+
+【2】相关性分析
+1. 使用 Excel MCP 计算利率与利差相关系数
+2. 使用 mcp-server-chart 生成三图对比
+
+【3】报告输出
+1. 撰写 400 字分析报告
+2. 使用 word MCP 输出 reports/em_impact.docx
+\end{lstlisting}
+
+\begin{theorybox}[金融数据MCP vs 经济数据MCP的使用边界]
+\textbf{金融数据MCP}（Tushare/iFinD/Yahoo）：以\textbf{微观主体}（上市公司/银行/基金/个股）为对象，提供高频、精细化的市场与财务数据，适合\textbf{投资研究}、\textbf{资产定价}、\textbf{公司金融}等场景。
+
+\textbf{经济数据MCP}（OECD/WB/OpenEcon）：以\textbf{宏观经济变量}（GDP/CPI/利率/汇率/就业）为对象，提供中低频、跨国可比的数据，适合\textbf{宏观研究}、\textbf{货币政策分析}、\textbf{国际金融}等场景。
+
+\textbf{协同范式}：宏观研究通常需要"自上而下"——先用经济数据MCP分析宏观周期与货币政策，再用金融数据MCP分析行业与个股的传导效应。
+\end{theorybox}
+
+% ============================================================
 \section{Office组MCP：金融文档自动化}
 % ============================================================
 
@@ -955,6 +1468,209 @@ AI使用PPT MCP将Word内容转换为5页演示文稿：
 
 \textbf{全流程耗时}：约2--3分钟（人工操作需1--2小时）
 \end{casebox}
+
+% ============================================================
+\section{图表可视化MCP：AntV Chart金融图表生成}
+% ============================================================
+
+\textbf{GitHub项目}：\url{https://github.com/antvis/mcp-server-chart}（AntV官方，4.2k stars）
+
+mcp-server-chart是蚂蚁集团AntV团队开发的可视化MCP，基于AntV开源可视化库（G2/G6/L7等），提供\textbf{25+种图表类型}的代码生成与渲染能力。在金融场景中，AntV Chart MCP弥补了Excel MCP图表类型有限、定制化困难的不足。
+
+\subsection{主要图表能力}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{图表类型} & \textbf{金融场景应用} \\
+\midrule
+柱状图 / 条形图 & 银行营收对比、贷款规模排名 \\
+折线图 / 面积图 & 股价走势、利率趋势、信贷脉冲 \\
+饼图 / 环图 & 资产配置、客户行业分布 \\
+散点图 / 气泡图 & 估值散点（PE-PB）、风险-收益分布 \\
+雷达图 & 银行多维度综合评分 \\
+仪表盘 & KPI指标可视化 \\
+桑基图 & 资金流向、客户迁移路径 \\
+热力图 & 板块轮动、相关系数矩阵 \\
+树状图 / 旭日图 & 资产组合分解 \\
+词云 & 公告主题提取、年报关键词 \\
+漏斗图 & 营销转化、产品渗透路径 \\
+地理图 & 区域金融业务分布（与高德叠加） \\
+网络图 & 股东持股关联图、供应链金融 \\
+箱线图 & 收益率分布、估值分布 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{L7任务提示词：银行业绩综合图表}
+
+\begin{lstlisting}
+任务：使用 mcp-server-chart 生成 10 家上市银行综合图表
+
+【1】数据准备
+1. 使用 tushareMcp 获取 10 家银行 2024 年报数据：营收、净利润、ROE、不良率、拨备覆盖率
+2. 使用 Excel MCP 整理为 reports/bank_compare_2024.xlsx
+
+【2】图表生成（使用 mcp-server-chart）
+1. 调用 generate_bar_chart 生成 10 家银行净利润对比柱状图
+2. 调用 generate_radar_chart 生成 5 维度雷达图（标准化后）
+3. 调用 generate_scatter_chart 生成 ROE-不良率散点图
+4. 调用 generate_sankey_chart 生成资产-负债结构桑基图
+5. 所有图表保存为 figures/ 目录下的 PNG
+
+【3】报告整合
+1. 使用 word MCP 将 4 张图插入 reports/bank_compare_report.docx
+2. 使用 ppt MCP 生成 5 页汇报 PPT
+\end{lstlisting}
+
+\begin{theorybox}[AntV Chart MCP vs Excel MCP图表能力对比]
+\textbf{Excel MCP}：擅长\textbf{数据驱动的标准图表}，与Excel深度集成，适合做日常报表。其图表嵌入在xlsx文件中，可与数据联动更新。图表类型覆盖基础10种（柱/折线/饼/散点/面积/雷达/3D等）。
+
+\textbf{AntV Chart MCP}：擅长\textbf{定制化的高级可视化}，输出独立PNG/SVG文件，适合做研报插图、演示文稿、海报设计。图表类型丰富（25+种），样式高度可定制（颜色/字体/标注/交互）。
+
+\textbf{协同策略}：日常数据探索用Excel MCP，研报/PPT中的关键图表用AntV Chart MCP精雕细琢。
+\end{theorybox}
+
+% ============================================================
+\section{地图与PDF文献MCP}
+% ============================================================
+
+\subsection{高德地图 MCP（amap-maps）}
+
+\textbf{官方项目}：\url{https://lbs.amap.com/api/mcp-server/summary}（高德地图官方）
+
+\textbf{npm包}：\url{https://www.npmjs.com/package/@amap/amap-maps-mcp-server}
+
+高德地图MCP是阿里高德团队2025年发布的官方MCP服务，将高德开放平台的13个核心API（地理编码、逆地理编码、POI搜索、路径规划、天气查询、行政区划、IP定位、骑行/步行/驾车导航等）封装为MCP工具。在金融场景中，主要用于银行网点空间布局分析、客户地理画像、区域金融业务分布等。
+
+\begin{lstlisting}
+任务：使用 amap-maps 完成四川省银行网点空间分析
+
+【1】网点获取
+1. 使用 fetch MCP 从银保监会公开页面抓取四川省 5 家国有行+12 家股份行+30 家城商行网点列表
+2. 使用 amap-mcp 的 maps_geo 接口将地址批量转为经纬度
+
+【2】空间分析
+1. 使用 amap-mcp 的 maps_text_search 接口查询网点周边 1km 的写字楼、住宅、地铁站 POI
+2. 使用 Excel MCP 计算每个网点的周边配套评分
+
+【3】可视化输出
+1. 使用 mcp-server-chart 调用 generate_pin_map 生成四川地图散点图
+2. 撰写 300 字分析报告
+\end{lstlisting}
+
+\subsection{Scansci PDF MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/Rimagination/scansci-pdf}
+
+Scansci PDF是面向研究者与学生的学术论文PDF下载MCP，支持DOI、arXiv ID、URL、论文标题四种输入方式。Scansci-PDF采用\textbf{MCP+Skill双层架构}：MCP层提供21个底层工具（来源查询、PDF下载、批量处理、Zotero联动等），Skill层提供"如何找到一篇好论文"的工作流模板。
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{核心能力} & \textbf{说明} \\
+\midrule
+智能下载 & 自动尝试开放获取、出版商接口、机构访问、浏览器登录等路径 \\
+批量下载 & 一次性下载多篇论文（如BibTeX文件中所有条目） \\
+付费墙处理 & 多机构WebVPN登录、Tor网络支持 \\
+Zotero联动 & 导入到Zotero库（含PDF附件） \\
+引文格式转换 & 支持BibTeX、Endnote、RefMan等格式 \\
+PDF解析 & 提取文本、表格、参考文献列表 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{lstlisting}
+任务：使用 scansci-pdf 完成"数字货币对商业银行影响"文献综述
+
+【1】文献检索
+1. 使用 scansci-pdf 的 search 接口，关键词 "digital currency bank lending"
+2. 筛选近 3 年高被引论文前 20 篇
+
+【2】PDF 下载
+1. 使用 scansci-pdf 的 batch_download 接口批量下载 20 篇 PDF
+2. 全部保存到 papers/digital_currency/ 目录
+
+【3】摘要生成
+1. 使用 PDF 解析工具提取每篇论文摘要
+2. 使用 mcp-server-chart 调用 generate_word_cloud 生成主题词云
+3. 使用 word MCP 生成文献综述初稿
+\end{lstlisting}
+
+% ============================================================
+\section{系统自动化与AI辅助MCP}
+% ============================================================
+
+\subsection{macOS桌面自动化双雄：automation-mcp 与 macos-automator}
+
+\subsubsection{automation-mcp}
+
+\textbf{GitHub项目}：\url{https://github.com/ashwwwin/automation-mcp}
+
+automation-mcp由ashwwwin开发，提供macOS系统级UI自动化能力：鼠标控制、键盘输入、窗口管理、屏幕截图、UI元素识别。其设计理念是\textbf{让AI像人一样操作Mac}，适用于没有专用MCP的桌面软件（如老版网银客户端、行情软件等）。
+
+\begin{lstlisting}
+任务：使用 automation-mcp 截取通达信行情软件特定窗口
+
+1. 启动通达信（如果未启动）
+2. 获取窗口列表，识别"通达信"主窗口
+3. 调整窗口位置到屏幕左上角 100x100 大小 800x600
+4. 截取窗口内容，保存为 figures/tdx_snapshot.png
+\end{lstlisting}
+
+\subsubsection{macos-automator}
+
+\textbf{GitHub项目}：\url{https://github.com/steipete/macos-automator-mcp}
+
+\textbf{npm包}：\url{https://www.npmjs.com/package/@steipete/macos-automator-mcp}
+
+macos-automator由知名开发者steipete（前Mozilla CEO）维护，专注于执行AppleScript和JavaScript for Automation（JXA）脚本。它将AI模型对macOS原生API的调用能力做了薄封装，适合需要深度集成macOS特有功能（如Finder操作、Safari扩展、系统偏好设置）的场景。
+
+\begin{theorybox}[automation-mcp vs macos-automator的能力边界]
+\textbf{automation-mcp}：通用型UI自动化，通过屏幕坐标+像素识别操作UI元素。优势：\textbf{无需目标软件提供API}，任何macOS应用都可操作。劣势：依赖视觉识别，对动态UI（如动画、滚动）鲁棒性较差。
+
+\textbf{macos-automator}：API型系统集成，通过执行AppleScript/JXA脚本直接调用macOS API。优势：\textbf{执行效率高、稳定性强}，可批量处理系统级任务。劣势：仅适用于支持AppleScript的应用（Finder/Safari/Mail/Notes等原生应用支持好，第三方应用支持参差不齐）。
+
+\textbf{协同范式}：优先用macos-automator处理原生应用（如Finder批量重命名），回退到automation-mcp处理第三方应用UI。
+\end{theorybox}
+
+\subsection{Sequential Thinking MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/modelcontextprotocol/servers}（MCP官方reference server中的\texttt{sequentialthinking}）
+
+Sequential Thinking是MCP协议作者Anthropic官方维护的reference server之一，提供\textbf{结构化逐步推理}能力。与普通AI对话不同，Sequential Thinking强制AI将复杂问题分解为多个思考步骤，每步可修订、追溯、分支，特别适合金融分析中的多步推理（如"先看宏观、再看行业、再看个股"的研究框架）。
+
+\begin{lstlisting}
+任务：使用 sequential-thinking 分析招商银行估值合理性
+
+请AI按以下步骤推理：
+1. 当前宏观经济周期阶段（衰退/复苏/过热/滞胀）
+2. 银行业整体ROE与估值水平
+3. 招商银行相对银行业的alpha来源
+4. 当前股价是否反映这些因素
+5. 给出估值结论
+\end{lstlisting}
+
+\subsection{Context7 MCP}
+
+\textbf{GitHub项目}：\url{https://github.com/upstash/context7-mcp}
+
+\textbf{npm包}：\url{https://www.npmjs.com/package/@upstash/context7-mcp}
+
+Context7由Upstash（知名云服务厂商）维护，提供\textbf{实时库文档查询}能力。当AI需要使用某个Python/JS/Go库的API时，Context7可以返回该库的最新文档（而非AI训练数据中的过时信息）。在金融数据MCP使用中，Context7可以帮AI快速查Tushare接口的最新字段定义、AntV Chart的最新图表参数等。
+
+\begin{lstlisting}
+任务：使用 context7 解决 Tushare 新接口参数问题
+
+1. AI 在调用 Tushare 的新接口 moneyflow_dc 时遇到参数不确定
+2. 调用 context7 查询 "tushare moneyflow_dc"
+3. Context7 返回该接口的官方文档（含参数、返回字段、示例）
+4. AI 据此正确调用接口
+\end{lstlisting}
 
 % ============================================================
 \section{数据分析组MCP：Stata计量经济学}
@@ -1228,17 +1944,18 @@ Fetch → 数据格式判断
 
 \subsection{工作流编排案例：银行分析全链路}
 
-以下是一个典型的银行分析全链路工作流，展示了Fetch→Excel→Word→PPT四MCP协同：
+以下是一个典型的银行分析全链路工作流，展示了\textbf{金融数据 + Excel + AntV Chart + Word + PPT}五MCP协同：
 
 \textbf{任务描述}：为某上市银行自动生成季度经营分析报告。
 
-\textbf{Step 1 — 数据采集}（Fetch MCP）
+\textbf{Step 1 — 数据采集}（Tushare + iFinD + OECD 金融数据组MCP）
 
 \begin{lstlisting}
-使用 fetch MCP 获取以下数据：
-1. 该银行最新季报关键财务指标（营收、净利润、不良率、拨备覆盖率）
-2. 同期LPR利率数据
-3. 行业平均指标（来自银保监会公开数据）
+使用金融数据组 MCP 获取以下数据：
+1. 使用 tushareMcp 获取该银行最新季报财务指标（营收、净利润、不良率、拨备覆盖率）
+2. 使用 hexin-ifind-ds-edb-mcp 获取同期LPR、SHIBOR利率数据
+3. 使用 tushareMcp 获取行业平均指标（25家上市银行均值）
+4. 使用 oecd-mcp 获取同期 G7 银行业资本充足率与不良率基准
 \end{lstlisting}
 
 \textbf{Step 2 — 数据处理}（Excel MCP）
@@ -1246,12 +1963,21 @@ Fetch → 数据格式判断
 \begin{lstlisting}
 使用 Excel MCP 完成以下处理：
 1. 创建"原始数据"Sheet，存入采集到的所有数据
-2. 创建"对比分析"Sheet，计算该行与行业平均的偏离度
+2. 创建"对比分析"Sheet，计算该行与行业平均、与G7基准的偏离度
 3. 创建"趋势分析"Sheet，生成近4个季度的趋势图表
 4. 创建"综合评分"Sheet，基于多维度指标计算综合评分
 \end{lstlisting}
 
-\textbf{Step 3 — 文档生成}（Word MCP）
+\textbf{Step 3 — 高级可视化}（AntV Chart MCP）
+
+\begin{lstlisting}
+使用 mcp-server-chart 生成高端图表（保存为 figures/）：
+1. 调用 generate_radar_chart 生成该行 vs 行业 vs G7 的5维度雷达图
+2. 调用 generate_sankey_chart 生成资产负债结构桑基图
+3. 调用 generate_heatmap 生成近12季度多指标热力图
+\end{lstlisting}
+
+\textbf{Step 4 — 文档生成}（Word MCP）
 
 \begin{lstlisting}
 使用 word MCP 生成分析报告文档：
@@ -1263,16 +1989,55 @@ Fetch → 数据格式判断
 6. 结论与建议：投资建议
 \end{lstlisting}
 
-\textbf{Step 4 — 演示生成}（PPT MCP）
+\textbf{Step 5 — 演示生成}（PPT MCP）
 
 \begin{lstlisting}
 使用 ppt MCP 生成5页演示文稿：
 1. 封面页
 2. 核心指标概览（表格）
-3. 趋势分析（图表）
+3. 趋势分析（嵌入AntV生成的图表）
 4. 同业对比（雷达图）
 5. 结论与建议
 \end{lstlisting}
+
+\textbf{Step 6 — 一键部署}（Vercel/Cloudflare MCP，可选）
+
+\begin{lstlisting}
+使用 vercel 或 cloudflare-* MCP 将分析报告部署为可访问网页：
+1. 生成静态 HTML（含嵌入图表）
+2. 调用 edgeone-makers-mcp-server 一键部署
+3. 获得 https://xxx.edgeone.app/ 分享链接
+\end{lstlisting}
+
+\subsection{“宏观—行业—个股”三步式金融研究工作流}
+
+本节展示一个进阶的多MCP协同案例，体现了金融数据组与经济数据组的协作：
+
+\begin{lstlisting}
+任务：使用金融+经济数据 MCP 完成 “中国上市银行顺周期能力” 研究报告
+
+【宏观阶段】（经济数据组）
+1. 使用 hexin-ifind-ds-edb-mcp 获取 2015-2024 中国 GDP/CPI/PMI/M2 增速
+2. 使用 openecon-data 获取同期美欧 GDP 增速与利率周期
+3. 使用 mcp-server-chart 生成中国宏观周期四象限图
+
+【行业阶段】（金融数据组）
+1. 使用 tushareMcp 获取 36 家上市银行 2015-2024 报表数据
+2. 使用 Excel MCP 计算各行 “顺周期指数”（营收增速对 GDP 增速的弹性）
+3. 使用 china-stock-mcp 获取各行股价季度表现
+
+【个股阶段】（金融数据 + Stata）
+1. 使用 yahoo-finance 获取 H 股中资银行同步数据
+2. 使用 stata-mcp 跑面板回归：ROE ~ 宏观变量 + 个体控制
+3. 使用 Excel MCP + AntV Chart 生成股价叠加图与领先-滞后关联图
+
+【报告输出】
+1. 使用 word MCP 生成 30 页完整研究报告
+2. 使用 ppt MCP 生成 10 页汇报材料
+3. 使用 vercel MCP 部署为对外展示页面
+\end{lstlisting}
+
+这一案例完整覆盖了「宏观-行业-个股」三层研究框架，是金融从业者使用MCP实现\textbf{可复现量化研究}的典型范式。
 
 \subsection{MCP调用顺序与依赖管理}
 
@@ -1325,7 +2090,7 @@ MCP服务不可用 & 服务未启动或进程崩溃 & 重启服务后重试；�
 
 在理论层面，MCP是一种开放标准，通过三层架构（Client/Server/Tool）和JSON-RPC 2.0通信协议，实现了AI与外部工具的标准化连接。与传统API调用不同，MCP的关键创新在于将工具选择权交给AI模型——AI根据Tool Schema的描述自主决定调用哪个工具、传入什么参数，用户只需用自然语言描述目标。
 
-在实践层面，本章详细讲解了浏览器组（Playwright/Chrome DevTools/Fetch）、Office组（Excel/Word/PPT）和数据分析组（Stata）共8组MCP的配置与使用。每个MCP都通过具体的金融场景任务进行了演示，从银行官网审计到客户分群报表，从年报简报到计量回归分析。
+在实践层面，本章详细讲解了\textbf{10个组别、30+个MCP}的配置与使用，涵盖：浏览器组（Playwright/Chrome DevTools/Fetch）、金融数据组（Tushare/同花顺iFinD/Yahoo Finance/China Stock/Finance-MCP/OpenBB）、经济数据组（OECD/World Bank/OpenEcon）、Office组（Excel/Word/PPT）、图表可视化组（AntV Chart）、地图地理组（高德）、PDF文献组（Scansci PDF）、系统自动化组（automation-mcp/macOS Automator/WindowsMCP）、AI辅助组（Sequential Thinking/Context7）、云部署组（Vercel/Cloudflare/EdgeOne）。每个MCP都通过具体的金融场景任务进行了演示，覆盖了从银行官网审计到行业多因子分析、从跨国银行业对比到“宏观-行业-个股”三层研究报告等多元场景。
 
 在编排层面，多MCP协同工作可以采用流水线、并行和条件分支三种模式。关键原则是：数据先行、处理居中、输出在后、中间产物保存。
 
@@ -1336,7 +2101,7 @@ MCP服务不可用 & 服务未启动或进程崩溃 & 重启服务后重试；�
 % ============================================================
 
 \keyterms{
-MCP（Model Context Protocol）、MCP Client、MCP Server、JSON-RPC 2.0、Tool Schema、工具发现、stdio传输、SSE传输、Playwright MCP、Lighthouse审计、Fetch MCP、Excel MCP、Word MCP、Stata MCP、面板数据固定效应模型
+MCP（Model Context Protocol）、MCP Client、MCP Server、JSON-RPC 2.0、Tool Schema、工具发现、stdio传输、SSE传输、Streamable HTTP、Playwright MCP、Lighthouse审计、Fetch MCP、Tushare MCP、同花顺iFinD MCP、Yahoo Finance MCP、China Stock MCP、OpenBB、OECD MCP、World Bank Data360 MCP、OpenEcon Data MCP、Excel MCP、Word MCP、PowerPoint MCP、AntV Chart MCP、高德地图 MCP、Scansci PDF MCP、automation-mcp、macos-automator、Sequential Thinking MCP、Context7 MCP、Vercel MCP、Cloudflare MCP、EdgeOne MCP、面板数据固定效应模型
 }
 
 % ============================================================
@@ -1349,11 +2114,23 @@ MCP（Model Context Protocol）、MCP Client、MCP Server、JSON-RPC 2.0、Tool 
   \item 比较stdio传输与SSE传输的适用场景。如果你需要在企业内网部署一个MCP网关（连接内部数据库），应该选择哪种传输方式？为什么？
   \item 在金融数据采集中，Playwright MCP和Fetch MCP各有何优劣？什么场景下应该优先选择Fetch而非Playwright？
   \item 面板数据回归中，Hausman检验拒绝了随机效应模型（$p < 0.01$），但你关心的核心解释变量是一个不随时间变化的变量（如银行注册地所在省份）。此时应如何选择估计策略？
-  \item \textbf{实操设计题}：请设计一个MCP组合编排工作流，实现「自动监控某上市银行官网公告，当出现新的利润分配公告时，自动提取关键数据，生成分析简报（Word+PPT），并发送通知」。要求：
+  \item \textbf{金融数据MCP选型题}：你需要完成一项“上市银行顺周期能力”研究。
   \begin{itemize}
-    \item 列出需要使用的MCP组合及调用顺序
+    \item 该研究中需要拉取36家上市银行2015-2024年财务数据，应选择哪个MCP？为什么不直接使用Fetch MCP抓报表？
+    \item 跨国对比阶段需要与G7银行体系比较，应选择哪个经济数据MCP？该MCP的官方项目地址是什么？
+    \item 研究报告需要一张高质量的“股价叠加 vs 宏观周期”多变量图，应使用Excel MCP还是AntV Chart MCP？为什么？
+  \end{itemize}
+  \item \textbf{多MCP协同实操题}：请设计一个MCP组合编排工作流，实现“使用公开论文PDF与金融数据MCP，自动生成某上市公司同业对标报告”。要求：
+  \begin{itemize}
+    \item 列出需要使用的MCP组合及调用顺序（需要用到 Scansci PDF MCP）
     \item 写出关键步骤的提示词框架
     \item 设计错误处理与回退策略
+    \item 说明为什么需要 PDF 文献组与金融数据组 MCP 联动
+  \end{itemize}
+  \item \textbf{创新设计题}：请设计一个mcp组合，在「宏观周期判断」阶段调用经济数据组MCP，在「行业与个股」阶段调用金融数据组MCP，在「可视化」阶段调用AntV Chart MCP，在「一键报告」阶段调用Word/PPT/Vercel MCP。要求：
+  \begin{itemize}
+    \item 画出调用流程图（可用mermaid语法）
+    \item 说明每一步的输入、输出与中间产物保存路径
   \end{itemize}
 \end{enumerate}
 \end{exercisebox}

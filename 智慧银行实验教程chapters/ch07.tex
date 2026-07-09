@@ -8,10 +8,313 @@
   \item 理解金融数据的特征与预处理方法
   \item 掌握面板数据回归分析的基本方法与模型选择
   \item 学会时间序列预测的经典与深度学习方法
-  \item 了解因果推断的主要方法论
+  \item 了解因果推断的主要方法论（DID/RDD/IV/SCM/PSM）
   \item 掌握AI辅助计量分析的完整工作流
+  \item 掌握金融数据获取 Skill（\texttt{tushare-finance} / \texttt{china-stock-analysis} / \texttt{openbb-finance} / \texttt{api-data-fetcher}）的调用
+  \item 掌握计量分析 Skill（\texttt{stata} / \texttt{stata-regression} / \texttt{r-econometrics} / \texttt{python-panel-data} / \texttt{data-analysis}）的差异化使用与三环境协同
+  \item 掌握发表级图表与LaTeX表格 Skill（\texttt{econ-visualization} / \texttt{paper-figure} / \texttt{latex-tables} / \texttt{mermaid-diagram}）的输出
+  \item 掌握计量研究演示文稿 Skill（学术线 \texttt{paper-slides} / \texttt{beamer-presentation}；商业线 \texttt{pptx} / \texttt{qoderwork-ppt} / \texttt{ppt-master}）
 \end{enumerate}
 }
+
+% ============================================================
+\section{AI Skill辅助金融数据分析工作流}
+
+% ============================================================
+
+\textbf{【本章方法论定位】} 本章所有计量分析任务都以"调用Skill"为组织原则——不仅是“写一段提示词让AI跑代码”，更是明确调用\texttt{stata} / \texttt{r-econometrics} / \texttt{python-panel-data} / \texttt{econ-visualization}等Skill来完成专业金融计量任务。
+
+\textbf{与ch03的MCP流水线区别}：本章Skill是"方法论"（怎么微计量结果处理），MCP是"工具能力"（能不能读到数据）。二者是能力与方法的辩证统一。
+
+\subsection{6节点Skill流水线（贯穿本章）}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clp{6cm}p{4.5cm}}
+\toprule
+\textbf{节点} & \textbf{环节} & \textbf{任务} & \textbf{Skill候选} \\
+\midrule
+1 & 文献综述 & 系统检索+综述+管理引用 & \texttt{systematic-literature-review} / \texttt{lit-review-assistant} / \texttt{academic-researcher} / \texttt{find-literature} \\
+2 & 数据获取 & 从API/数据库拉取金融数据 & \texttt{tushare-finance} / \texttt{china-stock-analysis} / \texttt{api-data-fetcher} / \texttt{worldbank-data360} / \texttt{oecd-data} \\
+3 & 数据清洗 & 缺失值/异常值/变换 & \texttt{stata-data-cleaning} / \texttt{data-analysis} / \texttt{r-data-cleaning} \\
+4 & 回归分析 & OLS/FE/IV/DiD/RDD/预测 & \texttt{stata} / \texttt{stata-regression} / \texttt{r-econometrics} / \texttt{python-panel-data} / \texttt{data-analysis} \\
+5 & 图表生成 & 发表级图表与表格 & \texttt{econ-visualization} / \texttt{paper-figure} / \texttt{paper-illustration} / \texttt{latex-tables} / \texttt{mermaid-diagram} \\
+6 & 论文与演示 & LaTeX初稿与会议slides & \texttt{paper-write} / \texttt{academic-paper-writer} / \texttt{paper-slides} / \texttt{beamer-presentation} / \texttt{ppt-master} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{提示词Skill化改写原则}
+
+为实现“所有Stata/Python/R提示词都Skill化”，本章遵循统一的提示词改写原则：
+
+\textbf{三要素包装法}（每个原提示词都必做）：
+
+原始提示词 = "请运行Stata代码：reg y x, robust"
+
+Skill化后 = "请调用 \texttt{stata} Skill完成以下任务：【背景】...【输入】...【代码】...【预期输出】..."
+
+\textbf{改写原则10条}：
+\begin{enumerate}[leftmargin=2em]
+  \item 必须明示Skill名称（调用X Skill）
+  \item 必须明示输入文件/变量
+  \item 必须明示输出文件/格式
+  \item 原裸代码保留（作为代码补充，不是替代）
+  \item 环境检查提前（提示词开头或附录说明依赖）
+  \item 多Skill串联（一个提示词可调用多个Skill协同）
+  \item 失败回退方案（如Skill不可用，如何手动运行）
+  \item 输出预期明确（交什么文件、什么格式）
+  \item 业务上下文（为什么跑这个回归，解释预期含义）
+  \item 可重复性（明确随机种子、软件版本、依赖版本）
+\end{enumerate}
+
+\textbf{标准化提示词模板}（实验报告附件用）：
+\begin{lstlisting}
+【Skill调用提示词 v1.0】
+调用 Skill：<skill-name-1>、<skill-name-2>
+任务背景：<1-2句说明>
+输入数据：<文件路径 + 关键变量>
+输出要求：<文件路径 + 格式>
+环境检查：请先运行 /tmp/check_ch07_env.sh
+原代码补充：<可选，保留关键代码块>
+失败回退：如Skill不可用，手动运行 <backup-command>
+预期结论：<说明预期结果含义>
+\end{lstlisting}
+
+% ============================================================
+\section{计量分析运行环境准备（R/Stata/Python三环境协同）}
+
+% ============================================================
+
+本章计量分析依赖R、Stata、Python三大工具中任一环境，本节在调用计量Skill之前提供完整环境准备说明。
+
+\subsection{R环境（r-econometrics Skill前置）}
+
+\textbf{R 4.0+安装}：
+\begin{lstlisting}[style=shell]
+brew install --cask r       # macOS
+# 或访问 https://cran.r-project.org/bin/macosx/ 下载 R-x.y.z-arm64.pkg
+\end{lstlisting}
+
+\textbf{CRAN国内镜像}（\texttt{~/.Rprofile}）：
+\begin{lstlisting}[style=r]
+options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+\end{lstlisting}
+
+\textbf{本章计量必备R包}（一键安装）：
+\begin{lstlisting}[style=r]
+install.packages(c(
+  "fixest",       # feols() 高维FE、IV、DiD
+  "modelsummary", # 发表级回归表
+  "rdrobust",     # 断点回归
+  "did",          # Callaway-Sant'Anna现代DiD
+  "Synth",        # 合成控制法
+  "MatchIt",      # PSM
+  "sandwich", "lmtest",
+  "AER",          # ivreg()
+  "ggplot2", "scales", "dplyr", "tidyr", "readr", "tidyverse"
+))
+\end{lstlisting}
+
+\textbf{RStudio Desktop}（推荐IDE）：\url{https://posit.co/download/rstudio-desktop/}
+
+\textbf{R路径验证脚本}（运行后可粘贴到AI提示词）：
+\begin{lstlisting}[style=r]
+cat("R version:", R.version.string, "\n")
+cat("fixest:", as.character(packageVersion("fixest")), "\n")
+cat("modelsummary:", as.character(packageVersion("modelsummary")), "\n")
+\end{lstlisting}
+
+\subsection{Stata环境（stata / stata-regression Skill前置）}
+
+\textbf{macOS路径}（学生必看）：
+\begin{lstlisting}[style=shell]
+# 默认路径
+/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp
+# 查找不到时
+mdfind -name "stata-mp" | grep MacOS
+\end{lstlisting}
+
+\textbf{PATH配置}（\texttt{~/.zshrc}）：
+\begin{lstlisting}[style=shell]
+export PATH="/Applications/Stata/StataMP.app/Contents/MacOS:$PATH"
+source ~/.zshrc
+\end{lstlisting}
+
+\textbf{批处理运行模板}（AI调用Stata的标准方式）：
+\begin{lstlisting}[style=shell]
+stata-mp -b do chapter7_panel.do    # 输出 chapter7_panel.log
+\end{lstlisting}
+
+\textbf{本章计量必备Stata包}（\texttt{ssc install}一键）：
+\begin{lstlisting}[style=stata]
+ssc install reghdfe, replace
+ssc install estout, replace
+ssc install outreg2, replace
+ssc install did_multiplegt, replace
+ssc install eventstudyinteract, replace
+ssc install rdrobust, replace
+ssc install psmatch2, replace
+ssc install synth, replace
+ssc install ivreg2, replace
+ssc install xtabond2, replace
+ssc install winsor2, replace
+ssc install sgmediation, replace
+\end{lstlisting}
+
+\textbf{Stata与R/Python互调}（\texttt{stata} Skill支持）：
+\begin{lstlisting}[style=stata]
+python: import pandas as pd; df = pd.read_stata("data.dta")
+rsource: library(fixest); source("fe_reg.R")
+\end{lstlisting}
+
+\subsection{Python环境（python-panel-data / data-analysis Skill前置）}
+
+\textbf{建议版本}：Python 3.10+。
+
+\textbf{Conda环境}：
+\begin{lstlisting}[style=shell]
+conda create -n banking python=3.11
+conda activate banking
+pip install pandas numpy statsmodels scikit-learn pmdarima prophet torch \
+            matplotlib seaborn linearmodels PyFixest jupyterlab
+\end{lstlisting}
+
+\textbf{虚拟环境（venv备选）}：
+\begin{lstlisting}[style=shell]
+python3 -m venv ~/.venvs/banking
+source ~/.venvs/banking/bin/activate
+\end{lstlisting}
+
+\subsection{三环境协同使用提示}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{4cm}|p{7cm}|}
+\hline
+\textbf{工具} & \textbf{优势} & \textbf{本章典型场景} \\
+\hline
+R & 计量生态最完整（fixest/did/AER），可重复性高 & \texttt{r-econometrics} Skill处理DiD/RDD/IV/合成控制 \\
+Stata & 中文金融实证主流（reghdfe/eventdd），可发表性高 & \texttt{stata-regression} Skill输出三列回归表 \\
+Python & 机器学习/深度学习强，灵活性高 & \texttt{python-panel-data} Skill做LSTM/Prophet预测 \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{全章Skill环境检查清单（期末上机前必运行）}
+
+% ============================================================
+
+本节是ch07所有用到的Skill环境检查总表，覆盖约30个Skill，每个Skill列出安装指令、环境检查命令、在ch07中出现的位置。
+
+\subsection{数据获取Skill（5个）}
+\textbf{tushare-finance Skill}（任务13、18）：
+\begin{lstlisting}[style=shell]
+pip install tushare pandas
+export TUSHARE_TOKEN='your_token_here'
+python3 -c "import tushare; pro=tushare.pro_api(); print(pro.stock_basic(list_status='L', limit=1))"
+\end{lstlisting}
+\textbf{api-data-fetcher Skill}（任务13）：\texttt{pip install requests pandas}。
+
+\textbf{worldbank-data360 Skill}（任务17）：联网即可。
+
+\textbf{oecd-data Skill}（任务17）：联网即可。
+
+\textbf{china-stock-analysis Skill}（任务18）：依赖china-stock-mcp MCP，需mcp.json配置。
+
+\subsection{数据清洗Skill（3个）}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{stata-data-cleaning Skill}（任务13）：见§Stata环境
+  \item \textbf{data-analysis Skill}（任务13、15、18）：见§Python环境
+  \item \textbf{r-data-cleaning Skill}（任务13）：依赖\texttt{dplyr}/\texttt{tidyr}（tidyverse的一部分）
+\end{itemize}
+
+\subsection{计量回归Skill（5个）}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{stata Skill}（任务13-18）：见§Stata环境
+  \item \textbf{stata-regression Skill}（任务14、18）：stata依赖 + reghdfe/estout
+  \item \textbf{r-econometrics Skill}（任务14、16、18）：见§R环境
+  \item \textbf{python-panel-data Skill}（任务14、15、18）：见§Python环境 + linearmodels
+  \item \textbf{data-analysis Skill}（任务14-18）：见§Python环境
+\end{itemize}
+
+\subsection{因果推断Skill（5个）}
+\textbf{r-econometrics Skill}：同上。
+
+\textbf{did / csdid R包}（任务16）：
+\begin{lstlisting}[style=shell]
+Rscript -e 'library(did); packageVersion("did")'
+\end{lstlisting}
+\textbf{rdrobust / Synth / MatchIt R包}（任务16）：见§R环境。
+
+\subsection{时间序列Skill（4个）}
+\textbf{r-econometrics Skill}（任务15）：含\texttt{vars}/\texttt{urca}/\texttt{forecast}。
+
+\textbf{statsmodels Python包}（任务15）：见§Python环境。
+
+\textbf{pmdarima Python包}（任务15）：
+\begin{lstlisting}[style=shell]
+pip install pmdarima
+python3 -c "import pmdarima; print(pmdarima.__version__)"
+\end{lstlisting}
+\textbf{prophet Python包}（任务15）：
+\begin{lstlisting}[style=shell]
+pip install prophet
+python3 -c "from prophet import Prophet; print('prophet OK')"
+\end{lstlisting}
+
+\subsection{表格与图表Skill（5个）}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{latex-tables Skill}（任务14、18）：依赖\texttt{esttab}或\texttt{modelsummary}
+  \item \textbf{econ-visualization Skill}（任务14-18）：见§R环境
+  \item \textbf{paper-figure Skill}（任务15、18）：见§Python环境
+  \item \textbf{paper-illustration Skill}（任务17、18）：需\texttt{GEMINI\_API\_KEY}
+  \item \textbf{mermaid-diagram Skill}（任务17、18）：\texttt{npm install -g @mermaid-js/mermaid-cli}
+\end{itemize}
+
+\subsection{写作与文献Skill（4个）}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{paper-write / academic-paper-writer Skill}（任务17、18）：依赖xelatex
+  \item \textbf{systematic-literature-review Skill}（任务17）：联网即可
+  \item \textbf{lit-review-assistant Skill}（任务17）：联网即可
+\end{itemize}
+
+\subsection{ch07全章一键环境检查脚本（期末上机前必运行）}
+
+\begin{lstlisting}[style=shell]
+cat > /tmp/check_ch07_env.sh << 'EOF'
+#!/bin/bash
+PASS=0; FAIL=0
+check() { if eval "$2" >/dev/null 2>&1; then echo "OK $1"; PASS=$((PASS+1)); else echo "FAIL $1"; FAIL=$((FAIL+1)); fi; }
+
+echo "=== ch07 Skill环境检查 ==="
+check "R 4.0+"            "R --version | grep -q 'R version'"
+check "Stata"              "[ -x /Applications/Stata/StataMP.app/Contents/MacOS/stata-mp ]"
+check "Python 3.10+"       "python3 -c 'import sys; sys.exit(0 if sys.version_info>=(3,10) else 1)'"
+check "fixest包"          "Rscript -e 'library(fixest)'"
+check "modelsummary包"    "Rscript -e 'library(modelsummary)'"
+check "rdrobust包"        "Rscript -e 'library(rdrobust)'"
+check "did包"             "Rscript -e 'library(did)'"
+check "Synth包"           "Rscript -e 'library(Synth)'"
+check "MatchIt包"         "Rscript -e 'library(MatchIt)'"
+check "statsmodels"        "python3 -c 'import statsmodels'"
+check "linearmodels"       "python3 -c 'import linearmodels'"
+check "PyFixest"           "python3 -c 'import pyfixest'"
+check "pmdarima"           "python3 -c 'import pmdarima'"
+check "prophet"            "python3 -c 'from prophet import Prophet'"
+check "matplotlib"         "python3 -c 'import matplotlib'"
+check "tushare"            "python3 -c 'import tushare'"
+check "TUSHARE_TOKEN"      "[ -n \"\$TUSHARE_TOKEN\" ]"
+check "xelatex"            "which xelatex"
+check "pdftoppm"           "which pdftoppm"
+
+echo "---"
+echo "通过: \$PASS, 失败: \$FAIL"
+[ \$FAIL -eq 0 ] && echo "OK ch07环境就绪" || echo "请安装缺失组件后再进行实验"
+EOF
+chmod +x /tmp/check_ch07_env.sh && /tmp/check_ch07_env.sh
+\end{lstlisting}
 
 % ============================================================
 \section{金融数据特征与处理方法}
@@ -206,6 +509,82 @@ winsor2 roe, cuts(1 99) replace
 
 数据质量控制是不可省略的前置步骤——"垃圾进，垃圾出"（Garbage In, Garbage Out）永远是计量分析的第一法则。
 \end{theorybox}
+
+\subsubsection{Skill 化包装：本节实操提示词}
+
+\textbf{【本节 Skill 化原则】} 下面三个提示词覆盖了金融数据预处理的完整 Skill 化流水线，所有提示词都明确调用具体 Skill，原裸代码作为补充保留。
+
+\textbf{缺失值处理（Skill 化）}：
+\begin{lstlisting}
+请调用 stata-data-cleaning 技能完成银行面板数据多重插补：
+
+【调用 Skill】stata-data-cleaning、data-analysis
+【背景】50 家上市银行 2010-2024 年面板数据，包含 roe、npl_ratio、car 三个变量
+【输入】data/bank_panel.dta
+【输出要求】
+  - data/bank_panel_mi.dta（多重插补后数据）
+  - reports/missing_diagnostics.md（缺失模式分析 + 插补效果对比）
+【环境检查】运行 /tmp/check_ch07_env.sh 确认 stata-mp 可访问
+【原代码补充】Stata mi 命令链式插补代码（作为补充）：
+  mi set wide
+  mi register imputed roe npl_ratio car
+  mi impute chained (regress) roe npl_ratio car = loan_growth log_asset, add(20)
+【失败回退】如 stata-data-cleaning Skill 不可用，手写 mi 命令
+【预期结论】插补后样本量、敏感性分析对比
+\end{lstlisting}
+
+\textbf{异常值检测（Skill 化）}：
+\begin{lstlisting}
+请调用 data-analysis 技能完成异常值检测：
+
+【调用 Skill】data-analysis（Isolation Forest 路线）
+【输入】data/bank_panel_clean.csv
+【输出】reports/outlier_report.md（含异常值列表 + 建议处置方式）
+【环境检查】python3 -c "import sklearn" 确认 scikit-learn 已安装
+【原代码补充】Python 代码：
+  from sklearn.ensemble import IsolationForest
+  clf = IsolationForest(contamination=0.05, random_state=42)
+  df['outlier'] = clf.fit_predict(df[['roe','npl_ratio','car']])
+【预期结论】哪些银行哪些年份出现异常？
+\end{lstlisting}
+
+\textbf{数据获取预备（Skill 化）}：
+\begin{lstlisting}
+请调用 tushare-finance 技能拉取 50 家上市银行 2010-2024 年财务数据：
+
+【调用 Skill】tushare-finance、china-stock-analysis
+【输入】银行列表 50 家（含 6 大国有行 + 9 家股份行 + 城商行 + 农商行）
+【输出】
+  - data/bank_panel_raw.csv（含 11 项核心指标）
+  - reports/data_source_description.md（含 Wind/CSMAR/Tushare 三源对比）
+【环境检查】export TUSHARE_TOKEN 后 python3 -c "import tushare" 验证
+【原代码补充】Tushare 拉取代码：
+  pro = ts.pro_api()
+  df = pro.daily_basic(ts_code='601398.SH', start='20100101', end='20241231')
+【预期结论】数据准备完整，可进入面板回归阶段
+\end{lstlisting}
+
+\subsubsection{中文金融数据源补充}
+
+除了 Bankscope 国际数据库，国内金融研究还常用以下中文数据源：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{7cm}}
+\toprule
+\textbf{数据源} & \textbf{特点} & \textbf{使用场景} \\
+\midrule
+Wind（万得） & 覆盖全、数据全但需机构订阅 & 学术+实务主流 \\
+CSMAR（国泰安） & 学术研究专用、字段标准化 & 高校论文首选 \\
+Tushare & 免费开放、Python友好 & 学生/个人研究 \\
+Choice（东方财富） & 实时行情 + 基本面 & 实务交易研究 \\
+iFinD（同花顺） & 机构级数据、API 友好 & 银行业实务 \\
+CNINFO（巨潮资讯） & 公告原文、年报 PDF & 事件研究 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Skill 调用推荐}：Tushare 适合批量拉取学术面板数据；china-stock-analysis MCP 适合实时数据查询；CSMAR/Wind 数据需要商业订阅。
 
 % ============================================================
 \section{面板数据回归分析}
@@ -458,6 +837,87 @@ estat ar2, artests(2)
 
 \textbf{预期产出}：三列回归表 + 模型选择检验结果 + 分析结论。
 \end{practicebox}
+
+\subsubsection{Skill 化包装：本节实操提示词}
+
+\textbf{【本节 Skill 化原则】} 本节所有 Stata/Python/R 提示词都包装为 Skill 调用形式，下方提供 4 个核心场景的 Skill 化提示词，覆盖原裸代码 + 三环境对比。
+
+\textbf{三模型面板回归（Stata Skill 化）}：
+\begin{lstlisting}
+请调用 stata-regression 技能完成三模型面板回归：
+
+【调用 Skill】stata-regression、latex-tables、econ-visualization
+【背景】检验 ROE 影响因素（业务场景：银行盈利能力）
+【输入】data/bank_panel.dta
+【输出要求】
+  - reports/ch07_panel_reg.tex（三列回归表 LaTeX 代码）
+  - reports/ch07_panel_reg.pdf（编译后 PDF）
+  - figures/coefficient_compare.pdf（系数对比图）
+【环境检查】运行 /tmp/check_ch07_env.sh
+【原代码补充】Stata 代码（作为补充）：
+  reg roe npl_ratio car loan_growth log_asset, robust
+  est store ols
+  reghdfe roe npl_ratio car loan_growth log_asset, absorb(bank_id year) robust
+  est store fe2
+  xtreg roe npl_ratio car loan_growth log_asset, re robust
+  est store re
+  hausman fe2 re
+  esttab ols fe2 re using ch07_panel_reg.tex, b(3) se(3) star(* 0.1 ** 0.05 *** 0.01)
+【失败回退】如 stata-regression 不可用，手写 esttab 命令
+【预期结论】最合适模型 + 系数经济含义
+\end{lstlisting}
+
+\textbf{R fixest 多维 FE（R Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics 技能完成 R fixest 多维固定效应回归：
+
+【调用 Skill】r-econometrics、econ-visualization
+【输入】data/bank_panel.csv
+【输出要求】
+  - reports/ch07_fixest_reg.md（含 R 输出表格）
+  - reports/ch07_fixest_reg.tex（modelsummary 输出的 LaTeX 代码）
+【环境检查】Rscript -e 'library(fixest); library(modelsummary)'
+【原代码补充】R 代码：
+  library(fixest); library(modelsummary)
+  reg1 = feols(roe ~ npl_ratio + car | bank_id + year, data = df, vcov = ~bank_id)
+  modelsummary(list("FE" = reg1), output = "ch07_fixest.tex", stars = TRUE)
+【预期结论】fixest 输出与 Stata reghdfe 一致性验证
+\end{lstlisting}
+
+\textbf{动态面板 GMM（Python Skill 化）}：
+\begin{lstlisting}
+请调用 python-panel-data 技能完成 Arellano-Bond 动态面板估计：
+
+【调用 Skill】python-panel-data、stata-regression
+【输入】data/bank_panel.csv（含 ROE 滞后项）
+【输出】
+  - reports/ch07_gmm_reg.md（含 GMM 估计系数表）
+  - figures/ar1_ar2_test.pdf（AR(1)/AR(2) 检验图）
+【环境检查】python3 -c "import linearmodels; print(linearmodels.__version__)"
+【原代码补充】Python 代码：
+  from linearmodels.panel import PanelOLS, ArellanoBond
+  mod = ArellanoBond(df.set_index(['bank_id','year']), dependent='roe',
+                     exog=['npl_ratio','car'], lags=1)
+  res = mod.fit(cov_type='clustered', cluster_entity=True)
+【预期结论】动态调整的 ROE 滞后系数、AR(2) 不显著则模型合理
+\end{lstlisting}
+
+\textbf{回归系数对比可视化（econ-visualization Skill 化）}：
+\begin{lstlisting}
+请调用 econ-visualization 技能生成回归系数对比图：
+
+【调用 Skill】econ-visualization
+【输入】reports/ch07_panel_reg.tex 中的系数表
+【输出】figures/coefficient_compare.pdf（OLS/FE/RE 三模型系数并排对比）
+【环境检查】Rscript -e 'library(ggplot2); library(tidyverse)'
+【原代码补充】ggplot2 系数图代码：
+  ggplot(coef_df, aes(x=variable, y=estimate, color=model)) +
+    geom_pointrange(aes(ymin=ci_low, ymax=ci_high)) +
+    coord_flip() + theme_minimal(base_size=14)
+【预期结论】哪些系数跨模型稳健？
+\end{lstlisting}
+
+\textbf{三环境 Skill 对比}：上述四个提示词覆盖了 Stata（中文金融主流）、R（计量方法论完整）、Python（机器学习兼容）三环境，学生可根据自己熟悉的工具选择其一，或交叉验证。
 
 % ============================================================
 \section{时间序列预测}
@@ -746,6 +1206,108 @@ MAPE & $\frac{100\%}{n}\sum_{t=1}^{n}\left|\frac{y_t - \hat{y}_t}{y_t}\right|$ &
 \textbf{预期产出}：预测对比图 + 模型评估表 + 分析结论。
 \end{practicebox}
 
+\subsubsection{Skill 化包装：本节实操提示词}
+
+\textbf{【本节 Skill 化原则】} 本节所有 SARIMA/Prophet/LSTM/GRU 代码都包装为 Skill 调用形式，下方提供 5 个核心场景的 Skill 化提示词。
+
+\textbf{STL 时间序列分解（Python Skill 化）}：
+\begin{lstlisting}
+请调用 data-analysis 技能完成 STL 分解：
+
+【调用 Skill】data-analysis
+【输入】data/bank_card_spending.csv（月度信用卡消费额）
+【输出】
+  - figures/stl_decomposition.pdf（趋势/季节/残差三幅子图）
+  - reports/stl_summary.md（分解结论 + 季节强度）
+【环境检查】python3 -c "import statsmodels; print(statsmodels.__version__)"
+【原代码补充】statsmodels.tsa.seasonal.STL 代码
+【预期结论】趋势是否增长？季节幅度多大？
+\end{lstlisting}
+
+\textbf{SARIMA 自动定阶（Python Skill 化）}：
+\begin{lstlisting}
+请调用 python-panel-data 技能完成 SARIMA 自动定阶与预测：
+
+【调用 Skill】python-panel-data、paper-figure
+【输入】data/bank_card_spending.csv
+【输出】
+  - reports/sarima_model.md（含最优 (p,d,q)(P,D,Q) 参数 + AIC）
+  - figures/sarima_forecast.pdf（预测值 + 95% 置信区间阴影）
+  - reports/sarima_metrics.txt（RMSE/MAE/MAPE）
+【环境检查】python3 -c "import pmdarima; print(pmdarima.__version__)"
+【原代码补充】pmdarima.auto_arima 代码
+【预期结论】最优模型、预测未来 30 天精度
+\end{lstlisting}
+
+\textbf{VAR/VECM（R Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics 技能完成 VAR/VECM 多变量时间序列分析：
+
+【调用 Skill】r-econometrics
+【输入】data/bank_macro.csv（多个宏观变量：GDP、CPI、M2、银行贷款）
+【输出】
+  - reports/var_model.md（含滞后阶数选择 + 脉冲响应图）
+  - figures/irf.pdf（脉冲响应函数）
+  - reports/granger_causality.md（Granger 因果检验）
+【环境检查】Rscript -e 'library(vars); library(urca)'
+【原代码补充】vars::VAR 代码：
+  library(vars); library(urca)
+  var1 = VAR(df[, c('loan','cpi','m2')], p = 2, type = 'const')
+  irf(var1, impulse = 'm2', response = 'loan') %>% plot()
+【预期结论】货币供应量是否 Granger 引起贷款？
+\end{lstlisting}
+
+\textbf{LSTM 一键构建（Python Skill 化）}：
+\begin{lstlisting}
+请调用 python-panel-data 技能完成 LSTM 时间序列预测：
+
+【调用 Skill】python-panel-data、paper-figure
+【输入】data/bank_card_spending.csv（24 个月以上月度数据）
+【输出】
+  - figures/lstm_forecast.pdf（预测对比图）
+  - reports/lstm_metrics.txt（RMSE/MAE/MAPE）
+  - reports/lstm_architecture.md（网络结构 + 训练历史）
+【环境检查】python3 -c "import torch; print(torch.__version__)"
+【原代码补充】PyTorch LSTM 代码（作为底层理解保留）：
+  class BankLSTM(nn.Module):
+    def __init__(self, input_size=1, hidden_size=64, num_layers=2):
+      super().__init__()
+      self.lstm = nn.LSTM(input_size, hidden_size, num_layers,
+                          batch_first=True, dropout=0.2)
+      self.fc = nn.Linear(hidden_size, 1)
+【预期结论】LSTM vs SARIMA 哪个更适合？
+\end{lstlisting}
+
+\textbf{Prophet 快速预测（Python Skill 化）}：
+\begin{lstlisting}
+请调用 data-analysis 技能完成 Prophet 预测：
+
+【调用 Skill】data-analysis、paper-figure
+【输入】data/bank_card_spending.csv（含 date + amount 两列）
+【输出】
+  - figures/prophet_forecast.pdf（趋势 + 季节 + 预测）
+  - figures/prophet_components.pdf（趋势/周/年季节性分解）
+  - reports/prophet_summary.md
+【环境检查】python3 -c "from prophet import Prophet"
+【原代码补充】Prophet 标准代码：
+  from prophet import Prophet
+  model = Prophet(yearly_seasonality=True, weekly_seasonality=True)
+  model.fit(df.rename(columns={'date':'ds','amount':'y'}))
+【预期结论】Prophet 自动检测的变化点是否符合 2020 疫情影响？
+\end{lstlisting}
+
+\textbf{模型对比可视化（paper-figure Skill 化）}：
+\begin{lstlisting}
+请调用 paper-figure 技能完成 SARIMA/LSTM/Prophet 三模型对比图：
+
+【调用 Skill】paper-figure、econ-visualization
+【输入】三个模型的预测 CSV 文件
+【输出】figures/forecast_3models.pdf（三模型预测 + 实际值叠加）
+【环境检查】python3 -c "import matplotlib; print(matplotlib.__version__)"
+【原代码补充】matplotlib 多线绘制代码
+【预期结论】哪个模型最适合信用卡消费预测？
+\end{lstlisting}
+
 % ============================================================
 \section{因果推断方法}
 % ============================================================
@@ -961,6 +1523,127 @@ reghdfe log_loan treat_post treat post controls, ///
 \textbf{预期产出}：DID回归表 + 平行趋势图 + 稳健性检验结果 + 分析结论。
 \end{practicebox}
 
+\subsubsection{Skill 化包装：本节实操提示词}
+
+\textbf{【本节 Skill 化原则】} 本节所有 DID/RDD/IV/SCM/PSM 代码都包装为 Skill 调用形式，下方提供 6 个核心场景的 Skill 化提示词。
+
+\textbf{DID 双重差分（Stata + R 双 Skill 化）}：
+\begin{lstlisting}
+请调用 stata Skill（或 r-econometrics Skill）完成 DID 双重差分：
+
+【调用 Skill】stata、stata-regression、r-econometrics、econ-visualization
+【背景】数字金融政策对银行贷款的影响（2020 年《金融科技发展规划》）
+【输入】data/bank_digital_did.dta
+【输出要求】
+  - reports/did_main.tex（基准 DID 三线表）
+  - reports/did_robust.tex（PSM-DID / 安慰剂检验 / 替代变量 三表）
+  - figures/parallel_trend.pdf（平行趋势检验图）
+  - figures/event_study.pdf（事件研究图）
+【环境检查】运行 /tmp/check_ch07_env.sh
+【原代码补充】Stata 代码（首选）：
+  reghdfe log_loan treat_post, absorb(bank_id year) cluster(bank_id)
+  eventdd y, method(hdfe) absorb(id year) treat(treat) time(year) baseline(-1) leads(5) lags(5) graph
+  did_multiplegt y treat post, robust
+【R 备选】did 包代码（Callaway-Sant'Anna）：
+  library(did); att_gt(log_loan ~ treat, data = df, panel = TRUE)
+【失败回退】如两个 Skill 都不可用，手写双重差分代码
+【预期结论】数字金融对银行贷款的 ATT、平行趋势是否成立？
+\end{lstlisting}
+
+\textbf{RDD 断点回归（R Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics Skill 完成断点回归 RDD：
+
+【调用 Skill】r-econometrics、econ-visualization
+【背景】信贷门槛效应（信用评分 600 分阈值）
+【输入】data/loan_rdd.dta（含 running_var 与 outcome）
+【输出】
+  - reports/rdd_main.md（含 rdrobust 输出 + CCT 带宽）
+  - figures/rdd_plot.pdf（断点图 + 局部拟合曲线）
+  - reports/rdd_bandwidth_sensitivity.md（带宽敏感性）
+【环境检查】Rscript -e 'library(rdrobust)'
+【原代码补充】R 代码：
+  library(rdrobust); library(rddensity)
+  rd1 = rdrobust(y, running_var, c = 600)
+  rdplot(y, running_var, c = 600)
+【预期结论】刚跨过 600 分阈值的借款人是否显著不同？
+\end{lstlisting}
+
+\textbf{IV 工具变量（R + Python 双 Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics Skill（或 python-panel-data Skill）完成 IV 估计：
+
+【调用 Skill】r-econometrics、python-panel-data
+【背景】银行业对外开放对 ROE 的影响（工具变量：地理临近国家银行业开放度）
+【输入】data/bank_iv.dta
+【输出】
+  - reports/iv_main.md（含第一阶段 F + 第二阶段系数）
+  - reports/iv_diagnostics.md（弱工具变量 / 过度识别检验）
+【环境检查】Rscript -e 'library(AER)' 或 python3 -c "import linearmodels"
+【原代码补充】R 代码（首选）：
+  library(AER); iv1 = ivreg(roe ~ openness + controls | controls + iv_distance, data = df)
+【Python 备选】linearmodels 代码：
+  from linearmodels.iv import IV2SLS
+  iv1 = IV2SLS(df['roe'], df[controls], df['openness'], df['iv_distance']).fit(cov_type='clustered')
+【预期结论】第一阶段 F 是否 > 10？过度识别检验是否拒绝？
+\end{lstlisting}
+
+\textbf{SCM 合成控制法（R Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics Skill 完成合成控制法 SCM：
+
+【调用 Skill】r-econometrics、python-panel-data
+【背景】评估某省数字金融试点政策对当地银行 ROE 的影响
+【输入】data/province_panel.csv（多个省份银行 ROA/ROE 时间序列）
+【输出】
+  - reports/scm_main.md（含权重表 + 处理效应）
+  - figures/scm_plot.pdf（实际 vs 合成对比图）
+  - reports/placebo_test.md（安慰剂检验）
+【环境检查】Rscript -e 'library(Synth)'
+【原代码补充】R Synth 代码：
+  library(Synth); dataprep.out = dataprep(df, predictors = ..., dependent = 'roe')
+  synth.out = synth(dataprep.out); gaps.plot(synth.res)
+【Python 备选】SyntheticControlMethods：
+  from syntheticcontrolmethods import Synth
+  sc = Synth(df, 'roe', 'treated_unit', intervention_time)
+【预期结论】处理效应大小、是否统计显著？
+\end{lstlisting}
+
+\textbf{PSM 倾向得分匹配（R + Stata 双 Skill 化）}：
+\begin{lstlisting}
+请调用 r-econometrics Skill（或 stata Skill）完成 PSM：
+
+【调用 Skill】r-econometrics、stata
+【背景】数字银行对客户满意度的影响（处理：使用数字银行 vs 不使用）
+【输入】data/customer_panel.csv
+【输出】
+  - reports/psm_main.md（含 ATT + 倾向得分分布）
+  - figures/psm_balance.pdf（匹配前后协变量平衡图）
+  - reports/psm_robust.md（不同匹配算法对比）
+【环境检查】Rscript -e 'library(MatchIt)' 或 stata -e "which psmatch2"
+【原代码补充】R 代码（首选）：
+  library(MatchIt); m1 = matchit(treat ~ age + income + education, data = df, method = 'nearest')
+  match.data(m1) %>% group_by(treat) %>% summarise(outcome = mean(satisfaction))
+【Stata 备选】psmatch2：
+  psmatch2 treat age income education, outcome(satisfaction) neighbor(3)
+【预期结论】数字银行使用者的客户满意度平均高出多少？
+\end{lstlisting}
+
+\textbf{文献梳理前置（systematic-literature-review Skill 化）}：
+\begin{lstlisting}
+请调用 systematic-literature-review 技能梳理因果识别策略文献：
+
+【调用 Skill】systematic-literature-review、lit-review-assistant
+【背景】为实证研究章节梳理 DID/RDD/IV/SCM/PSM 文献基础
+【输入】研究主题：银行业数字化转型的因果效应
+【输出】
+  - reports/causal_literature.md（含 10 篇代表性文献）
+  - references/causal.bib（BibTeX 文件）
+【环境检查】联网访问 Semantic Scholar/arXiv
+【原代码补充】手动使用 find-literature Skill 搜索关键词
+【预期结论】每种方法的代表性文献 1-2 篇，形成方法论基础
+\end{lstlisting}
+
 % ============================================================
 \section{AI辅助计量分析工作流}
 % ============================================================
@@ -988,51 +1671,116 @@ AI大模型正在重塑计量经济学的研究流程，但它始终是\textbf{�
 
 \subsection{完整工作流}
 
-\subsubsection{Step 1：文献综述→确定模型设定}
+\subsubsection{Step 1：文献综述→确定模型设定（Skill 化版）}
 
-利用AI快速梳理相关文献，提炼已有研究的模型设定、变量选择和估计方法。提示词示例：
+利用 \texttt{systematic-literature-review} / \texttt{lit-review-assistant} / \texttt{academic-researcher} 元 Skill 快速梳理文献：
 
 \begin{lstlisting}
-请帮我梳理"银行盈利能力影响因素"的实证文献：
-1. 列出近5年5篇代表性中文文献（含作者、年份、期刊）
-2. 每篇文献的核心模型设定是什么？
-3. 常用的被解释变量和解释变量有哪些？
-4. 主要的实证策略（FE/RE/GMM/IV）是什么？
-5. 现有研究的不足之处是什么？
+请调用 systematic-literature-review 技能梳理"银行盈利能力影响因素"实证文献：
+
+【调用 Skill】systematic-literature-review、lit-review-assistant、academic-researcher
+【背景】为银行盈利能力实证研究梳理文献基础
+【输入】关键词：bank profitability / ROE / commercial bank / panel data
+【输出要求】
+  - reports/literature_review.md（5 篇代表性中文文献 + 3 篇英文文献）
+  - references/literature.bib（BibTeX 文件）
+  - reports/model_specification.md（提炼的模型设定总结）
+【环境检查】联网访问 Semantic Scholar / arXiv
+【预期结论】最常用的模型设定、变量选择、估计策略
 \end{lstlisting}
 
-\subsubsection{Step 2：数据获取与清洗（AI辅助）}
+\subsubsection{Step 2：数据获取与清洗（Skill 化版）}
 
-AI可辅助编写数据爬取脚本、缺失值处理代码和异常值检测逻辑，但数据的准确性和完整性仍需人工核验。
+调用 \texttt{tushare-finance} / \texttt{worldbank-data360} / \texttt{oecd-mcp} 获取数据，\texttt{data-analysis} / \texttt{r-data-cleaning} 完成清洗：
 
-\subsubsection{Step 3：描述统计与可视化（AI辅助）}
+\begin{lstlisting}
+请调用 tushare-finance + data-analysis 技能完成银行数据拉取与清洗：
 
-让AI生成描述统计表、相关系数矩阵和关键变量的分布图。此环节AI可高度自动化，但研究者应关注数据是否符合经济直觉。
+【调用 Skill】tushare-finance、worldbank-data360、data-analysis、stata-data-cleaning
+【背景】拉取 50 家上市银行 2010-2024 年财务数据并清洗
+【输入】50 家银行股票代码 + 宏观变量清单
+【输出要求】
+  - data/bank_panel_raw.csv（原始数据）
+  - data/bank_panel_clean.csv（清洗后数据）
+  - reports/data_cleaning_log.md（清洗日志）
+【环境检查】运行 /tmp/check_ch07_env.sh
+【原代码补充】保留底层 tushare API 调用代码
+【预期结论】可用样本量、缺失处理策略
+\end{lstlisting}
 
-\subsubsection{Step 4：模型估计与检验（AI执行+人工判断）}
+\subsubsection{Step 3：描述统计与可视化（Skill 化版）}
 
-AI可快速执行多种模型估计，但以下关键判断必须由研究者做出：
-\begin{itemize}[leftmargin=2em]
-  \item 固定效应vs随机效应的选择依据
-  \item 工具变量的合理性论证
-  \item 系数的经济含义是否合理
-\end{itemize}
+调用 \texttt{data-analysis} / \texttt{econ-visualization} 完成描述统计：
 
-\subsubsection{Step 5：稳健性检验设计（AI建议+人工决策）}
+\begin{lstlisting}
+请调用 data-analysis + econ-visualization 技能完成描述统计与可视化：
 
-AI可建议稳健性检验方案，但检验的合理性需要研究者判断：
-\begin{itemize}[leftmargin=2em]
-  \item 替换变量度量方式
-  \item 调整样本范围（排除特殊年份/银行类型）
-  \item 使用不同估计方法
-  \item 安慰剂检验/ falsification test
-\end{itemize}
+【调用 Skill】data-analysis、econ-visualization
+【输入】data/bank_panel_clean.csv
+【输出】
+  - reports/descriptive_stats.md（含均值/标准差/分位数/相关系数矩阵）
+  - figures/distribution.pdf（各变量分布直方图）
+  - figures/correlation_heatmap.pdf（相关矩阵热力图）
+【环境检查】Rscript -e 'library(ggplot2)' 或 python3 -c "import seaborn"
+【预期结论】数据是否符合经济直觉、是否存在异常模式
+\end{lstlisting}
 
-\subsubsection{Step 6：结果解释与论文撰写}
+\subsubsection{Step 4：模型估计与检验（Skill 化版）}
 
-AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断。特别注意：回归系数的统计显著不等于经济显著——一个$1\%$显著水平的系数，如果经济量级微不足道（如ROE提高0.001个百分点），其实际意义有限。
+调用 \texttt{stata-regression} / \texttt{python-panel-data} / \texttt{r-econometrics} 三选一执行模型估计：
 
-\begin{warningbox}[AI计量分析的常见陷阱]
+\begin{lstlisting}
+请调用 stata-regression（或 r-econometrics）技能完成模型估计：
+
+【调用 Skill】stata-regression、r-econometrics、python-panel-data、latex-tables
+【输入】data/bank_panel_clean.csv
+【输出】
+  - reports/main_reg.tex（三线表 LaTeX 代码）
+  - reports/model_selection.md（模型选择检验 + Hausman + BP-LM）
+【环境检查】运行 /tmp/check_ch07_env.sh
+【原代码补充】保留原 Stata / R / Python 代码
+【预期结论】最合适模型 + 系数的经济含义
+\end{lstlisting}
+
+\subsubsection{Step 5：稳健性检验设计（Skill 化版）}
+
+调用 \texttt{econ-visualization} 完成稳健性图形展示：
+
+\begin{lstlisting}
+请调用 econ-visualization + stata-regression 技能完成稳健性检验：
+
+【调用 Skill】econ-visualization、stata-regression
+【输入】基准回归结果 + 稳健性检验方案
+【输出】
+  - figures/robustness_check.pdf（替换变量、调整样本、替换方法多子图）
+  - reports/placebo_test.md（安慰剂检验结果）
+【环境检查】运行 /tmp/check_ch07_env.sh
+【预期结论】主要结论是否跨检验稳健？
+\end{lstlisting}
+
+\subsubsection{Step 6：结果解释与论文撰写（Skill 化版）}
+
+调用 \texttt{paper-write} / \texttt{academic-paper-writer} / \texttt{latex-tables} 输出 LaTeX 初稿：
+
+\begin{lstlisting}
+请调用 paper-write + latex-tables 技能完成论文初稿：
+
+【调用 Skill】paper-write、academic-paper-writer、latex-tables、econ-visualization
+【输入】所有 reports/ 与 figures/ 文件
+【输出】
+  - paper/sections/01_intro.tex
+  - paper/sections/02_literature.tex
+  - paper/sections/03_data.tex
+  - paper/sections/04_method.tex
+  - paper/sections/05_results.tex
+  - paper/sections/06_conclusion.tex
+  - paper/main.tex（可编译的完整论文）
+  - paper/main.pdf（编译后 PDF）
+【环境检查】which xelatex && which latexmk
+【预期结论】完整论文初稿，可提交导师审阅
+\end{lstlisting}
+
+\begin{warningbox}[AI 计量分析的常见陷阱 + Skill 误调用风险]
 \begin{enumerate}[leftmargin=2em]
   \item \textbf{过拟合}：AI可能建议加入过多控制变量或交互项以提高$R^2$，但牺牲了模型的解释力和外推性。经济学研究追求的是简约而稳健的模型，而非最高$R^2$。
 
@@ -1041,8 +1789,252 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
   \item \textbf{伪回归}：两个非平稳时间序列可能高度相关但毫无因果关系（如中国GDP与全球气温）。AI不会自动提醒你做单位根检验和协整检验——这些是研究者的责任。
 
   \item \textbf{忽略经济学直觉}：AI可能建议统计上最优但经济学上无意义的模型设定。始终以经济学理论为锚，以统计方法为工具。
+
+  \item \textbf{Skill 误调用风险（新增）}：
+    \begin{itemize}
+      \item \textbf{Skill 重复触发}：多个 Skill 提供相似功能（如 python-panel-data 与 data-analysis），AI 可能误调用多个 Skill 导致输出冲突。建议在提示词中明确指定单一主 Skill。
+      \item \textbf{Skill 版本不一致}：相同 Skill 不同版本的输出格式可能不同（如 latex-tables v1 输出三线表，v2 输出 booktabs），建议锁定版本号。
+      \item \textbf{Skill 数据要求差异}：stata-regression 接受 .dta，python-panel-data 接受 .csv，r-econometrics 接受 .csv/RData。切换 Skill 时需检查数据格式。
+      \item \textbf{Skill 误触发其他章节}：如 §6.1 数据特征 调用 data-analysis Skill 后，AI 误判该 Skill 应继续处理 §6.2 面板回归，导致数据未清洗即进入回归阶段。
+    \end{itemize}
 \end{enumerate}
 \end{warningbox}
+
+% ============================================================
+\section{计量分析成果可视化Skill（独立章节）}
+
+% ============================================================
+
+\textbf{【本章特别要求】} 本节专门介绍计量分析成果的可视化Skill体系，涵盖学术图表、LaTeX表格、Mermaid示意图。
+
+\subsection{econ-visualization（学术发表级图表）}
+\textbf{适用场景}：所有计量结果的图形化输出。
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{描述统计}：分布直方图、相关矩阵热力图
+  \item \textbf{面板回归}：系数对比图、固定效应分布图
+  \item \textbf{时间序列}：预测对比图、残差诊断图
+  \item \textbf{因果推断}：\textbf{事件研究图}（含95\%置信区间）、\textbf{平行趋势检验图}、\textbf{断点回归图}、\textbf{倾向得分分布图}
+\end{itemize}
+\textbf{输出}：\texttt{figures/*.pdf}（矢量）。
+
+\textbf{环境检查}：见§R环境。
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+请使用 econ-visualization 技能完成以下图表：
+1. 数据：data/bank_panel.csv
+2. 图表1：事件研究图（coefficient + 95% CI），展示政策前后 10 年
+3. 图表2：四家银行 ROA/ROE 历年双轴折线图
+4. 主题：theme_minimal(base_size=14)，Times 字体
+5. 输出：figures/ch07_event_study.pdf + ch07_roe_compare.pdf
+\end{lstlisting}
+
+\subsection{paper-figure（Python matplotlib论文图表）}
+与\texttt{econ-visualization}互补：R ggplot2 vs Python matplotlib。
+
+9类图表决策树自动选型（line/bar/scatter/heatmap/box/multi-panel）。与\texttt{paper-write} Skill联动：自动生成 \texttt{\textbackslash includegraphics} LaTeX片段。
+
+\textbf{适用场景}：需要Python生态深度集成时（如scikit-learn模型可视化）。
+
+\subsection{mermaid-diagram（流程图与示意图）}
+\textbf{适用场景}：识别策略示意图、变量关系图、研究框架图。
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+请使用 mermaid-diagram 技能绘制双重差分法（DID）识别策略示意图：
+Y = α + β(Treat×Post) + γX + μ_i + δ_t + ε
+输出：figures/did_framework.mmd + 渲染 PNG
+\end{lstlisting}
+
+\subsection{latex-tables（发表级LaTeX表格）}
+\textbf{触发词}："回归表LaTeX"、"esttab"、"LaTeX表格"。
+
+\textbf{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item Stata \texttt{esttab}一键输出三线表
+  \item R \texttt{modelsummary::modelsummary(list, output="table.tex")}
+  \item Python \texttt{stargazer}或自定义booktabs风格
+\end{itemize}
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+请使用 latex-tables 技能生成以下LaTeX表格：
+- 输入：R回归对象 ols/fe/re
+- 输出：ch07_table1.tex（含三线表、t统计量、星号标注、模型标题）
+- 风格：booktabs，保留3位小数，显著性 * 0.1 ** 0.05 *** 0.01
+\end{lstlisting}
+
+\subsection{计量可视化Skill选择决策树}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{需要什么？} & \textbf{推荐Skill} \\
+\hline
+发表级图表（黑白打印友好） & \texttt{econ-visualization} \\
+需要Python生态集成 & \texttt{paper-figure} \\
+识别策略流程图 / 框架图 & \texttt{mermaid-diagram} \\
+三线表 / 回归表 & \texttt{latex-tables} \\
+架构图 / 模型图 & \texttt{paper-illustration}（需GEMINI\_API\_KEY） \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{计量研究演示与汇报Skill（独立章节）}
+
+% ============================================================
+
+\textbf{【本章特别要求】} 本节专门介绍计量研究从图表到演示文稿的全套Skill体系，分学术与商业两条主线。
+
+\subsection{学术汇报线（开题答辩/学术会议）}
+
+\textbf{paper-slides Skill}（首选）：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：将完整的计量研究论文转为会议汇报slides
+  \item \textbf{输入}：\texttt{paper/sections/*.tex} + \texttt{figures/}
+  \item \textbf{输出}：\texttt{slides/main.pdf}（Beamer）+ \texttt{presentation.pptx} + \texttt{TALK\_SCRIPT.md}
+  \item \textbf{4档规模}：poster-talk（5-8页）/ spotlight（8-12页）/ oral（15-22页）/ invited（25-40页）
+  \item \textbf{7套会议配色}：NeurIPS / ICML / ICLR / CVPR / ECCV / AAAI / ACL / EMNLP / GENERIC
+  \item \textbf{完整讲稿} + 预期Q\&A 8个
+\end{itemize}
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+/paper-slides "paper/" --talk_type: oral --venue: GENERIC --minutes: 20 --aspect: 16:9
+\end{lstlisting}
+
+\textbf{beamer-presentation Skill}（手工定制Beamer）：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：开题答辩、毕业答辩、job market talk
+  \item 提供metropolis/Madrid/CambridgeUS等主题
+  \item 直接编辑.tex源文件，灵活度高
+\end{itemize}
+
+\textbf{paper-poster Skill}：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：学术会议海报展示（A0/A1幅面）
+  \item 特点：单页视觉优先，包含QR码、图表嵌入
+\end{itemize}
+
+\subsection{商业/银行汇报线（董事会/客户汇报）}
+
+\textbf{pptx Skill}（通用PPT操作）：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：行内决策汇报、客户提案
+  \item 9种专业配色：Deep Night、Woodland、Vibrant Coral、Earth Tone等
+  \item 视觉设计原则：避免默认蓝、加0.5" 留白、字号对比 ≥20pt
+\end{itemize}
+
+\textbf{qoderwork-ppt Skill}（14模板智能匹配）：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：商业汇报、产品发布、培训材料
+  \item 14种HTML模板 + 一键管线（Puppeteer → dom-to-pptx）
+  \item 环境：Node.js + Puppeteer + LibreOffice
+\end{itemize}
+
+\textbf{ppt-master Skill}（AI多格式 → SVG → PPTX）—— \textbf{【用户特别要求】}：
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{适用}：现成调研报告 / PDF / Word / Markdown一键转专业PPT
+  \item 多Agent协作：内容解析 → 视觉设计 → SVG渲染
+  \item 输出：高质量SVG页面 + 可编辑PPTX
+\end{itemize}
+
+\textbf{与其他PPT Skill的差异}：
+\begin{itemize}[leftmargin=1em]
+  \item \texttt{paper-slides}：论文 → 学术Beamer slides
+  \item \texttt{pptx}：通用PPT自由创作
+  \item \texttt{qoderwork-ppt}：HTML模板匹配
+  \item \textbf{\texttt{ppt-master}：现成文档智能转PPT（最适合作业/调研报告汇报）}
+\end{itemize}
+
+\subsection{演示文稿Skill选择决策树}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{需求场景} & \textbf{推荐Skill} \\
+\hline
+论文转会议汇报slides & \texttt{paper-slides} \\
+开题/毕业答辩Beamer & \texttt{beamer-presentation} \\
+学术海报 & \texttt{paper-poster} \\
+行内决策汇报（手工定制） & \texttt{pptx} \\
+商业产品发布（模板化） & \texttt{qoderwork-ppt} \\
+调研报告/作业转PPT（最快速） & \texttt{ppt-master} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{计量研究端到端Skill流水线（贯穿全章）}
+
+\begin{lstlisting}
+1. 系统性文献综述：systematic-literature-review
+2. 数据获取：tushare-finance（银行财务）
+3. 数据清洗：stata-data-cleaning（Stata） / data-analysis（Python）
+4. 回归分析：stata-regression / r-econometrics / python-panel-data
+5. 图表生成：econ-visualization（R） / paper-figure（Python）
+6. LaTeX表格：latex-tables（esttab / modelsummary）
+7. 论文初稿：paper-write / academic-paper-writer
+8. 学术slides：paper-slides
+9. 商业PPT：pptx / qoderwork-ppt / ppt-master
+\end{lstlisting}
+
+% ============================================================
+\section{提示词Skill化改写原则（实验报告附件用）}
+
+% ============================================================
+
+为实现"所有Stata/Python/R提示词都Skill化"，本章遵循统一的提示词改写原则：
+
+\textbf{三要素包装法}（每个原提示词都必做）：
+
+原始提示词 = "请运行Stata代码：reg y x, robust"
+
+Skill化后 = "请调用 \texttt{stata} Skill完成以下任务：【背景】...【输入】...【代码】...【预期输出】..."
+
+\textbf{改写对照表}（三种场景）：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{7cm}}
+\toprule
+\textbf{场景} & \textbf{原提示词} & \textbf{Skill化后提示词} \\
+\midrule
+Stata回归 & "跑reghdfe命令" & "请调用 \texttt{stata-regression} Skill跑reghdfe，使用 y、i.firm、c.x1\#\#c.x2、fe(year)，vce(cluster firm)，输出三列回归表到 ch07\_table1.tex" \\
+Python LSTM & "训练LSTM预测ROA" & "请调用 \texttt{python-panel-data} Skill完成LSTM预测，输入数据 bank\_panel.csv，预测 horizon=5，输出 predictions.csv + paper-figure配套图表" \\
+R断点回归 & "跑rdrobust" & "请调用 \texttt{r-econometrics} Skill实现断点回归：因变量 y、运行变量 x、断点 cutoff=0，输出 rd\_estimate.txt + econ-visualization生成断点图 rd\_plot.pdf" \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{改写原则10条}：
+\begin{enumerate}[leftmargin=2em]
+  \item 必须明示Skill名称（调用X Skill）
+  \item 必须明示输入文件/变量
+  \item 必须明示输出文件/格式
+  \item 原裸代码保留（作为代码补充，不是替代）
+  \item 环境检查提前（提示词开头或附录说明依赖）
+  \item 多Skill串联（一个提示词可调用多个Skill协同）
+  \item 失败回退方案（如Skill不可用，如何手动运行）
+  \item 输出预期明确（交什么文件、什么格式）
+  \item 业务上下文（为什么跑这个回归，解释预期含义）
+  \item 可重复性（明确随机种子、软件版本、依赖版本）
+\end{enumerate}
+
+\textbf{标准化提示词模板}（实验报告附件用）：
+\begin{lstlisting}
+【Skill调用提示词 v1.0】
+调用 Skill：<skill-name-1>、<skill-name-2>
+任务背景：<1-2句说明>
+输入数据：<文件路径 + 关键变量>
+输出要求：<文件路径 + 格式>
+环境检查：请先运行 /tmp/check_ch07_env.sh
+原代码补充：<可选，保留关键代码块>
+失败回退：如Skill不可用，手动运行 <backup-command>
+预期结论：<说明预期结果含义>
+\end{lstlisting}
 
 % ============================================================
 \section{实验：银行盈利能力影响因素实证研究}
@@ -1091,6 +2083,26 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
 
 本实验使用Bankscope（现Bank Focus）数据库中中国商业银行2010--2024年的年度财务数据，涵盖国有大型银行、股份制银行、城市商业银行和农村商业银行四类机构。样本剔除了政策性银行、外资银行和数据严重缺失的观测。
 
+\textbf{【Skill化扩展】中文金融数据源对照表}：除 Bankscope 外，本实验可使用以下中文数据源（按 Skill 集成度排序）：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{7cm}}
+\toprule
+\textbf{数据源} & \textbf{Skill / 工具} & \textbf{覆盖范围与特点} \\
+\midrule
+Tushare Pro & \texttt{tushare-finance} Skill（推荐） & 沪深A股、港股、基金、期货、宏观经济；免费 Token 即可访问；2010-至今 \\
+Wind 资讯 & \texttt{hexin-ifind-ds-stock-mcp} & 银行财务、宏观、行业指数全；机构版订阅；高频与日频均覆盖 \\
+CSMAR & \texttt{api-data-fetcher} + 自定义脚本 & 学术标准数据库；银行财务、公司治理、宏观研究系列 \\
+同花顺 iFinD & \texttt{hexin-ifind-ds-stock-mcp} & 同 Wind，含研报、公告、新闻舆情 \\
+银行年报 & \texttt{pdf-extraction} Skill & 银保监会披露的官方文本；最权威但需 OCR \\
+宏观数据 & \texttt{worldbank-data360} / \texttt{oecd-mcp} & 跨国宏观对照；GDP、CPI、M2 等 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{建议策略}：本科教学用 \texttt{tushare-finance} Skill（免费）；硕士论文用 CSMAR/Wind；跨国比较用 World Bank/OECD。
+
 \subsubsection{实证策略}
 
 \begin{enumerate}[leftmargin=2em]
@@ -1100,9 +2112,57 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
   \item \textbf{中介效应}：检验风险承担是否中介资本充足率对盈利能力的影响
 \end{enumerate}
 
+\subsection{Skill 化包装概述}
+
+\textbf{【本实验 Skill 化原则】} 本实验的所有 Stata/Python/R 提示词都包装为 Skill 调用形式，每个 Step 提供双版本提示词：\textbf{① Skill 化包装提示词}（推荐使用）+ \textbf{② 原始裸代码提示词}（作为代码补充保留）。
+
+\textbf{统一提示词模板}（每个 Step 都遵循）：
+
+\begin{lstlisting}
+请调用 <Skill名称> 技能完成 <任务名称>：
+
+【调用 Skill】<skill-1>、<skill-2>、...
+【背景】<1-2 句说明研究目的>
+【输入数据】<文件路径 + 关键变量名>
+【输出要求】
+  - <输出文件1>：<格式说明>
+  - <输出文件2>：<格式说明>
+【环境检查】运行 /tmp/check_ch07_env.sh
+【原代码补充】保留底层 Stata/Python/R 命令（详见各 Step 下方）
+【失败回退】如 Skill 不可用，手动运行 <backup-command>
+【预期结论】<说明预期结果含义>
+\end{lstlisting}
+
+\textbf{交付物格式升级}：本实验所有 .rtf/.txt 输出\textbf{同时输出 .tex}（由 \texttt{latex-tables} Skill 接管）+ \textbf{PDF}（由 \texttt{paper-compile} Skill 编译），方便直接嵌入论文。
+
+\textbf{Skill 调用记录文件}：实验结束后必须生成 \texttt{reports/ch07\_skill\_workflow.md}（完整 Skill 调用日志），包含：每次调用的 Skill 名称、输入输出文件、执行时长、错误信息与回退方案。该文件作为实验报告附件提交，是 Skill 化实验的核心凭证。
+
 \subsection{分步提示词}
 
 \subsubsection{Step 1：描述统计与相关性分析}
+
+\textbf{【Skill 化版】调用 \texttt{data-analysis} + \texttt{econ-visualization}}：
+
+\begin{lstlisting}
+请调用 data-analysis + econ-visualization 技能完成描述统计与相关性分析：
+
+【调用 Skill】data-analysis、econ-visualization、stata-data-cleaning
+【背景】为银行盈利能力实证研究提供描述统计与变量相关性诊断
+【输入数据】
+  - data/bank_panel_clean.csv（50 家上市银行 2010-2024 年面板）
+  - 变量清单：ROE / ROA / NPL / CAR / SIZE / LOAN / GDP / CPI
+【输出要求】
+  - reports/ch07_desc_stat.md（含均值、标准差、分位数、相关系数矩阵）
+  - reports/ch07_desc_stat.tex（LaTeX 表格，latex-tables Skill 输出）
+  - figures/ch07_distribution.pdf（各变量分布直方图与正态性检验）
+  - figures/ch07_correlation_heatmap.pdf（核心变量相关矩阵热力图）
+【环境检查】运行 /tmp/check_ch07_env.sh；python3 -c "import seaborn, matplotlib"
+【原代码补充】保留 Stata summarize / corr / pwcorr 命令作底层补充
+【失败回退】如 Skill 不可用，手写 Stata：summarize, detail; pwcorr roe npl car size, star(0.05)
+【预期结论】样本量≥500；核心变量相关系数符合经济直觉；ROE 分布呈右偏
+\end{lstlisting}
+
+\textbf{【原裸代码提示词·保留】}：
 
 \begin{lstlisting}
 任务：银行盈利能力研究——描述统计
@@ -1117,6 +2177,30 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
 
 \subsubsection{Step 2：基准回归}
 
+\textbf{【Skill 化版】调用 \texttt{stata-regression} + \texttt{latex-tables}}：
+
+\begin{lstlisting}
+请调用 stata-regression + latex-tables 技能完成基准回归：
+
+【调用 Skill】stata-regression、latex-tables、econ-visualization
+【背景】以双向固定效应模型检验银行盈利能力影响因素，验证 H1/H2/H3
+【输入数据】
+  - data/bank_panel_clean.csv（500×15 面板）
+  - 被解释变量：ROE
+  - 核心解释变量：NPL、CAR、SIZE
+  - 控制变量：LOAN、GDP、CPI
+【输出要求】
+  - reports/ch07_baseline.tex（三线表，latex-tables Skill 输出，含3 列嵌套模型）
+  - reports/ch07_baseline.pdf（paper-compile Skill 编译生成）
+  - figures/ch07_baseline_coefplot.pdf（系数对比图，econ-visualization 输出）
+【环境检查】Stata 可访问；R modelsummary 包安装；xelatex 可用
+【原代码补充】保留 Stata reghdfe 原生命令（详见下方原裸代码提示词）
+【失败回退】如 stata-regression 不可用，手动执行 stata-mp -b do baseline.do
+【预期结论】NPL 系数显著负、CAR 系数显著正、SIZE 平方项显著负（U型）
+\end{lstlisting}
+
+\textbf{【原裸代码提示词·保留】}：
+
 \begin{lstlisting}
 任务：银行盈利能力研究——基准回归
 
@@ -1130,6 +2214,27 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
 \end{lstlisting}
 
 \subsubsection{Step 3：稳健性检验}
+
+\textbf{【Skill 化版】调用 \texttt{stata-regression} + \texttt{econ-visualization} + \texttt{paper-figure}}：
+
+\begin{lstlisting}
+请调用 stata-regression + econ-visualization + paper-figure 技能完成稳健性检验：
+
+【调用 Skill】stata-regression、econ-visualization、paper-figure、latex-tables
+【背景】验证基准回归结论在 4 种稳健性检验下的一致性
+【输入数据】data/bank_panel_clean.csv（同 Step 2）
+【输出要求】
+  - reports/ch07_robustness.tex（4 列稳健性表格：替换 ROA / Winsorize / 排除 2020 / 滞后项）
+  - reports/ch07_robustness.pdf
+  - figures/ch07_robustness_forest.pdf（稳健性系数对比森林图，econ-visualization）
+  - figures/ch07_robustness_sensitivity.pdf（敏感性分析图，paper-figure）
+【环境检查】Stata 可用；R ggplot2 + python matplotlib 均就绪
+【原代码补充】保留 winsor2 / reghdfe with lags 等底层命令
+【失败回退】手写循环 Stata 脚本
+【预期结论】4 项稳健性检验系数符号与显著性保持一致
+\end{lstlisting}
+
+\textbf{【原裸代码提示词·保留】}：
 
 \begin{lstlisting}
 任务：银行盈利能力研究——稳健性检验
@@ -1146,6 +2251,28 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
 
 \subsubsection{Step 4：异质性分析}
 
+\textbf{【Skill 化版】调用 \texttt{data-analysis} + \texttt{econ-visualization}}：
+
+\begin{lstlisting}
+请调用 data-analysis + econ-visualization 技能完成异质性分析：
+
+【调用 Skill】data-analysis、econ-visualization、latex-tables
+【背景】考察银行类型与区域异质性，识别资本充足率对不同类型银行的差异化影响
+【输入数据】data/bank_panel_clean.csv + 分组变量 TYPE（4类）+ REGION（3类）
+【输出要求】
+  - reports/ch07_heterogeneity.tex（按银行类型与区域分组回归表）
+  - reports/ch07_heterogeneity.pdf
+  - figures/ch07_heterogeneity_type.pdf（4 类银行系数对比图）
+  - figures/ch07_heterogeneity_region.pdf（3 大区域对比热力图）
+  - reports/ch07_chow_test.md（Chow 检验结果汇总）
+【环境检查】python3 + Stata + R 均就绪
+【原代码补充】保留 bysort type: reghdfe 循环命令（详见原裸代码提示词）
+【失败回退】手动循环生成各子样本回归表
+【预期结论】CAR 对城商行/农商行的正向影响显著大于国有大行
+\end{lstlisting}
+
+\textbf{【原裸代码提示词·保留】}：
+
 \begin{lstlisting}
 任务：银行盈利能力研究——异质性分析
 
@@ -1159,6 +2286,29 @@ AI可辅助起草初稿，但经济学解释必须基于研究者的专业判断
 \end{lstlisting}
 
 \subsubsection{Step 5：中介效应检验}
+
+\textbf{【Skill 化版】调用 \texttt{r-econometrics} 中介模块}：
+
+\begin{lstlisting}
+请调用 r-econometrics 技能（含 mediation 模块）完成中介效应检验：
+
+【调用 Skill】r-econometrics（含 mediation）、econ-visualization、latex-tables
+【背景】验证 CAR → RISK → ROE 中介路径，为理论机制提供证据
+【输入数据】
+  - data/bank_panel_clean.csv
+  - 路径：CAR → RISK（风险加权资产占比）→ ROE
+【输出要求】
+  - reports/ch07_mediation.tex（Sobel 检验 + Bootstrap 置信区间表）
+  - reports/ch07_mediation.pdf
+  - figures/ch07_mediation_path.pdf（中介路径示意图，econ-visualization）
+  - reports/ch07_mediation_summary.md（中介效应占总效应比例）
+【环境检查】R mediation 包；Rscript -e 'library(mediation); packageVersion("mediation")'
+【原代码补充】保留 Stata sgmediation 命令（详见下方原裸代码提示词）
+【失败回退】手写三步 Sobel 检验 + 手动计算中介比例
+【预期结论】RISK 中介占比 25-40%，机制成立
+\end{lstlisting}
+
+\textbf{【原裸代码提示词·保留】}：
 
 \begin{lstlisting}
 任务：银行盈利能力研究——中介效应检验
@@ -1177,18 +2327,91 @@ Step c: reg roe car risk controls, robust      （直接效应+b路径）
 
 \subsection{预期产出}
 
+\textbf{【Skill 化交付物清单】} 所有交付物同时输出 LaTeX + PDF 格式（除原始 .rtf/.txt 外）：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clll}
+\toprule
+\textbf{\#} & \textbf{交付物} & \textbf{原格式} & \textbf{Skill 化输出格式} \\
+\midrule
+1 & 描述统计表 + 相关系数矩阵 & .txt & .md + .tex + .pdf \\
+2 & 基准回归表（三列） & .rtf & .tex（三线表） + .pdf \\
+3 & 稳健性检验表 & .rtf & .tex + .pdf + 森林图 PDF \\
+4 & 异质性分析表 & .rtf & .tex + .pdf + 对比热力图 \\
+5 & 中介效应检验结果 & .txt & .md + .tex + .pdf + 路径示意图 \\
+6 & 200字研究结论 & 实验报告 & 实验报告（Skill 化部分） \\
+\textbf{7} & \textbf{【新增·核心交付物】Skill 调用记录} & --- & \texttt{reports/ch07\_skill\_workflow.md} \\
+\textbf{8} & \textbf{【新增】配套图表集} & --- & \texttt{figures/ch07\_*.pdf}（5-8 张） \\
+\textbf{9} & \textbf{【新增】Skill 化实验报告模板} & --- & \texttt{reports/ch07\_report.tex} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{\texttt{ch07\_skill\_workflow.md} 模板}：
+
+\begin{lstlisting}[style=markdown]
+# ch07 实验 Skill 调用日志
+
+## 实验概览
+- 实验名称：银行盈利能力影响因素实证研究
+- 实验者：<姓名> / <学号>
+- 实验日期：<YYYY-MM-DD>
+- 总耗时：<X 小时>
+
+## Skill 调用清单
+
+### Step 1: 描述统计
+- 调用 Skill: data-analysis, econ-visualization
+- 输入: data/bank_panel_clean.csv
+- 输出: reports/ch07_desc_stat.md, .tex, figures/ch07_distribution.pdf
+- 执行时长: <X 秒>
+- 错误与回退: <无 / 描述问题与解决方案>
+
+### Step 2: 基准回归
+- 调用 Skill: stata-regression, latex-tables, econ-visualization
+... (类推每个 Step)
+
+## 环境检查报告
+- R 版本: <4.x.x>
+- Stata 版本: <18>
+- Python 版本: <3.11>
+- 所有依赖包: <已安装 / 缺失 X>
+
+## 总结
+- 实验是否成功: <是/否>
+- 主要发现: <一句话总结>
+- 下一步改进: <可选>
+\end{lstlisting}
+
+\subsection{Skill 化交付物补充说明}
+
+\textbf{为什么需要 \texttt{ch07\_skill\_workflow.md}}：
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{可追溯性}：教师可通过该日志复现学生每次 Skill 调用，验证实验真实性。
+  \item \textbf{调试凭证}：当输出文件缺失或错误时，可通过日志快速定位是哪个 Skill / 步骤出错。
+  \item \textbf{Skill 习得证据}：展示学生从“裸命令”到“Skill 化工作流”的思维转变，是 Skill 化教学的核心产出。
+  \item \textbf{可复用资产}：后续学生可参考本日志快速搭建同类实验。
+\end{itemize}
+
+\textbf{交付物文件清单（期末提交检查表）}：
+
 \begin{table}[H]
 \centering
 \begin{tabular}{cll}
 \toprule
-\textbf{\#} & \textbf{交付物} & \textbf{文件名} \\
+\textbf{\checkmark} & \textbf{文件名} & \textbf{备注} \\
 \midrule
-1 & 描述统计表 + 相关系数矩阵 & reports/ch07\_desc\_stat.txt \\
-2 & 基准回归表（三列） & reports/ch07\_baseline.rtf \\
-3 & 稳健性检验表 & reports/ch07\_robustness.rtf \\
-4 & 异质性分析表 & reports/ch07\_heterogeneity.rtf \\
-5 & 中介效应检验结果 & reports/ch07\_mediation.txt \\
-6 & 200字研究结论 & 写入实验报告 \\
+\square & \texttt{data/bank\_panel\_clean.csv} & 数据准备 \\
+\square & \texttt{reports/ch07\_desc\_stat.tex/.pdf} & 描述统计 \\
+\square & \texttt{reports/ch07\_baseline.tex/.pdf} & 基准回归 \\
+\square & \texttt{reports/ch07\_robustness.tex/.pdf} & 稳健性 \\
+\square & \texttt{reports/ch07\_heterogeneity.tex/.pdf} & 异质性 \\
+\square & \texttt{reports/ch07\_mediation.tex/.pdf} & 中介效应 \\
+\square & \texttt{figures/ch07\_*.pdf} & 5-8 张配套图 \\
+\square & \texttt{reports/ch07\_skill\_workflow.md} & \textbf{Skill 调用日志} \\
+\square & \texttt{reports/ch07\_report.tex/.pdf} & 完整实验报告 \\
+\square & \texttt{references/literature.bib} & 文献 BibTeX \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1205,7 +2428,7 @@ Step c: reg roe car risk controls, robust      （直接效应+b路径）
 
 本章系统介绍了金融数据分析与计量经济学的核心方法。7.1节阐述了金融数据的六大类型和四大典型特征（尖峰厚尾、异方差、序列相关、结构突变），以及缺失值处理、异常值检测和变量变换的完整预处理流程。7.2节深入讲解了面板数据回归的三种经典模型（混合OLS、固定效应、随机效应）及其选择检验（F检验、Hausman检验、BP-LM检验），并介绍了动态面板GMM方法。7.3节从时间序列分解出发，依次介绍了SARIMA、LSTM和Prophet三种预测方法。7.4节阐述了因果推断的四种主流方法（DID、RDD、IV、SCM）。7.5节构建了AI辅助计量分析的六步工作流，并警示了过拟合、数据窥探、伪回归等常见陷阱。7.6节通过银行盈利能力影响因素的完整实验，将上述方法串联为论文级实证研究。
 
-\keyterms{面板数据、固定效应模型、随机效应模型、Hausman检验、reghdfe、GMM、SARIMA、LSTM、Prophet、因果推断、双重差分法（DID）、平行趋势假设、断点回归（RDD）、工具变量法（IV）、2SLS、合成控制法（SCM）、缩尾处理（Winsorize）、ARCH效应、多重插补、中介效应}
+\keyterms{面板数据、双向固定效应模型、随机效应模型、Hausman检验、F检验、BP-LM检验、reghdfe、动态面板GMM、Arellano-Bond、SARIMA、LSTM、GRU、Prophet、VAR、VECM、单位根检验、协整、Granger因果、因果推断、双重差分法（DID）、平行趋势检验、Callaway-Sant'Anna、断点回归（RDD）、工具变量法（IV）、2SLS、合成控制法（SCM）、倾向得分匹配（PSM）、缩尾处理（Winsorize）、ARCH效应、GARCH、多重插补、中介效应、Sobel检验、Baron-Kenny、Skill化提示词、\texttt{stata-regression} Skill、\texttt{r-econometrics} Skill、\texttt{python-panel-data} Skill、\texttt{econ-visualization} Skill、\texttt{tushare-finance} Skill、\texttt{latex-tables} Skill、\texttt{stata-data-cleaning} Skill、\texttt{data-analysis} Skill、Skill调用日志（\texttt{ch07\_skill\_workflow.md}）}
 
 \begin{exercisebox}[思考题]
 \begin{enumerate}[leftmargin=2em]
@@ -1214,5 +2437,8 @@ Step c: reg roe car risk controls, robust      （直接效应+b路径）
   \item SARIMA和LSTM各有什么优劣势？在什么场景下应优先选择SARIMA而非LSTM？
   \item 某研究者发现银行数字化转型指数与ROE显著正相关，便声称"数字化转型提升了银行盈利能力"。请指出该因果推断的逻辑缺陷，并提出改进方案。
   \item AI辅助计量分析中，"数据窥探"问题为何特别严重？请设计一个防止数据窥探的工作流程。
+  \item \textbf{【Skill 化·新增】} 在面板回归分析中，\texttt{stata-regression} / \texttt{r-econometrics} / \texttt{python-panel-data} 三个 Skill 各有什么独特优势与使用场景？请设计一个“Stata 估计 + R fixest 交叉验证 + Python linearmodels GMM 对比”的三 Skill 协同工作流，并讨论如何处理三者在数据格式、输出风格、稳健性指标上的差异。
+  \item \textbf{【Skill 化·新增】} \texttt{econ-visualization} Skill 能够自动生成发表级图表。请设计 3 个对比实验：\textbf{(a)} 未调用该 Skill 仅靠 AI 自行生成的图表 vs \textbf{(b)} 调用该 Skill 生成的图表 vs \textbf{(c)} 调用 \texttt{paper-figure} Skill 生成的图表，从期刊审稿人视角评价三种图表在“主题一致性、色彩友好性、矢量输出、可重复性”上的差异。
+  \item \textbf{【Skill 化·新增】} 本章提供了 Tushare / iFinD / China-Stock / World Bank / OECD 等多个数据获取 Skill。请以“研究中国上市银行 2010-2024 年跨国比较”这一课题为例，设计一个多数据源融合策略：哪些指标优先用哪个 Skill？跨国宏观变量应使用哪个 Skill？如遇到 Skill 返回数据冲突，如何进行交叉验证与质量控制？
 \end{enumerate}
 \end{exercisebox}

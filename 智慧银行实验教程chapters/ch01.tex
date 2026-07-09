@@ -55,6 +55,49 @@
 \bottomrule
 \end{tabularx}
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  stage/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=2.2cm, align=center, font=\small, inner sep=4pt},
+  stagehot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=2.6cm, minimum height=2.2cm, align=center, font=\small, inner sep=4pt},
+  arrow/.style={-{Stealth[length=3mm]}, very thick},
+]
+% 四个阶段方框
+\node[stage] (s1) at (0,0) {\textbf{电子化}\\1960s—90s\\\textcolor{blue!70!black}{大型机、数据库}\\\footnotesize 手工$\rightarrow$电子};
+\node[stage] (s2) at (4.2,0) {\textbf{网络化}\\1995—2010\\\textcolor{blue!70!black}{互联网、Web}\\\footnotesize 网点$\rightarrow$在线};
+\node[stage] (s3) at (8.4,0) {\textbf{移动化}\\2010—2020\\\textcolor{blue!70!black}{4G/5G、智能终端}\\\footnotesize 固定$\rightarrow$移动};
+\node[stagehot] (s4) at (12.6,0) {\textbf{智能化}\\2020至今\\\textcolor{orange!80!black}{LLM、Agent}\\\footnotesize 辅助$\rightarrow$自主};
+
+% 阶段间演进箭头
+\draw[arrow, blue!60] (s1.east) -- (s2.west);
+\draw[arrow, blue!60] (s2.east) -- (s3.west);
+\draw[arrow, orange!80] (s3.east) -- (s4.west);
+
+% 顶端：AI 能力跃迁轴
+\draw[arrow, red!70] (-1.5, 3.2) -- (14.1, 3.2) node[right, font=\footnotesize\bfseries, black] {AI 能力};
+\node[font=\small\bfseries, red!70] at (-1.2, 2.8) {弱};
+\node[font=\small\bfseries, red!70] at (13.8, 2.8) {强};
+\draw[arrow, red!70, dashed] (s1.north) -- (s1.north |- 0,3.2);
+\draw[arrow, red!70, dashed] (s2.north) -- (s2.north |- 0,3.2);
+\draw[arrow, red!70, dashed] (s3.north) -- (s3.north |- 0,3.2);
+\draw[arrow, red!70, dashed] (s4.north) -- (s4.north |- 0,3.2);
+
+% 底端：数据资产积累轴
+\draw[arrow, green!60!black] (-1.5, -2.2) -- (14.1, -2.2) node[right, font=\footnotesize\bfseries, black] {数据资产};
+\node[font=\small\bfseries, green!60!black] at (-1.2, -2.6) {少};
+\node[font=\small\bfseries, green!60!black] at (13.8, -2.6) {多};
+\draw[arrow, green!60!black, dashed] (s1.south) -- (s1.south |- 0,-2.2);
+\draw[arrow, green!60!black, dashed] (s2.south) -- (s2.south |- 0,-2.2);
+\draw[arrow, green!60!black, dashed] (s3.south) -- (s3.south |- 0,-2.2);
+\draw[arrow, green!60!black, dashed] (s4.south) -- (s4.south |- 0,-2.2);
+
+% 核心论断标签
+\node[draw=red!70, very thick, fill=yellow!15, rounded corners=2pt, font=\footnotesize\bfseries, align=center] at (6.3, -1.3) {三阶段：效率提升\quad $\to$\quad 智能化阶段：能力跃迁};
+\end{tikzpicture}
+\caption{金融科技四阶段演进与 AI 能力跃迁示意（自制）}
+\label{fig:fintech-stages}
+\end{figure}
+
 \subsection{全球银行数字化转型趋势}
 
 从全球视角审视，银行业数字化转型呈现出若干共性趋势。

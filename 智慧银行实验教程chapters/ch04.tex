@@ -6,11 +6,124 @@
 本章学习目标：
 \begin{enumerate}
   \item 理解Skill的设计原理与知识工程视角
-  \item 掌握金融类Skill的调用方法
+  \item 熟悉本机 167 个 Skill 的 20 个分类体系，重点掌握 11 类高关联度 Skill 的能力边界
+  \item 掌握金融类Skill的调用方法（含 8 个从 \textbullet 到 \textbullet\textbullet\textbullet\textbullet 的实战任务）
+  \item 掌握学术与商业图形展示 Skill 体系（\texttt{econ-visualization} / \texttt{paper-figure} / \texttt{paper-illustration} / \texttt{mermaid-diagram}）
+  \item 掌握演示文稿 Skill 体系（学术线 \texttt{beamer-presentation} / \texttt{paper-slides} / \texttt{paper-poster}；商业线 \texttt{pptx} / \texttt{qoderwork-ppt} / \texttt{ppt-master}）
+  \item 掌握元 Skill 体系（\texttt{create-skill} / \texttt{find-skills} / \texttt{skill-auditor} / \texttt{write-skill-readme} / \texttt{install-skill-dependency} / \texttt{luban}）
   \item 独立编写符合规范的金融Skill
   \item 从银行合规视角进行Skill安全审计
 \end{enumerate}
 }
+
+% ===========================================================
+\section{Skill库全景图：从167个Skill看AI能力生态}
+% ===========================================================
+
+本章Skill体系不是一个孤立的技术点，而是构筑在一个涵盖\textbf{167个Skill}、分\textbf{20个分类}的完整Skill生态之上。本节先绘制一张全景图，让你在深入具体Skill之前，先看清AI能力生态的宏观面貌。
+
+\subsection{本机Skill库总览}
+
+本课程使用的Skill库位于\texttt{qoder-skills-library/}目录（CNB仓库：\url{https://cnb.cool/xiaosicau/qoder-skills-library.git}），共\textbf{167个Skill / 20个分类}，外加\texttt{.agents/skills/}项目本地的9个核心Skill。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcp{9cm}}
+\toprule
+\textbf{分类} & \textbf{数量} & \textbf{与银行金融业务关联度} \\
+\midrule
+01-ideation 选题 & 6 & 高（选题辅助） \\
+02-literature 文献综述 & 10 & 高（实证文献支撑） \\
+03-theory 理论建模 & 5 & 中（计量模型推导） \\
+\rowcolor{yellow!20}04-data 数据获取与清洗 & \textbf{3} & \textbf{极高} \\
+\rowcolor{yellow!20}05-analysis 统计分析与仿真 & \textbf{11} & \textbf{极高} \\
+06-experiment 实验流程 & 5 & 中 \\
+\rowcolor{yellow!20}07-writing 论文写作 & \textbf{7} & \textbf{高} \\
+08-funding NSFC 申报 & 6 & 中（项目申报） \\
+09-review 审稿 & 11 & 高（成果改进） \\
+\rowcolor{yellow!20}10-communication 演示展示 & \textbf{7} & \textbf{高} \\
+11-perspective 思维顾问 & 2 & 高（中国金融学体系、Munger/Taleb等思维） \\
+\rowcolor{yellow!20}12-finance 金融与商业 & \textbf{11} & \textbf{极高} \\
+13-consulting 咨询框架 & 3 & 高 \\
+14-cnb CNB 平台 & 13 & 低 \\
+15-browser 浏览器自动化 & 9 & 中 \\
+\rowcolor{yellow!20}16-office 文档办公 & \textbf{8} & \textbf{高} \\
+17-ima IMA 笔记 & 3 & 低 \\
+18-opencli 站点CLI & 6 & 低 \\
+\rowcolor{yellow!20}19-devtools 元工具 & \textbf{20} & \textbf{高（含skill-auditor/create-skill/find-skills等元Skill）} \\
+20-messaging 通讯 & 4 & 低 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+其中，\textbf{11类高关联度Skill}（标黄）是本章重点。
+
+\subsection{学术研究全流程与Skill映射}
+
+一个完整的学术研究项目可以划分为：选题→文献→理论→数据→分析→实验→写作→审稿→展示九大环节。每一个环节都对应多个Skill可以辅助：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{6cm}p{6cm}}
+\toprule
+\textbf{研究环节} & \textbf{典型任务} & \textbf{可调用的Skill} \\
+\midrule
+选题 & 从热点问题中寻找创新点 & \texttt{idea-generation} / \texttt{research-refine} / \texttt{ideation-spark} \\
+文献综述 & 系统检索+综述+管理引用 & \texttt{find-literature} / \texttt{systematic-literature-review} / \texttt{lit-review-assistant} / \texttt{pdf-extraction} \\
+理论建模 & 构建数理模型与推导 & \texttt{theory-modeling} / \texttt{model-derivation} \\
+数据获取 & 从API/数据库拉取金融数据 & \texttt{tushare-finance} / \texttt{china-stock-analysis} / \texttt{yahoo-finance} / \texttt{worldbank-data360} \\
+统计分析 & 描述统计+回归+因果推断 & \texttt{stata} / \texttt{r-econometrics} / \texttt{python-panel-data} / \texttt{data-analysis} \\
+实验流程 & A/B测试与实验跟踪 & \texttt{ab-test-analysis} / \texttt{experiment-tracker} \\
+论文写作 & LaTeX写作+表格+排版 & \texttt{paper-write} / \texttt{latex-tables} / \texttt{academic-paper-writer} / \texttt{humanizer-zh} \\
+审稿与润色 & 多轮迭代提升论文质量 & \texttt{paper-review} / \texttt{peer-review} / \texttt{research-review} / \texttt{auto-review-loop} \\
+演示展示 & 会议汇报与海报 & \texttt{beamer-presentation} / \texttt{paper-slides} / \texttt{paper-poster} / \texttt{ppt-master} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{银行业务工作流与Skill映射}
+
+从业务侧看，银行业的工作流可以分为：数据获取→分析→报告→决策→运营五大环节。每个环节同样有Skill支撑：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{6cm}p{6cm}}
+\toprule
+\textbf{业务环节} & \textbf{典型任务} & \textbf{可调用的Skill} \\
+\midrule
+数据获取 & 从Wind/CSMAR/行内系统拉数 & \texttt{tushare-finance} / \texttt{api-data-fetcher} / \texttt{china-stock-mcp} \\
+数据分析 & 信用评估/反欺诈/反洗钱/压力测试 & \texttt{finance-expert} / \texttt{r-econometrics} / \texttt{stata-regression} \\
+报告生成 & Word/Excel/PPT 文档 & \texttt{docx} / \texttt{xlsx} / \texttt{pptx} / \texttt{pdf} \\
+决策辅助 & 波特五力/SWOT/估值 & \texttt{consulting-frameworks} / \texttt{financial-modeling} / \texttt{stock-analysis} \\
+运营管理 & 舆情监控+风险预警+客户分群 & \texttt{finance-news} / \texttt{bank-risk-alert} / \texttt{questionnaire-design} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Skill发现与生态接入}
+
+如何在众多Skill中找到合适的？三种途径：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{\texttt{find-skills} 元Skill}：从\texttt{skills.sh}市场、GitHub anthropics/skills 仓库、本地 qoder-skills-library、npm registry中发现Skill。
+  \item \textbf{本机浏览}：直接查阅\texttt{qoder-skills-library/<分类>/<skill-name>/SKILL.md}（每个Skill一个独立目录）。
+  \item \textbf{自然语言提示}：在AI IDE中描述需求，AI自动匹配最合适的Skill。
+\end{enumerate}
+
+\begin{lstlisting}[style=shell]
+# 技能库根目录一览
+ls qoder-skills-library/
+# 查找所有包含 "finance" 的 Skill
+grep -rl "finance" qoder-skills-library/*/SKILL.md
+\end{lstlisting}
+
+\begin{notebox}[Skill发现的三条经验]
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{不确定时先试用\texttt{find-skills}元Skill}：它会同时查询多个生态市场，给你最全的候选。
+  \item \textbf{优先选择本地Skill}：本机已安装的Skill不需要额外下载，响应更快。
+  \item \textbf{看SKILL.md的tags字段}：tags是Skill的能力标签，是快速判断Skill适用场景的捷径。
+\end{itemize}
+\end{notebox}
 
 % ===========================================================
 \section{Skill设计原理}
@@ -182,32 +295,402 @@ Skill的触发是一个\textbf{语义匹配}过程。当用户在AI IDE中输入
 其中\textbf{反馈}环节往往被忽视，但它是Skill持续优化的关键。一个好的Skill应当根据实际使用中的问题不断迭代——比如发现某个触发词容易误触发，就在\texttt{When to Use}中增加排除条件；发现某个步骤容易出错，就在\texttt{Best Practices}中增加提醒。
 
 % ===========================================================
+\section{运行环境准备详解：Skill调用前的环境检查}
+
+% ===========================================================
+
+\textbf{【本章特别要求】} 调用Skill不是点下按钮那么简单。许多Skill（如\texttt{r-econometrics}、\texttt{econ-visualization}、\texttt{qoderwork-ppt}）背后依赖完整的语言解释器、外部包、Node模块或API Key。学生在实验时最常见的问题是"命令找不到"、"包未安装"、"路径错误"。本节集中讲解调用Skill所需的运行环境，避免你在实验时遇到这些坑。
+
+\subsection{R语言环境（r-econometrics / econ-visualization的前置依赖）}
+
+\textbf{R解释器安装}（macOS推荐Homebrew）：
+
+\begin{lstlisting}[style=shell]
+# 方式1：Homebrew安装最新稳定版
+brew install --cask r
+
+# 方式2：下载官方安装包（适合离线/教学机房）
+# https://cran.r-project.org/bin/macosx/  下载 R-4.x.x-arm64.pkg
+\end{lstlisting}
+
+\textbf{RStudio Desktop}（IDE，推荐）：\url{https://posit.co/download/rstudio-desktop/}
+
+\textbf{CRAN镜像配置}（加速国内下载）：在\texttt{~/.Rprofile}中写入：
+
+\begin{lstlisting}[style=r]
+options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+\end{lstlisting}
+
+\textbf{必备R包一键安装}（\texttt{r-econometrics} / \texttt{econ-visualization}共需）：
+
+\begin{lstlisting}[style=r]
+install.packages(c(
+  "tidyverse",   # 数据清洗+ggplot2基础
+  "fixest",      # 高维固定效应+IV+DiD（替代reghdfe/ivreg2）
+  "modelsummary",# 发表级回归表
+  "rdrobust",    # 断点回归
+  "did",         # Callaway-Sant'Anna现代DID
+  "Synth",       # 合成控制法
+  "MatchIt",     # 倾向得分匹配
+  "sandwich", "lmtest",  # 稳健标准误
+  "AER",         # IV估计（ivreg）
+  "stargazer"    # 回归表替代方案
+))
+\end{lstlisting}
+
+\textbf{R路径验证}：
+
+\begin{lstlisting}[style=shell]
+which R
+R --version          # 应输出 R version 4.x.x
+Rscript -e 'cat(packageVersion("fixest"))'   # 应输出可读版本号
+\end{lstlisting}
+
+\subsection{Stata环境（stata / stata-regression的前置依赖）}
+
+\textbf{macOS路径定位}（学生常踩坑）：
+
+\begin{lstlisting}[style=shell]
+# Stata 18 / StataNow标准路径
+/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp
+/Applications/StataNow/StataMP.app/Contents/MacOS/stata-mp
+# 自动定位
+mdfind -name "stata-mp" | grep MacOS
+\end{lstlisting}
+
+\textbf{PATH配置}（加入\texttt{~/.zshrc}）：
+
+\begin{lstlisting}[style=shell]
+export PATH="/Applications/Stata/StataMP.app/Contents/MacOS:$PATH"
+source ~/.zshrc
+\end{lstlisting}
+
+\textbf{批处理模式调用}（AI Skill调用Stata的标准方式）：
+
+\begin{lstlisting}[style=shell]
+stata-mp -b do analysis.do     # 输出到 analysis.log
+stata-mp -b do /tmp/run.do && echo SUCCESS || echo FAILED
+\end{lstlisting}
+
+\textbf{必备外部命令}（\texttt{ssc install}一键安装）：
+
+\begin{lstlisting}[style=stata]
+ssc install reghdfe, replace
+ssc install estout, replace
+ssc install outreg2, replace
+ssc install did_multiplegt, replace
+ssc install eventstudyinteract, replace
+ssc install rdrobust, replace
+ssc install psmatch2, replace
+ssc install synth, replace
+ssc install ivreg2, replace
+ssc install xtabond2, replace
+ssc install winsor2, replace
+\end{lstlisting}
+
+\subsection{Python环境（python-panel-data / data-analysis / paper-figure的前置依赖）}
+
+\textbf{建议版本}：Python 3.10+（与\texttt{reghdfe}等Stata包无冲突）。
+
+\textbf{Conda环境}（推荐，隔离R/Stata/Python）：
+
+\begin{lstlisting}[style=shell]
+conda create -n banking python=3.11
+conda activate banking
+pip install pandas numpy statsmodels scikit-learn pmdarima prophet torch \
+            matplotlib seaborn linearmodels PyFixest   # PyFixest是fixest的Python版
+\end{lstlisting}
+
+\textbf{Jupyter Lab}（推荐IDE）：\texttt{pip install jupyterlab}
+
+\subsection{PPT演示文稿相关环境（pptx / qoderwork-ppt / ppt-master的前置依赖）}
+
+\textbf{Node.js + npm}：\url{https://nodejs.org/}（LTS版）。
+
+\textbf{Puppeteer + LibreOffice}（\texttt{qoderwork-ppt}一键管线需要）：
+
+\begin{lstlisting}[style=shell]
+brew install --cask libreoffice   # macOS
+npm install -g pptxgenjs puppeteer jsdom dom-to-pptx lucide-static
+\end{lstlisting}
+
+\textbf{poppler-utils}（\texttt{pptx} Skill的PDF转图片依赖）：
+
+\begin{lstlisting}[style=shell]
+brew install poppler   # 提供 pdftoppm 命令
+\end{lstlisting}
+
+\textbf{LaTeX Beamer}（\texttt{beamer-presentation} / \texttt{paper-slides}需要）：macTeX已包含；Linux \texttt{sudo apt install texlive-latex-extra texlive-fonts-recommended}。
+
+\begin{warningbox}[Skill使用前必走的3步环境检查]
+每个Skill被学生调用前，请先运行3步检查，避免命令找不到的尴尬：
+
+\begin{lstlisting}[style=shell]
+# === Step 1：路径/可执行文件检查 ===
+which <skill-binary-or-interpreter>
+# 例：which R / which stata-mp / which python3 / which xelatex
+
+# === Step 2：依赖包/库检查 ===
+<interpreter> -e "<import-test-command>"
+# 例：Rscript -e 'library(fixest)' / python3 -c 'import tushare'
+
+# === Step 3：Skill可访问性检查 ===
+ls <path-to-skill>/SKILL.md
+# 例：ls qoder-skills-library/05-analysis/stata/SKILL.md
+\end{lstlisting}
+
+\begin{itemize}[leftmargin=1em]
+  \item 三步全过 → 可使用该Skill
+  \item Step 1不过 → 安装语言解释器（brew install / 官网下载）
+  \item Step 2不过 → 安装依赖包（R \texttt{install.packages} / Python \texttt{pip install} / Stata \texttt{ssc install}）
+  \item Step 3不过 → 重新拉取qoder-skills-library（git pull）或安装缺失Skill
+\end{itemize}
+\end{warningbox}
+
+% ===========================================================
+\section{20分类Skill全景安装与环境检查总表}
+
+% ===========================================================
+
+\textbf{【本章特别要求】} 本节是学生查阅频率最高的"环境准备速查表"，覆盖全部20个分类中的\textbf{11类高关联度Skill}（其余9类列出位置但默认低频）。每个Skill都包含"安装指令 + 环境检查命令"两部分。
+
+\subsection{01-ideation 选题类（6个Skill）}
+\textbf{idea-generation} / \texttt{research-ideation} / \texttt{ideation-spark}等：低依赖，只需Cursor/Claude Code调用。
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/01-ideation/   # 验证存在性
+\end{lstlisting}
+\textbf{brainstorming Skill}（全局可用）：无需额外环境，调用即可。
+
+\subsection{02-literature 文献综述类（10个Skill）}
+\textbf{find-literature} / \texttt{lit-review-assistant} / \texttt{academic-researcher} / \texttt{systematic-literature-review}：需要联网访问Semantic Scholar / arXiv / OpenAlex。
+\begin{lstlisting}[style=shell]
+curl -I https://api.semanticscholar.org/ | head -1   # 应返回 HTTP 200
+curl -I https://export.arxiv.org/ | head -1          # arXiv API
+\end{lstlisting}
+\textbf{pdf-extraction Skill}：依赖Python pdfplumber。
+\begin{lstlisting}[style=shell]
+pip install pdfplumber
+python3 -c "import pdfplumber; print(pdfplumber.__version__)"
+\end{lstlisting}
+\textbf{scansci-pdf Skill}：需要校园VPN配置（详见SKILL.md）。
+\begin{lstlisting}[style=shell]
+cat mcp.json | jq '.mcpServers."scansci-pdf"'
+\end{lstlisting}
+
+\subsection{04-data 数据获取与清洗类（3个Skill）—— 重点}
+\textbf{tushare-finance Skill}：依赖Tushare Token。
+\begin{lstlisting}[style=shell]
+# 申请 Token：https://tushare.pro/register
+export TUSHARE_TOKEN='your_token_here'
+python3 -c "import tushare; print(tushare.__version__)"
+\end{lstlisting}
+\textbf{api-data-fetcher Skill}：依赖requests库 + API Key。\texttt{pip install requests pandas}
+
+\textbf{worldbank-data360 / oecd-data}：依赖联网。
+\begin{lstlisting}[style=shell]
+curl -I https://api.worldbank.org/ | head -1
+curl -I https://stats.oecd.org/ | head -1
+\end{lstlisting}
+
+\subsection{05-analysis 统计分析与仿真类（11个Skill）—— 最重点}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{stata Skill}：见§R/Stata环境（已详述）
+  \item \textbf{stata-regression Skill}：stata依赖 + reghdfe/estout包
+  \item \textbf{r-econometrics Skill}：见§R环境（已详述）
+  \item \textbf{python-panel-data Skill}：见§Python环境 + linearmodels/PyFixest
+  \item \textbf{data-analysis Skill}：见§Python环境
+  \item \textbf{abm-analyzer / agent-based-modeling / agricultural-insurance-abm Skill}：依赖Mesa框架
+\end{itemize}
+\begin{lstlisting}[style=shell]
+pip install mesa numpy pandas matplotlib
+python3 -c "import mesa; print(mesa.__version__)"
+\end{lstlisting}
+\textbf{latex-tables Skill}：依赖esttab（R/Stata）或modelsummary（R）。
+\begin{lstlisting}[style=shell]
+Rscript -e 'library(modelsummary); packageVersion("modelsummary")'
+stata-mp -e "ssc install estout, replace"
+\end{lstlisting}
+
+\subsection{06-experiment 实验流程类（5个Skill）}
+\textbf{experiment-plan} / \texttt{experiment-tracker} / \texttt{ml-experiment-tracking}：低依赖，仅需Python。
+
+\textbf{ab-test-analysis Skill}：依赖scipy/statsmodels。
+
+\subsection{07-writing 论文写作类（7个Skill）—— 重点}
+\textbf{paper-write} / \texttt{academic-paper-writer Skill}：依赖LaTeX。
+\begin{lstlisting}[style=shell]
+which xelatex      # macOS: /Library/TeX/texbin/xelatex 或 /usr/local/bin/xelatex
+xelatex --version  # 应输出 XeTeX 3.141592653
+\end{lstlisting}
+\textbf{latex-tables Skill}：见05-analysis。
+
+\textbf{humanizer-zh Skill}：依赖联网调用AI检测API。
+
+\textbf{paper-compile Skill}：依赖完整LaTeX环境 + latexmk。
+\begin{lstlisting}[style=shell]
+which latexmk && latexmk --version
+\end{lstlisting}
+
+\subsection{09-review 审稿类（11个Skill）}
+\textbf{paper-review} / \texttt{peer-review} / \texttt{research-review} / \texttt{research-critique} / \texttt{scientific-critical-thinking} / \texttt{scholar-evaluation}：低依赖（多为LLM推理）。
+
+\textbf{auto-review-loop} / \texttt{auto-review-loop-llm} / \texttt{auto-review-loop-minimax Skill}：依赖OpenAI/Codex/MiniMax API Key。
+\begin{lstlisting}[style=shell]
+export OPENAI_API_KEY='sk-...'   # auto-review-loop / auto-review-loop-llm
+export MINIMAX_API_KEY='...'     # auto-review-loop-minimax
+\end{lstlisting}
+\textbf{auto-paper-improvement-loop Skill}：依赖GPT-5.4访问。
+\begin{lstlisting}[style=shell]
+export GPT54_API_KEY='sk-...'
+\end{lstlisting}
+
+\subsection{10-communication 演示展示类（7个Skill）—— 重点}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{beamer-presentation / paper-slides / paper-poster Skill}：见§运行环境准备-LaTeX Beamer
+  \item \textbf{pptx Skill}：见§Node.js + LibreOffice环境
+  \item \textbf{qoderwork-ppt Skill}：见§Puppeteer + LibreOffice环境
+  \item \textbf{ppt-master Skill}：AI驱动多格式SVG生成，需联网 + Gemini/Claude API
+\end{itemize}
+\begin{lstlisting}[style=shell]
+export GEMINI_API_KEY='your_key'    # https://aistudio.google.com/app/apikey
+export ANTHROPIC_API_KEY='sk-ant-...'
+node --version && which libreoffice && which pdftoppm
+\end{lstlisting}
+\textbf{paper-figure / econ-visualization / paper-illustration Skill}：见05-analysis与§R环境。
+
+\textbf{mermaid-diagram Skill}：依赖mermaid CLI。
+\begin{lstlisting}[style=shell]
+npm install -g @mermaid-js/mermaid-cli
+mmdc --version
+\end{lstlisting}
+
+\subsection{11-perspective 思维顾问类（2个Skill）}
+\textbf{china-finance-knowledge-system-v6 Skill}：低依赖（本地知识库）。
+
+\textbf{munger-thinking / taleb-thinking}（如存在）：低依赖。
+
+\subsection{12-finance 金融与商业类（11个Skill）—— 最重点}
+\textbf{finance-expert} / \texttt{financial-modeling} / \texttt{backtesting-trading-strategies Skill}：低依赖（多为LLM推理）。
+
+\textbf{stock-analysis / china-stock-analysis Skill}：见§Tushare Token + china-stock-mcp MCP。
+
+\textbf{yahoo-finance Skill}：依赖yfinance库。
+\begin{lstlisting}[style=shell]
+pip install yfinance
+python3 -c "import yfinance; print(yfinance.__version__)"
+\end{lstlisting}
+\textbf{openbb-finance Skill}：依赖OpenBB Terminal。
+\begin{lstlisting}[style=shell]
+pip install openbb
+openbb-build
+\end{lstlisting}
+\textbf{financial-unit-economics / saas-economics-efficiency-metrics / startup-financial-modeling / questionnaire-design Skill}：低依赖。
+
+\subsection{16-office 文档办公类（8个Skill）—— 重点}
+\textbf{docx Skill}：依赖python-docx。
+\begin{lstlisting}[style=shell]
+pip install python-docx
+python3 -c "import docx; print(docx.__version__)"
+\end{lstlisting}
+\textbf{xlsx Skill}：依赖openpyxl/pandas。\texttt{pip install openpyxl pandas}
+
+\textbf{pdf Skill}：依赖pypdf/pdfplumber。\texttt{pip install pypdf pdfplumber}
+
+\textbf{cli-anything / pdf-office-suite / doc-suite / spreadsheet-suite Skill}：依项检查。
+
+\textbf{pptx Skill}：见10-communication。
+
+\textbf{office-powerpoint / office-word MCP}：需mcp.json中启用。
+
+\subsection{19-devtools 元工具类（20个Skill）—— 本章重点}
+详见§元Skill体系章节（\texttt{create-skill} / \texttt{find-skills} / \texttt{skill-auditor} / \texttt{write-skill-readme} / \texttt{install-skill-dependency} / \texttt{luban}）。
+
+其他工具：\texttt{github-cli} / \texttt{claude-code} / \texttt{cursor-cli}等。
+\begin{lstlisting}[style=shell]
+gh --version       # GitHub CLI
+claude --version   # Claude Code（可选）
+cursor --version   # Cursor IDE（可选）
+\end{lstlisting}
+
+\subsection{环境速查命令（一键检查所有11类高关联度Skill）}
+
+复制以下脚本到本地运行，5秒内输出所有Skill的可用性报告。
+
+\begin{lstlisting}[style=shell]
+cat > /tmp/check_all_skills.sh << 'EOF'
+#!/bin/bash
+echo "=== 环境检查报告 ==="
+echo "[R]    $(R --version 2>/dev/null | head -1 || echo MISSING)"
+echo "[Stata] $(stata-mp --version 2>/dev/null | head -1 || echo MISSING)"
+echo "[Py]    $(python3 --version 2>/dev/null || echo MISSING)"
+echo "[Node]  $(node --version 2>/dev/null || echo MISSING)"
+echo "[LaTeX] $(xelatex --version 2>/dev/null | head -1 || echo MISSING)"
+echo "[LibreOffice] $(libreoffice --version 2>/dev/null | head -1 || echo MISSING)"
+echo "[poppler] $(pdftoppm -v 2>&1 | head -1 || echo MISSING)"
+echo "[mermaid] $(mmdc --version 2>/dev/null || echo MISSING)"
+echo "[GitHub] $(curl -s -o /dev/null -w '%{http_code}' https://github.com)"
+echo "[Tushare] $([ -n "$TUSHARE_TOKEN" ] && echo SET || echo MISSING)"
+echo "[Gemini] $([ -n "$GEMINI_API_KEY" ] && echo SET || echo MISSING)"
+echo "=== Skill库存盘点 ==="
+ls qoder-skills-library/ | head -30
+EOF
+chmod +x /tmp/check_all_skills.sh && /tmp/check_all_skills.sh
+\end{lstlisting}
+
+% ===========================================================
 \section{金融Skill生态全景}
 % ===========================================================
 
 \subsection{金融Skill分类概览}
 
-以下是本课程技能库中与银行金融直接相关的Skill：
+以下是本课程技能库中与银行金融直接相关的Skill（原表13行，现扩充为\textbf{5大类共30+个Skill}）：
 
 \begin{table}[H]
 \centering
-\begin{tabular}{llp{5.5cm}}
+\begin{tabular}{lp{2.8cm}p{8cm}}
 \toprule
-\textbf{Skill名称} & \textbf{分类} & \textbf{核心能力} \\
+\textbf{大类} & \textbf{Skill名称} & \textbf{核心能力} \\
 \midrule
-finance-expert & 分析 & DCF估值、信用风险评估、DuPont分析 \\
-financial-modeling & 分析 & 构建DCF/LBO/M\&A模型 + 敏感性分析 \\
-china-stock-analysis & 数据 & A股数据获取 + 财务指标计算 \\
-tushare-finance & 数据 & tushare Pro API获取中国金融市场数据 \\
-finance-news & 数据 & 实时财经新闻抓取 + 情绪分析 \\
-backtesting-trading-strategies & 分析 & 量化策略回测 + Sharpe/回撤计算 \\
-consulting-frameworks & 咨询 & McKinsey 7S / BCG / 波特五力 / SWOT \\
-questionnaire-design & 数据 & 学术调查问卷设计（金融普惠等方向） \\
-xlsx & 文档 & Excel读写 + 财务模型 + 公式 + 图表 \\
-docx & 文档 & Word报告生成（封面/目录/页码） \\
-pptx & 文档 & PPT演示文稿生成与编辑 \\
-financial-unit-economics & 分析 & 单位经济学分析（SaaS/金融科技） \\
-stock-analysis & 数据 & 全球股票分析（含Yahoo Finance数据） \\
+\multirow{6}{*}{\textbf{数据获取类}} & \texttt{tushare-finance} & tushare Pro API获取中国金融市场数据（股票/基金/期货） \\
+& \texttt{china-stock-analysis} & A股数据获取 + 财务指标计算 \\
+& \texttt{yahoo-finance} & 美股/港股全球股票数据（yfinance库） \\
+& \texttt{openbb-finance} & OpenBB Terminal多资产多市场金融数据 \\
+& \texttt{api-data-fetcher} & 通用API数据拉取框架（多数据源适配） \\
+& \texttt{finance-news} & 实时财经新闻抓取 + 情绪分析 \\
+\midrule
+\multirow{8}{*}{\textbf{专业分析类}} & \texttt{finance-expert} & DCF估值、信用风险评估、DuPont分析、五C模型 \\
+& \texttt{financial-modeling} & 构建DCF/LBO/M\&A模型 + 敏感性分析 \\
+& \texttt{backtesting-trading-strategies} & 量化策略回测 + Sharpe/回撤计算 \\
+& \texttt{financial-unit-economics} & 单位经济学分析（SaaS/金融科技） \\
+& \texttt{stock-analysis} & 全球股票分析（含Yahoo Finance数据） \\
+& \texttt{saas-economics-efficiency-metrics} & SaaS企业效率指标分析 \\
+& \texttt{startup-financial-modeling} & 初创企业财务建模 \\
+& \texttt{questionnaire-design} & 学术调查问卷设计（金融普惠等方向） \\
+\midrule
+\multirow{8}{*}{\textbf{计量与数据科学类}} & \texttt{stata} & Stata全面参考（.do文件/计量/图表/包） \\
+& \texttt{stata-regression} & reghdfe/estout一键输出三线回归表 \\
+& \texttt{r-econometrics} & R fixest包（高维FE/IV/DiD）+ 计量生态 \\
+& \texttt{python-panel-data} & Python面板数据回归（linearmodels/PyFixest） \\
+& \texttt{data-analysis} & 通用数据分析与预处理 \\
+& \texttt{abm-analyzer} & Agent-Based Modeling仿真分析 \\
+& \texttt{agent-based-modeling} & ABM建模与仿真 \\
+& \texttt{agricultural-insurance-abm} & 农业保险ABM专题仿真 \\
+\midrule
+\multirow{8}{*}{\textbf{文档与可视化类}} & \texttt{xlsx} & Excel读写 + 财务模型 + 公式 + 图表 \\
+& \texttt{docx} & Word报告生成（封面/目录/页码） \\
+& \texttt{pptx} & PPT演示文稿生成与编辑（python-pptx） \\
+& \texttt{pdf} & PDF读写 + 表格提取 \\
+& \texttt{qoderwork-ppt} & 14种HTML模板 + 一键生成PPTX \\
+& \texttt{cli-anything} & 通用CLI命令适配框架 \\
+& \texttt{econ-visualization} & 学术发表级图表（R ggplot2） \\
+& \texttt{paper-figure} & 论文图表（Python matplotlib） \\
+& \texttt{mermaid-diagrams} & Mermaid流程图/时序图/甘特图 \\
+\midrule
+\multirow{5}{*}{\textbf{思维与方法论类}} & \texttt{consulting-frameworks} & McKinsey 7S / BCG / 波特五力 / SWOT \\
+& \texttt{humanizer-zh} & AI文本检测与中文人文改写 \\
+& \texttt{china-finance-knowledge-system-v6} & 中国金融学知识体系 \\
+& \texttt{systematic-literature-review} & 系统性文献综述生成 \\
+& \texttt{lit-review-assistant} & 文献综述辅助助手 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -310,6 +793,89 @@ npx skills ls
 Skill存放位置（了解即可）：Qoder = \texttt{\%APPDATA\%\textbackslash Qoder\textbackslash skills\textbackslash}；TRAE内置无需手动管理。
 
 % ===========================================================
+\section{元Skill体系：管理Skill的Skill}
+
+% ===========================================================
+
+元Skill（Meta-Skill）是\textbf{管理Skill的Skill}，是本章的亮点。本节覆盖6个核心元Skill，按"创建→发现→审计→打磨→发布"的生命周期组织。
+
+\subsection{create-skill（创建元Skill）}
+\textbf{触发词}："创建一个新Skill"、"为XX场景生成Skill"、"按SKILL.md模板生成"。
+
+\textbf{能力清单}：跟随交互向导生成完整SKILL.md（含frontmatter、argument-hint、allowed-tools、workflow\_stage、tags）。
+
+\textbf{环境检查}：依赖Node.js + Cursor/Claude Code（其他IDE可能不支持完整向导）。
+\begin{lstlisting}[style=shell]
+node --version   # >= 18.x
+npm --version
+ls qoder-skills-library/19-devtools/create-skill/SKILL.md
+\end{lstlisting}
+
+\subsection{find-skills（发现元Skill）}
+\textbf{触发词}："找Skill"、"有什么Skill能做XX"、"skills.sh市场"、"Skill发现"。
+
+\textbf{能力清单}：从skills.sh生态、GitHub anthropics/skills仓库、本地qoder-skills-library、npm registry发现Skill。
+
+\textbf{环境检查}：依赖网络访问https://skills.sh与https://github.com。
+\begin{lstlisting}[style=shell]
+curl -I https://skills.sh/  | head -1   # 应返回 HTTP 200
+ping -c 1 github.com                    # 验证 GitHub 可达
+\end{lstlisting}
+
+\subsection{skill-auditor（审计元Skill）—— 五维审计自动化}
+\textbf{触发词}："审计这个Skill"、"检查Skill质量"、"SKILL.md五维评分"。
+
+\textbf{能力清单}：对任意SKILL.md进行五维自动评分（触发词准确性、输出完整性、数据依赖、合规性、改进建议），输出结构化审计报告。
+
+\textbf{环境检查}：独立运行，无需额外依赖。
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/19-devtools/skill-auditor/SKILL.md
+qoder skill run skill-auditor --target=.agents/skills/bank-risk-alert/SKILL.md
+\end{lstlisting}
+
+\subsection{write-skill-readme（文档生成元Skill）}
+\textbf{触发词}："生成Skill README"、"补README"、"Skill文档"。
+
+\textbf{能力清单}：根据SKILL.md + 示例自动生成README.md（含徽章、使用场景、示例代码）。
+
+\subsection{install-skill-dependency（环境诊断元Skill）}
+\textbf{触发词}："Skill环境诊断"、"检查依赖"、"Skill装不起来"。
+
+\textbf{能力清单}：诊断Skill调用前的所有环境依赖（R包/Stata外部命令/Python包/Node模块/API Key），输出缺失清单与一键安装脚本。
+
+\textbf{环境检查}：本元Skill本身依赖Python 3.8+。
+\begin{lstlisting}[style=shell]
+python3 --version   # >= 3.8
+pip show skill-diagnostic 2>/dev/null || pip install skill-diagnostic
+\end{lstlisting}
+
+\subsection{luban（打磨元Skill）}
+\textbf{触发词}："打磨Skill"、"Skill升级"、"鲁班打磨"、"Skill产品化"。
+
+\textbf{能力清单}：工匠式五动作（验料/访行/过尺/慢刨/回炉），产出《Skill打磨报告》 + 可替换改写片段 + 出师证书。
+
+\subsection{元Skill协同工作流（实战提示词）}
+
+\begin{lstlisting}
+我要为本行创建一个"银行反洗钱可疑交易报告生成Skill"（名为 aml-suspicious-report），请按以下流程协助：
+1. 调用 create-skill 生成 SKILL.md 初始草稿
+2. 调用 find-skills 查找生态中同类Skill（如 finance-expert、bank-risk-alert）作为参考
+3. 调用 skill-auditor 对生成的草稿进行五维自动审计，输出改进点
+4. 按 skill-auditor 的反馈迭代修改（最多 2 轮）
+5. 调用 write-skill-readme 生成 README.md
+6. 调用 install-skill-dependency 检查Skill是否能跑起来
+7. （可选）调用 luban 进一步打磨该Skill，准备发布到 qoder-skills-library
+\end{lstlisting}
+
+\textbf{预期产出}：
+\begin{itemize}[leftmargin=1em]
+  \item \texttt{aml-suspicious-report/SKILL.md}（草稿定稿）
+  \item \texttt{aml-suspicious-report/README.md}（自动生成）
+  \item \texttt{aml-suspicious-report/audit\_report.md}（五维审计报告）
+  \item \texttt{aml-suspicious-report/env\_check.txt}（环境检查日志）
+\end{itemize}
+
+% ===========================================================
 \section{Skill调用实战}
 % ===========================================================
 
@@ -333,7 +899,7 @@ Skill存放位置（了解即可）：Qoder = \texttt{\%APPDATA\%\textbackslash 
 \end{table}
 
 % -----------------------------------------------------------
-\subsection{docx Skill：银行客户回访报告（★）}
+\subsection{docx Skill：银行客户回访报告（\ding{72}）}
 % -----------------------------------------------------------
 
 \textbf{场景}：你是某城商行客户经理，需要为VIP客户C00001（张**）生成一份规范的电话回访报告。
@@ -413,7 +979,7 @@ choco install libreoffice-fresh -y
 \end{theorybox}
 
 % -----------------------------------------------------------
-\subsection{finance-expert Skill：信用风险评估（★★）}
+\subsection{finance-expert Skill：信用风险评估（\ding{72}\ding{72}）}
 % -----------------------------------------------------------
 
 \textbf{场景}：银行风控部门需要对一家中小企业客户进行信用风险评估，辅助审批500万元流动资金贷款。
@@ -499,7 +1065,7 @@ npx skills add personamanagmentlayer/pcl@finance-expert -y
 \end{lstlisting}
 
 % -----------------------------------------------------------
-\subsection{xlsx Skill：贷款FTP定价模型（★★★）}
+\subsection{xlsx Skill：贷款FTP定价模型（\ding{72}\ding{72}\ding{72}）}
 % -----------------------------------------------------------
 
 \textbf{场景}：银行资产负债部需要构建一个贷款FTP定价模型，用于指导客户经理合理报价。
@@ -594,11 +1160,459 @@ FTP定价的意义在于：将利率风险从业务条线转移至资金中心�
 4. 输出各分群客户数、平均资产、营销建议
 \end{lstlisting}
 
+% -----------------------------------------------------------
+\subsection{tushare-finance + china-stock-analysis Skill：银行股估值对比（\ding{72}\ding{72}\ding{72}）}
+% -----------------------------------------------------------
+
+\textbf{场景}：银行业研究员需要对比 A 股银行股与 H 股银行股的估值水平，为本行投资决策提供数据支持。
+
+\textbf{技能安装}：
+
+\begin{lstlisting}[style=shell]
+# Tushare Skill 前置
+pip install tushare pandas
+export TUSHARE_TOKEN='your_token_here'    # 申请：https://tushare.pro/register
+# 验证
+python3 -c "import tushare; pro=tushare.pro_api(); print(pro.stock_basic(list_status='L', limit=1))"
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+# Step 1：路径检查
+which python3
+# Step 2：依赖检查
+python3 -c "import tushare; print(tushare.__version__)"
+[ -n "$TUSHARE_TOKEN" ] && echo "TUSHARE_TOKEN SET" || echo "MISSING"
+# Step 3：Skill 可访问性
+ls qoder-skills-library/04-data/tushare-finance/SKILL.md
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 tushare-finance 技能完成 A 股银行股估值对比分析：
+
+【调用 Skill】tushare-finance、china-stock-analysis
+【背景】为本行投资决策提供 A/H 股银行股估值对比
+【输入数据】
+  - A 股银行：工商银行(601398)、招商银行(600036)、北京银行(601169)、常熟银行(601128)
+  - H 股银行：工商银行(1398.HK)、招商银行(3968.HK)
+  - 时间范围：2010-01-01 至 2025-12-31
+【输出要求】
+  - reports/bank_valuation_compare.xlsx（A/H 股 PE/PB 对比表）
+  - figures/bank_pe_compare.pdf（PE 对比折线图）
+  - reports/bank_valuation_analysis.md（分析报告 ≥800 字）
+【环境检查】运行 /tmp/check_all_skills.sh 确认 Tushare Token 已配置
+【原代码补充】
+  import tushare as ts
+  pro = ts.pro_api()
+  df_a = pro.daily_basic(ts_code='601398.SH', start='20240101')
+  df_h = pro.hk_daily(ts_code='01398.HK', start='20240101')
+【失败回退】如 china-stock-mcp 不可用，直接使用 tushare 单独拉取
+【预期结论】A 股银行 PE 较 H 股溢价率、H 股银行 PB 折价幅度、估值修复空间
+\end{lstlisting}
+
+\textbf{学生练习}：将样本银行扩展至 16 家全国性商业银行，绘制 A/H 股溢价率分布图。
+
+% -----------------------------------------------------------
+\subsection{backtesting-trading-strategies Skill：银行股量化回测（\ding{72}\ding{72}\ding{72}\ding{72}）}
+% -----------------------------------------------------------
+
+\textbf{场景}：银行金融市场部需要回测"双均线 + RSI + 海龟"三类经典策略在银行股上的表现，为自营交易提供量化依据。
+
+\textbf{技能安装}：
+
+\begin{lstlisting}[style=shell]
+pip install backtrader vectorbt pandas numpy matplotlib
+ls qoder-skills-library/12-finance/backtesting-trading-strategies/SKILL.md
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+which python3
+python3 -c "import backtrader; print('backtrader OK')"
+python3 -c "import vectorbt; print('vectorbt OK')" || echo "vectorbt MISSING (optional)"
+ls qoder-skills-library/12-finance/backtesting-trading-strategies/SKILL.md
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 backtesting-trading-strategies 技能完成银行股量化策略回测：
+
+【调用 Skill】backtesting-trading-strategies、tushare-finance、econ-visualization
+【背景】测试三种经典技术策略在 5 家银行股上的表现
+【输入数据】
+  - 标的：工商银行、招商银行、兴业银行、平安银行、宁波银行（2015-2025）
+  - 策略：
+    * 策略 1：双均线（MA5/MA20 金叉死叉）
+    * 策略 2：RSI（超买超卖阈值 30/70）
+    * 策略 3：海龟交易法（20 日突破）
+  - 初始资金：100 万元 / 手续费 0.1% / 滑点 0.05%
+【输出要求】
+  - reports/strategy_backtest_results.xlsx（绩效对比表）
+  - figures/backtest_curves.pdf（三策略净值曲线对比）
+  - reports/backtest_report.md（分析报告，含夏普/最大回撤/年化收益）
+【环境检查】运行 /tmp/check_all_skills.sh
+【原代码补充】backtrader Strategy 类示例代码（见 SKILL.md）
+【失败回退】如 backtesting-trading-strategies Skill 不可用，手写 backtrader 策略代码
+【预期结论】哪种策略在银行股上最稳健？年化夏普比率对比
+\end{lstlisting}
+
+\textbf{学生练习}：加入止损规则（亏损 5\% 自动平仓），观察回测结果变化。
+
+% -----------------------------------------------------------
+\subsection{econ-visualization Skill：银行 ROE 雷达图（\ding{72}\ding{72}\ding{72}）}
+% -----------------------------------------------------------
+
+\textbf{场景}：银行年报披露期，需要为投资者关系部门快速生成各家银行的多维财务对比图。
+
+\textbf{技能安装}（前置 R 环境准备见 §R 语言环境）：
+
+\begin{lstlisting}[style=shell]
+Rscript -e 'install.packages(c("fmsb", "ggplot2", "tidyr", "dplyr", "scales"))'
+ls qoder-skills-library/05-analysis/econ-visualization/SKILL.md
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+which R
+Rscript -e 'library(fmsb); library(ggplot2); cat("OK\n")'
+ls qoder-skills-library/05-analysis/econ-visualization/SKILL.md
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 econ-visualization 技能生成 5 家银行 ROE 多维雷达图：
+
+【调用 Skill】econ-visualization、tushare-finance
+【背景】投资者关系部门年度披露材料
+【输入数据】tushare 拉取 5 家银行 2024 年报数据：ROE、ROA、NIM、NPL、CAR
+【输出要求】
+  - figures/bank_roe_radar.pdf（5 行 × 5 维雷达图）
+  - figures/bank_roe_heatmap.pdf（指标×银行 热力图）
+  - 主题：theme_minimal(base_size=14)，Times 字体，colorblind-safe 配色
+【环境检查】运行 /tmp/check_all_skills.sh
+【原代码补充】R ggplot2 + fmsb 雷达图代码片段
+【失败回退】如 econ-visualization 不可用，调用 paper-figure（Python matplotlib）
+【预期结论】哪家银行综合表现最强？哪两家形成竞争梯队？
+\end{lstlisting}
+
+\textbf{学生练习}：将维度从 5 个扩展到 8 个（含拨备覆盖率/核心一级资本充足率/存款增速/贷款增速）。
+
+\textbf{本节新增任务与前 5 个任务的对应关系}：
+\begin{itemize}[leftmargin=1em]
+  \item 任务 1（\ding{72}）：docx —— 文档办公类
+  \item 任务 2（\ding{72}\ding{72}）：finance-expert —— 金融分析类
+  \item 任务 3（\ding{72}\ding{72}\ding{72}）：xlsx —— 数据建模类
+  \item 任务 4（\ding{72}\ding{72}\ding{72}）：自写 bank-risk-alert —— Skill 创建类
+  \item 任务 5（\ding{72}\ding{72}\ding{72}）：Skill 安全审计 —— 合规审计类
+  \item \textbf{任务 6（\ding{72}\ding{72}\ding{72}，新增）}：tushare-finance + china-stock-analysis —— 数据获取+金融分析类
+  \item \textbf{任务 7（\ding{72}\ding{72}\ding{72}\ding{72}，新增）}：backtesting-trading-strategies —— 量化回测+金融分析类
+  \item \textbf{任务 8（\ding{72}\ding{72}\ding{72}，新增）}：econ-visualization —— 学术图表+金融分析类
+\end{itemize}
+
+% ===========================================================
+\section{学术与商业图形展示Skill（独立章节）}
+
+% ===========================================================
+
+\textbf{【本章特别要求】} 由于图形展示在银行金融场景中极度高频（监管报表、研报图表、学术论文图示），单独成节。涵盖5个核心Skill。
+
+\subsection{econ-visualization（学术发表级图表，R ggplot2）}
+\textbf{触发词}："出版级图表"、"发表级图"、"ggplot2图表"、"econ viz"。
+
+\textbf{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item 时间序列图、事件研究图、回归系数图、断点图、双轴图、热力图
+  \item PDF/SVG矢量输出（300 DPI）
+  \item 一致的学术主题（minimal, serif font, colorblind-safe）
+\end{itemize}
+
+\textbf{环境检查}：依赖R + ggplot2（见§R语言环境）。
+\begin{lstlisting}[style=shell]
+Rscript -e 'library(ggplot2); library(econvis); cat("OK")'
+\end{lstlisting}
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+请使用 econ-visualization 技能生成以下学术图表：
+- 数据：data/panel.csv（银行 2010-2024 年面板）
+- 图表1：事件研究图（event_study），95% 置信区间阴影
+- 图表2：四家银行 ROE 对比的双轴折线图
+- 输出 PDF + PNG 至 figures/ch04_figures/
+- 主题：theme_minimal，Times 字体，14pt
+\end{lstlisting}
+
+\subsection{paper-figure（论文图表生成器，Python matplotlib）}
+\textbf{触发词}："画论文图"、"paper figure"、"matplotlib论文图表"。
+
+\textbf{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item 决策树自动选图（line/bar/scatter/heatmap/box/multi-panel）
+  \item 共享样式脚本 \texttt{paper\_plot\_style.py}（DPI=300、PDF矢量、colorblind配色）
+  \item 自动生成 \texttt{\textbackslash includegraphics} LaTeX片段
+  \item 9类图表 × 8种样式矩阵
+\end{itemize}
+
+\textbf{环境检查}：依赖matplotlib + seaborn。
+\begin{lstlisting}[style=shell]
+pip install matplotlib seaborn
+python3 -c "import matplotlib; print(matplotlib.__version__)"
+\end{lstlisting}
+
+\subsection{paper-illustration（论文插图/架构图，Gemini驱动）}
+\textbf{触发词}："架构图"、"AI绘图"、"paper illustration"、"画架构图"。
+
+\textbf{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item 调用 \texttt{gemini-3-pro}优化布局 + \texttt{Paperbanana (gemini-3-pro-image-preview)}渲染
+  \item CVPR/NeurIPS学术风格：圆角、渐变、4色配色、严格箭头方向
+  \item 多轮Claude评分 ≥9分才输出
+\end{itemize}
+
+\textbf{环境检查}：
+\begin{lstlisting}[style=shell]
+export GEMINI_API_KEY='your-key'   # https://aistudio.google.com/app/apikey
+ls qoder-skills-library/10-communication/paper-illustration/SKILL.md
+\end{lstlisting}
+
+\textbf{适用场景}：方法论流程图、模型架构图、概念图（\textbf{非统计数据图表}）。
+
+\subsection{mermaid-diagram（Mermaid图表，文本驱动）}
+\textbf{触发词}："流程图"、"时序图"、"甘特图"、"ER图"、"mermaid"。
+
+\textbf{能力清单}：流程图、时序图、类图、状态图、甘特图、饼图、Gitgraph。
+
+\textbf{环境检查}：
+\begin{lstlisting}[style=shell]
+npm install -g @mermaid-js/mermaid-cli
+mmdc --version
+\end{lstlisting}
+
+\textbf{提示词示例}：
+\begin{lstlisting}
+请使用 mermaid-diagram 技能生成银行信贷审批流程图：
+客户申请→征信查询→风控评分→人工审批→合同签订→放款
+输出：figures/loan_workflow.mmd + 渲染 PNG
+\end{lstlisting}
+
+\subsection{学术图表与商业图表的差异表}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{5cm}p{6cm}}
+\toprule
+\textbf{维度} & \textbf{学术图表（econ-visualization/paper-figure）} & \textbf{商业图表（mcp-server-chart）} \\
+\midrule
+目标期刊/受众 & 期刊审稿人（黑白打印友好） & 银行内部决策者（彩色屏幕优先） \\
+字体 & Times/Computer Modern衬线体 & 微软雅黑/Arial无衬线体 \\
+配色 & 2-4色，colorblind-safe & 品牌色，可渐变 \\
+输出 & PDF/SVG矢量 & PNG/PPTX嵌入 \\
+标题 & 写于LaTeX caption，图中无标题 & 图表内含大标题 \\
+注释密度 & 极简，必要时footnote & 丰富，数据标签直接显示 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===========================================================
+\section{演示文稿Skill章节（独立章节）}
+
+% ===========================================================
+
+\textbf{【本章特别要求】} 演示文稿分学术与商业两条主线，对应不同Skill组合。涵盖6个核心Skill。
+
+\subsection{学术演示文稿（Beamer LaTeX路线）}
+
+\textbf{beamer-presentation Skill}：
+
+\textit{触发词}："学术PPT"、"Beamer演示"、"学术汇报slides"。
+
+\textit{能力清单}：metropolis/Madrid/默认主题；15/45/90分钟三档结构；演讲者备注。
+
+\textit{输出}：\texttt{main.tex} + \texttt{main.pdf}。
+
+\textit{适用}：开题答辩、学术会议汇报、job market talk。
+
+\textbf{paper-slides Skill}：
+
+\textit{触发词}："做会议幻灯片"、"conference slides"、"做slides"。
+
+\textit{能力清单}（来自SKILL.md）：
+\begin{itemize}[leftmargin=1em]
+  \item 4种报告类型：poster-talk（3-5min, 5-8页）/ spotlight（5-8min, 8-12页）/ oral（15-20min, 15-22页）/ invited（30-45min, 25-40页）
+  \item 7种会议配色方案（NeurIPS/ICML/ICLR/CVPR/ECCV/AAAI/ACL/EMNLP/GENERIC）
+  \item 自动生成 \texttt{main.pdf}（Beamer）+ \texttt{presentation.pptx}（python-pptx）+ \texttt{TALK\_SCRIPT.md}（完整讲稿）
+  \item 演讲者备注 + 预期Q\&A 8个
+\end{itemize}
+
+\textit{提示词示例}：
+\begin{lstlisting}
+/paper-slides "paper/" --talk_type: oral --venue: ICML --minutes: 20 --aspect: 16:9
+\end{lstlisting}
+
+\textbf{paper-poster Skill}：
+
+\textit{触发词}："学术海报"、"poster"、"A0海报"。
+
+\textit{能力清单}：A0/A1海报；多栏布局；QR码；图表嵌入。
+
+\textit{适用}：学术会议海报展示。
+
+\subsection{商业/银行演示文稿（PPTX路线）}
+
+\textbf{pptx Skill}（通用PPT操作）：
+
+\textit{触发词}："PPT"、"幻灯片"、"演示文稿"、"pitch deck"。
+
+\textit{能力清单}（基于python-pptx + markitdown + LibreOffice）：
+\begin{itemize}[leftmargin=1em]
+  \item 文本提取（markitdown）、缩略图、XML解析
+  \item 从零生成（pptxgenjs）或修改现有模板
+  \item 9种专业配色（Deep Night、Woodland、Vibrant Coral、Earth Tone、Deep Sea、Graphite、Aquatic Trust、Wine \& Linen、Eucalyptus、Crimson Impact）
+  \item 视觉设计原则：避免单调布局、避免默认蓝、加0.5" 留白、字号对比 ≥20pt
+\end{itemize}
+
+\textit{提示词示例}：
+\begin{lstlisting}
+请使用 pptx 技能生成《XX银行 2026 年战略汇报》PPT（20页）：
+- 配色：Deep Night（navy + ice blue）
+- 字体：Georgia（标题） + Calibri（正文）
+- 每页含可视化元素（图标/图表/全屏图）
+- 输出：reports/bank_strategy_2026.pptx
+\end{lstlisting}
+
+\textbf{qoderwork-ppt Skill}（智能模板生成）：
+
+\textit{触发词}："智能PPT"、"QoderWork PPT"、"14模板"。
+
+\textit{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item 14种HTML模板自动匹配（含封面/分隔/内容/图标/全屏图等）
+  \item 一键管线：\texttt{run-pipeline.js} → Puppeteer + dom-to-pptx转换
+  \item 保留背景图、圆角、字体、全部样式
+  \item Lucide图标库（本地静态资源，无需网络）
+\end{itemize}
+
+\textit{适用场景}：商业汇报、产品发布、培训材料（\textbf{需联网生成真实图片}）。
+
+\textit{环境依赖}：Node.js + Puppeteer + LibreOffice + lucide-static（见§PPT演示文稿相关环境）。
+
+\textbf{ppt-master Skill}（AI驱动多格式SVG内容生成）—— \textbf{【用户特别要求】}：
+
+\textit{触发词}："ppt-master"、"SVG演示"、"AI幻灯片"。
+
+\textit{能力清单}：
+\begin{itemize}[leftmargin=1em]
+  \item 多Agent协作：内容解析 → 视觉设计 → SVG渲染
+  \item 输入支持：PDF / DOCX / URL / Markdown
+  \item 输出：SVG页面 + 通过多角色协作导出PPTX
+  \item 适用：把现成文档（论文/讲义/调研报告）一键转为专业幻灯片
+\end{itemize}
+
+\textit{环境检查}：
+\begin{lstlisting}[style=shell]
+export GEMINI_API_KEY='your_key'    # https://aistudio.google.com/app/apikey
+export ANTHROPIC_API_KEY='sk-ant-...'
+node --version && which libreoffice && which pdftoppm
+\end{lstlisting}
+
+\textit{与上述Skill的差异}：
+\begin{itemize}[leftmargin=1em]
+  \item \texttt{paper-slides}：论文 → 学术LaTeX slides
+  \item \texttt{pptx}：通用PPT自由创作
+  \item \texttt{qoderwork-ppt}：HTML模板 + 14套商业模板
+  \item \textbf{ppt-master：多格式输入 + SVG中间层 + PPTX输出}（更智能的"文档→幻灯片"转换器）
+\end{itemize}
+
+\subsection{学术 vs 商业演示文稿Skill对照表}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{维度} & \textbf{学术（Beamer）} & \textbf{商业/银行（PPTX）} \\
+\midrule
+核心Skill & \texttt{beamer-presentation} / \texttt{paper-slides} & \texttt{pptx} / \texttt{qoderwork-ppt} / \texttt{ppt-master} \\
+排版语言 & LaTeX（公式、参考文献无缝） & HTML→PPTX 或 PPTX直生成 \\
+公式支持 & 完美（直接\$...\textbackslash\$） & 差（需图片或OMML） \\
+品牌定制 & 弱（依赖Beamer主题） & 强（自由配色/字体） \\
+可编辑性 & 弱（需懂LaTeX） & 强（PowerPoint直接改） \\
+受众 & 学术评委、研讨会同行 & 行领导、客户、董事会 \\
+典型产出 & \texttt{main.pdf} & \texttt{presentation.pptx} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{提示词示例（综合）}
+
+\begin{lstlisting}
+请帮我制作一份《XX城商行 2026 年度数字化转型汇报》（30页 PPT）：
+1. 使用 pptx 技能（商业风格，Deep Night 配色）
+2. 同时使用 paper-slides 技能生成学术附录（Beamer 版本供发表）
+3. 使用 paper-figure 技能生成关键图表（ROE 对比、贷款结构、客户增长）
+4. 使用 mermaid-diagram 技能绘制数字化转型架构图
+输出：
+- 主报告：reports/digital_transformation_2026.pptx
+- 学术附录：reports/digital_transformation_appendix.pdf
+- 架构图：figures/digital_arch.png
+\end{lstlisting}
+
 % ===========================================================
 \section{Skill编写方法论}
 % ===========================================================
 
 调用现有Skill只是起点，真正的能力提升来自于\textbf{编写自己的Skill}。本节系统讲解Skill编写的方法论，并通过实战案例带你完成第一个自编写Skill。
+
+\subsection{Skill创建的元 Skill 工具箱}
+
+在手工编写 SKILL.md 之前，强烈推荐先使用 \textbf{元 Skill} 工具箱。四个核心元 Skill 覆盖"起草→润色→发布→审计"全生命周期：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{4cm}p{6cm}}
+\toprule
+\textbf{元 Skill} & \textbf{阶段} & \textbf{作用} \\
+\midrule
+\texttt{create-skill} & 起草 & 跟随交互向导生成完整 SKILL.md（含 frontmatter、argument-hint、allowed-tools、tags） \\
+\texttt{humanizer-zh} & 润色 & 将 AI 生成腔的文本润色为自然语言，提升 Skill 可读性 \\
+\texttt{write-skill-readme} & 发布 & 根据 SKILL.md 自动生成 README.md（含徽章、使用场景、示例代码） \\
+\texttt{skill-auditor} & 审计 & 五维自动评分（触发词/输出/数据/合规/改进），输出结构化报告 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{lstlisting}
+【Skill 创建 完整工作流提示词】
+
+我要为本行创建一个反洗钱可疑交易报告生成 Skill（aml-suspicious-report），
+请按以下流程协助：
+
+Step 1（创建）：调用 create-skill 元 Skill 生成 SKILL.md 初始草稿
+Step 2（参考）：调用 find-skills 查找同类 Skill（如 finance-expert、bank-risk-alert）作为参考
+Step 3（润色）：调用 humanizer-zh 对草稿进行中文自然化润色，去除 AI 生成腔
+Step 4（审计）：调用 skill-auditor 对草稿进行五维自动审计
+Step 5（修复）：按审计反馈迭代修改（最多 2 轮）
+Step 6（发布）：调用 write-skill-readme 生成 README.md
+Step 7（诊断）：调用 install-skill-dependency 检查 Skill 是否能跑起来
+
+【预期产出】
+- aml-suspicious-report/SKILL.md（草稿定稿）
+- aml-suspicious-report/README.md（自动生成）
+- aml-suspicious-report/audit\_report.md（五维审计报告）
+\end{lstlisting}
+
+\begin{notebox}[元 Skill 工具箱的环境检查]
+\begin{lstlisting}[style=shell]
+# 检查 4 个元 Skill 都可访问
+for skill in create-skill humanizer-zh write-skill-readme skill-auditor; do
+  ls qoder-skills-library/19-devtools/$skill/SKILL.md 2>/dev/null \
+    && echo "OK: $skill" \
+    || echo "MISSING: $skill"
+done
+\end{lstlisting}
+\end{notebox}
 
 \subsection{触发词设计原则}
 
@@ -658,6 +1672,50 @@ Do NOT use this skill when:
 因此，金融类Skill的触发词设计应当偏保守，宁可漏触发（由用户明确指定），也不可误触发。
 \end{warningbox}
 
+\subsubsection{排除条件 vs Include 模式——两种触发词策略对照}
+
+在金融领域，以下两种触发词设计策略各有适用场景，请根据业务特点选择：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{3.5cm}p{5cm}p{5cm}}
+\toprule
+\textbf{维度} & \textbf{排除条件模式（exclude-first）} & \textbf{Include 模式（include-first）} \\
+\midrule
+设计思路 & 先定义能力范围，再列出不适用场景 & 先列出适用场景，能力范围依场景推断 \\
+适用场景 & 高风险、低错误容忍度（如交易执行、信用审批） & 低风险、探索性场景（如数据可视化、报告起草） \\
+误触发风险 & 低（默认不触发，除非明显匹配） & 中（边缘场景可能误触发） \\
+漏触发风险 & 中（用户需明确指定 Skill） & 低（场景描述完整即可触发） \\
+金融场景示例 & \texttt{bank-risk-alert}：除非明确出现"风险预警"才触发 & \texttt{finance-expert}：只要涉及企业财务分析就可能触发 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{案例对比}：同一业务场景"企业财务异常预警"，两种写法：
+
+\begin{lstlisting}[style=json]
+// === 排除条件模式（推荐金融风险场景）===
+{
+  "when_to_use": "处理企业财务异常预警任务",
+  "include_keywords": ["财务异常", "财报预警", "财务预警"],
+  "exclude_keywords": ["股价预警", "舆情预警", "市场风险"],
+  "trigger_confidence_threshold": 0.85
+}
+
+// === Include 模式（适合探索性场景）===
+{
+  "when_to_use": "分析企业财务数据并发现异常",
+  "include_keywords": [
+    "财务分析", "财报解读", "异常检测", "三表分析",
+    "财务预警", "杜邦分析", "现金流分析", "盈利质量"
+  ],
+  "exclude_keywords": [],
+  "trigger_confidence_threshold": 0.6
+}
+\end{lstlisting}
+
+\textbf{银行场景推荐}：金融业务优先采用\textbf{排除条件模式}，特别是涉及客户敏感数据、交易指令、风险评级等场景。
+
 \subsection{输入输出规范}
 
 \subsubsection{参数设计：必选vs可选}
@@ -704,7 +1762,7 @@ Skill执行可能因各种原因失败（缺少依赖、输入不合法、外部
 4. 若无法完成全部步骤，已完成部分仍应输出，并标注"未完成步骤"
 \end{lstlisting}
 
-\subsection{实战：编写bank-risk-alert Skill（★★★）}
+\subsection{实战：编写bank-risk-alert Skill（\ding{72}\ding{72}\ding{72}）}
 
 \textbf{场景}：你是银行科技部的AI工程师，需要为全行客户经理打造一个「贷后风险预警话术生成器」Skill。
 
@@ -818,6 +1876,98 @@ Skill执行可能因各种原因失败（缺少依赖、输入不合法、外部
 % ===========================================================
 
 银行在引入外部AI Skill前，必须进行严格的安全与合规审计。这不仅关乎数据安全，更是监管合规的硬性要求。
+
+\subsection{自动化审计工具：skill-auditor 元 Skill}
+
+\textbf{【本节特别推荐】} 传统的人工五维审计耗时较长，本项目提供 \texttt{skill-auditor} 元 Skill，可对任意 SKILL.md 进行自动化五维评分。
+
+\subsubsection{skill-auditor 的能力清单}
+
+\begin{itemize}[leftmargin=1em]
+  \item 自动检查 触发词准确性（中英文覆盖、排除条件、误触发风险）
+  \item 自动检查 输出完整性（Instructions 步骤、输出模板、示例输入输出）
+  \item 自动检查 数据依赖（明文敏感词、必填字段、数据脱敏规则）
+  \item 自动检查 合规性（免责声明、监管提示、审批留痕）
+  \item 自动生成 改进建议（按优先级排序、可直接执行）
+\end{itemize}
+
+\subsubsection{3 步环境检查}
+
+\begin{lstlisting}[style=shell]
+# Step 1：路径检查（skill-auditor 是 Skill 文件，无独立二进制）
+ls qoder-skills-library/19-devtools/skill-auditor/SKILL.md
+# Step 2：Skill 可访问性
+qoder skill ls | grep skill-auditor
+# Step 3：调用测试
+qoder skill run skill-auditor --target=.agents/skills/bank-risk-alert/SKILL.md
+\end{lstlisting}
+
+\subsubsection{调用提示词}
+
+\begin{lstlisting}
+请调用 skill-auditor 技能对 .agents/skills/bank-risk-alert/SKILL.md
+进行五维自动审计：
+
+【调用 Skill】skill-auditor、security-best-practices
+【输入】.agents/skills/bank-risk-alert/SKILL.md
+【输出】reports/audit_bank-risk-alert.md（含五维评分表 + 改进建议）
+【审计依据】security-best-practices Skill 提供的银行 Skill 安全清单
+\end{lstlisting}
+
+\subsubsection{人工审计 vs skill-auditor 自动审计 对比}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{3.5cm}p{5cm}p{5cm}}
+\toprule
+\textbf{维度} & \textbf{人工审计} & \textbf{skill-auditor 自动审计} \\
+\midrule
+耗时 & 2-4 小时/Skill & 30 秒/Skill \\
+一致性 & 受审计员经验影响大 & 标准化输出，跨 Skill 可比 \\
+覆盖度 & 受审计员精力限制可能漏项 & 覆盖所有 checklist 项目 \\
+深度 & 能识别语义上下文问题 & 只能识别模式化问题（关键词、结构） \\
+主观判断 & 能结合业务场景灵活判断 & 仅按预设规则评分 \\
+监管证据 & 需审计员签字 & 自动生成审计日志，可追溯 \\
+适用场景 & 重要 Skill 上线前终审 & 全量 Skill 定期巡检 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{推荐组合}：先用 skill-auditor 完成全量 Skill 的初筛（<1 小时），再对高风险 Skill 进行人工复审。
+
+\subsection{外部 Skill 白名单/黑名单管理}
+
+银行在引入外部 Skill 时，应建立\textbf{分级管理}制度：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lp{3cm}p{5cm}p{4cm}}
+\toprule
+\textbf{类别} & \textbf{准入要求} & \textbf{典型 Skill} & \textbf{数据流向} \\
+\midrule
+白名单（开放） & 官方认证 + 内部审计通过 & \texttt{docx}、\texttt{xlsx}、\texttt{mermaid-diagram} & 仅本地处理 \\
+灰名单（审批） & 业务部门申请 + 合规复审 & \texttt{finance-expert}、\texttt{tushare-finance} & 可联网但禁止传敏感数据 \\
+黑名单（禁用） & 任何情况下禁止使用 & 未审计的第三方 Skill & 禁止传输任何数据 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{lstlisting}[style=json]
+// 推荐的白名单管理文件：.agents/skill-whitelist.json
+{
+  "whitelist": [
+    {"name": "docx", "version": ">=1.0.0", "approved_by": "科技部", "approved_at": "2025-12-01"},
+    {"name": "xlsx", "version": ">=1.0.0", "approved_by": "科技部", "approved_at": "2025-12-01"},
+    {"name": "econ-visualization", "version": ">=1.2.0", "approved_by": "风控部", "approved_at": "2026-01-15"}
+  ],
+  "graylist": [
+    {"name": "tushare-finance", "constraint": "禁止传入客户身份证/账号", "approved_by": "数据治理委员会"}
+  ],
+  "blacklist": [
+    {"name": "未审计的任意 npm skills", "reason": "供应链风险"}
+  ]
+}
+\end{lstlisting}
 
 \subsection{银行业AI应用合规框架}
 
@@ -1010,7 +2160,7 @@ AI Skill生成的分析报告、风险评估结论等，在法律上如何定性
 \section{进阶选做}
 % ===========================================================
 
-\subsection{金融新闻舆情分析（★★★★）}
+\subsection{金融新闻舆情分析（\ding{72}\ding{72}\ding{72}\ding{72}）}
 
 \textbf{场景}：银行舆情监控部门需要每日跟踪银行业相关新闻，进行情绪分析和风险预警。
 
@@ -1052,7 +2202,7 @@ npx skills add sundial-org/awesome-openclaw-skills@finance-news -y
 保存到 reports/bank_sentiment_weekly.md
 \end{lstlisting}
 
-\subsection{咨询框架分析银行数字化转型（★★★★）}
+\subsection{咨询框架分析银行数字化转型（\ding{72}\ding{72}\ding{72}\ding{72}）}
 
 \textbf{技能安装}：
 
@@ -1081,6 +2231,128 @@ npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
 保存到 reports/porter_five_forces_banking.md
 \end{lstlisting}
 
+\subsection{financial-modeling Skill：银行 DCF 估值（\ding{72}\ding{72}\ding{72}\ding{72}）}
+
+\textbf{场景}：本行拟对一家拟授信客户进行估值，作为贷款额度的参考依据。
+
+\textbf{技能安装}：
+
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/12-finance/financial-modeling/SKILL.md
+# 验证 Python 环境
+python3 -c "import numpy_financial; print('OK')" || pip install numpy-financial
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+which python3
+python3 -c "import numpy_financial; print(numpy_financial.__version__)"
+ls qoder-skills-library/12-finance/financial-modeling/SKILL.md
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 financial-modeling 技能完成商业银行 DCF 估值：
+
+【调用 Skill】financial-modeling、tushare-finance
+【背景】拟授信客户 X 银行 DCF 估值
+【输入数据】
+  - 拉取 X 银行 2018-2024 年报数据：净利润、净资产、ROE、增长
+  - 折现率 WACC 假设：股权成本 10%、债务成本 4.5%、资本结构 8% 股权 92% 债务
+  - 增长率阶段：明示期 5 年 + 永续增长 2.5%
+【输出要求】
+  - reports/bank_dcf_valuation.xlsx（含 3 表：FCFE/FCFF/股息贴现）
+  - figures/dcf_sensitivity.pdf（折现率与永续增长率敏感性分析）
+  - reports/dcf_report.md（含估值结论与风险提示）
+【环境检查】运行 /tmp/check_all_skills.sh
+【原代码补充】DCF 标准代码片段（numpy_financial.npv / irr）
+【失败回退】如 Skill 不可用，手写三表 DCF 逻辑
+【预期结论】X 银行每股内在价值区间、对应市净率
+\end{lstlisting}
+
+\textbf{学生练习}：调整 WACC 和增长率假设，观察估值结果的敏感性。
+
+\subsection{humanizer-zh Skill：AI 文本检测与改写（\ding{72}\ding{72}\ding{72}）}
+
+\textbf{场景}：撰写信贷调查报告时，需要去除 AI 生成的“机械感”，提升文本自然度。
+
+\textbf{技能安装}：
+
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/07-writing/humanizer-zh/SKILL.md
+# humanizer-zh 一般仅需联网调用 AI 检测 API
+curl -I https://api.openai.com/ | head -1
+export OPENAI_API_KEY='sk-...'
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/07-writing/humanizer-zh/SKILL.md
+[ -n "$OPENAI_API_KEY" ] && echo "API_KEY SET" || echo "MISSING"
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 humanizer-zh 技能对以下信贷调查报告进行人性化润色：
+
+【调用 Skill】humanizer-zh
+【输入】reports/credit_risk_hengda.md
+【输出要求】
+  - reports/credit_risk_hengda_humanized.md（润色后版本）
+  - 检测报告：AI 痕迹评分（越低越自然）、修改点列表
+【质量要求】不能修改专业术语与数据，口语化调整需保留“银行内部报告”严肃风格
+\end{lstlisting}
+
+\textbf{学生练习}：对比润色前后文本的 AI 检测评分（如使用 GPTZero）。
+
+\subsection{consulting-frameworks Skill：银行业 SWOT + BCG 矩阵（\ding{72}\ding{72}\ding{72}）}
+
+\textbf{场景}：本行战略部需要制定 2026-2030 年数字化战略，需用多种咨询框架进行多维度分析。
+
+\textbf{技能安装}：
+
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/13-consulting/consulting-frameworks/SKILL.md
+# 一般仅需 LLM 调用能力
+\end{lstlisting}
+
+\textbf{3 步环境检查}：
+\begin{lstlisting}[style=shell]
+ls qoder-skills-library/13-consulting/consulting-frameworks/SKILL.md
+\end{lstlisting}
+
+\textbf{操作提示词（Skill 化包装）}：
+
+\begin{lstlisting}
+请调用 consulting-frameworks 技能完成商业银行多框架战略分析：
+
+【调用 Skill】consulting-frameworks
+【背景】XX 城商行 2026-2030 年数字化战略制定
+【输入】本行近 3 年财务、资产质量、客户结构数据
+【输出要求】
+  - reports/swot_matrix.md（4×4 矩阵 + 战略选择象限图）
+  - reports/bcg_portfolio.md（业务条线 BCG 矩阵：明星/现金牛/问题/瘦狗）
+  - reports/strategy_summary.md（多框架交集分析出的 TOP3 战略选择）
+【图表要求】每份报告配 1-2 个 mermaid 架构图
+【环境检查】运行 /tmp/check_all_skills.sh
+【原代码补充】SWOT/BCG 框架核心问题列表
+【失败回退】如 Skill 不可用，手动按框架填写
+【预期结论】本行处于哪象限？数字化投资应集中在哪三个领域？
+\end{lstlisting}
+
+\textbf{学生练习}：选取本省某城商行作为案例，完成完整 SWOT + BCG 分析（≥1500 字报告）。
+
+\textbf{进阶选做 5 个任务的对应 Skill 一览}：
+\begin{itemize}[leftmargin=1em]
+  \item 任务 1：\texttt{finance-news} + \texttt{news-read}（舆情分析）
+  \item 任务 2：\texttt{consulting-frameworks}（波特五力）
+  \item \textbf{任务 3（新增）}：\texttt{financial-modeling}（DCF 估值）
+  \item \textbf{任务 4（新增）}：\texttt{humanizer-zh}（AI 文本检测与改写）
+  \item \textbf{任务 5（新增）}：\texttt{consulting-frameworks}（SWOT + BCG 矩阵）
+\end{itemize}
+
 % ===========================================================
 \section*{本章小结}
 % ===========================================================
@@ -1097,7 +2369,7 @@ npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
   \item \textbf{安全审计}：从银行业合规框架出发，建立了五维审计方法论（触发词/输出/数据/合规/改进），确保AI Skill在金融场景中的安全合规使用。
 \end{itemize}
 
-\keyterms{Skill、SKILL.md、触发词、MCP vs Skill、知识工程、FTP转移定价、五C模型、RFM分群、数据脱敏、合规审计、五维审计法、金融数据分类分级}
+\keyterms{Skill、SKILL.md、触发词、MCP vs Skill、知识工程、FTP转移定价、五C模型、RFM分群、数据脱敏、合规审计、五维审计法、金融数据分类分级、Skill库全景、167个Skill、20分类、元Skill、create-skill、find-skills、skill-auditor、write-skill-readme、install-skill-dependency、luban、tushare-finance、china-stock-analysis、backtesting-trading-strategies、financial-modeling、econ-visualization、ppt-master、qoderwork-ppt、paper-slides、paper-figure、mermaid-diagram、white-list/black-list、exclude-first/include-first、环境准备速查表、R环境、Stata路径、Python环境、Node.js、LualOffice、poppler-utils}
 
 \section*{思考题}
 \addcontentsline{toc}{section}{思考题}
@@ -1112,6 +2384,16 @@ npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
   \item 在FTP定价模型中，如果央行为应对经济下行而下调LPR，银行应如何调整定价参数？请分析FTP、风险溢价、目标利润三个参数的调整逻辑及其对最终贷款利率的影响。
 
   \item 设计一个"银行反洗钱预警"Skill的SKILL.md大纲，包括name、触发词、输入参数、输出模板、分级逻辑和Best Practices。特别说明：该Skill如何处理可疑交易报告（STR）的合规要求？
+
+  \item \textbf{【新增】} 在本机 167 个 Skill / 20 分类体系中，如果要为"中小企业信用贷款审批"场景找到最合适的 Skill 组合，你会如何选择？请说明选择策略并列出 5-8 个 Skill 及其协同方式。
+
+  \item \textbf{【新增】} 元 Skill 体系（create-skill / find-skills / skill-auditor / luban）与普通业务 Skill 在使用场景上有什么本质区别？请举例说明元 Skill 如何在 Skill 创建 → 发现 → 审计 → 打磨全生命周期中发挥作用。
+
+  \item \textbf{【新增】} 在金融场景中，是应该使用排除条件模式（exclude-first）还是 Include 模式（include-first）？请从误触发风险、漏触发风险两个角度对比，并给出你认为应该采用哪种模式的判断准则。
+
+  \item \textbf{【新增】} 假设你计划同时使用 tushare-finance、backtesting-trading-strategies、econ-visualization 三个 Skill 完成"银行股估值+回测+可视化"项目，请说明：(a) 三个 Skill 的调用顺序与依赖关系；(b) 每个 Skill 需要的环境检查步骤；(c) 如何通过 \texttt{/tmp/check_all_skills.sh} 一键验证环境。
+
+  \item \textbf{【新增】} skill-auditor 自动化审计与人工五维审计各有优劣。请说明：什么场景下应该以 skill-auditor 初筛为主、人工复审为辅？什么场景下必须人工审计？
 \end{enumerate}
 
 \section*{实验报告要求}
@@ -1130,6 +2412,9 @@ npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
 5 & bank-risk-alert测试截图 & 输入 + 输出截图 \\
 6 & 金融Skill审计报告 & reports/skill\_audit\_report.md \\
 7 & 实验心得（$\geq$ 200字） & 含AI出错案例反思 \\
+8 & \textbf{【新增】} 银行股估值对比表 & reports/bank\_valuation\_compare.xlsx \\
+9 & \textbf{【新增】} 量化回测报告 & reports/strategy\_backtest\_results.xlsx \\
+10 & \textbf{【新增】} ROE 雷达图 & figures/bank\_roe\_radar.pdf \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1140,4 +2425,10 @@ npx skills add aznatkoiny/zai-skills@consulting-frameworks -y
   \item 完成「银行客户RFM分群」或「舆情分析」任务（+5分）
   \item 自写bank-product-recommender Skill并通过测试（+5分）
   \item 完成「波特五力银行数字化转型」分析（+5分）
+  \item \textbf{【新增】} 完成 tushare-finance A/H 股估值对比（任务 6）（+5分）
+  \item \textbf{【新增】} 完成 backtesting-trading-strategies 三策略回测（任务 7）（+5分）
+  \item \textbf{【新增】} 完成 econ-visualization ROE 雷达图（任务 8）（+5分）
+  \item \textbf{【新增】} 完成 financial-modeling DCF 估值（任务 3）（+5分）
+  \item \textbf{【新增】} 完成 humanizer-zh AI 文本改写（任务 4）（+5分）
+  \item \textbf{【新增】} 完成 consulting-frameworks SWOT+BCG 分析（任务 5）（+5分）
 \end{itemize}
