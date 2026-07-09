@@ -26,6 +26,42 @@
 
 \textbf{与ch03的MCP流水线区别}：本章Skill是"方法论"（怎么微计量结果处理），MCP是"工具能力"（能不能读到数据）。二者是能力与方法的辩证统一。
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.6cm,
+  step/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=1.6cm, align=center, font=\footnotesize, inner sep=4pt},
+  stephot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=2.6cm, minimum height=1.6cm, align=center, font=\footnotesize, inner sep=4pt},
+  arr/.style={-{Stealth[length=3mm]}, very thick, blue!60},
+]
+% 6 个节点，水平铺开
+\node[step]    (n1) at (0, 0)  {\textbf{1. 数据获取}\\\textcolor{blue!70!black}{api-data-fetcher}\\\textcolor{blue!70!black}{cn-stock-mcp}\\\textcolor{blue!70!black}{tushareMcp}};
+\node[step]    (n2) at (3.4,0)  {\textbf{2. 数据清洗}\\\textcolor{blue!70!black}{stata-data-cleaning}\\\textcolor{blue!70!black}{python-panel-data}};
+\node[stephot] (n3) at (6.8,0)  {\textbf{3. 计量回归}\\\textcolor{orange!80!black}{stata-regression}\\\textcolor{orange!80!black}{r-econometrics}};
+\node[stephot] (n4) at (10.2,0) {\textbf{4. 因果推断}\\\textcolor{orange!80!black}{abm-toolkit}\\\textcolor{orange!80!black}{python-panel-data}};
+\node[step]    (n5) at (13.6,0) {\textbf{5. 时间序列}\\\textcolor{blue!70!black}{shibor / LPR 数据}\\\textcolor{blue!70!black}{forecast Skill}};
+\node[stephot] (n6) at (17.0,0) {\textbf{6. 表格与图表}\\\textcolor{orange!80!black}{latex-tables}\\\textcolor{orange!80!black}{econ-visualization}\\\textcolor{orange!80!black}{paper-figure}};
+
+% 节点间箭头
+\draw[arr] (n1) -- (n2);
+\draw[arr] (n2) -- (n3);
+\draw[arr] (n3) -- (n4);
+\draw[arr] (n4) -- (n5);
+\draw[arr] (n5) -- (n6);
+
+% 阶段背景标
+\node[draw=blue!40, dashed, thick, rounded corners=2pt, fit=(n1)(n2), inner sep=6pt, label=above:\footnotesize 预处理] (stage1) {};
+\node[draw=orange!60, dashed, thick, rounded corners=2pt, fit=(n3)(n4), inner sep=6pt, label=above:\footnotesize 核心分析] (stage2) {};
+\node[draw=blue!40, dashed, thick, rounded corners=2pt, fit=(n5)(n6), inner sep=6pt, label=above:\footnotesize 输出] (stage3) {};
+
+% 反馈环
+\draw[arr, red!70, dashed] (n6.south) to[bend right=30] (n1.south);
+\node[font=\footnotesize\bfseries, red!70] at (8.5, -2.4) {迭代：调参 / 补数据 / 稳健性检验};
+\end{tikzpicture}
+\caption{AI Skill 辅助金融数据分析 6 节点流水线（自制）}
+\label{fig:data-pipeline}
+\end{figure}
+
 \subsection{6节点Skill流水线（贯穿本章）}
 
 \begin{table}[H]

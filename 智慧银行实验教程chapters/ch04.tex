@@ -22,6 +22,35 @@
 
 本章Skill体系不是一个孤立的技术点，而是构筑在一个涵盖\textbf{167个Skill}、分\textbf{20个分类}的完整Skill生态之上。本节先绘制一张全景图，让你在深入具体Skill之前，先看清AI能力生态的宏观面貌。
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=1.6cm, align=center, font=\footnotesize, inner sep=4pt},
+  boxhot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=2.6cm, minimum height=1.6cm, align=center, font=\footnotesize, inner sep=4pt},
+  arrow/.style={-{Stealth[length=3mm]}, very thick, blue!60},
+]
+% 4 象限：业务阶段 × 使用频率
+\node[box]    (q1) at (-3.5, 1.8)  {\textbf{高频主流程}\\\textcolor{blue!70!black}{01-ideation}\\\textcolor{blue!70!black}{02-literature}\\\textcolor{blue!70!black}{03-theory}};
+\node[boxhot] (q2) at ( 3.5, 1.8)  {\textbf{高频主流程}\\\textcolor{orange!80!black}{07-writing}\\\textcolor{orange!80!black}{10-communication}\\\textcolor{orange!80!black}{12-finance}};
+\node[box]    (q3) at (-3.5,-1.8)  {\textbf{低频辅助}\\\textcolor{blue!70!black}{16-office}\\\textcolor{blue!70!black}{13-consulting}\\\textcolor{blue!70!black}{20-messaging}};
+\node[boxhot] (q4) at ( 3.5,-1.8)  {\textbf{低频辅助}\\\textcolor{orange!80!black}{19-devtools}\\\textcolor{orange!80!black}{15-browser}\\\textcolor{orange!80!black}{17-ima}};
+
+% 中心标签
+\node[draw=red!70, very thick, fill=yellow!20, rounded corners=3pt, font=\small\bfseries, align=center, minimum width=2.2cm, minimum height=1.4cm] at (0,0) {167\\个\\Skill\\\footnotesize 20 分类};
+
+% 分类轴
+\draw[arrow, red!70] (-5.5, 0) -- (5.5, 0) node[right, font=\footnotesize\bfseries, black] {金融专业性};
+\node[font=\footnotesize\bfseries, red!70] at (-5.8, 0.3) {通用};
+\node[font=\footnotesize\bfseries, red!70] at (5.8, 0.3) {金融专业};
+
+\draw[arrow, green!60!black] (0, -3.0) -- (0, 3.0) node[above, font=\footnotesize\bfseries, black] {使用频率};
+\node[font=\footnotesize\bfseries, green!60!black] at (0.3, -3.2) {低};
+\node[font=\footnotesize\bfseries, green!60!black] at (0.3, 3.2) {高};
+\end{tikzpicture}
+\caption{Skill 生态四象限全景图（自制）}
+\label{fig:skill-quadrants}
+\end{figure}
+
 \subsection{本机Skill库总览}
 
 本课程使用的Skill库位于\texttt{qoder-skills-library/}目录（CNB仓库：\url{https://cnb.cool/xiaosicau/qoder-skills-library.git}），共\textbf{167个Skill / 20个分类}，外加\texttt{.agents/skills/}项目本地的9个核心Skill。

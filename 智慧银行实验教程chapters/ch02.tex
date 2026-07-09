@@ -18,6 +18,45 @@
 \section{AI IDE生态全景}
 % ============================================================
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  era/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=3.2cm, minimum height=2.4cm, align=center, font=\small, inner sep=4pt},
+  erahot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=3.2cm, minimum height=2.4cm, align=center, font=\small, inner sep=4pt},
+  arrow/.style={-{Stealth[length=3mm]}, very thick},
+]
+% 三个时代方框
+\node[era] (e1) at (0,0) {\textbf{编辑器时代}\\1980s--2000s\\\textcolor{blue!70!black}{Vim / Emacs}\\\footnotesize 纯文本，无智能};
+\node[era] (e2) at (5.4,0) {\textbf{IDE时代}\\2000s--2015\\\textcolor{blue!70!black}{VS Code / JetBrains}\\\footnotesize 语法高亮、断点调试};
+\node[erahot] (e3) at (10.8,0) {\textbf{AI IDE时代}\\2022--至今\\\textcolor{orange!80!black}{Cursor / Qoder / Copilot}\\\footnotesize 自然语言编程};
+
+% 阶段演进箭头
+\draw[arrow, blue!60] (e1.east) -- (e2.west);
+\draw[arrow, orange!80] (e2.east) -- (e3.west);
+
+% 能力跃迁轴
+\draw[arrow, red!70] (-1.5, 2.8) -- (12.3, 2.8) node[right, font=\footnotesize\bfseries, black] {智能程度};
+\node[font=\small\bfseries, red!70] at (-1.2, 2.4) {低};
+\node[font=\small\bfseries, red!70] at (12.0, 2.4) {高};
+\draw[arrow, red!70, dashed] (e1.north) -- (e1.north |- 0,2.8);
+\draw[arrow, red!70, dashed] (e2.north) -- (e2.north |- 0,2.8);
+\draw[arrow, red!70, dashed] (e3.north) -- (e3.north |- 0,2.8);
+
+% 角色定位轴
+\draw[arrow, green!60!black] (-1.5, -2.2) -- (12.3, -2.2) node[right, font=\footnotesize\bfseries, black] {开发者角色};
+\node[font=\small\bfseries, green!60!black] at (-1.2, -2.6) {完全主导};
+\node[font=\small\bfseries, green!60!black] at (12.0, -2.6) {AI 协作};
+\draw[arrow, green!60!black, dashed] (e1.south) -- (e1.south |- 0,-2.2);
+\draw[arrow, green!60!black, dashed] (e2.south) -- (e2.south |- 0,-2.2);
+\draw[arrow, green!60!black, dashed] (e3.south) -- (e3.south |- 0,-2.2);
+
+% 核心论断标签
+\node[draw=red!70, very thick, fill=yellow!15, rounded corners=2pt, font=\footnotesize\bfseries, align=center] at (5.4, -1.3) {前两阶段：工具替代\quad $\to$\quad AI IDE：范式转移};
+\end{tikzpicture}
+\caption{AI IDE 三阶段演进示意（自制）}
+\label{fig:ide-evolution}
+\end{figure}
+
 \subsection{从传统IDE到AI IDE的演进}
 
 集成开发环境（IDE）是程序员的核心工作工具。回顾IDE的发展历程，可以大致分为三个阶段：

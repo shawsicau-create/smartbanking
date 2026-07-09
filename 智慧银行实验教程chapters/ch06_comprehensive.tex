@@ -22,6 +22,53 @@
 
 BMAD（Breakthrough Method of Agile AI-Driven Development）是一种AI驱动的敏捷开发方法论，其核心理念是：\textbf{让AI扮演不同角色完成专业工作，人类负责决策与审核}。这种方法将程序员的定位从"代码编写者"提升为"AI团队管理者"。
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  phase/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=2.0cm, align=center, font=\footnotesize, inner sep=4pt},
+  phasehot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=2.6cm, minimum height=2.0cm, align=center, font=\footnotesize, inner sep=4pt},
+  arr/.style={-{Stealth[length=3mm]}, very thick, blue!60},
+  roleg/.style={ellipse, draw=red!70, very thick, fill=yellow!20, minimum width=1.8cm, minimum height=0.9cm, align=center, font=\footnotesize\bfseries, inner sep=2pt},
+]
+% 五个阶段
+\node[phase]    (p1) at (0,  2.4)  {\textbf{P1 分析/构思}\\\textcolor{blue!70!black}{产品愿景}};
+\node[phase]    (p2) at (3.5,2.4)  {\textbf{P2 规划/设计}\\\textcolor{blue!70!black}{PRD + 架构}};
+\node[phasehot] (p3) at (7.0,2.4)  {\textbf{P3 方案细化}\\\textcolor{orange!80!black}{史诗 / 故事拆分}};
+\node[phasehot] (p4) at (10.5,2.4) {\textbf{P4 实施/交付}\\\textcolor{orange!80!black}{Sprint 迭代}};
+\node[phasehot] (p5) at (14.0,2.4) {\textbf{P5 反馈/优化}\\\textcolor{orange!80!black}{追溯 + 迭代}};
+
+% 阶段连接
+\draw[arr] (p1) -- (p2);
+\draw[arr] (p2) -- (p3);
+\draw[arr] (p3) -- (p4);
+\draw[arr] (p4) -- (p5);
+
+% AI 角色关联（每个阶段下对应一个 AI 角色）
+\node[roleg] (r1) at (0, 0)  {Analyst};
+\node[roleg] (r2) at (3.5,0)  {PM + Architect};
+\node[roleg] (r3) at (7.0,0)  {Scrum Master};
+\node[roleg] (r4) at (10.5,0) {Dev Team};
+\node[roleg] (r5) at (14.0,0) {QA Owner};
+
+% 阶段与角色连线
+\draw[arr, dashed, gray!70] (p1) -- (r1);
+\draw[arr, dashed, gray!70] (p2) -- (r2);
+\draw[arr, dashed, gray!70] (p3) -- (r3);
+\draw[arr, dashed, gray!70] (p4) -- (r4);
+\draw[arr, dashed, gray!70] (p5) -- (r5);
+
+% 闭环反馈
+\draw[arr, red!70, very thick, dashed] (p5.south) to[bend right=40] (p1.south);
+\node[draw=red!70, fill=white, font=\footnotesize\bfseries, align=center] at (7.0, -2.0) {闭环反馈：每个 Sprint 都贡献反馈给下个 P1};
+
+% 顶部人类监督
+\node[draw=red!70, very thick, fill=yellow!15, rounded corners=2pt, font=\footnotesize\bfseries, align=center, minimum width=11cm] at (7.0, 4.4) {人类决策者（项目经理 / 架构师）负责决策与审核};
+\draw[arr, red!70] (7.0, 4.0) -- (p2.north);
+\end{tikzpicture}
+\caption{BMAD 五阶段闭环与 AI 角色分工示意（自制）}
+\label{fig:bmad-cycle}
+\end{figure}
+
 \subsection{方法论演进背景}
 
 软件开发方法论经历了数十年的演进：从瀑布模型（1970s）到敏捷开发（2001年《敏捷宣言》），再到DevOps（2015年）的自动化流水线。大语言模型（LLM）的突破催生了全新的范式——AI驱动开发（2023年至今）。AI不再只是辅助工具，而是\textbf{承担了团队中专业角色的工作}。BMAD方法论正是这一范式变革的系统性实践框架。

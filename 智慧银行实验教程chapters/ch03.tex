@@ -21,6 +21,77 @@
 \section{MCP协议理论基础}
 % ============================================================
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  layer/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=11cm, minimum height=1.4cm, align=center, font=\small, inner sep=4pt},
+  layerhot/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=11cm, minimum height=1.4cm, align=center, font=\small, inner sep=4pt},
+  arrow/.style={-{Stealth[length=3mm]}, very thick},
+  bidir/.style={{Stealth[length=3mm]}-{Stealth[length=3mm]}, very thick, dashed, gray!70},
+]
+% 三层架构（自上而下）
+\node[layer] (L3) at (0, 0) {\textbf{第3层\quad MCP Client（宿主 IDE）}\quad TRAE / Qoder / Cursor / Claude Desktop\\\footnotesize 接收用户请求，转发到 MCP Server};
+\node[layer] (L2) at (0, -2.0) {\textbf{第2层\quad MCP Host（协议运行时）}\quad 负责消息路由、能力发现、权限控制\\\footnotesize JSON-RPC 2.0 over stdio / SSE / HTTP};
+\node[layerhot] (L1) at (0, -4.0) {\textbf{第1层\quad MCP Server（工具 / 数据接入方）}\quad amap / ifind / browser-use / excel 等千余连接器\\\footnotesize 将外部能力封装为统一 Tool Schema};
+
+% 层间接口标签
+\node[font=\footnotesize\bfseries, blue!70] at (6.5, -1.0) {Tools / Resources / Prompts（能力声明）};
+\node[font=\footnotesize\bfseries, orange!80!black] at (6.5, -3.0) {JSON-RPC 请求/响应 + 通知};
+
+% 双向箭头
+\draw[bidir] ([xshift=-1cm]L3.south) -- ([xshift=-1cm]L2.north);
+\draw[bidir] ([xshift=1cm]L2.south) -- ([xshift=1cm]L1.north);
+
+% 右侧标签轴
+\draw[arrow, red!70] (7.0, 0.5) -- (7.0, -4.5);
+\node[font=\footnotesize\bfseries, red!70, align=center] at (8.0, -2.0) {抽象\\\\\\\\逐层\\下沉};
+
+% 左侧标签轴
+\draw[arrow, green!60!black] (-7.0, 0.5) -- (-7.0, -4.5);
+\node[font=\footnotesize\bfseries, green!60!black, align=center] at (-8.0, -2.0) {接近\\用户\\\\\\\\接近\\工具};
+\end{tikzpicture}
+\caption{MCP 三层架构示意（自制）}
+\label{fig:mcp-arch}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.8cm and 1.8cm,
+  role/.style={rectangle, rounded corners=3pt, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=0.9cm, align=center, font=\small\bfseries, inner sep=3pt},
+  step/.style={rectangle, rounded corners=2pt, draw=orange!80, fill=yellow!15, minimum width=2.6cm, minimum height=0.7cm, align=center, font=\footnotesize, inner sep=2pt},
+  arr/.style={-{Stealth[length=2.5mm]}, thick, blue!70},
+  arrR/.style={-{Stealth[length=2.5mm]}, thick, orange!80},
+]
+% 三个角色
+\node[role] (H)  at (0, 0)    {Host\\(IDE)};
+\node[role] (C)  at (6, 0)    {MCP Client\\(运行时)};
+\node[role] (S)  at (12, 0)   {MCP Server\\(工具源)};
+
+% 6 步生命周期（垂直时序）
+\node[step] (s1) at (0, -1.6)    {1. 用户提问};
+\node[step] (s2) at (6, -1.6)    {2. 解析意图};
+\node[step] (s3) at (12, -1.6)   {3. 调用 Tool};
+\node[step] (s4) at (12, -3.0)   {4. 返 JSON 结果};
+\node[step] (s5) at (6, -3.0)    {5. 包装为上下文};
+\node[step] (s6) at (0, -3.0)    {6. 生成回答};
+
+% 时序箭头
+\draw[arr] (H.south |- s1.north) -- (s1.north);
+\draw[arr] (s1.east) -- (s2.west);
+\draw[arrR] (s2.east) -- (s3.west);
+\draw[arrR] (s3.south) -- (s4.north);
+\draw[arr] (s4.west) -- (s5.east);
+\draw[arr] (s5.west) -- (s6.east);
+\draw[arr] (s6.north) -- (H.south |- s6.north);
+
+% 时间轴标签
+\node[font=\footnotesize\bfseries, gray!70] at (6, -4.2) {时间 $\longrightarrow$};
+\end{tikzpicture}
+\caption{MCP 一次调用的完整生命周期（自制）}
+\label{fig:mcp-lifecycle}
+\end{figure}
+
 \subsection{MCP的诞生背景}
 
 在AI大模型快速发展的2023--2024年间，一个核心矛盾日益凸显：大模型拥有强大的推理与生成能力，却无法直接访问外部工具和数据源——它像一位博学但足不出户的学者，无法查阅实时汇率、操作电子表格、驱动浏览器。各AI平台纷纷推出自己的"工具调用"方案，但彼此互不兼容：

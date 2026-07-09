@@ -19,6 +19,49 @@
 \section{项目选题指南}
 % ============================================================
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  week/.style={rectangle, draw=blue!70, very thick, fill=blue!8, minimum width=2.6cm, minimum height=0.7cm, align=center, font=\small\bfseries, inner sep=3pt},
+  task/.style={rectangle, rounded corners=2pt, draw=orange!80, fill=orange!15, minimum width=2.6cm, minimum height=0.55cm, align=center, font=\footnotesize, inner sep=2pt},
+  arr/.style={-{Stealth[length=2.5mm]}, thick},
+]
+% 4 周甘特轴
+\draw[arrow, red!70, thick] (0, -0.2) -- (12.0, -0.2) node[right, font=\footnotesize\bfseries]{时间线};
+\foreach \x/\w in {0/W1, 3/W2, 6/W3, 9/W4} {
+  \node[week] at (\x+1.5, 0) {\w};
+  \draw[thick, gray!60] (\x, 0.3) -- (\x, -3.5);
+}
+
+% 任务条带（颜色越深表示工作量越重）
+\node[task, fill=red!30]    at (1.5, -0.9)  {\textbf{选题与需求}};
+\node[task, fill=orange!30] at (4.5, -0.9)  {PRD 与架构设计};
+\node[task, fill=green!20]  at (7.5, -0.9)  {MVP 原型开发};
+\node[task, fill=blue!20]   at (10.5, -0.9) {打磨 + 部署 + 答辩};
+
+% 里程碑标记
+\foreach \x/\m in {0/选题答辩, 3/MVP, 6/联调, 9/终极交付} {
+  \node[draw=red!70, fill=yellow!20, font=\footnotesize\bfseries, align=center, minimum width=1.4cm, minimum height=0.4cm] at (\x+1.5, -2.4) {\m};
+}
+
+% 里程碑轴线
+\draw[thick, dashed, gray!70] (0, -1.6) -- (12.0, -1.6);
+\node[font=\footnotesize\bfseries, red!70, align=center] at (6.0, -3.4) {里程碑轴};
+
+% 角色分工矩阵说明
+\node[draw=blue!70, fill=blue!5, rounded corners=2pt, font=\footnotesize, align=left, minimum width=11cm] at (6.0, -5.0) {
+\textbf{角色分工推荐}：\\
+\quad • \textbf{产品经理}：需求文档、UI/UX、验收测试\\
+\quad • \textbf{架构师}：技术选型、核心模块、代码评审\\
+\quad • \textbf{AI 提示词工程师}：Skill / MCP 集成、提示词调优\\
+\quad • \textbf{DevOps}：CI/CD、部署、监控\\
+2 人团队可合并产品+AI 提示词与架构+DevOps。
+};
+\end{tikzpicture}
+\caption{课程综合项目 4 周甘特图与里程碑（自制）}
+\label{fig:project-gantt}
+\end{figure}
+
 \subsection{选题原则}
 
 综合项目是本课程的"收官之作"，选题质量直接决定项目的成败。好的选题应满足四个原则：

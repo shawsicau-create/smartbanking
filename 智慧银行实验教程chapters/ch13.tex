@@ -31,6 +31,34 @@
 
 本章将系统介绍课程中涉及的所有CLI工具，帮助你构建完整的AI开发工具链。
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  cat/.style={rectangle, rounded corners=4pt, draw=blue!70, very thick, fill=blue!8, minimum width=4.2cm, minimum height=2.6cm, align=center, font=\small, inner sep=4pt},
+  catorange/.style={rectangle, rounded corners=4pt, draw=orange!80, very thick, fill=orange!15, minimum width=4.2cm, minimum height=2.6cm, align=center, font=\small, inner sep=4pt},
+  catgreen/.style={rectangle, rounded corners=4pt, draw=green!60!black, very thick, fill=green!15, minimum width=4.2cm, minimum height=2.6cm, align=center, font=\small, inner sep=4pt},
+  arrow/.style={-{Stealth[length=3mm]}, very thick},
+]
+% 三大 CLI 类别
+\node[cat]      (c1) at (0,0)    {\textbf{仓库管理 CLI}\\\textcolor{blue!70!black}{\large cnb}\\\footnotesize CNB 云开发平台\\\footnotesize Git 凭证管理};
+\node[catorange] (c2) at (6.5,0)  {\textbf{Skill 包管理 CLI}\\\textcolor{orange!80!black}{\large skills / opencli}\\\footnotesize AI 技能仓库的\\\footnotesize install / list / update};
+\node[catgreen] (c3) at (13,0)   {\textbf{AI 编程 CLI}\\\textcolor{green!50!black}{\large claude / codex / qoder}\\\footnotesize 终端版 AI 对话与\\\footnotesize 自动写代码};
+
+% 连接关系
+\draw[arrow, blue!70] (c1.east) -- node[above, font=\footnotesize]{仓库认证} (c2.west);
+\draw[arrow, orange!80] (c2.east) -- node[above, font=\footnotesize]{依赖加载} (c3.west);
+
+% 底层依赖
+\node[draw=red!70, very thick, fill=yellow!15, rounded corners=2pt, font=\footnotesize\bfseries, align=center, minimum width=11cm, minimum height=0.8cm] at (6.5, -2.6) {共同底层：Node.js + npm/pnpm + Git + 环境变量（\$PATH, \$BK\_HOME）};
+
+\draw[arrow, red!70] (c1.south) -- (1.0, -2.2);
+\draw[arrow, red!70] (c2.south) -- (6.5, -2.2);
+\draw[arrow, red!70] (c3.south) -- (12.0, -2.2);
+\end{tikzpicture}
+\caption{本章 CLI 工具生态全景图（自制）}
+\label{fig:cli-ecosystem}
+\end{figure}
+
 % ============================================================
 \section{CNB CLI——代码仓库管理}
 % ============================================================
