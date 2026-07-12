@@ -3,59 +3,6 @@ title: '课件中心'
 description: '36张SVG幻灯片 + 8章语音导览 — 全课程可视化课件浏览'
 ---
 
-<script>
-  // 章节数据
-  const chapters = [
-    { id: 'ch01', title: '第1章 金融科技与银行数字化转型', audio: '/audio/ch01_narration.mp3' },
-    { id: 'ch02', title: '第2章 环境搭建与AI协作', audio: '/audio/ch02_narration.mp3' },
-    { id: 'ch03', title: '第3章 MCP协议与工具集成', audio: '/audio/ch03_narration.mp3' },
-    { id: 'ch04', title: '第4章 Skill体系', audio: '/audio/ch04_narration.mp3' },
-    { id: 'ch05', title: '第5章 CLI工具实战', audio: '/audio/ch05_narration.mp3' },
-    { id: 'ch06', title: '第6章 金融数据分析与计量经济学', audio: '/audio/ch06_narration.mp3' },
-    { id: 'ch07', title: '第7章 BMAD方法论与综合项目实践', audio: '/audio/ch07_narration.mp3' },
-    { id: 'ch08', title: '第8章 课程综合项目与创新实践', audio: '/audio/ch08_narration.mp3' },
-  ];
-
-  const allSlides = [
-    { ch: 'ch01', file: 'ch01_title', title: '第1章 标题页' },
-    { ch: 'ch01', file: 'ch01_agenda', title: '第1章 议程' },
-    { ch: 'ch01', file: 'ch01_fintech_stages', title: '金融科技发展阶段' },
-    { ch: 'ch01', file: 'ch01_summary', title: '第1章 总结' },
-    { ch: 'ch02', file: 'ch02_title', title: '第2章 标题页' },
-    { ch: 'ch02', file: 'ch02_agenda', title: '第2章 议程' },
-    { ch: 'ch02', file: 'ch02_ide_comparison', title: 'AI IDE对比' },
-    { ch: 'ch02', file: 'ch02_python_setup', title: 'Python环境配置' },
-    { ch: 'ch02', file: 'ch02_ai_collaboration_modes', title: 'AI协作四模式' },
-    { ch: 'ch02', file: 'ch02_summary', title: '第2章 总结' },
-    { ch: 'ch03', file: 'ch03_title', title: '第3章 标题页' },
-    { ch: 'ch03', file: 'ch03_agenda', title: '第3章 议程' },
-    { ch: 'ch03', file: 'ch03_architecture', title: 'MCP架构详解' },
-    { ch: 'ch03', file: 'ch03_mcp_concepts', title: 'MCP核心概念' },
-    { ch: 'ch03', file: 'ch03_server_development', title: 'MCP Server开发' },
-    { ch: 'ch03', file: 'ch03_summary', title: '第3章 总结' },
-    { ch: 'ch04', file: 'ch04_title', title: '第4章 标题页' },
-    { ch: 'ch04', file: 'ch04_agenda', title: '第4章 议程' },
-    { ch: 'ch04', file: 'ch04_skill_overview', title: 'Skill体系设计原理' },
-    { ch: 'ch04', file: 'ch04_summary', title: '第4章 总结' },
-    { ch: 'ch05', file: 'ch05_title', title: '第5章 标题页' },
-    { ch: 'ch05', file: 'ch05_agenda', title: '第5章 议程' },
-    { ch: 'ch05', file: 'ch05_cli_ecosystem', title: 'CLI工具生态' },
-    { ch: 'ch05', file: 'ch05_summary', title: '第5章 总结' },
-    { ch: 'ch06', file: 'ch06_title', title: '第6章 标题页' },
-    { ch: 'ch06', file: 'ch06_agenda', title: '第6章 议程' },
-    { ch: 'ch06', file: 'ch06_data_features', title: '金融数据特征与处理' },
-    { ch: 'ch06', file: 'ch06_summary', title: '第6章 总结' },
-    { ch: 'ch07', file: 'ch07_title', title: '第7章 标题页' },
-    { ch: 'ch07', file: 'ch07_agenda', title: '第7章 议程' },
-    { ch: 'ch07', file: 'ch07_bmad_stages', title: 'BMAD五阶段方法论' },
-    { ch: 'ch07', file: 'ch07_summary', title: '第7章 总结' },
-    { ch: 'ch08', file: 'ch08_title', title: '第8章 标题页' },
-    { ch: 'ch08', file: 'ch08_agenda', title: '第8章 议程' },
-    { ch: 'ch08', file: 'ch08_project_topics', title: '项目选题指南' },
-    { ch: 'ch08', file: 'ch08_summary', title: '课程总结' },
-  ];
-</script>
-
 <div id="slides-app">
   <div style="background:linear-gradient(135deg,#1E293B,#334155);border-radius:16px;padding:24px;margin-bottom:24px;color:#F1F5F9">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
@@ -155,7 +102,7 @@ description: '36张SVG幻灯片 + 8章语音导览 — 全课程可视化课件�
   var currentFilter = 'all';
   var filteredSlides = allSlides;
 
-  function renderGrid() {
+  window.renderGrid = function() {
     var grid = document.getElementById('slide-grid');
     if (!grid) return;
     grid.innerHTML = '';
@@ -163,14 +110,14 @@ description: '36张SVG幻灯片 + 8章语音导览 — 全课程可视化课件�
     filteredSlides.forEach(function(slide, idx) {
       var card = document.createElement('div');
       card.style.cssText = 'cursor:pointer;border:2px solid #e2e8f0;border-radius:8px;overflow:hidden;transition:border-color 0.2s;background:#1E293B';
-      card.onclick = function() { showSlide(slide, idx); };
+      card.onclick = function() { window.showSlide(slide, idx); };
       card.innerHTML = '<img src="/slides/' + slide.file + '.svg" alt="' + slide.title + '" style="width:100%;display:block" />' +
         '<div style="padding:8px 12px;color:#F1F5F9;font-size:12px"><span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.3);color:#93C5FD;margin-right:6px">' + chapterNames[slide.ch] + '</span>' + slide.title + '</div>';
       grid.appendChild(card);
     });
-  }
+  };
 
-  function showSlide(slide, idx) {
+  window.showSlide = function(slide, idx) {
     var realIdx = allSlides.indexOf(slide);
     if (realIdx >= 0) currentIdx = realIdx;
     var img = document.getElementById('current-slide');
@@ -183,30 +130,30 @@ description: '36张SVG幻灯片 + 8章语音导览 — 全课程可视化课件�
     if (audio) {
       audio.src = chapterAudio[slide.ch] || '';
     }
-  }
+  };
 
-  function slidesNext() {
+  window.slidesNext = function() {
     currentIdx = (currentIdx + 1) % allSlides.length;
-    showSlide(allSlides[currentIdx], currentIdx);
-  }
+    window.showSlide(allSlides[currentIdx], currentIdx);
+  };
 
-  function slidesPrev() {
+  window.slidesPrev = function() {
     currentIdx = (currentIdx - 1 + allSlides.length) % allSlides.length;
-    showSlide(allSlides[currentIdx], currentIdx);
-  }
+    window.showSlide(allSlides[currentIdx], currentIdx);
+  };
 
-  function filterSlides(ch) {
+  window.filterSlides = function(ch) {
     currentFilter = ch;
     document.querySelectorAll('.slide-tab').forEach(function(t) {
       t.style.background = t.dataset.ch === ch ? '#3B82F6' : '#f1f5f9';
       t.style.color = t.dataset.ch === ch ? 'white' : '#475569';
     });
-    renderGrid();
-  }
+    window.renderGrid();
+  };
 
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') slidesPrev();
-    if (e.key === 'ArrowRight') slidesNext();
+    if (e.key === 'ArrowLeft') window.slidesPrev();
+    if (e.key === 'ArrowRight') window.slidesNext();
   });
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -219,11 +166,11 @@ description: '36张SVG幻灯片 + 8章语音导览 — 全课程可视化课件�
         btn.dataset.ch = ch;
         btn.textContent = chapterNames[ch];
         btn.style.cssText = 'padding:6px 14px;border:1px solid #e2e8f0;border-radius:20px;background:#f1f5f9;color:#475569;cursor:pointer;font-size:13px';
-        btn.onclick = function() { filterSlides(ch); };
+        btn.onclick = function() { window.filterSlides(ch); };
         tabs.appendChild(btn);
       });
     }
-    renderGrid();
+    window.renderGrid();
   });
 </script>
 
