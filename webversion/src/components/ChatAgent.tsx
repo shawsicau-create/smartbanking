@@ -16,6 +16,26 @@ interface Message {
 
 type ChatMode = 'general' | 'bmad-analyst' | 'bmad-pm' | 'bmad-architect' | 'bmad-dev' | 'bmad-qa' | 'debate';
 
+// 用户信息接口
+interface User {
+    id: string;
+    username: string;
+    avatar_url: string;
+    email?: string;
+    role: string;
+    credits: number;
+    daily_used: number;
+}
+
+// 对话历史接口
+interface ChatHistory {
+    id: number;
+    title: string;
+    mode: string;
+    created_at: string;
+    updated_at: string;
+}
+
 const MODES: { key: ChatMode; label: string; icon: string; desc: string }[] = [
     { key: 'general', label: '通用问答', icon: '💬', desc: '金融问答与数据查询' },
     { key: 'bmad-analyst', label: '分析师', icon: '📋', desc: '需求分析专家' },
@@ -78,6 +98,92 @@ function loadChatHistory(): { messages: Message[]; mode: ChatMode } | null {
 
 function clearChatHistory() {
     localStorage.removeItem(STORAGE_KEY);
+}
+
+// ── 用户认证管理 ───────────────────────────────────────────
+const TOKEN_KEY = 'smartbank-token';
+
+function getAuthToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        return localStorage.getItem(TOKEN_KEY);
+    } catch {
+        return null;
+    }
+}
+
+function setAuthToken(token: string) {
+    try {
+        localStorage.setItem(TOKEN_KEY, token);
+    } catch (e) {
+        console.warn('保存 token 失败:', e);
+    }
+}
+
+function removeAuthToken() {
+    try {
+        localStorage.removeItem(TOKEN_KEY);
+    } catch (e) {
+        console.warn('移除 token 失败:', e);
+    }
+}
+
+// 验证 token 并获取用户信息
+async function fetchUserInfo(token: string): Promise<User | null> {
+    try {
+        const resp = await fetch('/api/auth/verify', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        return data.user;
+    } catch {
+        return null;
+    }
+}
+
+// 云端对话历史 API
+async function fetchCloudHistories(token: string): Promise<ChatHistory[]> {
+    try {
+        const resp = await fetch('/api/history', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resp.ok) return [];
+        const data = await resp.json();
+        return data.histories || [];
+    } catch {
+        return [];
+    }
+}
+
+async function saveCloudHistory(token: string, id: number | null, title: string, mode: string, messages: Message[]): Promise<number | null> {
+    try {
+        const resp = await fetch('/api/history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ id, title, mode, messages }),
+        });
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        return data.id;
+    } catch {
+        return null;
+    }
+}
+
+async function deleteCloudHistory(token: string, id: number): Promise<boolean> {
+    try {
+        const resp = await fetch(`/api/history?id=${id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return resp.ok;
+    } catch {
+        return false;
+    }
 }
 
 const TOOL_LABELS: Record<string, string> = {
@@ -259,6 +365,13 @@ function renderContent(text: string) {
 }
 
 export default function ChatAgent() {
+    // 用户登录状态
+    const [user, setUser] = useState<User | null>(null);
+    const [token, setToken] = useState<string | null>(() => getAuthToken());
+    const [showHistory, setShowHistory] = useState(false);
+    const [cloudHistories, setCloudHistories] = useState<ChatHistory[]>([]);
+    const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
+
     // 初始化时从 localStorage 加载历史记录
     const [messages, setMessages] = useState<Message[]>(() => {
         const saved = loadChatHistory();
@@ -274,6 +387,38 @@ export default function ChatAgent() {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [speaking, setSpeaking] = useState(false);
 
+    // 初始化时验证登录状态
+    useEffect(() => {
+        const initAuth = async () => {
+            if (token) {
+                const userInfo = await fetchUserInfo(token);
+                if (userInfo) {
+                    setUser(userInfo);
+                    // 加载云端历史列表
+                    const histories = await fetchCloudHistories(token);
+                    setCloudHistories(histories);
+                } else {
+                    // token 无效，清除
+                    removeAuthToken();
+                    setToken(null);
+                }
+            }
+        };
+        initAuth();
+    }, [token]);
+
+    // 监听 OAuth 回调消息
+    useEffect(() => {
+        const handler = (e: MessageEvent) => {
+            if (e.data?.type === 'github-oauth' && e.data.token) {
+                setAuthToken(e.data.token);
+                setToken(e.data.token);
+            }
+        };
+        window.addEventListener('message', handler);
+        return () => window.removeEventListener('message', handler);
+    }, []);
+
     useEffect(() => {
         const check = () => setSpeaking(window.speechSynthesis?.speaking || false);
         const id = setInterval(check, 500);
@@ -284,12 +429,73 @@ export default function ChatAgent() {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // 消息或模式变化时自动保存到 localStorage
+    // 消息或模式变化时自动保存
     useEffect(() => {
         if (messages.length > 0) {
-            saveChatHistory(messages, mode);
+            if (user && token) {
+                // 登录用户：保存到云端
+                const title = messages[0]?.content?.slice(0, 50) || '新对话';
+                saveCloudHistory(token, currentHistoryId, title, mode, messages).then(id => {
+                    if (id && !currentHistoryId) setCurrentHistoryId(id);
+                });
+            } else {
+                // 未登录用户：保存到本地
+                saveChatHistory(messages, mode);
+            }
         }
-    }, [messages, mode]);
+    }, [messages, mode, user, token, currentHistoryId]);
+
+    // GitHub 登录
+    const handleLogin = () => {
+        window.open('/api/auth/github', '_blank', 'width=600,height=700');
+    };
+
+    // 登出
+    const handleLogout = () => {
+        removeAuthToken();
+        setToken(null);
+        setUser(null);
+        setCurrentHistoryId(null);
+    };
+
+    // 加载云端对话
+    const loadCloudChat = async (history: ChatHistory) => {
+        if (!token) return;
+        try {
+            const resp = await fetch(`/api/history?id=${history.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (resp.ok) {
+                const data = await resp.json();
+                setMessages(data.messages || []);
+                setMode((history.mode as ChatMode) || 'general');
+                setCurrentHistoryId(history.id);
+                setShowHistory(false);
+            }
+        } catch (err) {
+            console.error('加载对话失败:', err);
+        }
+    };
+
+    // 删除云端对话
+    const handleDeleteHistory = async (id: number) => {
+        if (!token) return;
+        const success = await deleteCloudHistory(token, id);
+        if (success) {
+            setCloudHistories(prev => prev.filter(h => h.id !== id));
+            if (currentHistoryId === id) {
+                setCurrentHistoryId(null);
+                setMessages([]);
+            }
+        }
+    };
+
+    // 新建对话
+    const handleNewChat = () => {
+        setMessages([]);
+        setMode('general');
+        setCurrentHistoryId(null);
+    };
 
     const sendDebate = async (topic: string) => {
         const userMsg: Message = { role: 'user', content: `⚖️ 辩论主题：${topic}` };
@@ -389,19 +595,70 @@ export default function ChatAgent() {
                 </div>
                 <div className="header-right">
                     <ThemeSwitcher />
+
+                    {/* 用户登录/信息 */}
+                    {user ? (
+                        <div className="user-info">
+                            <button className="icon-btn" title="历史记录" onClick={() => setShowHistory(!showHistory)}>
+                                📋
+                            </button>
+                            <button className="icon-btn" title="新建对话" onClick={handleNewChat}>
+                                ➕
+                            </button>
+                            <img src={user.avatar_url} alt={user.username} className="user-avatar" />
+                            <span className="user-name">{user.username}</span>
+                            <span className="user-credits" title="剩余积分">💰 {user.credits}</span>
+                            <button className="icon-btn logout-btn" title="登出" onClick={handleLogout}>🚪</button>
+                        </div>
+                    ) : (
+                        <button className="login-btn" onClick={handleLogin} title="使用 GitHub 登录">
+                            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                            </svg>
+                            <span>登录</span>
+                        </button>
+                    )}
+
                     {messages.length > 0 && (
                         <>
                             <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
-                            <button className="icon-btn" title="清除历史" onClick={() => {
-                                clearChatHistory();
-                                setMessages([]);
-                                setMode('general');
-                            }}>🗑️</button>
+                            {!user && (
+                                <button className="icon-btn" title="清除历史" onClick={() => {
+                                    clearChatHistory();
+                                    setMessages([]);
+                                    setMode('general');
+                                }}>🗑️</button>
+                            )}
                         </>
                     )}
                     <a href="/" className="back-link">返回主页</a>
                 </div>
             </header>
+
+            {/* 历史记录面板 */}
+            {showHistory && user && (
+                <div className="history-panel">
+                    <div className="history-header">
+                        <h3>历史记录</h3>
+                        <button className="icon-btn" onClick={() => setShowHistory(false)}>✕</button>
+                    </div>
+                    <div className="history-list">
+                        {cloudHistories.length === 0 ? (
+                            <p className="history-empty">暂无历史记录</p>
+                        ) : (
+                            cloudHistories.map(h => (
+                                <div key={h.id} className="history-item" onClick={() => loadCloudChat(h)}>
+                                    <div className="history-item-info">
+                                        <span className="history-title">{h.title}</span>
+                                        <span className="history-time">{new Date(h.updated_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <button className="history-delete" onClick={(e) => { e.stopPropagation(); handleDeleteHistory(h.id); }}>🗑️</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Mode Selector */}
             <div className="mode-bar">

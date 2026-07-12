@@ -46,6 +46,9 @@ test_ch04.pdf
 *~
 ~$*
 
+# Wrangler 本地状态
+.wrangler/
+
 # 编译输出目录
 build/
 dist/

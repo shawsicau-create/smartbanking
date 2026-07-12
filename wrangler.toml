@@ -1,3 +1,8 @@
 name = "smartbanking"
 compatibility_date = "2024-11-01"
 pages_build_output_dir = "webversion/dist"
+
+[[d1_databases]]
+binding = "smartbank_db"
+database_name = "smartbank-db"
+database_id = "a5f1f1a0-00e8-4c6e-80ca-44ac2f07b373"
