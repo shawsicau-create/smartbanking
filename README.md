@@ -14,18 +14,14 @@
 
 > **在线阅读（含交互式目录、公式渲染、表格、实验手册）：**
 >
-> | 部署平台 | 访问地址 | 说明 |
-> |---|---|---|
-> | **Cloudflare Pages** | [https://smartbanking.pages.dev](https://smartbanking.pages.dev) | 全球 CDN，国内访问速度快 |
-> | EdgeOne Pages | [https://smartbanking-wmacgcua.edgeone.run](https://smartbanking-wmacgcua.edgeone.run) | 腾讯云全球 CDN |
-> | GitHub Pages | [https://shawsicau-create.github.io/smartbanking/](https://shawsicau-create.github.io/smartbanking/) | 海外镜像，GitHub Actions 自动部署 |
+> | 访问地址 | 说明 |
+> |---|---|
+> | [https://smartbanking.pages.dev](https://smartbanking.pages.dev) | Cloudflare Pages 全球 CDN，含 AI 智能体 |
 
 - 网站由 **Astro + Starlight** 构建
 - 源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)
-- 通过 `.cnb.yml` 云原生流水线自动部署到 **EdgeOne Pages**
-- 每次 `git push` 后约 1-2 分钟自动更新
-
-> ⚠️ **中国大陆用户访问提示**：本项目部署在 EdgeOne Pages 的 Global 区域。如在中国大陆网络下访问出现 401 UNAUTHORIZED，请到 [EdgeOne 控制台](https://console.cloud.tencent.com/edgeone/pages) 项目设置中启用"中国大陆加速"，然后重新部署。
+- 通过 `wrangler pages deploy` 部署到 **Cloudflare Pages**
+- 每次 `git push` 后手动执行部署，约 1 分钟完成
 
 ## 📘 教程 PDF
 
@@ -61,8 +57,7 @@ smartbanking/
 ├── 实验讲义/                              # 配套实验讲义与操作指南
 │   ├── BMAD-CRM系统开发实验手册.md        # 银行CRM系统12个完整实验
 │   ├── 实验详细步骤 BMAD方法论实战.txt    # BMAD安装到开发全流程
-│   ├── 实验详细步骤 BMAD代码云端部署.txt  # EdgeOne 部署实操
-│   ├── 实验详细步骤 CNB流水线自动部署到EdgeOne.md
+│   ├── 实验详细步骤 CNB流水线自动部署到Cloudflare.md
 │   ├── 实验详细步骤 使用cnm同步项目库.txt # 环境准备与CNB同步指南
 │   ├── 本地大模型部署指南.md              # 本地 LLM 部署参考
 │   └── mcp.json                          # MCP 服务配置文件
@@ -70,7 +65,7 @@ smartbanking/
 │   ├── src/content/docs/                 # Markdown 内容源
 │   ├── astro.config.mjs                  # Astro 配置（含 Starlight 侧边栏）
 │   ├── package.json
-│   └── dist/                             # 构建输出（用于 EdgeOne 部署）
+│   └── dist/                             # 构建输出（用于 Cloudflare 部署）
 ├── .agents/skills/                       # Qoder AI 技能配置
 │   ├── consulting-frameworks/            # 咨询框架技能
 │   ├── docx/                             # Word 文档处理技能
@@ -117,7 +112,7 @@ smartbanking/
 |    9     | 数据库适配与降级方案      | 工程实践   |
 |    10    | 功能测试验证              | 质量保证   |
 |    11    | 版本控制与 CNB 推送       | 版本管理   |
-|    12    | **EdgeOne Pages 部署**（前端） | 生产部署   |
+|    12    | **Cloudflare Pages 部署**（前端） | 生产部署   |
 
 ## 附录目录
 
@@ -142,11 +137,11 @@ smartbanking/
 | AI 教学工具 | Qoder / Trae CN / Cursor 等 AI IDE                                   |
 | 工具协议    | MCP（Model Context Protocol）                                       |
 | AI 技能     | Skill 体系（8 组专业技能）                                          |
-| CLI 工具    | CNB CLI / Skills CLI / Claude Code / Codex / EdgeOne CLI           |
+| CLI 工具    | CNB CLI / Skills CLI / Claude Code / Codex                              |
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）          |
 | 数据分析    | Stata / Python（pandas, statsmodels）                               |
 | 全栈开发    | React + Vite + Express + JWT                                        |
-| 部署平台    | **Cloudflare Pages** + EdgeOne Pages（腾讯云全球 CDN）+ GitHub Pages |
+| 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）                |
 | 版本控制    | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking)     |
 
 ## 快速开始
@@ -179,52 +174,30 @@ pnpm build           # 产物输出到 dist/
 pnpm preview         # 本地预览 http://localhost:4321
 ```
 
-### 4. 部署在线网站到 EdgeOne Pages
+### 4. 部署在线网站到 Cloudflare Pages
 
 #### 前置条件
 
-- 全局安装 EdgeOne CLI：`npm install -g edgeone`
-- 获取 API Token：访问 [https://pages.edgeone.ai/document/api-token](https://pages.edgeone.ai/document/api-token)
-- 在项目根目录创建 `.env` 文件（已加入 `.gitignore`）：
-  ```bash
-  EDGEONE_PAGES_API_TOKEN=your_token_here
-  ```
+- 全局安装 Wrangler CLI：`npm install -g wrangler`
+- 登录 Cloudflare：`wrangler login`
 
 #### 一键部署
 
 ```bash
 cd webversion/
-source ../.env
-npx edgeone makers deploy ./dist -n smartbanking -t $EDGEONE_PAGES_API_TOKEN
+pnpm build
+wrangler pages deploy dist --project-name=smartbanking
 ```
 
-部署成功后会返回形如 `https://smartbanking-wmacgcua.edgeone.run` 的访问链接。
-
-> ⚠️ **中国大陆访问**：默认部署到 Global（MLC excluded）区域，国内访问会被拦截。需在 [EdgeOne 控制台](https://console.cloud.tencent.com/edgeone/pages) 启用"中国大陆加速"。
+部署成功后会返回形如 `https://smartbanking.pages.dev` 的访问链接。
 
 ### 5. 自动部署（CI/CD）
 
-推送代码即自动部署。`.cnb.yml` 已配置完整流水线：
+推送代码后，使用 Wrangler CLI 手动部署：
 
-```yaml
-main:
-  push:
-    - name: deploy-webversion-to-edgeone
-      docker:
-        image: node:22
-      imports:
-        - https://cnb.cool/xiaosicau/secrets/-/blob/main/edgeone.yml
-      stages:
-        - 安装 pnpm
-        - 安装依赖（pnpm install）
-        - 构建网站（pnpm build）
-        - 部署到 EdgeOne Pages
-```
-
-密钥仓库 `xiaosicau/secrets` 需包含 `edgeone.yml`：
-
-```yaml
-EDGEONE_PAGES_API_TOKEN: "your_token_here"
+```bash
+cd webversion/ && pnpm build
+wrangler pages deploy dist --project-name=smartbanking
 ```
 
 ### 6. 环境准备
@@ -297,16 +270,14 @@ git push origin feature/新功能名称
 - **所属院系**: 四川农业大学经济学院 · 数字经济系
 - **CNB 仓库**: https://cnb.cool/xiaosicau/smartbanking
 - **GitHub 仓库**: https://github.com/shawsicau-create/smartbanking
-- **在线网站（Cloudflare Pages）**: https://smartbanking.pages.dev
-- **在线网站（EdgeOne Pages）**: https://smartbanking-wmacgcua.edgeone.run
-- **GitHub Pages**: https://shawsicau-create.github.io/smartbanking/
+- **在线网站**: https://smartbanking.pages.dev
 
 ## 相关文档
 
 - [MCP 服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md) - MCP 服务配置
 - [BMAD-CRM 系统开发实验手册](实验讲义%20/BMAD-CRM系统开发实验手册.md) - 银行 CRM 完整开发指南
 - [本地大模型部署指南](实验讲义%20/本地大模型部署指南.md) - 离线 AI 模型部署
-- [EdgeOne 流水线部署指南](实验讲义%20/实验详细步骤%20CNB流水线自动部署到EdgeOne.md) - 自动部署实战
+- [Cloudflare 部署指南](docs/cloudflare-pages-deploy.md) - Cloudflare Pages 部署配置
 
 ## 许可证
 
