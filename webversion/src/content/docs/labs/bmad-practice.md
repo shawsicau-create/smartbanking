@@ -3,6 +3,16 @@ title: 'BMAD方法论实战'
 description: 'BMAD方法论实战操作详细步骤'
 ---
 
+---
+title: 'BMAD方法论实战'
+description: 'BMAD方法论实战操作详细步骤'
+---
+
+---
+title: 'BMAD方法论实战'
+description: 'BMAD方法论实战操作详细步骤'
+---
+
 实验步骤：BMAD 方法论实战演练
 
 本实验指导学生使用 BMAD（Business Model Architecture and Development）方法论框架，在 AI IDE 中完成从创意构思到代码交付的完整产品开发流程。

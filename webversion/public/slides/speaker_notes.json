@@ -1,0 +1,153 @@
+{
+    "metadata": {
+        "title": "智慧银行实验教程 - Speaker Notes",
+        "total_slides": 36,
+        "created": "2026-07-12"
+    },
+    "slides": {
+        "ch01_title": {
+            "title": "第1章 金融科技与银行数字化转型",
+            "notes": "欢迎来到智慧银行实验教程课程。本章将带您了解金融科技的发展历程和银行数字化转型的核心趋势。我们将探讨AI、大数据、区块链等技术如何重塑银行业务，以及未来金融科技的发展方向。"
+        },
+        "ch01_agenda": {
+            "title": "第1章议程",
+            "notes": "本章将覆盖以下四个核心主题：首先了解金融科技的发展阶段，然后探讨银行数字化转型的驱动力，接着分析国内外典型案例，最后展望未来趋势与挑战。"
+        },
+        "ch01_fintech_stages": {
+            "title": "金融科技发展阶段",
+            "notes": "金融科技经历了三个主要阶段：FinTech 1.0时代以互联网银行和移动支付为代表；FinTech 2.0时代以大数据风控和智能投顾为核心；当前我们正处于FinTech 3.0时代，AI驱动的智能银行成为主流。每个阶段都深刻改变了金融服务的方式和效率。"
+        },
+        "ch01_summary": {
+            "title": "第1章总结",
+            "notes": "本章我们学习了金融科技的发展历程和银行数字化转型的关键要素。下一章将介绍环境搭建，包括AI IDE的配置和使用，为后续的实践操作做好准备。"
+        },
+        "ch02_title": {
+            "title": "第2章 环境搭建与AI协作",
+            "notes": "本章将指导您完成开发环境的搭建，包括AI IDE的安装配置、Python环境管理、Git版本控制等。这些工具是后续实验的基础。"
+        },
+        "ch02_agenda": {
+            "title": "第2章议程",
+            "notes": "本章议程包括：AI IDE对比与选择、Python环境配置、Git版本控制、以及AI协作四模式的介绍。我们将重点学习如何高效地与AI协作完成开发任务。"
+        },
+        "ch02_ide_comparison": {
+            "title": "AI IDE对比",
+            "notes": "主流AI IDE包括Qoder、TRAE、Cursor和GitHub Copilot等。它们各有特色：Qoder深度集成MCP协议，适合全栈开发；TRAE轻量高效，启动速度快；Cursor智能补全能力强；GitHub Copilot生态完善。选择时需考虑项目需求、团队习惯和成本因素。"
+        },
+        "ch02_python_setup": {
+            "title": "Python环境配置",
+            "notes": "Python环境配置有四种主流方案：官方Python、Anaconda、Miniconda和pyenv。对于金融数据分析，推荐使用Miniconda或pyenv，它们能更好地管理多个Python版本和虚拟环境。"
+        },
+        "ch02_ai_collaboration_modes": {
+            "title": "AI协作四模式",
+            "notes": "AI协作有四种模式：自动完成模式提供实时代码补全；对话模式进行多轮交互；代理模式执行复杂任务；内联编辑模式进行精准代码修改。掌握这些模式能显著提升开发效率。"
+        },
+        "ch02_summary": {
+            "title": "第2章总结",
+            "notes": "本章完成了开发环境的搭建和AI协作模式的学习。下一章将深入MCP协议，了解如何让AI与外部工具和数据源进行标准化通信。"
+        },
+        "ch03_title": {
+            "title": "第3章 MCP协议与工具集成",
+            "notes": "MCP（Model Context Protocol）是连接AI模型与外部世界的标准化协议。本章将深入学习MCP的三层架构、通信机制和Server开发实践。"
+        },
+        "ch03_agenda": {
+            "title": "第3章议程",
+            "notes": "本章将系统学习MCP协议：首先理解核心概念和三层架构，然后学习JSON-RPC通信机制，最后通过实战开发一个银行数据MCP Server。"
+        },
+        "ch03_architecture": {
+            "title": "MCP架构详解",
+            "notes": "MCP架构采用客户端-服务器模式。Host层（如AI IDE）启动Client，Client通过JSON-RPC 2.0协议与Server通信。Server可以是本地进程或远程服务，提供工具调用、资源访问和提示模板三大能力。这种分层设计实现了AI模型与外部系统的解耦。"
+        },
+        "ch03_mcp_concepts": {
+            "title": "MCP核心概念",
+            "notes": "MCP采用三层架构：Host层运行AI IDE，Client层管理协议通信，Server层提供工具和数据访问。这种设计实现了AI模型与外部系统的标准化连接，大大提升了AI工具的互操作性。"
+        },
+        "ch03_server_development": {
+            "title": "MCP Server开发",
+            "notes": "开发MCP Server需要实现tools/list和tools/call两个核心接口。我们将通过一个银行账户查询的实例，演示如何创建自定义的MCP Server，让AI能够访问银行数据。"
+        },
+        "ch03_summary": {
+            "title": "第3章总结",
+            "notes": "本章掌握了MCP协议的核心原理和Server开发技能。下一章将介绍Skill体系，学习如何将领域知识编码为AI可复用的技能脚本。"
+        },
+        "ch04_title": {
+            "title": "第4章 Skill体系",
+            "notes": "Skill体系是将领域专家知识编码为AI可理解的结构化文档的技术。本章将学习SKILL.md编写规范和金融领域Skill的开发实践。"
+        },
+        "ch04_agenda": {
+            "title": "第4章议程",
+            "notes": "本章议程包括：Skill设计原理与知识工程演进、SKILL.md编写规范、MCP与Skill的本质区别、以及金融领域Skill实例开发。"
+        },
+        "ch04_skill_overview": {
+            "title": "Skill体系设计原理",
+            "notes": "Skill体系经历了从专家系统到机器学习再到AI Skill的演进。AI Skill以Markdown文档为知识载体，兼具可解释性和灵活性。SKILL.md包含六个核心部分：name/description、When to Use、Instructions、Examples、Requirements和Best Practices。"
+        },
+        "ch04_summary": {
+            "title": "第4章总结",
+            "notes": "本章学习了Skill体系的设计原理和SKILL.md编写规范。下一章将进入CLI工具实战，学习如何使用命令行工具提升开发效率。"
+        },
+        "ch05_title": {
+            "title": "第5章 CLI工具实战",
+            "notes": "命令行工具是AI辅助开发的核心执行层。本章将系统介绍课程涉及的所有CLI工具，帮助构建完整的AI开发工具链。"
+        },
+        "ch05_agenda": {
+            "title": "第5章议程",
+            "notes": "本章将学习三大CLI工具：CNB CLI用于代码仓库管理，Skills CLI用于AI能力包管理，以及各工具的最佳实践。"
+        },
+        "ch05_cli_ecosystem": {
+            "title": "CLI工具生态",
+            "notes": "CLI工具具有四大优势：自动化友好、资源占用低、组合能力强、AI原生。CNB CLI管理代码仓库和Issue，Skills CLI管理AI能力包。掌握这些工具能大幅提升开发效率。"
+        },
+        "ch05_summary": {
+            "title": "第5章总结",
+            "notes": "本章掌握了CLI工具的使用方法和最佳实践。下一章将进入金融数据分析，学习面板数据、时间序列和因果推断等计量经济学方法。"
+        },
+        "ch06_title": {
+            "title": "第6章 金融数据分析与计量经济学",
+            "notes": "金融数据分析是实证研究的基础。本章将学习金融数据的特征、预处理方法、面板回归和因果推断等核心计量经济学技术。"
+        },
+        "ch06_agenda": {
+            "title": "第6章议程",
+            "notes": "本章议程包括：金融数据类型与特征、数据预处理全流程、面板回归分析、时间序列分析、以及因果推断方法（DID）。"
+        },
+        "ch06_data_features": {
+            "title": "金融数据特征与处理",
+            "notes": "金融数据分为截面数据、时间序列和面板数据三种类型。面板数据同时包含个体和时间维度，是实证研究的首选。金融数据具有尖峰厚尾、ARCH效应、序列相关和结构突变四大特征，需要专门的预处理方法。"
+        },
+        "ch06_summary": {
+            "title": "第6章总结",
+            "notes": "本章掌握了金融数据的特征分析和预处理方法。下一章将学习BMAD方法论，了解如何用AI驱动团队高效完成软件开发。"
+        },
+        "ch07_title": {
+            "title": "第7章 BMAD方法论与综合项目实践",
+            "notes": "BMAD是一种AI驱动的敏捷开发方法论，将程序员从代码编写者提升为AI团队管理者。本章将系统学习BMAD的五个阶段和实践流程。"
+        },
+        "ch07_agenda": {
+            "title": "第7章议程",
+            "notes": "本章议程包括：BMAD五阶段方法论、AI角色协作模式、CRM系统开发实战、以及EdgeOne Pages部署流程。"
+        },
+        "ch07_bmad_stages": {
+            "title": "BMAD五阶段方法论",
+            "notes": "BMAD包含五个阶段：Brainstorm（业务分析师）、Model（产品经理）、Architect（架构师）、Develop（开发者）、Verify（测试工程师）。核心价值是1人+AI等于传统5-9人团队，实现小时级迭代的极致效率。"
+        },
+        "ch07_summary": {
+            "title": "第7章总结",
+            "notes": "本章掌握了BMAD方法论的核心流程和AI团队协作模式。最后一章将聚焦课程综合项目，学习项目选题、开发和展示的全流程。"
+        },
+        "ch08_title": {
+            "title": "第8章 课程综合项目与创新实践",
+            "notes": "综合项目是课程的收官之作。本章将指导您完成项目选题、团队协作、开发实践和成果展示的全过程。"
+        },
+        "ch08_agenda": {
+            "title": "第8章议程",
+            "notes": "本章议程包括：项目选题四大原则、12个可选项目方向、团队协作与项目管理、以及项目答辩与竞赛指南。"
+        },
+        "ch08_project_topics": {
+            "title": "项目选题指南",
+            "notes": "项目选题遵循四大原则：可行性、创新性、金融相关性和技术适配性。课程提供12个可选方向，难度从2星到4星不等。建议初学者选择2星项目，有基础的同学选择3星项目，全栈经验者可挑战4星项目。"
+        },
+        "ch08_summary": {
+            "title": "课程总结",
+            "notes": "恭喜完成全部课程学习！您已掌握AI IDE深度使用、MCP协议与工具集成、Skill开发与复用、金融数据分析、BMAD方法论实践等核心能力。愿AI赋能您的金融科技之路，期待在创新实践中见到您的成果！"
+        }
+    }
+}

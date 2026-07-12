@@ -1,0 +1,99 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <rect x="80" y="50" width="200" height="40" rx="20" fill="#3B82F6" opacity="0.9"/>
+    <text x="180" y="76" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">智慧银行实验教程</text>
+    <text x="120" y="150" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#F1F5F9" font-weight="700">Python环境配置</text>
+    <text x="120" y="190" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="20" fill="#94A3B8">四种方案对比与选择</text>
+    <rect x="120" y="210" width="200" height="4" rx="2" fill="url(#accent-gradient)"/>
+    <g transform="translate(80, 250)">
+        <rect x="0" y="0" width="280" height="200" rx="12" fill="#334155" opacity="0.8"/>
+        <rect x="0" y="0" width="280" height="40" rx="12" fill="#3B82F6" opacity="0.9"/>
+        <text x="140" y="28" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">Anaconda</text>
+        <text x="20" y="70" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">推荐：数据科学方向</text>
+        <text x="20" y="95" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 预装pandas/numpy/scikit-learn</text>
+        <text x="20" y="115" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 可视化环境管理界面</text>
+        <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 安装包较大(约800MB)</text>
+        <text x="20" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 适合初学者快速上手</text>
+        <rect x="20" y="170" width="240" height="25" rx="4" fill="#10B981" opacity="0.8"/>
+        <text x="140" y="188" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="white" text-anchor="middle">⭐ 首选推荐</text>
+    </g>
+    <g transform="translate(400, 250)">
+        <rect x="0" y="0" width="280" height="200" rx="12" fill="#334155" opacity="0.8"/>
+        <rect x="0" y="0" width="280" height="40" rx="12" fill="#10B981" opacity="0.9"/>
+        <text x="140" y="28" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">Miniconda</text>
+        <text x="20" y="70" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">推荐：轻量级方案</text>
+        <text x="20" y="95" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 最小化安装(约50MB)</text>
+        <text x="20" y="115" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 灵活创建多环境</text>
+        <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 需额外安装Python包</text>
+        <text x="20" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 适合多项目开发</text>
+    </g>
+    <g transform="translate(720, 250)">
+        <rect x="0" y="0" width="280" height="200" rx="12" fill="#334155" opacity="0.8"/>
+        <rect x="0" y="0" width="280" height="40" rx="12" fill="#F59E0B" opacity="0.9"/>
+        <text x="140" y="28" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">venv</text>
+        <text x="20" y="70" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">推荐：简单轻量</text>
+        <text x="20" y="95" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• Python内置，无需额外安装</text>
+        <text x="20" y="115" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 轻量简单</text>
+        <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 不能管理多Python版本</text>
+        <text x="20" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 适合简单项目</text>
+    </g>
+    <g transform="translate(1040, 250)">
+        <rect x="0" y="0" width="200" height="200" rx="12" fill="#334155" opacity="0.8"/>
+        <rect x="0" y="0" width="200" height="40" rx="12" fill="#8B5CF6" opacity="0.9"/>
+        <text x="100" y="28" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">pyenv+venv</text>
+        <text x="20" y="70" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">推荐：进阶用户</text>
+        <text x="20" y="95" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 多版本Python共存</text>
+        <text x="20" y="115" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 项目级自动切换</text>
+        <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 需配置shell</text>
+        <text x="20" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• macOS/Linux专用</text>
+    </g>
+    <g transform="translate(80, 480)">
+        <rect x="0" y="0" width="1160" height="160" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" font-weight="600">金融Python库全景图</text>
+        <g transform="translate(20, 50)">
+            <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#3B82F6">数据获取</text>
+            <text x="0" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">tushare · akshare · yfinance</text>
+        </g>
+        <g transform="translate(300, 50)">
+            <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#10B981">数据分析</text>
+            <text x="0" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">pandas · numpy · scipy · statsmodels</text>
+        </g>
+        <g transform="translate(600, 50)">
+            <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F59E0B">机器学习</text>
+            <text x="0" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">scikit-learn · xgboost · lightgbm · pytorch</text>
+        </g>
+        <g transform="translate(900, 50)">
+            <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#8B5CF6">可视化</text>
+            <text x="0" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">matplotlib · seaborn · plotly</text>
+        </g>
+        <text x="20" y="110" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">一键安装命令：</text>
+        <rect x="20" y="120" width="1120" height="30" rx="4" fill="#1E293B"/>
+        <text x="30" y="140" font-family="SF Mono, monospace" font-size="14" fill="#10B981">pip install tushare akshare pandas numpy scikit-learn matplotlib seaborn plotly statsmodels flask</text>
+    </g>
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 2 章 / 共 8 章</text>
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

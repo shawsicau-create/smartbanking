@@ -1,0 +1,90 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <rect x="80" y="50" width="200" height="40" rx="20" fill="#3B82F6" opacity="0.9"/>
+    <text x="180" y="76" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">智慧银行实验教程</text>
+    <text x="120" y="150" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="42" fill="#F1F5F9" font-weight="700">本章小结</text>
+    <rect x="120" y="180" width="200" height="4" rx="2" fill="url(#accent-gradient)"/>
+    <text x="120" y="230" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="24" fill="#94A3B8">第4章：Skill体系</text>
+    <g transform="translate(120, 270)">
+        <g transform="translate(0, 0)">
+            <circle cx="20" cy="20" r="15" fill="#3B82F6" opacity="0.8"/>
+            <text x="20" y="26" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">1</text>
+            <text x="45" y="26" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">Skill设计原理</text>
+            <text x="45" y="48" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">领域知识编码为可复用技能脚本</text>
+        </g>
+        <g transform="translate(0, 70)">
+            <circle cx="20" cy="20" r="15" fill="#10B981" opacity="0.8"/>
+            <text x="20" y="26" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">2</text>
+            <text x="45" y="26" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">SKILL.md编写规范</text>
+            <text x="45" y="48" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">标准化的技能描述格式</text>
+        </g>
+        <g transform="translate(0, 140)">
+            <circle cx="20" cy="20" r="15" fill="#F59E0B" opacity="0.8"/>
+            <text x="20" y="26" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">3</text>
+            <text x="45" y="26" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">金融Skill实例</text>
+            <text x="45" y="48" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">银行业务数据分析技能</text>
+        </g>
+        <g transform="translate(0, 210)">
+            <circle cx="20" cy="20" r="15" fill="#8B5CF6" opacity="0.8"/>
+            <text x="20" y="26" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">4</text>
+            <text x="45" y="26" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">调试与优化</text>
+            <text x="45" y="48" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">提升Skill执行效率和准确性</text>
+        </g>
+    </g>
+    <g transform="translate(700, 270)">
+        <rect x="0" y="0" width="480" height="280" rx="12" fill="#334155" opacity="0.8"/>
+        <text x="20" y="40" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="20" fill="#F1F5F9" font-weight="600">核心收获</text>
+        <rect x="20" y="55" width="440" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <g transform="translate(20, 80)">
+            <circle cx="10" cy="10" r="8" fill="#3B82F6"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">理解Skill体系设计哲学</text>
+        </g>
+        <g transform="translate(20, 115)">
+            <circle cx="10" cy="10" r="8" fill="#10B981"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">掌握SKILL.md编写规范</text>
+        </g>
+        <g transform="translate(20, 150)">
+            <circle cx="10" cy="10" r="8" fill="#F59E0B"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">能够开发金融领域Skill</text>
+        </g>
+        <g transform="translate(20, 185)">
+            <circle cx="10" cy="10" r="8" fill="#8B5CF6"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">优化Skill性能和准确性</text>
+        </g>
+        <g transform="translate(20, 220)">
+            <circle cx="10" cy="10" r="8" fill="#EC4899"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">构建可复用的技能库</text>
+        </g>
+    </g>
+    <g transform="translate(120, 570)">
+        <rect x="0" y="0" width="1060" height="80" rx="8" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="30" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" font-weight="600">下一步</text>
+        <text x="20" y="55" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">Skill体系将领域知识编码为可复用脚本，下一章将介绍CLI工具实战——如何构建金融数据命令行工具</text>
+    </g>
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 4 章 / 共 8 章</text>
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

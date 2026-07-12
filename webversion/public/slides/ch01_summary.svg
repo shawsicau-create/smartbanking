@@ -1,0 +1,156 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <!-- Decorative grid lines -->
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <!-- Header -->
+    <g transform="translate(80, 40)">
+        <rect x="0" y="0" width="80" height="32" rx="16" fill="#3B82F6" opacity="0.9"/>
+        <text x="40" y="22" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">第1章</text>
+        <text x="100" y="25" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="24" fill="#F1F5F9" font-weight="600">本章小结</text>
+    </g>
+    <!-- Main content - 4-layer framework -->
+    <g transform="translate(80, 120)">
+        <!-- Layer 1: 行业层 -->
+        <g>
+            <rect x="0" y="0" width="260" height="280" rx="12" fill="#334155" opacity="0.9" stroke="#3B82F6" stroke-width="2"/>
+            <rect x="0" y="0" width="260" height="50" rx="12" fill="#3B82F6" opacity="0.8"/>
+            <text x="130" y="32" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">行业层</text>
+            <g transform="translate(20, 70)">
+                <circle cx="10" cy="10" r="6" fill="#3B82F6"/>
+                <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">四阶段演进</text>
+                <circle cx="10" cy="45" r="6" fill="#3B82F6"/>
+                <text x="25" y="50" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">效率→能力跃迁</text>
+                <circle cx="10" cy="80" r="6" fill="#3B82F6"/>
+                <text x="25" y="85" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">中国分层格局</text>
+                <circle cx="10" cy="115" r="6" fill="#3B82F6"/>
+                <text x="25" y="120" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">监管科技演进</text>
+                <circle cx="10" cy="150" r="6" fill="#3B82F6"/>
+                <text x="25" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">低代码路线</text>
+            </g>
+        </g>
+        <!-- Layer 2: 应用层 -->
+        <g transform="translate(300, 0)">
+            <rect x="0" y="0" width="260" height="280" rx="12" fill="#334155" opacity="0.9" stroke="#10B981" stroke-width="2"/>
+            <rect x="0" y="0" width="260" height="50" rx="12" fill="#10B981" opacity="0.8"/>
+            <text x="130" y="32" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">应用层</text>
+            <g transform="translate(20, 70)">
+                <circle cx="10" cy="10" r="6" fill="#10B981"/>
+                <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">智能客服</text>
+                <circle cx="10" cy="45" r="6" fill="#10B981"/>
+                <text x="25" y="50" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">智能风控</text>
+                <circle cx="10" cy="80" r="6" fill="#10B981"/>
+                <text x="25" y="85" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">智能营销</text>
+                <circle cx="10" cy="115" r="6" fill="#10B981"/>
+                <text x="25" y="120" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">智能运营</text>
+                <circle cx="10" cy="150" r="6" fill="#10B981"/>
+                <text x="25" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">智能合规</text>
+            </g>
+        </g>
+        <!-- Layer 3: 技术层 -->
+        <g transform="translate(600, 0)">
+            <rect x="0" y="0" width="260" height="280" rx="12" fill="#334155" opacity="0.9" stroke="#F59E0B" stroke-width="2"/>
+            <rect x="0" y="0" width="260" height="50" rx="12" fill="#F59E0B" opacity="0.8"/>
+            <text x="130" y="32" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">技术层</text>
+            <g transform="translate(20, 70)">
+                <circle cx="10" cy="10" r="6" fill="#F59E0B"/>
+                <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">Transformer架构</text>
+                <circle cx="10" cy="45" r="6" fill="#F59E0B"/>
+                <text x="25" y="50" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">预训练+对齐</text>
+                <circle cx="10" cy="80" r="6" fill="#F59E0B"/>
+                <text x="25" y="85" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">ChatBot→Agent</text>
+                <circle cx="10" cy="115" r="6" fill="#F59E0B"/>
+                <text x="25" y="120" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">ReAct框架</text>
+                <circle cx="10" cy="150" r="6" fill="#F59E0B"/>
+                <text x="25" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">工具使用能力</text>
+            </g>
+        </g>
+        <!-- Layer 4: 方法层 -->
+        <g transform="translate(900, 0)">
+            <rect x="0" y="0" width="260" height="280" rx="12" fill="#334155" opacity="0.9" stroke="#8B5CF6" stroke-width="2"/>
+            <rect x="0" y="0" width="260" height="50" rx="12" fill="#8B5CF6" opacity="0.8"/>
+            <text x="130" y="32" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="600">方法层</text>
+            <g transform="translate(20, 70)">
+                <circle cx="10" cy="10" r="6" fill="#8B5CF6"/>
+                <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">MCP连接层</text>
+                <circle cx="10" cy="45" r="6" fill="#8B5CF6"/>
+                <text x="25" y="50" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">Skill知识层</text>
+                <circle cx="10" cy="80" r="6" fill="#8B5CF6"/>
+                <text x="25" y="85" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">BMAD方法层</text>
+                <circle cx="10" cy="115" r="6" fill="#8B5CF6"/>
+                <text x="25" y="120" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">三位一体协同</text>
+                <circle cx="10" cy="150" r="6" fill="#8B5CF6"/>
+                <text x="25" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">迭代开发方法</text>
+            </g>
+        </g>
+    </g>
+    <!-- Connection lines between layers -->
+    <g stroke="#94A3B8" stroke-width="2" opacity="0.5">
+        <line x1="260" y1="260" x2="300" y2="260"/>
+        <line x1="560" y1="260" x2="600" y2="260"/>
+        <line x1="860" y1="260" x2="900" y2="260"/>
+    </g>
+    <!-- AI素养四维度 -->
+    <g transform="translate(80, 440)">
+        <text x="0" y="0" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="20" fill="#F1F5F9" font-weight="600">金融专业学生AI素养四维度</text>
+        <g transform="translate(0, 40)">
+            <!-- 维度1: 工具使用 -->
+            <rect x="0" y="0" width="260" height="60" rx="8" fill="#334155" stroke="#3B82F6" stroke-width="1"/>
+            <circle cx="30" cy="30" r="20" fill="#3B82F6" opacity="0.8"/>
+            <text x="30" y="35" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle">1</text>
+            <text x="60" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9" font-weight="600">工具使用</text>
+            <text x="60" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#94A3B8">会不会用</text>
+            <!-- 维度2: 提示工程 -->
+            <rect x="280" y="0" width="260" height="60" rx="8" fill="#334155" stroke="#10B981" stroke-width="1"/>
+            <circle cx="310" cy="30" r="20" fill="#10B981" opacity="0.8"/>
+            <text x="310" y="35" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle">2</text>
+            <text x="340" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9" font-weight="600">提示工程</text>
+            <text x="340" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#94A3B8">用不用好</text>
+            <!-- 维度3: 系统设计 -->
+            <rect x="560" y="0" width="260" height="60" rx="8" fill="#334155" stroke="#F59E0B" stroke-width="1"/>
+            <circle cx="590" cy="30" r="20" fill="#F59E0B" opacity="0.8"/>
+            <text x="590" y="35" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle">3</text>
+            <text x="620" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9" font-weight="600">系统设计</text>
+            <text x="620" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#94A3B8">能不能设计</text>
+            <!-- 维度4: 伦理判断 -->
+            <rect x="840" y="0" width="260" height="60" rx="8" fill="#334155" stroke="#8B5CF6" stroke-width="1"/>
+            <circle cx="870" cy="30" r="20" fill="#8B5CF6" opacity="0.8"/>
+            <text x="870" y="35" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle">4</text>
+            <text x="900" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9" font-weight="600">伦理判断</text>
+            <text x="900" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#94A3B8">该不该做</text>
+        </g>
+    </g>
+    <!-- Next chapter preview -->
+    <g transform="translate(80, 560)">
+        <rect x="0" y="0" width="1120" height="80" rx="12" fill="#334155" opacity="0.9"/>
+        <text x="40" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="#3B82F6" font-weight="600">下章预告</text>
+        <text x="40" y="60" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">第2章：MCP协议与工具连接 —— 学习如何让AI拥有"手脚"，连接外部数据源和业务系统</text>
+    </g>
+    <!-- Bottom bar -->
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 1 章 / 共 8 章</text>
+    <!-- Speaker notes indicator -->
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

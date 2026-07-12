@@ -3,6 +3,16 @@ title: '使用CNB同步项目库'
 description: '使用 CNB 平台同步和管理项目代码库'
 ---
 
+---
+title: '使用CNB同步项目库'
+description: '使用 CNB 平台同步和管理项目代码库'
+---
+
+---
+title: '使用CNB同步项目库'
+description: '使用 CNB 平台同步和管理项目代码库'
+---
+
 实验步骤：环境准备与CNB项目同步
 
 本实验帮助学生完成开发环境搭建，并将课程仓库同步到个人CNB空间。

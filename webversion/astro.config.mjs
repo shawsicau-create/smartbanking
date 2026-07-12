@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
+import mermaid from '@pasqal-io/starlight-client-mermaid';
 
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -46,6 +47,7 @@ export default defineConfig({
 		starlight({
 			title: 'SmartBank Agent',
 			description: '基于MCP+Skill+BMAD三位一体的金融科技实验教学智能体',
+			plugins: [mermaid()],
 			head: [
 				{
 					tag: 'script',
@@ -63,6 +65,23 @@ export default defineConfig({
 						inLanguage: 'zh-CN',
 						isAccessibleForFree: true,
 					}),
+				},
+				{
+					tag: 'script',
+					attrs: { src: 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js' },
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'text/javascript' },
+					content: `document.addEventListener('DOMContentLoaded', function() {
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+  mermaid.init(undefined, '.mermaid');
+});`,
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'text/javascript' },
+					content: `function toggleChapterAudio(ch){var a=document.getElementById(ch+'-audio');var b=document.getElementById(ch+'-play-btn');if(!a)return;if(a.paused){document.querySelectorAll('audio').forEach(function(e){if(e!==a&&e.paused===false){e.pause();var eb=document.getElementById(e.id.replace('-audio','-play-btn'));if(eb){eb.textContent='▶';eb.style.background='linear-gradient(135deg,#3B82F6,#2563EB)';}}});a.play();b.textContent='⏸';b.style.background='linear-gradient(135deg,#10B981,#059669)';}else{a.pause();b.textContent='▶';b.style.background='linear-gradient(135deg,#3B82F6,#2563EB)';}}`,
 				},
 			],
 			logo: {
@@ -85,6 +104,10 @@ export default defineConfig({
 				{
 					label: '🔌 MCP工具 & Skill能力',
 					link: '/tools/',
+				},
+				{
+					label: '🎬 课件中心',
+					link: '/slides/',
 				},
 				{
 					label: '前言',

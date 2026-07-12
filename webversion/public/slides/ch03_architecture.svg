@@ -1,0 +1,96 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <!-- Header -->
+    <g transform="translate(80, 40)">
+        <rect x="0" y="0" width="80" height="32" rx="16" fill="#3B82F6" opacity="0.9"/>
+        <text x="40" y="22" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">第3章</text>
+        <text x="100" y="25" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="24" fill="#F1F5F9" font-weight="600">MCP三层架构详解</text>
+    </g>
+    <!-- Three-layer architecture diagram -->
+    <g transform="translate(80, 100)">
+        <!-- Layer 1: MCP Client -->
+        <g>
+            <rect x="0" y="0" width="1120" height="150" rx="12" fill="#334155" opacity="0.9" stroke="#3B82F6" stroke-width="3"/>
+            <rect x="0" y="0" width="1120" height="45" rx="12" fill="#3B82F6" opacity="0.9"/>
+            <text x="560" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="600">第1层：MCP Client（宿主 IDE）</text>
+            <g transform="translate(40, 65)">
+                <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">TRAE / Qoder / Cursor / Claude Desktop</text>
+                <text x="0" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">职责：接收用户意图 → 决定调用哪个 MCP 工具</text>
+                <g transform="translate(0, 50)">
+                    <rect x="0" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="100" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle">工具发现</text>
+                    <rect x="220" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="320" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle">意图路由</text>
+                    <rect x="440" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="540" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle">请求构造</text>
+                    <rect x="660" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="760" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle">结果呈现</text>
+                </g>
+            </g>
+        </g>
+        <!-- Connection arrow -->
+        <g transform="translate(560, 160)">
+            <line x1="0" y1="0" x2="0" y2="30" stroke="#94A3B8" stroke-width="2" stroke-dasharray="5,5"/>
+            <polygon points="-8,25 0,35 8,25" fill="#94A3B8"/>
+            <text x="20" y="20" font-family="SF Pro Text, sans-serif" font-size="12" fill="#94A3B8">JSON-RPC over stdio / SSE</text>
+        </g>
+        <!-- Layer 2: MCP Server -->
+        <g transform="translate(0, 200)">
+            <rect x="0" y="0" width="1120" height="150" rx="12" fill="#334155" opacity="0.9" stroke="#10B981" stroke-width="3"/>
+            <rect x="0" y="0" width="1120" height="45" rx="12" fill="#10B981" opacity="0.9"/>
+            <text x="560" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="600">第2层：MCP Server（工具方进程）</text>
+            <g transform="translate(40, 65)">
+                <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">mcp-server-fetch / @playwright/mcp / stata-mcp</text>
+                <text x="0" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">职责：暴露 tools 列表 → 接收调用请求 → 返回结果</text>
+                <g transform="translate(0, 50)">
+                    <rect x="0" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="100" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#10B981" text-anchor="middle">Schema声明</text>
+                    <rect x="220" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="320" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#10B981" text-anchor="middle">请求处理</text>
+                    <rect x="440" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="540" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#10B981" text-anchor="middle">工具调用</text>
+                    <rect x="660" y="0" width="200" height="35" rx="6" fill="#1E293B"/>
+                    <text x="760" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="12" fill="#10B981" text-anchor="middle">结果封装</text>
+                </g>
+            </g>
+        </g>
+        <!-- Connection arrow -->
+        <g transform="translate(560, 360)">
+            <line x1="0" y1="0" x2="0" y2="30" stroke="#94A3B8" stroke-width="2" stroke-dasharray="5,5"/>
+            <polygon points="-8,25 0,35 8,25" fill="#94A3B8"/>
+            <text x="20" y="20" font-family="SF Pro Text, sans-serif" font-size="12" fill="#94A3B8">Function Calls / API Invocations</text>
+        </g>
+        <!-- Layer 3: Real Tools -->
+        <g transform="translate(0, 400)">
+            <rect x="0" y="0" width="1120" height="120" rx="12" fill="#334155" opacity="0.9" stroke="#F59E0B" stroke-width="3"/>
+            <rect x="0" y="0" width="1120" height="45" rx="12" fill="#F59E0B" opacity="0.9"/>
+            <text x="560" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="600">第3层：真实工具 / 外部系统</text>
+            <g transform="translate(40, 65)">
+                <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">浏览器 / Excel / Word / Stata / 数据库 / Web API</text>
+                <text x="0" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">职责：实际执行操作（打开页面、写入文件、跑回归等）</text>
+            </g>
+        </g>
+    </g>
+    <!-- Key insight -->
+    <g transform="translate(80, 600)">
+        <rect x="0" y="0" width="1120" height="50" rx="8" fill="#1E293B" stroke="#F59E0B" stroke-width="1"/>
+        <text x="40" y="30" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F59E0B">核心洞察：MCP的三层架构实现了"AI侧标准化 + 工具侧标准化"的双向解耦，任意Client可连接任意Server</text>
+    </g>
+    <!-- Bottom bar -->
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 3 章 / 共 8 章</text>
+    <!-- Speaker notes indicator -->
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

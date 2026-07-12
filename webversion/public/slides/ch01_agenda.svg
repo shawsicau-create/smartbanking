@@ -1,0 +1,104 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <!-- Decorative grid lines -->
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <!-- Left side: Chapter info -->
+    <g transform="translate(80, 60)">
+        <!-- Chapter badge -->
+        <rect x="0" y="0" width="80" height="32" rx="16" fill="#3B82F6" opacity="0.9"/>
+        <text x="40" y="22" font-family="SF Pro Display, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">第1章</text>
+        <!-- Chapter title -->
+        <text x="0" y="80" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="28" fill="#F1F5F9" font-weight="700">绪论：AI驱动的银行数字化转型</text>
+        <!-- Decorative line -->
+        <rect x="0" y="100" width="120" height="4" rx="2" fill="url(#accent-gradient)"/>
+    </g>
+    <!-- Main content area -->
+    <g transform="translate(80, 180)">
+        <!-- Section title -->
+        <text x="0" y="0" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="24" fill="#3B82F6" font-weight="600">本章学习内容</text>
+        <!-- Content items -->
+        <g transform="translate(0, 50)">
+            <!-- Item 1 -->
+            <g>
+                <circle cx="20" cy="15" r="20" fill="#334155" stroke="#3B82F6" stroke-width="2"/>
+                <text x="20" y="20" font-family="SF Pro Display, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">1</text>
+                <text x="55" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">银行业数字化转型全景</text>
+                <text x="55" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">金融科技四阶段 · 全球趋势 · 中国现状 · 监管科技演进</text>
+            </g>
+            <!-- Item 2 -->
+            <g transform="translate(0, 100)">
+                <circle cx="20" cy="15" r="20" fill="#334155" stroke="#10B981" stroke-width="2"/>
+                <text x="20" y="20" font-family="SF Pro Display, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">2</text>
+                <text x="55" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">AI在银行业的应用矩阵</text>
+                <text x="55" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">智能客服 · 智能风控 · 智能营销 · 智能运营 · 智能合规</text>
+            </g>
+            <!-- Item 3 -->
+            <g transform="translate(0, 200)">
+                <circle cx="20" cy="15" r="20" fill="#334155" stroke="#F59E0B" stroke-width="2"/>
+                <text x="20" y="20" font-family="SF Pro Display, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">3</text>
+                <text x="55" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">大语言模型与Agent范式</text>
+                <text x="55" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">LLM原理 · ChatBot到Agent · ReAct框架 · 工具使用</text>
+            </g>
+            <!-- Item 4 -->
+            <g transform="translate(0, 300)">
+                <circle cx="20" cy="15" r="20" fill="#334155" stroke="#8B5CF6" stroke-width="2"/>
+                <text x="20" y="20" font-family="SF Pro Display, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">4</text>
+                <text x="55" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9">MCP+Skill+BMAD方法论</text>
+                <text x="55" y="45" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">连接层 · 知识层 · 方法层 · 三位一体协同</text>
+            </g>
+        </g>
+    </g>
+    <!-- Right side: Visual metaphor -->
+    <g transform="translate(750, 200)">
+        <!-- Central circle -->
+        <circle cx="200" cy="200" r="80" fill="#334155" stroke="#3B82F6" stroke-width="3"/>
+        <text x="200" y="190" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">AI驱动</text>
+        <text x="200" y="215" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">银行转型</text>
+        <!-- Orbiting elements -->
+        <!-- Digitalization -->
+        <circle cx="200" cy="60" r="30" fill="#3B82F6" opacity="0.8"/>
+        <text x="200" y="65" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="10" fill="white" text-anchor="middle">数字化</text>
+        <!-- AI Applications -->
+        <circle cx="340" cy="200" r="30" fill="#10B981" opacity="0.8"/>
+        <text x="340" y="205" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="10" fill="white" text-anchor="middle">AI应用</text>
+        <!-- LLM/Agent -->
+        <circle cx="200" cy="340" r="30" fill="#F59E0B" opacity="0.8"/>
+        <text x="200" y="345" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="10" fill="white" text-anchor="middle">LLM/Agent</text>
+        <!-- Methodology -->
+        <circle cx="60" cy="200" r="30" fill="#8B5CF6" opacity="0.8"/>
+        <text x="60" y="205" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="10" fill="white" text-anchor="middle">方法论</text>
+        <!-- Connection lines -->
+        <line x1="200" y1="120" x2="200" y2="130" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+        <line x1="280" y1="200" x2="310" y2="200" stroke="#10B981" stroke-width="2" opacity="0.6"/>
+        <line x1="200" y1="280" x2="200" y2="310" stroke="#F59E0B" stroke-width="2" opacity="0.6"/>
+        <line x1="120" y1="200" x2="90" y2="200" stroke="#8B5CF6" stroke-width="2" opacity="0.6"/>
+    </g>
+    <!-- Bottom bar -->
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 1 章 / 共 8 章</text>
+    <!-- Speaker notes indicator -->
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

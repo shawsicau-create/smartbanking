@@ -23,3 +23,4 @@ pnpm-debug.log*
 # Vercel: 只保留 project.json（用于CI部署），忽略其他
 .vercel/*
 !.vercel/project.json
+.wrangler/

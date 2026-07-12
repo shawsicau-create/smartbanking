@@ -7,19 +7,56 @@ description: '环境配置速查、MCP服务器清单、Skill模板库、Prompt�
 
 ## LaTeX排版环境（详细版）
 
+```mermaid
+flowchart TB
+    subgraph Check["环境配置检查"]
+        C1["LaTeX环境"]
+        C2["Node.js环境"]
+        C3["Python环境"]
+        C4["Git环境"]
+        C5["AI IDE环境"]
+    end
+    
+    subgraph Tools["工具链"]
+        T1["xelatex/pdflatex"]
+        T2["npm/pnpm"]
+        T3["pip/conda"]
+        T4["git/cnb"]
+        T5["qoder/cursor"]
+    end
+    
+    subgraph Verify["验证命令"]
+        V1["xelatex --version"]
+        V2["node --version"]
+        V3["python --version"]
+        V4["git --version"]
+        V5["qoder --version"]
+    end
+    
+    C1 --> T1 --> V1
+    C2 --> T2 --> V2
+    C3 --> T3 --> V3
+    C4 --> T4 --> V4
+    C5 --> T5 --> V5
+    
+    style Check fill:#e1f5fe
+    style Tools fill:#e8f5e8
+    style Verify fill:#fff3e0
+```
+
 ### MiKTeX（Windows）
 
 MiKTeX是Windows上最推荐的LaTeX发行版，支持按需自动安装宏包。
 
 1.  访问<https://miktex.org/download>，下载Basic MiKTeX Installer（约230 MB）
 
-2.  运行安装程序，选择\"Install for current user\"（无需管理员权限）
+2.  运行安装程序，选择”Install for current user”（无需管理员权限）
 
 3.  安装路径默认为`%LOCALAPPDATA%\Programs\MiKTeX\`
 
-4.  打开MiKTeX Console → Settings →\"Install missing packages\"设为Always
+4.  打开MiKTeX Console → Settings →“Install missing packages”设为Always
 
-5.  Updates →\"Check for updates\"更新一次
+5.  Updates →“Check for updates”更新一次
 
 安装后自动获得的工具：
 
@@ -34,7 +71,7 @@ MiKTeX是Windows上最推荐的LaTeX发行版，支持按需自动安装宏包�
 
 MacTeX是TeX Live的macOS封装版，包含**全部**宏包（约7 GB）。
 
-```bash
+``` bash
 # 方式一：Homebrew（推荐）
 brew install --cask mactex
 
@@ -49,7 +86,7 @@ sudo installer -pkg /tmp/mactex.pkg -target /
 
 **PATH配置（如终端找不到xelatex）：**
 
-```bash
+``` bash
 echo 'export PATH="/usr/local/texlive/2026/bin/universal-darwin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
@@ -61,9 +98,11 @@ source ~/.zshrc
 | Windows  | 宋体/黑体/楷体/仿宋        | SimSun/SimHei/KaiTi/FangSong |
 | macOS    | 华文宋体/华文黑体/华文楷体 | STSong/STHeiti/STKaiti       |
 
-:::note[提示]
+<div class="note[提示]">
+
 使用`ctexart`文档类时，ctex宏包会**自动检测**操作系统并选择对应的中文字体，无需手动指定。
-:::
+
+</div>
 
 ### 推荐的LaTeX编辑器
 
@@ -74,7 +113,7 @@ source ~/.zshrc
 | VS Code + LaTeX Workshop | Win/Mac/Linux | 轻量，实时预览，Git集成            |
 | Overleaf                 | 在线          | 无需安装，协作方便，国内访问需加速 |
 
-## AI IDE------Qoder
+## AI IDE——Qoder
 
 Qoder是一款基于VS Code架构的AI智能体编程平台，内置多模型支持。
 
@@ -102,11 +141,11 @@ Qoder是一款基于VS Code架构的AI智能体编程平台，内置多模型支
 | Claude Code | Anthropic | `npm i -g @anthropic-ai/claude-code` | Claude Sonnet |
 | Codex CLI   | OpenAI    | `npm i -g @openai/codex`             | GPT-4o        |
 
-## CC Switch------多账号管理
+## CC Switch——多账号管理
 
 CC Switch是AI CLI多账号/多服务商管理工具，提供可视化界面统一管理Claude Code、Codex、Gemini CLI等7款工具的配置。
 
-```bash
+``` bash
 # macOS
 brew install --cask cc-switch
 
@@ -118,17 +157,17 @@ brew install --cask cc-switch
 
 ## OpenCLI与OpenClaw
 
-**OpenCLI**------把网站变成命令行：
+**OpenCLI**——把网站变成命令行：
 
-```bash
+``` bash
 npm install -g @jackwener/opencli
 opencli --version
 opencli setup   # 验证Chrome扩展连接
 ```
 
-**OpenClaw**------AI Skill包管理：
+**OpenClaw**——AI Skill包管理：
 
-```bash
+``` bash
 npm install -g openclaw
 openclaw --version
 openclaw install academic-paper-analysis
@@ -144,13 +183,44 @@ openclaw install arxiv
 | 开发成本 | 高（写Server） | 低（写Markdown） | 零         |
 | 适合场景 | 企业SaaS       | 知识沉淀复用     | 本地自动化 |
 
-:::note[提示]
+```mermaid
+flowchart TB
+    subgraph Layer["AI工具链三层架构"]
+        L1["CLI层\n执行层"]
+        L2["Skill层\n知识层"]
+        L3["MCP层\n连接层"]
+    end
+    
+    subgraph Examples["典型示例"]
+        E1["cnb/qoder/codex"]
+        E2["SKILL.md文件"]
+        E3["mcp-server-fetch"]
+    end
+    
+    subgraph UseCase["适用场景"]
+        U1["本地自动化"]
+        U2["知识沉淀复用"]
+        U3["企业SaaS"]
+    end
+    
+    L1 --> E1 --> U1
+    L2 --> E2 --> U2
+    L3 --> E3 --> U3
+    
+    style Layer fill:#e1f5fe
+    style Examples fill:#e8f5e8
+    style UseCase fill:#fff3e0
+```
+
+<div class="note[提示]">
+
 CLI（执行层）+ Skill（知识层）+ MCP（连接层）= 完整AI工具链。日常以CLI + Skill为主，MCP在需要跨系统数据连接时介入。
-:::
+
+</div>
 
 ## 完整安装检查清单
 
-```bash
+``` bash
 # LaTeX
 xelatex --version
 biber --version
@@ -170,9 +240,11 @@ openclaw --version
 cnb --version
 ```
 
-:::note[提示]
+<div class="note[提示]">
+
 完整版本的AI开发环境配置讲义（含OpenMAIC、DeepTutor、所有安装细节与故障排除）可参见独立文档：`AI开发环境配置讲义_中文版.pdf`。
-:::
+
+</div>
 
 # MCP配置大全与故障排除
 
@@ -180,12 +252,12 @@ cnb --version
 
 MCP（Model Context Protocol）让AI助手能够访问外部数据源和工具。Qoder的MCP配置文件位于：
 
-```text
+``` text
 # Windows
 %APPDATA%\Qoder\SharedClientCache\extension\local\mcp.json
 ```
 
-```text
+``` text
 # macOS
 ~/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json
 ```
@@ -203,59 +275,34 @@ MCP（Model Context Protocol）让AI助手能够访问外部数据源和工具�
 
 ### 完整mcp.json参考配置
 
-```json
+``` json
 {
   "mcpServers": {
 ```
-"fetch": {
-"command": "uvx",
-"args": ["mcp-server-fetch"]
-},
-"playwright": {
-"command": "npx",
-"args": ["@playwright/mcp@latest"]
-},
-"excel": {
-"command": "npx",
-"args": ["@negokaz/excel-mcp-server"]
-},
-"ppt": {
-"command": "uvx",
-"args": ["ppt_mcp_server"]
-},
-"word": {
-"command": "uvx",
-"args": ["word_mcp_server"]
-},
-"stata-mcp": {
-"command": "uvx",
-"args": ["stata-mcp"],
-"env": {
-"STATA_PATH": "C:<br/>Program Files<br/>Stata18<br/>StataMP-64.exe",
-"MCP_STATA_LOGLEVEL": "INFO"
-}
-}
-```
-  }
-}
-```
+
+“fetch”: { “command”: “uvx”, “args”: \[“mcp-server-fetch”\] }, “playwright”: { “command”: “npx”, “args”: \[“@playwright/mcp@latest”\] }, “excel”: { “command”: “npx”, “args”: \[“@negokaz/excel-mcp-server”\] }, “ppt”: { “command”: “uvx”, “args”: \[“ppt_mcp_server”\] }, “word”: { “command”: “uvx”, “args”: \[“word_mcp_server”\] }, “stata-mcp”: { “command”: “uvx”, “args”: \[“stata-mcp”\], “env”: { “STATA_PATH”: “C:<br/>Program Files<br/>Stata18<br/>StataMP-64.exe”, “MCP_STATA_LOGLEVEL”: “INFO” } }
+
+      }
+    }
 
 ### 各平台路径说明
 
-| **平台** | **mcp.json路径** |
-|:---|:---|
-| Qoder (Windows) | `%APPDATA%\Qoder\SharedClientCache\extension\local\mcp.json` |
-| Qoder (macOS) | `~/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json` |
-| Claude Desktop (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
-| Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| **平台**                 | **mcp.json路径**                                                                 |
+|:-------------------------|:---------------------------------------------------------------------------------|
+| Qoder (Windows)          | `%APPDATA%\Qoder\SharedClientCache\extension\local\mcp.json`                     |
+| Qoder (macOS)            | `~/Library/Application Support/Qoder/SharedClientCache/extension/local/mcp.json` |
+| Claude Desktop (Windows) | `%APPDATA%\Claude\claude_desktop_config.json`                                    |
+| Claude Desktop (macOS)   | `~/Library/Application Support/Claude/claude_desktop_config.json`                |
 
-:::note[提示]
+<div class="note[提示]">
+
 - 修改mcp.json后必须**完全退出IDE**再重启（任务栏右键退出，不只是关窗口）
 
 - JSON中Windows路径的反斜杠必须写成`<br/>`
 
 - macOS路径中的空格需注意转义
-:::
+
+</div>
 
 ## 常见问题排查
 
@@ -287,17 +334,17 @@ MCP（Model Context Protocol）让AI助手能够访问外部数据源和工具�
 
 - **stata-mcp找不到Stata**：在env.STATA_PATH填本机Stata实际路径
 
-- **word/ppt MCP启动慢**：首次uvx需联网下载，等1--3分钟
+- **word/ppt MCP启动慢**：首次uvx需联网下载，等1–3分钟
 
 ### Skill类问题
 
 - **AI不识别Skill**：①升级IDE；②使用skill finder重新安装；③检查description是否含明确触发词
 
-- **自写Skill不激活**：description写得太宽泛，AI不知何时调用------把场景写具体（如\"当用户提到X或Y时使用\"）
+- **自写Skill不激活**：description写得太宽泛，AI不知何时调用——把场景写具体（如”当用户提到X或Y时使用”）
 
 # Stata安装与联动配置
 
-**适用场景**：实验中\"数据分析组\"使用stata-mcp跑计量回归时需要本机已安装Stata。无Stata的同学可改用Python（statsmodels）替代，但**强烈建议安装**以获得完整体验。
+**适用场景**：实验中”数据分析组”使用stata-mcp跑计量回归时需要本机已安装Stata。无Stata的同学可改用Python（statsmodels）替代，但**强烈建议安装**以获得完整体验。
 
 ## Stata软件介绍
 
@@ -307,20 +354,26 @@ Stata是一款强大的统计分析软件，广泛应用于经济学、金融学
 
 Stata为商业软件，请通过官方渠道获取合法授权：
 
-:::note[正版获取途径]
+<div class="note[正版获取途径]">
+
 - **官方网站**：访问 <https://www.stata.com> 购买正版授权
 - **学生优惠**：Stata提供学生版（Graduate Plan），价格大幅低于商业版，详见 <https://www.stata.com/order/new/edu/graduate-plans/>
 - **机构订阅**：部分高校已购买站点授权，可咨询学校图书馆或院系实验室
 - **试用版**：可在官网申请免费的短期试用许可证
-:::
 
-:::caution[版权提示]
+</div>
+
+<div class="caution[版权提示]">
+
 Stata为商业软件，受版权法保护。请务必通过上述正规渠道获取授权版本，**切勿使用来源不明的安装包**，以免面临法律风险和安全隐患（捆绑恶意软件等）。
-:::
 
-:::tip[无法获取Stata？]
+</div>
+
+<div class="tip[无法获取Stata？]">
+
 若暂时无法获取Stata授权，可使用 Python（statsmodels / linearmodels）完成全部课程实验，详见下方「替代方案」。
-:::
+
+</div>
 
 ## 安装步骤
 
@@ -342,13 +395,13 @@ Stata为商业软件，受版权法保护。请务必通过上述正规渠道获
 
 打开PowerShell执行：
 
-```bash
+``` bash
 & "C:\Program Files\Stata18\StataMP-64.exe" -h
 ```
 
 或直接双击桌面Stata图标，命令窗口输入：
 
-```stata
+``` stata
 sysuse auto, clear
 summarize
 ```
@@ -363,29 +416,28 @@ stata-mcp有两种方案，分别对应不同的配置方式：
 
 本课程mcp.json使用的是SepineTam方案，它是独立的MCP Server，**无需IDE扩展**，直接通过subprocess调用Stata CLI：
 
-```json
+``` json
 "stata-mcp": {
   "command": "uvx",
   "args": ["stata-mcp"],
   "env": {
 ```
-"STATA_PATH": "C:<br/>Program Files<br/>Stata18<br/>StataMP-64.exe",
-"MCP_STATA_LOGLEVEL": "INFO"
-```
-  }
-}
-```
+
+“STATA_PATH”: “C:<br/>Program Files<br/>Stata18<br/>StataMP-64.exe”, “MCP_STATA_LOGLEVEL”: “INFO”
+
+      }
+    }
 
 **环境检查**（验证配置是否正确）：
 
-```bash
+``` bash
 # 检查 stata-mcp 是否能找到 Stata
 uvx stata-mcp doctor
 ```
 
 正常输出示例：
 
-```text
+``` text
 stata-mcp v1.17.0 -- Doctor Report
 [PASS] os: macOS (Darwin 25.3.0, arm64)
 [PASS] python: 3.13.5
@@ -396,15 +448,17 @@ stata-mcp v1.17.0 -- Doctor Report
 Summary: 12 passed, 0 failed
 ```
 
-:::note[提示]
+<div class="note[提示]">
+
 如安装的是SE版本，把StataMP-64.exe改为StataSE-64.exe；如安装路径不同，整段绝对路径也要相应修改。**注意JSON中反斜杠必须写成<br/><br/>**。
-:::
+
+</div>
 
 ### 方案二：hanlulong/stata-mcp（IDE扩展方案）
 
 如果使用Qoder/VS Code/Cursor等支持扩展的IDE，可以选择安装`DeepEcon.stata-mcp`扩展。此方案的架构如下：
 
-```text
+``` text
 ┌─────────────────┐        HTTP         ┌──────────────────────┐
 │  IDE (客户端)    │ ──mcp-remote──────▶ │  Stata MCP Server    │
 │  mcp.json 配置   │                     │  localhost:4000      │
@@ -414,7 +468,7 @@ Summary: 12 passed, 0 failed
 
 **Step 1：安装DeepEcon.stata-mcp扩展**（**关键步骤，不可跳过**）
 
-```bash
+``` bash
 # VS Code
 code --install-extension DeepEcon.stata-mcp
 
@@ -425,15 +479,17 @@ cursor --install-extension DeepEcon.stata-mcp
 # 在扩展市场搜索 "Stata MCP" 安装
 ```
 
-或在IDE中：扩展视图（Ctrl+Shift+X / Cmd+Shift+X）→搜索\"Stata MCP\"→安装。
+或在IDE中：扩展视图（Ctrl+Shift+X / Cmd+Shift+X）→搜索”Stata MCP”→安装。
 
-:::caution[警告]
-此方案**必须先安装扩展**！扩展启动后才会在localhost:4000监听，否则mcp-remote无法连接，会报\"connection refused\"错误。安装成功后状态栏应显示\"Stata\"。
-:::
+<div class="caution[警告]">
+
+此方案**必须先安装扩展**！扩展启动后才会在localhost:4000监听，否则mcp-remote无法连接，会报”connection refused”错误。安装成功后状态栏应显示”Stata”。
+
+</div>
 
 **Step 2：配置mcp.json**（仅Qoder/Claude Desktop需要此配置）
 
-```json
+``` json
 "stata-mcp": {
   "command": "npx",
   "args": ["-y", "mcp-remote", "http://localhost:4000/mcp-streamable"]
@@ -442,7 +498,7 @@ cursor --install-extension DeepEcon.stata-mcp
 
 **Step 3：验证服务**
 
-```bash
+``` bash
 # 健康检查（扩展启动后执行）
 curl -s http://localhost:4000/health
 # 期望返回: {"status":"ok","service":"Stata MCP Server","version":"0.4.1","stata_available":true}
@@ -458,17 +514,17 @@ curl -s http://localhost:4000/health
 
 ### 两种方案选型建议
 
-| **维度** | **SepineTam（本课程默认）** | **hanlulong（IDE扩展）** |
-|:---|:---|:---|
-| 是否需要IDE扩展 | 否 | 是（DeepEcon.stata-mcp） |
-| 是否需要IDE窗口保持打开 | 否 | 是 |
-| 安全机制 | Command Guard + RAM监控 | 无 |
-| 安装难度 | pip install uv即可 | 需安装扩展 |
-| 适合场景 | Agent驱动分析、CLI环境 | IDE内交互式编码 |
+| **维度**                | **SepineTam（本课程默认）** | **hanlulong（IDE扩展）** |
+|:------------------------|:----------------------------|:-------------------------|
+| 是否需要IDE扩展         | 否                          | 是（DeepEcon.stata-mcp） |
+| 是否需要IDE窗口保持打开 | 否                          | 是                       |
+| 安全机制                | Command Guard + RAM监控     | 无                       |
+| 安装难度                | pip install uv即可          | 需安装扩展               |
+| 适合场景                | Agent驱动分析、CLI环境      | IDE内交互式编码          |
 
 ## 完整Stata MCP设置参考
 
-以下设置适用于hanlulong/stata-mcp扩展方案，可在IDE设置中搜索\"Stata MCP\"修改：
+以下设置适用于hanlulong/stata-mcp扩展方案，可在IDE设置中搜索”Stata MCP”修改：
 
 | **设置项**                     | **说明**                   | **默认值** |
 |:-------------------------------|:---------------------------|:-----------|
@@ -482,9 +538,11 @@ curl -s http://localhost:4000/health
 | stata-vscode.resultDisplayMode | 输出模式（compact/full）   | compact    |
 | stata-vscode.maxOutputTokens   | MCP输出最大token（0=无限） | 10000      |
 
-:::note[提示]
-Compact模式会过滤循环代码回显、程序定义块、命令回显和续行符、冗余消息如\"(N real changes made)\"，有助于减少AI的token消耗。
-:::
+<div class="note[提示]">
+
+Compact模式会过滤循环代码回显、程序定义块、命令回显和续行符、冗余消息如”(N real changes made)“，有助于减少AI的token消耗。
+
+</div>
 
 ## macOS安装说明
 
@@ -498,7 +556,7 @@ Compact模式会过滤循环代码回显、程序定义块、命令回显和续�
 
 **macOS Stata路径**：
 
-```bash
+``` bash
 /Applications/Stata/StataMP.app/Contents/MacOS/stata-mp
 ```
 
@@ -510,19 +568,19 @@ macOS用户使用stata-mcp时：
 
 ## 常见问题
 
-| **现象** | **原因** | **解决** |
-|:---|:---|:---|
-| 安装时提示「Windows已保护您的电脑」 | SmartScreen误报 | 点击「更多信息」→「仍要运行」 |
-| 启动报「License not found」 | 授权文件未正确放置 | 把stata.lic拷贝到C:<br/>Program Files<br/>Stata18<br/>根目录 |
-| stata-mcp报「Stata not found」 | STATA_PATH路径写错或转义错 | 用PowerShell Test-Path验证 |
-| 中文路径乱码 | 安装在中文目录下 | 卸载后重装到C:<br/>Program Files<br/>等纯英文路径 |
-| 无法激活 | 授权码输入错误或过期 | 核对购买确认邮件中的序列号和授权码 |
+| **现象**                            | **原因**                   | **解决**                                                     |
+|:------------------------------------|:---------------------------|:-------------------------------------------------------------|
+| 安装时提示「Windows已保护您的电脑」 | SmartScreen误报            | 点击「更多信息」→「仍要运行」                                |
+| 启动报「License not found」         | 授权文件未正确放置         | 把stata.lic拷贝到C:<br/>Program Files<br/>Stata18<br/>根目录 |
+| stata-mcp报「Stata not found」      | STATA_PATH路径写错或转义错 | 用PowerShell Test-Path验证                                   |
+| 中文路径乱码                        | 安装在中文目录下           | 卸载后重装到C:<br/>Program Files<br/>等纯英文路径            |
+| 无法激活                            | 授权码输入错误或过期       | 核对购买确认邮件中的序列号和授权码                           |
 
 ## 替代方案（无法安装Stata时）
 
 若实在无法安装Stata，可使用Python替代：
 
-```python
+``` python
 import pandas as pd
 import statsmodels.formula.api as smf
 
@@ -531,11 +589,10 @@ df = pd.read_stata("data/bank_panel.dta")
 
 model = smf.ols("roe ~ npl_ratio + car + loan_growth + np.log(asset)",
 ```
-data=df).fit(cov_type="cluster",
-cov_kwds={"groups": df["bank_id"]})
-```
-print(model.summary())
-```
+
+data=df).fit(cov_type=“cluster”, cov_kwds={“groups”: df\[“bank_id”\]})
+
+    print(model.summary())
 
 并在实验报告中注明「采用Python statsmodels替代Stata」即可获得同等分数。
 
@@ -549,11 +606,11 @@ print(model.summary())
 
 2.  根据你的电脑系统选择对应版本下载：
 
-```text
+``` text
 - Windows 用户：点击 Windows (x64) 下载
 ```
 
-```text
+``` text
 - macOS 用户：点击 macOS (Apple Silicon) 下载
 ```
 
@@ -571,7 +628,7 @@ winget 是 Windows 10/11 自带的包管理器。如果你的电脑上没有 win
 
 在打开的 PowerShell（管理员）窗口中，逐条复制粘贴执行以下命令：
 
-```bash
+``` bash
 # 安装 Python 3.12
 winget install --id Python.Python.3.12 -e --source winget
 
@@ -584,35 +641,37 @@ winget install --id Git.Git -e --source winget
 
 ### 方式二：官网下载安装（备选方案）
 
-| **软件** | **下载地址** | **安装注意事项** |
-|:---|:---|:---|
+| **软件**    | **下载地址**                        | **安装注意事项**               |
+|:------------|:------------------------------------|:-------------------------------|
 | Python 3.12 | <https://www.python.org/downloads/> | 务必勾选「Add Python to PATH」 |
-| Node.js LTS | <https://nodejs.org/> | 选 LTS 版本，一路 Next |
-| Git | <https://git-scm.com/download/win> | 务必勾选「Add Git to PATH」 |
+| Node.js LTS | <https://nodejs.org/>               | 选 LTS 版本，一路 Next         |
+| Git         | <https://git-scm.com/download/win>  | 务必勾选「Add Git to PATH」    |
 
 ### macOS 用户
 
 如果终端提示 `brew: command not found`，说明尚未安装 Homebrew。先在终端执行：
 
-```bash
+``` bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 然后安装所需软件：
 
-```bash
+``` bash
 brew install python@3.12 node git
 ```
 
-:::caution[警告]
+<div class="caution[警告]">
+
 安装完成后，**必须关闭当前终端窗口，重新打开一个新终端**，才能识别 `python`、`node`、`git` 命令。
-:::
+
+</div>
 
 ## 安装 Python 包管理工具
 
 前提：确保第二步中的三个软件已安装完成，并且已重启终端（关闭再重新打开）。
 
-```bash
+``` bash
 # 升级 pip
 python -m pip install --upgrade pip
 
@@ -627,7 +686,7 @@ pip install flask pandas openpyxl pypdf -i https://pypi.tuna.tsinghua.edu.cn/sim
 
 前提：确保 `node --version` 有输出。如果报 `command not found`，回到第二步确认 Node.js 已安装并重启终端。
 
-```bash
+``` bash
 # 安装 CNB 命令行工具（管理仓库、组织等）
 npm install @cnbcool/cnb-cli -g
 
@@ -642,7 +701,7 @@ npx skills add https://cnb.cool/cnb/skills/cnb-skill.git --agent trae -y --copy
 
 在 Trae CN 终端（按 `Ctrl + ‘` 打开）中逐条执行：
 
-```bash
+``` bash
 python --version     # 应显示 3.12.x
 node --version       # 应显示 v20.x 或更高
 git --version        # 应显示 git version x.x
@@ -667,11 +726,11 @@ skills list          # 应显示已安装的技能列表（含 cnb-api 等）
 
 5.  授权范围设置（两种方式任选其一）：
 
-```text
+``` text
 - 方式 A（推荐）：在「常见场景」区域勾选「Git 客户端凭据」
 ```
 
-```text
+``` text
 - 方式 B：在下方「授权范围」中找到 repo-code → 选择「读写」
 ```
 
@@ -679,9 +738,11 @@ skills list          # 应显示已安装的技能列表（含 cnb-api 等）
 
 7.  立即复制 Token
 
-:::caution[警告]
+<div class="caution[警告]">
+
 Token 仅显示一次，关闭页面后无法再次查看！建议将 Token 粘贴到记事本或备忘录中保存。
-:::
+
+</div>
 
 ### 步骤 2：在 CNB 新建空仓库
 
@@ -699,7 +760,7 @@ Token 仅显示一次，关闭页面后无法再次查看！建议将 Token 粘�
 
 在 Trae CN 终端执行：
 
-```bash
+``` bash
 cnb login
 ```
 
@@ -717,7 +778,7 @@ cnb login
 
 ### 步骤 4：克隆课程仓库到本地
 
-```bash
+``` bash
 # 克隆教师仓库（完整课程资料）
 git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
 cd smartbanking-work
@@ -725,7 +786,7 @@ cd smartbanking-work
 
 ### 步骤 5：配置 Git 用户信息
 
-```bash
+``` bash
 # 替换为你的真实姓名和邮箱（用于提交记录显示）
 git config --global user.name "你的姓名"
 git config --global user.email "你的邮箱@example.com"
@@ -733,7 +794,7 @@ git config --global user.email "你的邮箱@example.com"
 
 ### 步骤 6：关联并推送到你的 CNB 仓库
 
-```bash
+``` bash
 # 添加你自己的 CNB 仓库为远程地址
 # 将 <你的用户名> 替换为你的 CNB 用户名
 git remote add myrepo https://cnb.cool/<你的用户名>/smartbanking.git
@@ -746,7 +807,7 @@ git push myrepo main
 
 如果 `git push` 提示输入用户名密码或认证失败，改用以下命令：
 
-```bash
+``` bash
 # 将 <你的Token> 替换为步骤 1 保存的令牌
 git remote set-url myrepo https://cnb:<你的Token>@cnb.cool/<你的用户名>/smartbanking.git
 git push myrepo main
@@ -756,7 +817,7 @@ git push myrepo main
 
 打开浏览器访问 `https://cnb.cool/你的用户名/smartbanking`，确认页面显示以下目录结构：
 
-```bash
+``` bash
 smartbanking/
 +-- .agents/                     # Qoder AI 技能配置
 +-- 智慧银行实验教程chapters/    # 教程主体（12章 + 附录）
@@ -786,131 +847,124 @@ PPT Master 是一个开源项目，可以用 AI 从任意文档生成原生可�
 
 1.  克隆项目到本地（国内推荐用 AtomGit）：
 
-```
-```bash
-# 方式 A（AtomGit 国内镜像，推荐）
-git clone https://atomgit.com/hugohe3/ppt-master.git
-```
+<!-- -->
 
-```
-# 方式 B（GitHub 官方）
-git clone https://github.com/hugohe3/ppt-master.git
-```
-```
+    ```bash
+    # 方式 A（AtomGit 国内镜像，推荐）
+    git clone https://atomgit.com/hugohe3/ppt-master.git
 
-```text
-也可以直接下载 ZIP 解压后进入目录。
-```
+    # 方式 B（GitHub 官方）
+    git clone https://github.com/hugohe3/ppt-master.git
+
+    ```text
+    也可以直接下载 ZIP 解压后进入目录。
 
 2.  安装 Python 依赖：
 
-```text
+``` text
 ```bash
 pip install -r requirements.txt
 ```
-```
 
-3.  验证安装：
+    3.  验证安装：
 
-```
-```bash
+``` bash
 python -c "import pptx; print('python-pptx 版本:', pptx.__version__)"
 ```
-```
 
-4.  浏览示例（可选）：打开 `examples/` 目录查看示例，或在线预览 <https://hugohe3.github.io/ppt-master/>
+    4.  浏览示例（可选）：打开 `examples/` 目录查看示例，或在线预览 <https://hugohe3.github.io/ppt-master/>
 
-**使用方法**：在 Trae CN 中打开 ppt-master 项目，将源材料放入 `projects/` 目录，然后在 AI 对话中告诉它要把什么内容做成 PPT 即可。
+    **使用方法**：在 Trae CN 中打开 ppt-master 项目，将源材料放入 `projects/` 目录，然后在 AI 对话中告诉它要把什么内容做成 PPT 即可。
 
-## 验收清单
+    ## 验收清单
 
-完成以下全部检查项，截图保存作为实验报告交付物：
+    完成以下全部检查项，截图保存作为实验报告交付物：
 
-|  **完成**   | **检查项**                      |
-|:-----------:|:--------------------------------|
-| $`\square`$ | Trae CN 已安装并登录            |
-| $`\square`$ | `python --version` ≥ 3.10       |
-| $`\square`$ | `node --version` ≥ v20          |
-| $`\square`$ | `git --version` 有输出          |
-| $`\square`$ | `cnb --version` 有输出          |
-| $`\square`$ | `cnb login` 登录成功            |
-| $`\square`$ | 项目已成功推送到自己的 CNB 仓库 |
-| $`\square`$ | 在 CNB 网页能看到项目文件列表   |
+    |  **完成**   | **检查项**                      |
+    |:-----------:|:--------------------------------|
+    | $`\square`$ | Trae CN 已安装并登录            |
+    | $`\square`$ | `python --version` ≥ 3.10       |
+    | $`\square`$ | `node --version` ≥ v20          |
+    | $`\square`$ | `git --version` 有输出          |
+    | $`\square`$ | `cnb --version` 有输出          |
+    | $`\square`$ | `cnb login` 登录成功            |
+    | $`\square`$ | 项目已成功推送到自己的 CNB 仓库 |
+    | $`\square`$ | 在 CNB 网页能看到项目文件列表   |
 
-## 常见问题速查
+    ## 常见问题速查
 
-| **报错信息** | **原因** | **解决方法** |
-|:---|:---|:---|
-| `command not found` | 安装后未重启终端 | 关闭终端窗口，重新打开再试 |
-| `cnb login` 超时 | 网络问题或 Token 错误 | 检查网络；或跳过 cnb login，在步骤6改用 Token URL |
-| git push 要求输入密码 | cnb login 未生效 | 改用 Token URL 方式推送 |
-| Authentication failed | Token 未复制完整或已过期 | 回步骤1重新创建令牌 |
-| 403 Forbidden | 推送的是 origin（教师仓库） | 确认执行 `git push myrepo main` |
-| updates were rejected | 自己的仓库已有内容 | 回步骤2删除仓库重建空仓库 |
-| `skills add` 报错 | npm 镜像问题 | 执行 `npm config set registry https://registry.npmmirror.com` |
-| `uvx: command not found` | uv 未安装 | 运行 `pip install uv` |
-| Token 忘记保存 | Token 仅显示一次 | 回步骤1重新创建新令牌 |
-| 中文文件名乱码 | 终端编码非 UTF-8 | Trae CN 设置中将终端编码改为 UTF-8 |
+    | **报错信息** | **原因** | **解决方法** |
+    |:---|:---|:---|
+    | `command not found` | 安装后未重启终端 | 关闭终端窗口，重新打开再试 |
+    | `cnb login` 超时 | 网络问题或 Token 错误 | 检查网络；或跳过 cnb login，在步骤6改用 Token URL |
+    | git push 要求输入密码 | cnb login 未生效 | 改用 Token URL 方式推送 |
+    | Authentication failed | Token 未复制完整或已过期 | 回步骤1重新创建令牌 |
+    | 403 Forbidden | 推送的是 origin（教师仓库） | 确认执行 `git push myrepo main` |
+    | updates were rejected | 自己的仓库已有内容 | 回步骤2删除仓库重建空仓库 |
+    | `skills add` 报错 | npm 镜像问题 | 执行 `npm config set registry https://registry.npmmirror.com` |
+    | `uvx: command not found` | uv 未安装 | 运行 `pip install uv` |
+    | Token 忘记保存 | Token 仅显示一次 | 回步骤1重新创建新令牌 |
+    | 中文文件名乱码 | 终端编码非 UTF-8 | Trae CN 设置中将终端编码改为 UTF-8 |
 
-  : 常见问题速查
+      : 常见问题速查
 
-# CNB与GitHub命令速查
+    # CNB与GitHub命令速查
 
-## 基础Git命令对比
+    ## 基础Git命令对比
 
-CNB的基础Git命令与GitHub**完全相同**，因为它们都基于Git版本控制系统。
+    CNB的基础Git命令与GitHub**完全相同**，因为它们都基于Git版本控制系统。
 
-| **操作** | **Git命令**                  | **CNB中使用** |
-|:---------|:-----------------------------|:--------------|
-| 克隆仓库 | `git clone <url>`            | 相同          |
-| 添加文件 | `git add <file>`             | 相同          |
-| 提交     | `git commit -m "message"`    | 相同          |
-| 推送     | `git push origin main`       | 相同          |
-| 拉取     | `git pull origin main`       | 相同          |
-| 分支管理 | `git branch`, `git checkout` | 相同          |
+    | **操作** | **Git命令**                  | **CNB中使用** |
+    |:---------|:-----------------------------|:--------------|
+    | 克隆仓库 | `git clone <url>`            | 相同          |
+    | 添加文件 | `git add <file>`             | 相同          |
+    | 提交     | `git commit -m "message"`    | 相同          |
+    | 推送     | `git push origin main`       | 相同          |
+    | 拉取     | `git pull origin main`       | 相同          |
+    | 分支管理 | `git branch`, `git checkout` | 相同          |
 
-## CNB专属CLI命令
+    ## CNB专属CLI命令
 
-CNB提供了`cnb`命令行工具来管理平台资源：
+    CNB提供了`cnb`命令行工具来管理平台资源：
 
-```bash
-# 登录/登出
-cnb login
-cnb logout
+    ```bash
+    # 登录/登出
+    cnb login
+    cnb logout
 
-# 组织管理
-cnb organizations list-top-groups
-cnb organizations create-organization
+    # 组织管理
+    cnb organizations list-top-groups
+    cnb organizations create-organization
 
-# 仓库管理
-cnb repositories list-repos
-cnb repositories create-repo
+    # 仓库管理
+    cnb repositories list-repos
+    cnb repositories create-repo
 
-# Issue和PR管理
-cnb issues list-issues
-cnb pulls list-pulls
+    # Issue和PR管理
+    cnb issues list-issues
+    cnb pulls list-pulls
 
-# AI功能
-cnb ai summarize-pr
-```
+    # AI功能
+    cnb ai summarize-pr
 
 ## 仓库地址格式对比
 
 **GitHub**：
 
-```bash
+``` bash
 https://github.com/用户名/仓库名.git
 git@github.com:用户名/仓库名.git
 ```
 
 **CNB**：
 
-```bash
+``` bash
 https://cnb.cool/组织名/仓库名.git
 https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
 ```
 
-:::note[提示]
+<div class="note[提示]">
+
 - **Git核心命令**：完全一致，可使用熟悉的Git命令进行代码管理
 
 - **平台管理命令**：CNB提供额外的`cnb` CLI来管理组织、仓库、Issue等
@@ -918,7 +972,8 @@ https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
 - **认证方式**：CNB使用访问令牌（Token）进行认证
 
 如果你熟悉GitHub的使用，切换到CNB几乎没有学习成本！
-:::
+
+</div>
 
 # 金融数据源汇总
 
@@ -932,23 +987,23 @@ tushare Pro是国内最流行的金融数据接口之一，提供A股、基金�
 
 **数据覆盖**：
 
-| **数据类别** | **接口示例** | **说明** |
-|:---|:---|:---|
-| A股日线 | `daily()` | 沪深A股日线行情（开盘/收盘/最高/最低/成交量） |
-| A股分钟线 | `pro.bar()` | 1分钟/5分钟线 |
-| 财务数据 | `income()`, `balancesheet()` | 利润表、资产负债表等 |
-| 基金净值 | `fund_nav()` | 开放式基金净值数据 |
-| 期货数据 | `futures_daily()` | 商品期货日线行情 |
-| 港股通 | `hk_hold()` | 港股通持股数据 |
-| 宏观经济 | `cn_gdp()` | GDP、CPI等宏观数据 |
+| **数据类别** | **接口示例**                 | **说明**                                      |
+|:-------------|:-----------------------------|:----------------------------------------------|
+| A股日线      | `daily()`                    | 沪深A股日线行情（开盘/收盘/最高/最低/成交量） |
+| A股分钟线    | `pro.bar()`                  | 1分钟/5分钟线                                 |
+| 财务数据     | `income()`, `balancesheet()` | 利润表、资产负债表等                          |
+| 基金净值     | `fund_nav()`                 | 开放式基金净值数据                            |
+| 期货数据     | `futures_daily()`            | 商品期货日线行情                              |
+| 港股通       | `hk_hold()`                  | 港股通持股数据                                |
+| 宏观经济     | `cn_gdp()`                   | GDP、CPI等宏观数据                            |
 
 **安装与使用**：
 
-```bash
+``` bash
 pip install tushare
 ```
 
-```python
+``` python
 import tushare as ts
 pro = ts.pro_api('your_token')
 
@@ -959,9 +1014,11 @@ df = pro.daily(ts_code='600519.SH', start_date='20260101', end_date='20260608')
 hs300 = pro.index_weight(index_code='399300.SZ')
 ```
 
-:::note[提示]
+<div class="note[提示]">
+
 tushare Pro采用积分制：注册送120积分，可访问基础数据；更高级的数据需要更多积分。获取积分的方式包括：完善个人信息、充值、分享文章等。课程实验所需的基础数据120积分即可满足。
-:::
+
+</div>
 
 ## akshare
 
@@ -971,11 +1028,11 @@ akshare是免费开源的中国金融数据接口，无需注册和Token，适�
 
 **安装与使用**：
 
-```bash
+``` bash
 pip install akshare
 ```
 
-```python
+``` python
 import akshare as ak
 
 # 获取A股实时行情
@@ -984,15 +1041,14 @@ df = ak.stock_zh_a_spot_em()
 # 获取个股历史数据
 df = ak.stock_zh_a_hist(symbol="600519", period="daily",
 ```
-start_date="20260101", end_date="20260608")
-```
 
-# 获取基金净值
-df = ak.fund_open_fund_info_em(symbol="000001")
+start_date=“20260101”, end_date=“20260608”)
 
-# 获取宏观数据
-df = ak.macro_china_gdp()
-```
+    # 获取基金净值
+    df = ak.fund_open_fund_info_em(symbol="000001")
+
+    # 获取宏观数据
+    df = ak.macro_china_gdp()
 
 **特点**：完全免费、无需注册、数据来源为东方财富等公开网站、更新频繁（几乎每周更新）。
 
@@ -1002,11 +1058,11 @@ yfinance是Yahoo Finance的Python接口，提供全球市场的股票、基金�
 
 **安装与使用**：
 
-```bash
+``` bash
 pip install yfinance
 ```
 
-```python
+``` python
 import yfinance as yf
 
 # 获取苹果公司股票数据
@@ -1028,11 +1084,11 @@ FRED（Federal Reserve Economic Data）是美联储经济数据库，提供50万
 
 **官网**：<https://fred.stlouisfed.org>
 
-```bash
+``` bash
 pip install fredapi
 ```
 
-```python
+``` python
 from fredapi import Fred
 fred = Fred(api_key='your_key')
 
@@ -1054,13 +1110,15 @@ cpi = fred.get_series('CPIAUCSL')
 
 **CSMAR**：国泰安数据库，学术研究常用，涵盖中国上市公司财务、治理、交易等全维度数据。高校通常有机构订阅，可通过学校图书馆访问。
 
-:::note[提示]
+<div class="note[提示]">
+
 - 课程实验：优先使用tushare/akshare免费数据
 
 - 毕业论文：申请学校图书馆的Wind/CSMAR访问权限
 
 - 竞赛/科研项目：可通过导师申请专项数据经费
-:::
+
+</div>
 
 ## 各数据源对比
 
@@ -1073,7 +1131,7 @@ cpi = fred.get_series('CPIAUCSL')
 | Wind        | 全球         | 付费（昂贵） |    极高     |     优      |   ★★★★★    |
 | CSMAR       | 中国         | 付费（机构） |    极高     |     良      |    ★★★★    |
 
-  : 金融数据源对比
+金融数据源对比
 
 ## OpenMAIC：AI辅助教学工具
 
@@ -1094,11 +1152,11 @@ cpi = fred.get_series('CPIAUCSL')
 | 白板演示   | AI实时绘图讲解，支持公式推导、流程图绘制           |
 | 项目制学习 | 学生选择角色，与AI协作完成结构化项目               |
 
-  : OpenMAIC核心功能
+OpenMAIC核心功能
 
 ### 快速上手
 
-```bash
+``` bash
 # 方式一：托管版（无需部署）
 # 访问 https://open.maic.chat，注册后即可使用
 
@@ -1126,7 +1184,7 @@ OpenMAIC支持多种AI模型提供商：
 | DeepSeek   | DeepSeek-V4     | `DEEPSEEK_API_KEY`  |
 | 本地       | Ollama          | `OLLAMA_BASE_URL`   |
 
-  : OpenMAIC支持的AI模型
+OpenMAIC支持的AI模型
 
 ### 导出格式
 
@@ -1154,7 +1212,7 @@ OpenMAIC支持多种AI模型提供商：
 
 以下为本课程实验报告的LaTeX模板，可直接复制使用：
 
-```html
+``` html
 \documentclass[12pt,a4paper]{ctexart}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath,amssymb}
@@ -1200,7 +1258,7 @@ OpenMAIC支持多种AI模型提供商：
 
 本科毕业论文一般采用学校提供的模板。如学校未提供，可参考以下基本结构：
 
-```html
+``` html
 \documentclass[12pt,a4paper]{ctexbook}
 \usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=3cm]{geometry}
 \usepackage[backend=biber,style=gb7714-2015]{biblatex}
@@ -1228,7 +1286,8 @@ OpenMAIC支持多种AI模型提供商：
 \end{document}
 ```
 
-:::note[提示]
+<div class="note[提示]">
+
 - 使用`gb7714-2015`参考文献格式，符合国标要求
 
 - 图表编号自动管理：`\caption{...}` + `\label{...}`
@@ -1236,7 +1295,8 @@ OpenMAIC支持多种AI模型提供商：
 - 交叉引用用`\ref{...}`，不手动写编号
 
 - 编译顺序：xelatex → biber → xelatex → xelatex
-:::
+
+</div>
 
 ## 常用LaTeX技巧速查
 
@@ -1253,76 +1313,80 @@ OpenMAIC支持多种AI模型提供商：
 | 加粗/斜体 | `**加粗**` / `*斜体*`                                   |
 | 特殊符号  | 度数`$^\circ$C`，百分号`$\%$`，美元`$\$$`               |
 
-  : LaTeX技巧速查
+LaTeX技巧速查
 
 # 术语表
 
 本术语表收录课程中涉及的60+核心术语，按拼音首字母排序，附中英对照及简要释义。
 
-| **术语** | **英文** | **释义** |
-|:---|:---|:---|
-| **术语** | **英文** | **释义** |
-| Agent | Autonomous Agent | 能自主感知环境、做出决策并执行动作的AI系统 |
-| BMAD | Build-Measure-Analyze-Decide | 一种迭代式软件开发方法论 |
-| CRM | Customer Relationship Management | 客户关系管理系统，用于管理客户交互和数据 |
-| CTAN | Comprehensive TeX Archive Network | LaTeX宏包的全球分发网络 |
-| DSL | Domain-Specific Language | 领域特定语言，为特定领域设计的专用语言 |
-| ESG | Environmental, Social, Governance | 环境、社会、治理，企业可持续发展评估框架 |
-| FAQ | Frequently Asked Questions | 常见问题解答 |
-| FRED | Federal Reserve Economic Data | 美联储经济数据库 |
-| FSM | Finite State Machine | 有限状态机，一种对话管理策略 |
-| Git | — | 分布式版本控制系统 |
-| GUI | Graphical User Interface | 图形用户界面 |
-| IDE | Integrated Development Environment | 集成开发环境 |
-| IVR | Interactive Voice Response | 交互式语音应答系统 |
-| JSON | JavaScript Object Notation | 轻量级数据交换格式 |
-| KPI | Key Performance Indicator | 关键绩效指标 |
-| LaTeX | — | 学术排版系统，本课程用于论文写作 |
-| LLM | Large Language Model | 大语言模型，如GPT-4、Claude等 |
-| LSTM | Long Short-Term Memory | 长短期记忆网络，一种循环神经网络 |
-| LPR | Loan Prime Rate | 贷款市场报价利率 |
-| MCP | Model Context Protocol | 模型上下文协议，AI工具调用标准 |
-| MVP | Minimum Viable Product | 最小可行产品 |
-| NER | Named Entity Recognition | 命名实体识别 |
-| NLP | Natural Language Processing | 自然语言处理 |
-| NLG | Natural Language Generation | 自然语言生成 |
-| NLU | Natural Language Understanding | 自然语言理解 |
-| OLS | Ordinary Least Squares | 普通最小二乘法 |
-| PR | Pull Request | 代码合并请求 |
-| RAG | Retrieval-Augmented Generation | 检索增强生成 |
-| SARIMA | Seasonal ARIMA | 季节性自回归移动平均模型 |
-| SHAP | SHapley Additive exPlanations | 基于博弈论的模型解释方法 |
-| Skill | — | 领域知识文件（SKILL.md），赋予AI专业能力 |
-| WBS | Work Breakdown Structure | 工作分解结构 |
-| XeLaTeX | — | 支持Unicode和系统字体的LaTeX引擎 |
-| 按需安装 | On-demand Installation | MiKTeX特性，使用未安装宏包时自动下载 |
-| 词嵌入 | Word Embedding | 将词语映射为低维向量的技术 |
-| 对话框 | Dialogue Box | 聊天界面的消息展示区域 |
-| 反洗钱 | Anti-Money Laundering (AML) | 防止不法资金通过金融系统合法化的监管要求 |
-| 风险偏好 | Risk Appetite | 投资者对风险的承受意愿和能力 |
-| 缝合怪 | Frankenstein | 指拼凑不同代码片段但不理解其原理的做法 |
-| 幻觉 | Hallucination | AI生成看似合理但事实错误的内容 |
-| 活期存款 | Demand Deposit | 随时可存取的银行存款 |
-| 基金定投 | Regular Investment Plan | 定期定额投资基金的理财方式 |
-| 框架填充 | Frame Filling | 一种对话管理策略，通过多轮收集槽位 |
-| 跨行转账 | Interbank Transfer | 向其他银行账户转账 |
-| 零售银行 | Retail Banking | 面向个人客户的银行服务 |
-| 流动性 | Liquidity | 资产快速变现而不损失价值的能力 |
-| 蒙特卡洛 | Monte Carlo | 通过随机模拟进行数值计算的方法 |
-| 内幕交易 | Insider Trading | 利用非公开信息进行证券交易的违法行为 |
-| 提示工程 | Prompt Engineering | 设计和优化AI输入提示的技术 |
-| 刚性兑付 | Guaranteed Redemption | 金融机构承诺保本保收益的做法（已被禁止） |
-| 商业计划书 | Business Plan | 描述商业机会和实施计划的文档 |
-| 身份识别 | KYC (Know Your Customer) | 了解你的客户，银行客户身份识别义务 |
-| 投资者适当性 | Investor Suitability | 确保推荐产品与客户风险承受能力匹配 |
-| 脱敏 | Data Masking | 对敏感数据进行遮蔽处理，如6222\*\*\*\*1234 |
-| 微调 | Fine-tuning | 在预训练模型基础上用特定数据继续训练 |
-| 向量数据库 | Vector Database | 存储和检索向量嵌入的专用数据库 |
-| 协议签署 | Agreement Signing | 客户确认产品条款的法律行为 |
-| 意图识别 | Intent Classification | 判断用户话语所表达的意图类型 |
-| 槽填充 | Slot Filling | 从用户话语中提取业务所需的结构化信息 |
-| 知识图谱 | Knowledge Graph | 以实体和关系构建的结构化知识库 |
-| 投资者适当性管理 | Suitability Management | 确保产品推荐与客户风险等级匹配的监管要求 |
-| 资产证券化 | Securitization | 将资产转化为可交易证券的金融技术 |
+| **术语**         | **英文**                           | **释义**                                   |
+|:-----------------|:-----------------------------------|:-------------------------------------------|
+| **术语**         | **英文**                           | **释义**                                   |
+| Agent            | Autonomous Agent                   | 能自主感知环境、做出决策并执行动作的AI系统 |
+| BMAD             | Build-Measure-Analyze-Decide       | 一种迭代式软件开发方法论                   |
+| CRM              | Customer Relationship Management   | 客户关系管理系统，用于管理客户交互和数据   |
+| CTAN             | Comprehensive TeX Archive Network  | LaTeX宏包的全球分发网络                    |
+| DSL              | Domain-Specific Language           | 领域特定语言，为特定领域设计的专用语言     |
+| ESG              | Environmental, Social, Governance  | 环境、社会、治理，企业可持续发展评估框架   |
+| FAQ              | Frequently Asked Questions         | 常见问题解答                               |
+| FRED             | Federal Reserve Economic Data      | 美联储经济数据库                           |
+| FSM              | Finite State Machine               | 有限状态机，一种对话管理策略               |
+| Git              | —                                  | 分布式版本控制系统                         |
+| GUI              | Graphical User Interface           | 图形用户界面                               |
+| IDE              | Integrated Development Environment | 集成开发环境                               |
+| IVR              | Interactive Voice Response         | 交互式语音应答系统                         |
+| JSON             | JavaScript Object Notation         | 轻量级数据交换格式                         |
+| KPI              | Key Performance Indicator          | 关键绩效指标                               |
+| LaTeX            | —                                  | 学术排版系统，本课程用于论文写作           |
+| LLM              | Large Language Model               | 大语言模型，如GPT-4、Claude等              |
+| LSTM             | Long Short-Term Memory             | 长短期记忆网络，一种循环神经网络           |
+| LPR              | Loan Prime Rate                    | 贷款市场报价利率                           |
+| MCP              | Model Context Protocol             | 模型上下文协议，AI工具调用标准             |
+| MVP              | Minimum Viable Product             | 最小可行产品                               |
+| NER              | Named Entity Recognition           | 命名实体识别                               |
+| NLP              | Natural Language Processing        | 自然语言处理                               |
+| NLG              | Natural Language Generation        | 自然语言生成                               |
+| NLU              | Natural Language Understanding     | 自然语言理解                               |
+| OLS              | Ordinary Least Squares             | 普通最小二乘法                             |
+| PR               | Pull Request                       | 代码合并请求                               |
+| RAG              | Retrieval-Augmented Generation     | 检索增强生成                               |
+| SARIMA           | Seasonal ARIMA                     | 季节性自回归移动平均模型                   |
+| SHAP             | SHapley Additive exPlanations      | 基于博弈论的模型解释方法                   |
+| Skill            | —                                  | 领域知识文件（SKILL.md），赋予AI专业能力   |
+| WBS              | Work Breakdown Structure           | 工作分解结构                               |
+| XeLaTeX          | —                                  | 支持Unicode和系统字体的LaTeX引擎           |
+| 按需安装         | On-demand Installation             | MiKTeX特性，使用未安装宏包时自动下载       |
+| 词嵌入           | Word Embedding                     | 将词语映射为低维向量的技术                 |
+| 对话框           | Dialogue Box                       | 聊天界面的消息展示区域                     |
+| 反洗钱           | Anti-Money Laundering (AML)        | 防止不法资金通过金融系统合法化的监管要求   |
+| 风险偏好         | Risk Appetite                      | 投资者对风险的承受意愿和能力               |
+| 缝合怪           | Frankenstein                       | 指拼凑不同代码片段但不理解其原理的做法     |
+| 幻觉             | Hallucination                      | AI生成看似合理但事实错误的内容             |
+| 活期存款         | Demand Deposit                     | 随时可存取的银行存款                       |
+| 基金定投         | Regular Investment Plan            | 定期定额投资基金的理财方式                 |
+| 框架填充         | Frame Filling                      | 一种对话管理策略，通过多轮收集槽位         |
+| 跨行转账         | Interbank Transfer                 | 向其他银行账户转账                         |
+| 零售银行         | Retail Banking                     | 面向个人客户的银行服务                     |
+| 流动性           | Liquidity                          | 资产快速变现而不损失价值的能力             |
+| 蒙特卡洛         | Monte Carlo                        | 通过随机模拟进行数值计算的方法             |
+| 内幕交易         | Insider Trading                    | 利用非公开信息进行证券交易的违法行为       |
+| 提示工程         | Prompt Engineering                 | 设计和优化AI输入提示的技术                 |
+| 刚性兑付         | Guaranteed Redemption              | 金融机构承诺保本保收益的做法（已被禁止）   |
+| 商业计划书       | Business Plan                      | 描述商业机会和实施计划的文档               |
+| 身份识别         | KYC (Know Your Customer)           | 了解你的客户，银行客户身份识别义务         |
+| 投资者适当性     | Investor Suitability               | 确保推荐产品与客户风险承受能力匹配         |
+| 脱敏             | Data Masking                       | 对敏感数据进行遮蔽处理，如6222\*\*\*\*1234 |
+| 微调             | Fine-tuning                        | 在预训练模型基础上用特定数据继续训练       |
+| 向量数据库       | Vector Database                    | 存储和检索向量嵌入的专用数据库             |
+| 协议签署         | Agreement Signing                  | 客户确认产品条款的法律行为                 |
+| 意图识别         | Intent Classification              | 判断用户话语所表达的意图类型               |
+| 槽填充           | Slot Filling                       | 从用户话语中提取业务所需的结构化信息       |
+| 知识图谱         | Knowledge Graph                    | 以实体和关系构建的结构化知识库             |
+| 投资者适当性管理 | Suitability Management             | 确保产品推荐与客户风险等级匹配的监管要求   |
+| 资产证券化       | Securitization                     | 将资产转化为可交易证券的金融技术           |
 
-  : 术语表
+术语表
+
+\$\$
+
+$$

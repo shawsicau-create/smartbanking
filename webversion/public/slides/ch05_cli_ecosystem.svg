@@ -1,0 +1,85 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <rect x="80" y="50" width="200" height="40" rx="20" fill="#3B82F6" opacity="0.9"/>
+    <text x="180" y="76" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">智慧银行实验教程</text>
+    <text x="120" y="145" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#F1F5F9" font-weight="700">CLI工具生态</text>
+    <rect x="120" y="170" width="200" height="4" rx="2" fill="url(#accent-gradient)"/>
+    <text x="120" y="210" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="20" fill="#94A3B8">AI辅助开发的核心执行层</text>
+    <g transform="translate(120, 240)">
+        <g transform="translate(0, 0)">
+            <rect x="0" y="0" width="500" height="200" rx="12" fill="#334155" opacity="0.9"/>
+            <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#3B82F6" font-weight="600">CNB CLI - 代码仓库管理</text>
+            <rect x="20" y="48" width="460" height="3" rx="1" fill="#3B82F6" opacity="0.5"/>
+            <text x="20" y="75" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• cnb login - OAuth2授权登录</text>
+            <text x="20" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• cnb repositories get-repos - 查看仓库</text>
+            <text x="20" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• cnb issues create-issue - 创建Issue</text>
+            <text x="20" y="150" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• cnb pulls list-pulls - 管理PR</text>
+            <text x="20" y="175" font-family="SF Mono, monospace" font-size="14" fill="#10B981">$ cnb status ✓ 已登录</text>
+        </g>
+        <g transform="translate(520, 0)">
+            <rect x="0" y="0" width="500" height="200" rx="12" fill="#334155" opacity="0.9"/>
+            <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#10B981" font-weight="600">Skills CLI - AI能力包管理</text>
+            <rect x="20" y="48" width="460" height="3" rx="1" fill="#10B981" opacity="0.5"/>
+            <text x="20" y="75" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• npx skills add - 安装Skill</text>
+            <text x="20" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• npx skills list - 列出已安装</text>
+            <text x="20" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• npx skills remove - 移除Skill</text>
+            <text x="20" y="150" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">• npx skills search - 搜索Skill</text>
+            <text x="20" y="175" font-family="SF Mono, monospace" font-size="14" fill="#F59E0B">$ npx skills add finance/risk-analysis</text>
+        </g>
+    </g>
+    <g transform="translate(120, 460)">
+        <rect x="0" y="0" width="1020" height="180" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#F1F5F9" font-weight="600">CLI工具四大优势</text>
+        <rect x="20" y="48" width="980" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <g transform="translate(20, 70)">
+            <circle cx="15" cy="15" r="15" fill="#3B82F6" opacity="0.8"/>
+            <text x="15" y="20" font-family="SF Pro Display, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">1</text>
+            <text x="40" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">自动化友好</text>
+            <text x="40" y="42" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">可编写脚本批量执行，适合CI/CD流水线</text>
+        </g>
+        <g transform="translate(260, 70)">
+            <circle cx="15" cy="15" r="15" fill="#10B981" opacity="0.8"/>
+            <text x="15" y="20" font-family="SF Pro Display, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">2</text>
+            <text x="40" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">资源占用低</text>
+            <text x="40" y="42" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">无需图形界面，服务器环境也能运行</text>
+        </g>
+        <g transform="translate(520, 70)">
+            <circle cx="15" cy="15" r="15" fill="#F59E0B" opacity="0.8"/>
+            <text x="15" y="20" font-family="SF Pro Display, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">3</text>
+            <text x="40" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">组合能力强</text>
+            <text x="40" y="42" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">通过管道（pipe）将多个工具串联</text>
+        </g>
+        <g transform="translate(780, 70)">
+            <circle cx="15" cy="15" r="15" fill="#8B5CF6" opacity="0.8"/>
+            <text x="15" y="20" font-family="SF Pro Display, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">4</text>
+            <text x="40" y="20" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">AI原生</text>
+            <text x="40" y="42" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">大语言模型天然擅长生成和执行命令</text>
+        </g>
+    </g>
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 5 章 / 共 8 章</text>
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

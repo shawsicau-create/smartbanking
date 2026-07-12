@@ -1,0 +1,108 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <rect x="80" y="50" width="200" height="40" rx="20" fill="#3B82F6" opacity="0.9"/>
+    <text x="180" y="76" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">智慧银行实验教程</text>
+    <text x="120" y="145" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#F1F5F9" font-weight="700">金融数据特征与处理</text>
+    <rect x="120" y="170" width="200" height="4" rx="2" fill="url(#accent-gradient)"/>
+    <text x="120" y="210" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="20" fill="#94A3B8">面板数据、时间序列、截面数据的特征与预处理</text>
+    <g transform="translate(120, 240)">
+        <g transform="translate(0, 0)">
+            <rect x="0" y="0" width="330" height="160" rx="12" fill="#334155" opacity="0.9"/>
+            <text x="20" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#3B82F6" font-weight="600">截面数据</text>
+            <text x="20" y="55" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">某一时点各银行ROE</text>
+            <text x="20" y="80" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">无时间维度</text>
+            <text x="20" y="105" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">仅有个体维度</text>
+            <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">适用：银行间对比分析</text>
+        </g>
+        <g transform="translate(350, 0)">
+            <rect x="0" y="0" width="330" height="160" rx="12" fill="#334155" opacity="0.9"/>
+            <text x="20" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#10B981" font-weight="600">时间序列</text>
+            <text x="20" y="55" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">某银行2000-2025年月度股价</text>
+            <text x="20" y="80" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">单一个体</text>
+            <text x="20" y="105" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">时间连续</text>
+            <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">适用：趋势预测、波动分析</text>
+        </g>
+        <g transform="translate(700, 0)">
+            <rect x="0" y="0" width="330" height="160" rx="12" fill="#10B981" opacity="0.2" stroke="#10B981" stroke-width="2"/>
+            <text x="20" y="30" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#10B981" font-weight="600">面板数据 ★</text>
+            <text x="20" y="55" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">50家银行2010-2024年财务指标</text>
+            <text x="20" y="80" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">个体×时间双维度</text>
+            <text x="20" y="105" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981">信息量最大</text>
+            <text x="20" y="135" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#F1F5F9">适用：实证研究首选</text>
+        </g>
+    </g>
+    <g transform="translate(120, 420)">
+        <rect x="0" y="0" width="500" height="220" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#F1F5F9" font-weight="600">金融数据四大特征</text>
+        <rect x="20" y="48" width="460" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <g transform="translate(20, 70)">
+            <circle cx="10" cy="10" r="10" fill="#EF4444" opacity="0.8"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">尖峰厚尾</text>
+            <text x="25" y="37" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">极端事件概率高于正态分布预测</text>
+        </g>
+        <g transform="translate(20, 115)">
+            <circle cx="10" cy="10" r="10" fill="#F59E0B" opacity="0.8"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">ARCH效应</text>
+            <text x="25" y="37" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">波动率具有集聚性特征</text>
+        </g>
+        <g transform="translate(20, 160)">
+            <circle cx="10" cy="10" r="10" fill="#8B5CF6" opacity="0.8"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">序列相关</text>
+            <text x="25" y="37" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">收益率平方和绝对值呈现高阶自相关</text>
+        </g>
+        <g transform="translate(20, 205)">
+            <circle cx="10" cy="10" r="10" fill="#EC4899" opacity="0.8"/>
+            <text x="25" y="15" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">结构突变</text>
+            <text x="25" y="37" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">政策变革导致序列结构性断裂</text>
+        </g>
+    </g>
+    <g transform="translate(660, 420)">
+        <rect x="0" y="0" width="490" height="220" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#F1F5F9" font-weight="600">数据预处理流程</text>
+        <rect x="20" y="48" width="450" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <g transform="translate(20, 70)">
+            <rect x="0" y="0" width="130" height="40" rx="6" fill="#3B82F6" opacity="0.8"/>
+            <text x="65" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="white" text-anchor="middle">缺失值处理</text>
+        </g>
+        <g transform="translate(160, 70)">
+            <rect x="0" y="0" width="130" height="40" rx="6" fill="#10B981" opacity="0.8"/>
+            <text x="65" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="white" text-anchor="middle">异常值检测</text>
+        </g>
+        <g transform="translate(300, 70)">
+            <rect x="0" y="0" width="130" height="40" rx="6" fill="#F59E0B" opacity="0.8"/>
+            <text x="65" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="white" text-anchor="middle">数据标准化</text>
+        </g>
+        <g transform="translate(20, 130)">
+            <text x="0" y="0" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 删除法：缺失比例&lt;5%</text>
+            <text x="0" y="22" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 均值/中位数插补：随机缺失</text>
+            <text x="0" y="44" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• 多重插补（MI）：系统性缺失</text>
+            <text x="0" y="66" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">• IQR/Z-score法检测异常值</text>
+        </g>
+    </g>
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 6 章 / 共 8 章</text>
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>

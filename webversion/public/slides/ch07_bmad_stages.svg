@@ -1,0 +1,101 @@
+<svg 
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+        <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <rect width="1280" height="720" fill="url(#bg-gradient)"/>
+    <g opacity="0.1" stroke="#94A3B8" stroke-width="1">
+        <line x1="0" y1="180" x2="1280" y2="180"/>
+        <line x1="0" y1="360" x2="1280" y2="360"/>
+        <line x1="0" y1="540" x2="1280" y2="540"/>
+        <line x1="320" y1="0" x2="320" y2="720"/>
+        <line x1="640" y1="0" x2="640" y2="720"/>
+        <line x1="960" y1="0" x2="960" y2="720"/>
+    </g>
+    <rect x="80" y="50" width="200" height="40" rx="20" fill="#3B82F6" opacity="0.9"/>
+    <text x="180" y="76" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="600">智慧银行实验教程</text>
+    <text x="120" y="145" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#F1F5F9" font-weight="700">BMAD五阶段方法论</text>
+    <rect x="120" y="170" width="200" height="4" rx="2" fill="url(#accent-gradient)"/>
+    <text x="120" y="210" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="20" fill="#94A3B8">AI驱动的敏捷开发框架</text>
+    <g transform="translate(120, 240)">
+        <g transform="translate(0, 0)">
+            <rect x="0" y="0" width="190" height="180" rx="12" fill="#3B82F6" opacity="0.2" stroke="#3B82F6" stroke-width="2"/>
+            <text x="95" y="40" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#3B82F6" text-anchor="middle" font-weight="700">B</text>
+            <text x="95" y="70" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" text-anchor="middle" font-weight="600">Brainstorm</text>
+            <text x="95" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">业务分析师</text>
+            <text x="95" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">AI as Analyst</text>
+            <text x="95" y="160" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">→ 功能清单</text>
+        </g>
+        <g transform="translate(210, 0)">
+            <rect x="0" y="0" width="190" height="180" rx="12" fill="#10B981" opacity="0.2" stroke="#10B981" stroke-width="2"/>
+            <text x="95" y="40" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#10B981" text-anchor="middle" font-weight="700">M</text>
+            <text x="95" y="70" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" text-anchor="middle" font-weight="600">Model</text>
+            <text x="95" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">产品经理</text>
+            <text x="95" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">AI as PM</text>
+            <text x="95" y="160" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">→ 需求文档</text>
+        </g>
+        <g transform="translate(420, 0)">
+            <rect x="0" y="0" width="190" height="180" rx="12" fill="#F59E0B" opacity="0.2" stroke="#F59E0B" stroke-width="2"/>
+            <text x="95" y="40" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#F59E0B" text-anchor="middle" font-weight="700">A</text>
+            <text x="95" y="70" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" text-anchor="middle" font-weight="600">Architect</text>
+            <text x="95" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">技术架构师</text>
+            <text x="95" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">AI as Architect</text>
+            <text x="95" y="160" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">→ 技术方案</text>
+        </g>
+        <g transform="translate(630, 0)">
+            <rect x="0" y="0" width="190" height="180" rx="12" fill="#8B5CF6" opacity="0.2" stroke="#8B5CF6" stroke-width="2"/>
+            <text x="95" y="40" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#8B5CF6" text-anchor="middle" font-weight="700">D</text>
+            <text x="95" y="70" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" text-anchor="middle" font-weight="600">Develop</text>
+            <text x="95" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">开发者</text>
+            <text x="95" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">AI as Developer</text>
+            <text x="95" y="160" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">→ 可运行代码</text>
+        </g>
+        <g transform="translate(840, 0)">
+            <rect x="0" y="0" width="190" height="180" rx="12" fill="#EC4899" opacity="0.2" stroke="#EC4899" stroke-width="2"/>
+            <text x="95" y="40" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="36" fill="#EC4899" text-anchor="middle" font-weight="700">V</text>
+            <text x="95" y="70" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="18" fill="#F1F5F9" text-anchor="middle" font-weight="600">Verify</text>
+            <text x="95" y="100" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">测试工程师</text>
+            <text x="95" y="125" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">AI as QA</text>
+            <text x="95" y="160" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">→ 测试报告</text>
+        </g>
+    </g>
+    <g transform="translate(120, 450)">
+        <rect x="0" y="0" width="500" height="190" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#F1F5F9" font-weight="600">核心价值</text>
+        <rect x="20" y="48" width="460" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <text x="20" y="80" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">从"代码编写者"提升为"AI团队管理者"</text>
+        <text x="20" y="110" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">1人 + AI = 传统5-9人团队</text>
+        <text x="20" y="140" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#F1F5F9">小时级迭代，极致效率</text>
+        <text x="20" y="170" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="16" fill="#94A3B8">最适合：中小型项目原型开发、MVP验证</text>
+    </g>
+    <g transform="translate(660, 450)">
+        <rect x="0" y="0" width="490" height="190" rx="12" fill="#0F172A" opacity="0.8"/>
+        <text x="20" y="35" font-family="SF Pro Display, PingFang SC, sans-serif" font-size="22" fill="#F1F5F9" font-weight="600">与传统敏捷对比</text>
+        <rect x="20" y="48" width="450" height="3" rx="1" fill="url(#accent-gradient)"/>
+        <g transform="translate(20, 70)">
+            <rect x="0" y="0" width="200" height="40" rx="4" fill="#334155"/>
+            <text x="100" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">传统敏捷（Scrum）</text>
+        </g>
+        <g transform="translate(230, 70)">
+            <rect x="0" y="0" width="200" height="40" rx="4" fill="#10B981" opacity="0.3"/>
+            <text x="100" y="25" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#10B981" text-anchor="middle">BMAD</text>
+        </g>
+        <text x="20" y="130" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">团队：5-9人 → 1人+AI</text>
+        <text x="20" y="155" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">周期：2-4周 → 小时级</text>
+        <text x="20" y="180" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">角色：分工协作 → 人指挥AI</text>
+    </g>
+    <rect x="0" y="680" width="1280" height="40" fill="#0F172A" opacity="0.8"/>
+    <text x="40" y="706" font-family="SF Pro Text, PingFang SC, sans-serif" font-size="14" fill="#94A3B8">SmartBank Agent · 智慧银行实验教程</text>
+    <text x="1240" y="706" font-family="SF Pro Text, sans-serif" font-size="14" fill="#94A3B8" text-anchor="end">第 7 章 / 共 8 章</text>
+    <g transform="translate(1200, 680)">
+        <rect x="0" y="0" width="60" height="30" rx="4" fill="#334155"/>
+        <text x="30" y="20" font-family="SF Pro Text, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">🎤 Notes</text>
+    </g>
+</svg>
