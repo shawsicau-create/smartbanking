@@ -56,7 +56,7 @@ export default function GeneratePanel() {
                         <p className="subtitle">一键生成结构化教学大纲与内容</p>
                     </div>
                 </div>
-                <a href={import.meta.env.BASE_URL} className="back-link">返回课程</a>
+                <a href="/" className="back-link">返回主页</a>
             </header>
 
             <main className="chat-main">

@@ -59,13 +59,18 @@ export default function QuizPanel() {
         <div className="chat-container">
             <header className="chat-header">
                 <div className="header-left">
-                    <div className="logo-icon">SB</div>
+                    <div className="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                            <path d="M8 22V14L16 8L24 14V22H20V17H12V22H8Z" stroke="white" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                            <circle cx="16" cy="14" r="2" fill="white" opacity="0.8" />
+                        </svg>
+                    </div>
                     <div>
                         <h1>金融测验</h1>
                         <p className="subtitle">AI生成选择题 · 支持多种难度</p>
                     </div>
                 </div>
-                <a href={import.meta.env.BASE_URL} className="back-link">返回课程</a>
+                <a href="/" className="back-link">返回主页</a>
             </header>
 
             <main className="chat-main">

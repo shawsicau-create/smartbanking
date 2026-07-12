@@ -241,7 +241,13 @@ export default function ChatAgent() {
             {/* Header */}
             <header className="chat-header">
                 <div className="header-left">
-                    <div className="logo-icon">SB</div>
+                    <div className="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                            <path d="M8 22V14L16 8L24 14V22H20V17H12V22H8Z" stroke="white" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                            <circle cx="16" cy="14" r="2" fill="white" opacity="0.8" />
+                            <path d="M10 25H22" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+                        </svg>
+                    </div>
                     <div>
                         <h1>SmartBank Agent</h1>
                         <p className="subtitle">{currentMode.icon} {currentMode.label}模式 · 四川农业大学智慧银行实验室</p>
@@ -251,7 +257,7 @@ export default function ChatAgent() {
                     {messages.length > 0 && (
                         <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
                     )}
-                    <a href={import.meta.env.BASE_URL} className="back-link">返回课程</a>
+                    <a href="/" className="back-link">返回主页</a>
                 </div>
             </header>
 
@@ -271,7 +277,8 @@ export default function ChatAgent() {
                     <div className="welcome">
                         <div className="welcome-icon">🏦</div>
                         <h2>欢迎使用 SmartBank Agent</h2>
-                        <p>我可以帮你查询实时金融数据、解答金融专业问题、指导 BMAD 项目开发。</p>
+                        <p>我是你的金融科技AI助手，可以查询实时金融数据、解答专业问题、指导 BMAD 项目开发。</p>
+                        <p className="powered-by" style={{ marginTop: '-8px' }}>{currentMode.icon} 当前模式：{currentMode.label} - {currentMode.desc}</p>
                         <div className="suggestions">
                             {SUGGESTIONS.map((s, i) => (
                                 <button
