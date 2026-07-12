@@ -125,3 +125,204 @@ table {
 .katex {
     font-size: 1.05em;
 }
+
+/* 附录样式增强 */
+
+/* 附录章节标题卡片 */
+.appendix-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.appendix-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.appendix-section h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.appendix-section p {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* 附录内容卡片 */
+.appendix-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.appendix-card h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #334155;
+    border-bottom: 2px solid #3b82f6;
+    padding-bottom: 0.5rem;
+}
+
+/* 代码块优化 */
+.appendix-code {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+}
+
+.appendix-code code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* 表格优化 */
+.appendix-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.appendix-table th {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: none;
+}
+
+.appendix-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: normal;
+}
+
+.appendix-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.appendix-table tr:hover {
+    background: #eff6ff;
+}
+
+/* 提示框增强 */
+.appendix-note {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+}
+
+.appendix-note strong {
+    color: #1d4ed8;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.appendix-tip {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+}
+
+.appendix-tip strong {
+    color: #15803d;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.appendix-warning {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+}
+
+.appendix-warning strong {
+    color: #b45309;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* 验收清单样式 */
+.checklist {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.checklist li {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checklist li:last-child {
+    border-bottom: none;
+}
+
+/* 链接卡片 */
+.link-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #1d4ed8;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.link-card:hover {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .appendix-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .appendix-icon {
+        font-size: 2rem;
+    }
+    
+    .appendix-section h2 {
+        font-size: 1.25rem;
+    }
+}

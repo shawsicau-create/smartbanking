@@ -5,7 +5,13 @@ description: '环境配置速查、MCP服务器清单、Skill模板库、Prompt�
 
 **适用场景**：本附录提供从零搭建完整AI辅助开发环境的详细指南，涵盖LaTeX排版、Node.js、Python、Git、AI IDE（Qoder）、AI CLI工具、MCP服务器等全部内容。已在实验一中完成基本环境搭建的同学，可参考本附录进行进阶配置。
 
-## LaTeX排版环境（详细版）
+<div class="appendix-section">
+<div class="appendix-icon">📄</div>
+<div>
+<h2>LaTeX排版环境（详细版）</h2>
+<p>从零搭建完整LaTeX排版环境的详细指南，涵盖Windows、macOS、Linux全平台配置</p>
+</div>
+</div>
 
 ```mermaid
 flowchart TB
@@ -93,10 +99,15 @@ source ~/.zshrc
 
 ### 系统中文字体
 
+<div class="appendix-card">
+<h4>系统中文字体配置</h4>
+<table class="appendix-table">
 | **平台** | **字体**                   | **LaTeX调用名**              |
 |:---------|:---------------------------|:-----------------------------|
 | Windows  | 宋体/黑体/楷体/仿宋        | SimSun/SimHei/KaiTi/FangSong |
 | macOS    | 华文宋体/华文黑体/华文楷体 | STSong/STHeiti/STKaiti       |
+</table>
+</div>
 
 <div class="note[提示]">
 
@@ -113,7 +124,13 @@ source ~/.zshrc
 | VS Code + LaTeX Workshop | Win/Mac/Linux | 轻量，实时预览，Git集成            |
 | Overleaf                 | 在线          | 无需安装，协作方便，国内访问需加速 |
 
-## AI IDE——Qoder
+<div class="appendix-section">
+<div class="appendix-icon">🤖</div>
+<div>
+<h2>AI IDE——Qoder</h2>
+<p>AI智能体编程平台，内置多模型支持，支持MCP集成和Skill系统</p>
+</div>
+</div>
 
 Qoder是一款基于VS Code架构的AI智能体编程平台，内置多模型支持。
 
@@ -133,15 +150,32 @@ Qoder是一款基于VS Code架构的AI智能体编程平台，内置多模型支
 | Skill系统  | 加载SKILL.md文件赋予AI领域知识               |
 | 多模型切换 | 支持GPT-4o、Claude Sonnet、DeepSeek等        |
 
-## AI CLI工具
+<div class="appendix-section">
+<div class="appendix-icon">⚡</div>
+<div>
+<h2>AI CLI工具</h2>
+<p>命令行AI工具对比与安装指南，支持多模型切换和多账号管理</p>
+</div>
+</div>
 
+<div class="appendix-card">
+<h4>AI CLI工具对比</h4>
+<table class="appendix-table">
 | **工具**    | **厂商**  | **安装命令**                         | **核心模型**  |
 |:------------|:----------|:-------------------------------------|:--------------|
 | QoderCLI    | Qoder AI  | `npm i -g @qoder-ai/qodercli`        | 多模型切换    |
 | Claude Code | Anthropic | `npm i -g @anthropic-ai/claude-code` | Claude Sonnet |
 | Codex CLI   | OpenAI    | `npm i -g @openai/codex`             | GPT-4o        |
+</table>
+</div>
 
-## CC Switch——多账号管理
+<div class="appendix-section">
+<div class="appendix-icon">🔄</div>
+<div>
+<h2>CC Switch——多账号管理</h2>
+<p>AI CLI多账号/多服务商管理工具，提供可视化界面统一管理配置</p>
+</div>
+</div>
 
 CC Switch是AI CLI多账号/多服务商管理工具，提供可视化界面统一管理Claude Code、Codex、Gemini CLI等7款工具的配置。
 
@@ -155,7 +189,13 @@ brew install --cask cc-switch
 
 核心功能：50+预置服务商一键切换、系统托盘快切、统一MCP管理、用量追踪、云端同步。
 
-## OpenCLI与OpenClaw
+<div class="appendix-section">
+<div class="appendix-icon">🛠️</div>
+<div>
+<h2>OpenCLI与OpenClaw</h2>
+<p>网站变命令行 + AI Skill包管理，扩展AI工具链的利器</p>
+</div>
+</div>
 
 **OpenCLI**——把网站变成命令行：
 
@@ -174,14 +214,25 @@ openclaw install academic-paper-analysis
 openclaw install arxiv
 ```
 
-## MCP/Skill/CLI三种范式对比
+<div class="appendix-section">
+<div class="appendix-icon">⚖️</div>
+<div>
+<h2>MCP/Skill/CLI三种范式对比</h2>
+<p>理解AI工具链的三层架构，选择最适合的工具方案</p>
+</div>
+</div>
 
+<div class="appendix-card">
+<h4>MCP/Skill/CLI三种范式对比</h4>
+<table class="appendix-table">
 | **维度** | **MCP**        | **Skill**        | **CLI**    |
 |:---------|:---------------|:-----------------|:-----------|
 | 本质     | 连接协议       | 领域知识文件     | Shell命令  |
 | 类比     | USB-C接口      | 操作手册         | 万能遥控器 |
 | 开发成本 | 高（写Server） | 低（写Markdown） | 零         |
 | 适合场景 | 企业SaaS       | 知识沉淀复用     | 本地自动化 |
+</table>
+</div>
 
 ```mermaid
 flowchart TB
@@ -218,7 +269,13 @@ CLI（执行层）+ Skill（知识层）+ MCP（连接层）= 完整AI工具链�
 
 </div>
 
-## 完整安装检查清单
+<div class="appendix-section">
+<div class="appendix-icon">✅</div>
+<div>
+<h2>完整安装检查清单</h2>
+<p>一键验证所有工具是否正确安装，快速定位问题</p>
+</div>
+</div>
 
 ``` bash
 # LaTeX
@@ -246,7 +303,13 @@ cnb --version
 
 </div>
 
-# MCP配置大全与故障排除
+<div class="appendix-section">
+<div class="appendix-icon">🔧</div>
+<div>
+<h2>MCP配置大全与故障排除</h2>
+<p>MCP服务器配置详解与常见问题排查指南</p>
+</div>
+</div>
 
 ## MCP服务器配置详解
 
@@ -342,7 +405,13 @@ MCP（Model Context Protocol）让AI助手能够访问外部数据源和工具�
 
 - **自写Skill不激活**：description写得太宽泛，AI不知何时调用——把场景写具体（如”当用户提到X或Y时使用”）
 
-# Stata安装与联动配置
+<div class="appendix-section">
+<div class="appendix-icon">📊</div>
+<div>
+<h2>Stata安装与联动配置</h2>
+<p>Stata统计分析软件安装与stata-mcp联动配置指南</p>
+</div>
+</div>
 
 **适用场景**：实验中”数据分析组”使用stata-mcp跑计量回归时需要本机已安装Stata。无Stata的同学可改用Python（statsmodels）替代，但**强烈建议安装**以获得完整体验。
 
@@ -596,7 +665,13 @@ data=df).fit(cov_type=“cluster”, cov_kwds={“groups”: df\[“bank_id”\]
 
 并在实验报告中注明「采用Python statsmodels替代Stata」即可获得同等分数。
 
-# 环境准备与CNB项目同步详细步骤
+<div class="appendix-section">
+<div class="appendix-icon">🚀</div>
+<div>
+<h2>环境准备与CNB项目同步详细步骤</h2>
+<p>从零搭建开发环境，完成课程仓库同步到个人CNB空间</p>
+</div>
+</div>
 
 本附录帮助学生完成开发环境搭建，并将课程仓库同步到个人CNB空间。
 
@@ -908,7 +983,13 @@ python -c "import pptx; print('python-pptx 版本:', pptx.__version__)"
 
       : 常见问题速查
 
-    # CNB与GitHub命令速查
+    <div class="appendix-section">
+    <div class="appendix-icon">📋</div>
+    <div>
+    <h2>CNB与GitHub命令速查</h2>
+    <p>Git基础命令对比与CNB专属CLI命令速查表</p>
+    </div>
+    </div>
 
     ## 基础Git命令对比
 
@@ -975,7 +1056,13 @@ https://cnb:令牌@cnb.cool/组织名/仓库名.git  (带令牌认证)
 
 </div>
 
-# 金融数据源汇总
+<div class="appendix-section">
+<div class="appendix-icon">📈</div>
+<div>
+<h2>金融数据源汇总</h2>
+<p>课程实验中可能用到的金融数据源汇总，包括免费和付费两大类</p>
+</div>
+</div>
 
 本附录汇总课程实验中可能用到的金融数据源，包括免费和付费两大类。
 
@@ -1133,7 +1220,13 @@ cpi = fred.get_series('CPIAUCSL')
 
 金融数据源对比
 
-## OpenMAIC：AI辅助教学工具
+<div class="appendix-section">
+<div class="appendix-icon">🎓</div>
+<div>
+<h2>OpenMAIC：AI辅助教学工具</h2>
+<p>清华大学开发的开源AI教学平台，支持多智能体编排技术</p>
+</div>
+</div>
 
 **OpenMAIC**（Open Multi-Agent Interactive Classroom）是清华大学教育学院开发的开源AI教学平台，采用多智能体编排技术，可将任何主题一键转化为交互式课堂体验。
 
@@ -1206,7 +1299,13 @@ OpenMAIC支持的AI模型
 
 4.  **项目展示**：为综合项目生成交互式演示，提升答辩效果
 
-# LaTeX论文排版模板
+<div class="appendix-section">
+<div class="appendix-icon">📝</div>
+<div>
+<h2>LaTeX论文排版模板</h2>
+<p>课程实验报告和本科毕业论文LaTeX模板，可直接复制使用</p>
+</div>
+</div>
 
 ## 课程实验报告模板
 
@@ -1315,7 +1414,13 @@ OpenMAIC支持的AI模型
 
 LaTeX技巧速查
 
-# 术语表
+<div class="appendix-section">
+<div class="appendix-icon">📖</div>
+<div>
+<h2>术语表</h2>
+<p>课程中涉及的60+核心术语，按拼音首字母排序，附中英对照及简要释义</p>
+</div>
+</div>
 
 本术语表收录课程中涉及的60+核心术语，按拼音首字母排序，附中英对照及简要释义。
 
