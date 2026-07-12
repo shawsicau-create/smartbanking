@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const BMAD_PHASES = [
     { id: 'analyst', icon: '📋', title: 'Phase 1: 需求分析', role: 'Analyst', desc: '定义用户故事、需求文档和验收标准', color: '#10b981' },
@@ -71,7 +72,10 @@ export default function PblDashboard() {
                             <p className="subtitle">{selected.desc}</p>
                         </div>
                     </div>
-                    <a href="/" className="back-link">返回主页</a>
+                    <div className="header-right">
+                        <ThemeSwitcher />
+                        <a href="/" className="back-link">返回主页</a>
+                    </div>
                 </header>
                 <div className="pbl-phase-bar">
                     {selected.phases.map(p => (
@@ -127,7 +131,10 @@ export default function PblDashboard() {
                         <p className="subtitle">问题驱动式学习 · 全流程项目实战</p>
                     </div>
                 </div>
-                <a href="/" className="back-link">返回主页</a>
+                <div className="header-right">
+                    <ThemeSwitcher />
+                    <a href="/" className="back-link">返回主页</a>
+                </div>
             </header>
             <main className="chat-main">
                 <div className="welcome">

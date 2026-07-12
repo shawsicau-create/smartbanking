@@ -10,6 +10,12 @@ import QuizPanel from '../components/QuizPanel';
     <title>金融测验 - SmartBank Agent</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/chat.css" />
+    <script>
+      (function(){
+        var t = localStorage.getItem('sb-theme') || 'terminal';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
   </head>
   <body>
     <QuizPanel client:load />

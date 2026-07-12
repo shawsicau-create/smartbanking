@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
 interface Question {
     id: string;
@@ -70,7 +71,10 @@ export default function QuizPanel() {
                         <p className="subtitle">AI生成选择题 · 支持多种难度</p>
                     </div>
                 </div>
-                <a href="/" className="back-link">返回主页</a>
+                <div className="header-right">
+                    <ThemeSwitcher />
+                    <a href="/" className="back-link">返回主页</a>
+                </div>
             </header>
 
             <main className="chat-main">

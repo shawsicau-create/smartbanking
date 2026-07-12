@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, type FormEvent } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
 interface ToolCall {
     name: string;
@@ -254,6 +255,7 @@ export default function ChatAgent() {
                     </div>
                 </div>
                 <div className="header-right">
+                    <ThemeSwitcher />
                     {messages.length > 0 && (
                         <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
                     )}

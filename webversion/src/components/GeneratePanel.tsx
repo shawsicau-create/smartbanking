@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
 interface Module {
     id: string;
@@ -50,13 +51,21 @@ export default function GeneratePanel() {
         <div className="chat-container">
             <header className="chat-header">
                 <div className="header-left">
-                    <div className="logo-icon">SB</div>
+                    <div className="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                            <path d="M8 22V14L16 8L24 14V22H20V17H12V22H8Z" stroke="white" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                            <circle cx="16" cy="14" r="2" fill="white" opacity="0.8" />
+                        </svg>
+                    </div>
                     <div>
                         <h1>AI内容生成</h1>
                         <p className="subtitle">一键生成结构化教学大纲与内容</p>
                     </div>
                 </div>
-                <a href="/" className="back-link">返回主页</a>
+                <div className="header-right">
+                    <ThemeSwitcher />
+                    <a href="/" className="back-link">返回主页</a>
+                </div>
             </header>
 
             <main className="chat-main">

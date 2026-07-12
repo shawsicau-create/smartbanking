@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, type FormEvent } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -145,6 +146,7 @@ export default function IndexHero() {
                         <span className="index-logo-text">SmartBank Agent</span>
                     </div>
                     <nav className="index-nav">
+                        <ThemeSwitcher />
                         <a href="/chat/" className="index-nav-link index-nav-link--primary">进入智能体</a>
                         <a href="/quiz/" className="index-nav-link">测验</a>
                         <a href="/pbl/" className="index-nav-link">项目</a>
