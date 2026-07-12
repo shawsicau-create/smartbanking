@@ -5,6 +5,7 @@ interface ToolGroup {
     icon: string;
     name: string;
     desc: string;
+    example?: string;
     tools: { name: string; desc: string; status: 'active' | 'local' | 'planned' }[];
 }
 
@@ -12,6 +13,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     {
         icon: '📈', name: 'Tushare 金融数据组',
         desc: 'A股行情、财务报表、资金流向、股东信息等实时数据',
+        example: '试一试: “查询贵州茅台最近5个交易日的收盘价”',
         tools: [
             { name: 'query_stock', desc: 'A股个股日线行情查询', status: 'active' },
             { name: 'query_stock_basic', desc: '按名称搜索股票代码', status: 'active' },
@@ -27,6 +29,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     {
         icon: '🌍', name: '世界银行宏观经济组',
         desc: 'GDP、CPI、金融账户、Findex等全球宏观数据',
+        example: '试一试: “对比中国和美国的GDP增长率”',
         tools: [
             { name: 'query_macro_gdp', desc: '各国GDP数据', status: 'active' },
             { name: 'query_macro_indicator', desc: '200+宏观指标查询', status: 'active' },
@@ -37,6 +40,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     {
         icon: '🗺️', name: '高德地图 MCP 组',
         desc: '银行网点搜索、位置服务、路线规划',
+        example: '试一试: “搜索成都市的中国工商银行网点”',
         tools: [
             { name: 'search_bank_branch', desc: '搜索银行网点（按城市+关键词）', status: 'active' },
             { name: 'search_nearby', desc: '搜索附近金融机构', status: 'active' },
@@ -45,6 +49,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     {
         icon: '📊', name: '图表可视化 MCP 组',
         desc: 'AntV Chart 图表自动生成（柱/线/饼/散点/桑基等）',
+        example: '试一试: “生成贵州茅台近30天股价折线图”',
         tools: [
             { name: 'generate_chart', desc: '金融数据图表自动生成', status: 'active' },
         ],
@@ -180,6 +185,9 @@ export default function ToolsPanel() {
                                 </div>
                                 {expanded === group.name && (
                                     <div className="tools-list">
+                                        {group.example && (
+                                            <div className="tool-example">💡 {group.example}</div>
+                                        )}
                                         {group.tools.map(tool => {
                                             const st = statusLabel(tool.status);
                                             return (
@@ -219,17 +227,24 @@ export default function ToolsPanel() {
                 <div className="tools-arch">
                     <h3>三位一体架构</h3>
                     <div className="arch-diagram">
-                        <div className="arch-layer">
+                        <div className="arch-card">
+                            <span className="arch-card-icon">🔌</span>
                             <span className="arch-label">MCP 协议层</span>
                             <span className="arch-desc">20+ 金融数据源 · JSON-RPC 2.0 · 统一 Tool Schema</span>
                         </div>
-                        <div className="arch-arrow">↕</div>
-                        <div className="arch-layer">
+                        <div className="arch-connector">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+                        </div>
+                        <div className="arch-card">
+                            <span className="arch-card-icon">🧠</span>
                             <span className="arch-label">Skill 技能层</span>
                             <span className="arch-desc">167 个 Skill · 20 分类 · 金融/学术/可视化/研究</span>
                         </div>
-                        <div className="arch-arrow">↕</div>
-                        <div className="arch-layer">
+                        <div className="arch-connector">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+                        </div>
+                        <div className="arch-card">
+                            <span className="arch-card-icon">📋</span>
                             <span className="arch-label">BMAD 方法层</span>
                             <span className="arch-desc">Analyst → PM → Architect → Dev → QA 五角色</span>
                         </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const THEMES = [
+    { key: 'light', label: 'Light', desc: '学术白色风格', color: '#0f766e', emoji: '☀️' },
     { key: 'terminal', label: 'Terminal', desc: 'Bloomberg终端风格', color: '#10b981', emoji: '🖥️' },
     { key: 'ocean', label: 'Ocean', desc: 'Coursera学术蓝', color: '#3b82f6', emoji: '🌊' },
     { key: 'ember', label: 'Ember', desc: 'MasterClass奢华金', color: '#f59e0b', emoji: '🔥' },
@@ -8,12 +9,12 @@ const THEMES = [
 ];
 
 export default function ThemeSwitcher() {
-    const [current, setCurrent] = useState('terminal');
+    const [current, setCurrent] = useState('light');
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const saved = localStorage.getItem('sb-theme') || 'terminal';
+        const saved = localStorage.getItem('sb-theme') || 'light';
         document.documentElement.setAttribute('data-theme', saved);
         setCurrent(saved);
     }, []);

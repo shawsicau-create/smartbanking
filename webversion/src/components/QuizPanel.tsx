@@ -9,7 +9,14 @@ interface Question {
     explanation: string;
 }
 
-const TOPICS = ['商业银行风险管理', '证券投资分析', '国际金融与汇率', '金融科技与区块链', '信贷审批实务', '资产定价理论'];
+const TOPICS = [
+    { name: '商业银行风险管理', icon: '🏦', color: '#0f766e' },
+    { name: '证券投资分析', icon: '📈', color: '#3b82f6' },
+    { name: '国际金融与汇率', icon: '🌍', color: '#8b5cf6' },
+    { name: '金融科技与区块链', icon: '⛓️', color: '#f59e0b' },
+    { name: '信贷审批实务', icon: '📋', color: '#ef4444' },
+    { name: '资产定价理论', icon: '💹', color: '#06b6d4' },
+];
 const DIFFICULTIES = ['基础', '进阶', '高级'];
 
 export default function QuizPanel() {
@@ -19,7 +26,7 @@ export default function QuizPanel() {
     const [showResult, setShowResult] = useState(false);
     const [score, setScore] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [topic, setTopic] = useState(TOPICS[0]);
+    const [topic, setTopic] = useState(TOPICS[0].name);
     const [difficulty, setDifficulty] = useState(DIFFICULTIES[0]);
     const [count, setCount] = useState(5);
 
@@ -86,9 +93,14 @@ export default function QuizPanel() {
                         <div className="quiz-config">
                             <div className="config-row">
                                 <label>主题</label>
-                                <select value={topic} onChange={e => setTopic(e.target.value)}>
-                                    {TOPICS.map(t => <option key={t} value={t}>{t}</option>)}
-                                </select>
+                                <div className="quiz-topic-grid">
+                                    {TOPICS.map(t => (
+                                        <button key={t.name} className={`quiz-topic-card ${topic === t.name ? 'active' : ''}`} onClick={() => setTopic(t.name)} style={{ '--topic-color': t.color } as React.CSSProperties}>
+                                            <span className="quiz-topic-icon">{t.icon}</span>
+                                            <span className="quiz-topic-name">{t.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             <div className="config-row">
                                 <label>难度</label>
@@ -105,7 +117,16 @@ export default function QuizPanel() {
                                 </select>
                             </div>
                             <button className="generate-btn" onClick={generate} disabled={loading}>
-                                {loading ? '生成中...' : '开始测验'}
+                                {loading ? (
+                                    <span className="btn-loading-text">生成中...</span>
+                                ) : (
+                                    <>
+                                        开始测验
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

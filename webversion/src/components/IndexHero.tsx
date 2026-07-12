@@ -64,7 +64,7 @@ export default function IndexHero() {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState<ChatMode>('general');
     const [showChat, setShowChat] = useState(false);
-    const [showCourses, setShowCourses] = useState(false);
+    const [showCourses, setShowCourses] = useState(true);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -153,6 +153,7 @@ export default function IndexHero() {
                         <a href="/quiz/" className="index-nav-link">测验</a>
                         <a href="/pbl/" className="index-nav-link">项目</a>
                         <a href="/generate/" className="index-nav-link">生成</a>
+                        <a href="/preface/" className="index-nav-link">课程文档</a>
                         <a href="https://cnb.cool/xiaosicau/smartbanking" className="index-nav-link" target="_blank" rel="noopener">CNB</a>
                     </nav>
                 </div>
@@ -325,6 +326,31 @@ export default function IndexHero() {
 
             {/* Footer */}
             <footer className="index-footer">
+                <div className="index-footer-main">
+                    <div className="index-footer-left">
+                        <div className="index-footer-brand">
+                            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                                <rect width="32" height="32" rx="8" fill="url(#footer-logo-grad)" />
+                                <path d="M8 22V14L16 8L24 14V22H20V17H12V22H8Z" stroke="white" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                                <circle cx="16" cy="14" r="2" fill="white" opacity="0.8" />
+                                <defs><linearGradient id="footer-logo-grad" x1="0" y1="0" x2="32" y2="32"><stop stopColor="#10b981" /><stop offset="1" stopColor="#059669" /></linearGradient></defs>
+                            </svg>
+                            <span>SmartBank Agent</span>
+                        </div>
+                        <p className="index-footer-desc">《智慧银行实验教程》配套教学智能体平台</p>
+                    </div>
+                    <div className="index-footer-links">
+                        <a href="/chat/">智能问答</a>
+                        <a href="/quiz/">金融测验</a>
+                        <a href="/pbl/">BMAD项目</a>
+                        <a href="/tools/">MCP工具</a>
+                        <a href="/preface/">课程文档</a>
+                    </div>
+                    <div className="index-footer-links">
+                        <a href="https://github.com/xiaosicau/smartbanking" target="_blank" rel="noopener">GitHub</a>
+                        <a href="https://cnb.cool/xiaosicau/smartbanking" target="_blank" rel="noopener">CNB仓库</a>
+                    </div>
+                </div>
                 <div className="index-footer-tech">
                     <span className="index-tech-badge">MiMo</span>
                     <span className="index-tech-badge">MCP</span>
@@ -332,9 +358,14 @@ export default function IndexHero() {
                     <span className="index-tech-badge">World Bank</span>
                     <span className="index-tech-badge">Cloudflare Pages</span>
                 </div>
-                <p className="index-footer-text">
-                    四川农业大学 · 数字经济系 · 肖诗顺 教授
-                </p>
+                <div className="index-footer-bottom">
+                    <p className="index-footer-text">
+                        四川农业大学 · 数字经济系 · 肖诗顺 教授
+                    </p>
+                    <p className="index-footer-copyright">
+                        &copy; 2026 SmartBank Agent. Built with Astro + Starlight.
+                    </p>
+                </div>
             </footer>
         </div>
     );

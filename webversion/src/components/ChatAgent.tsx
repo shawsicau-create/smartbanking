@@ -17,13 +17,13 @@ interface Message {
 type ChatMode = 'general' | 'bmad-analyst' | 'bmad-pm' | 'bmad-architect' | 'bmad-dev' | 'bmad-qa' | 'debate';
 
 const MODES: { key: ChatMode; label: string; icon: string; desc: string }[] = [
-    { key: 'general', label: '通用', icon: '💬', desc: '金融问答与数据查询' },
-    { key: 'bmad-analyst', label: '分析师', icon: '📋', desc: '需求分析师' },
-    { key: 'bmad-pm', label: '产品', icon: '📊', desc: '产品经理' },
-    { key: 'bmad-architect', label: '架构', icon: '🏗️', desc: '架构师' },
-    { key: 'bmad-dev', label: '开发', icon: '💻', desc: '开发者' },
-    { key: 'bmad-qa', label: 'QA', icon: '🔍', desc: '质量保障' },
-    { key: 'debate', label: '辩论', icon: '⚔️', desc: '多空辩论' },
+    { key: 'general', label: '通用问答', icon: '💬', desc: '金融问答与数据查询' },
+    { key: 'bmad-analyst', label: '分析师', icon: '📋', desc: '需求分析专家' },
+    { key: 'bmad-pm', label: '产品经理', icon: '📊', desc: '产品规划与路线图' },
+    { key: 'bmad-architect', label: '架构师', icon: '🏗️', desc: '系统架构设计' },
+    { key: 'bmad-dev', label: '开发者', icon: '💻', desc: '编码实现指导' },
+    { key: 'bmad-qa', label: 'QA保障', icon: '🔍', desc: '质量测试与审查' },
+    { key: 'debate', label: '多空辩论', icon: '⚔️', desc: '多头vs空头分析' },
 ];
 
 const SUGGESTIONS = [
@@ -358,7 +358,16 @@ export default function ChatAgent() {
                     aria-label={mode === 'debate' ? '输入辩论主题' : '输入金融问题'}
                 />
                 <button type="submit" disabled={loading || !input.trim()}>
-                    {loading ? '...' : '发送'}
+                    {loading ? (
+                        <span className="send-loading-dots"><span /><span /><span /></span>
+                    ) : (
+                        <>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 19V5M5 12l7-7 7 7" />
+                            </svg>
+                            发送
+                        </>
+                    )}
                 </button>
             </form>
         </div>
