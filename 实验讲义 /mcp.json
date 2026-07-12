@@ -2,26 +2,45 @@
   "mcpServers": {
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
     },
     "amap-maps": {
       "command": "npx",
-      "args": ["-y", "@amap/amap-maps-mcp-server"],
+      "args": [
+        "-y",
+        "@amap/amap-maps-mcp-server"
+      ],
       "env": {
         "AMAP_MAPS_API_KEY": "63f93d2223f744affebade9ef7982732"
       }
     },
     "stata-mcp": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "http://localhost:4000/mcp-streamable"]
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:4000/mcp-streamable"
+      ]
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {
+        "CHROME_URL": "http://localhost:9222"
+      }
     },
     "automation-mcp": {
       "command": "/Users/xiaoshiishun/.bun/bin/bun",
@@ -42,14 +61,21 @@
     },
     "excel": {
       "command": "npx",
-      "args": ["--yes", "@negokaz/excel-mcp-server"],
+      "args": [
+        "--yes",
+        "@negokaz/excel-mcp-server"
+      ],
       "env": {
         "EXCEL_MCP_PAGING_CELLS_LIMIT": "4000"
       }
     },
     "office-word": {
       "command": "/Users/xiaoshiishun/Library/Python/3.9/bin/uvx",
-      "args": ["--from", "Office-Word-MCP-Server", "word_mcp_server"],
+      "args": [
+        "--from",
+        "Office-Word-MCP-Server",
+        "word_mcp_server"
+      ],
       "env": {
         "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"
       }
@@ -69,10 +95,134 @@
     },
     "scansci-pdf": {
       "command": "/opt/homebrew/bin/scansci-pdf",
-      "args": ["run"]
+      "args": [
+        "run"
+      ]
     },
     "edgeone-makers-mcp-server": {
+      "type": "streamablehttp",
       "url": "https://mcp-on-edge.edgeone.site/mcp-server"
+    },
+    "hexin-ifind-ds-stock-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-stock-mcp"
+    },
+    "hexin-ifind-ds-fund-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-fund-mcp"
+    },
+    "hexin-ifind-ds-edb-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-edb-mcp"
+    },
+    "hexin-ifind-ds-news-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-news-mcp"
+    },
+    "hexin-ifind-ds-bond-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-bond-mcp"
+    },
+    "hexin-ifind-ds-global-stock-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-global-stock-mcp"
+    },
+    "hexin-ifind-ds-index-mcp": {
+      "headers": {
+        "Authorization": "eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg"
+      },
+      "type": "streamablehttp",
+      "url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers/hexin-ifind-ds-index-mcp"
+    },
+    "fred-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@stefanoamorelli/fred-mcp-server@latest"
+      ],
+      "env": {
+        "FRED_API_KEY": "YOUR_FRED_API_KEY_HERE"
+      }
+    },
+    "worldbank-data360": {
+      "type": "streamablehttp",
+      "url": "https://maimcpext.worldbank.org/ext/data360/mcp"
+    },
+    "openecon-data": {
+      "type": "streamablehttp",
+      "url": "https://data.openecon.ai/mcp"
+    },
+    "oecd-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "oecd-mcp"
+      ]
+    },
+    "bls-labor-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cyanheads/bls-labor-mcp-server@latest"
+      ],
+      "env": {
+        "MCP_TRANSPORT_TYPE": "stdio",
+        "MCP_LOG_LEVEL": "info",
+        "BLS_API_KEY": "YOUR_BLS_API_KEY_HERE"
+      }
+    },
+    "openbb-mcp": {
+      "type": "streamablehttp",
+      "url": "http://127.0.0.1:8001/mcp"
+    },
+    "tushareMcp": {
+      "type": "streamablehttp",
+      "url": "https://api.tushare.pro/mcp/?token=99882e4e66b875e8d7776fed9e84e14a949447d9cde3d2fbeac443ba"
+    },
+    "finance-mcp": {
+      "type": "streamablehttp",
+      "url": "https://finvestai.top/mcp",
+      "headers": {
+        "X-Tushare-Token": "99882e4e66b875e8d7776fed9e84e14a949447d9cde3d2fbeac443ba"
+      }
+    },
+    "yahoo-finance": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "yahoo-finance-mcp-server"
+      ]
+    },
+    "china-stock-mcp": {
+      "command": "uvx",
+      "args": [
+        "china-stock-mcp"
+      ]
+    },
+    "mcp-server-chart": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@antv/mcp-server-chart"
+      ]
     }
   }
 }

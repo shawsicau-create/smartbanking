@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
+
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
@@ -31,17 +33,19 @@ const basePath = isGitHubPages ? `/${ghRepoName}/` : '/';
 export default defineConfig({
 	site: siteUrl,
 	base: basePath,
+	output: 'static',
 	markdown: {
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [rehypeKatex],
 	},
 	integrations: [
+		react(),
 		// @astrojs/sitemap 自动读取 site 字段，生成 /sitemap-index.xml
 		// 配合 robots.txt 中的 Sitemap 声明，主动提交给 Google / 百度
 		sitemap(),
 		starlight({
-			title: '智慧银行实验教程',
-			description: 'AI驱动的金融科技实践',
+			title: 'SmartBank Agent',
+			description: '基于MCP+Skill+BMAD三位一体的金融科技实验教学智能体',
 			head: [
 				{
 					tag: 'script',
@@ -74,6 +78,10 @@ export default defineConfig({
 				'./src/styles/custom.css',
 			],
 			sidebar: [
+				{
+					label: '🤖 SmartBank Agent',
+					link: '/chat/',
+				},
 				{
 					label: '前言',
 					items: [{ slug: 'preface' }],

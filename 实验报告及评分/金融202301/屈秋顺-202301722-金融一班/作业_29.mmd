@@ -1,0 +1,43 @@
+erDiagram
+    CUSTOMER ||--o{ CONTACT_RECORD : has
+    CUSTOMER ||--o{ SERVICE_TICKET : creates
+    CUSTOMER }o--|| CUSTOMER_LEVEL : belongs_to
+    
+    CUSTOMER {
+        bigint customer_id PK
+        varchar name
+        varchar phone
+        varchar email
+        varchar level
+        datetime register_date
+        datetime created_at
+        datetime updated_at
+    }
+    
+    CONTACT_RECORD {
+        bigint record_id PK
+        bigint customer_id FK
+        varchar contact_type
+        text content
+        datetime contact_time
+        varchar operator
+    }
+    
+    SERVICE_TICKET {
+        bigint ticket_id PK
+        bigint customer_id FK
+        varchar title
+        text content
+        varchar status
+        varchar priority
+        datetime created_at
+        datetime updated_at
+        datetime completed_at
+    }
+    
+    CUSTOMER_LEVEL {
+        int level_id PK
+        varchar level_name
+        varchar privileges
+        decimal discount_rate
+    }

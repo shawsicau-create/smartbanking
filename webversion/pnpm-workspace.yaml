@@ -1,6 +1,8 @@
 allowBuilds:
   esbuild: true
   sharp: true
+  workerd: false
 onlyBuiltDependencies:
   - esbuild
   - sharp
+storeDir: /Users/xiaoshiishun/微云同步助手(275531137)/qoder工作目录。cnb代码/.pnpm-store/v11
