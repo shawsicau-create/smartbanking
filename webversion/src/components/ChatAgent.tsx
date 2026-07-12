@@ -50,6 +50,36 @@ function exportChat(messages: Message[]) {
     a.click();
 }
 
+// ── localStorage 历史记录管理 ────────────────────────────
+const STORAGE_KEY = 'smartbank-chat-history';
+
+function saveChatHistory(messages: Message[], mode: ChatMode) {
+    try {
+        const data = { messages, mode, timestamp: Date.now() };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.warn('保存对话历史失败:', e);
+    }
+}
+
+function loadChatHistory(): { messages: Message[]; mode: ChatMode } | null {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (data && Array.isArray(data.messages)) {
+            return { messages: data.messages, mode: data.mode || 'general' };
+        }
+    } catch (e) {
+        console.warn('加载对话历史失败:', e);
+    }
+    return null;
+}
+
+function clearChatHistory() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
 const TOOL_LABELS: Record<string, string> = {
     query_stock: '查询A股个股行情',
     query_stock_basic: '搜索股票代码',
@@ -229,10 +259,17 @@ function renderContent(text: string) {
 }
 
 export default function ChatAgent() {
-    const [messages, setMessages] = useState<Message[]>([]);
+    // 初始化时从 localStorage 加载历史记录
+    const [messages, setMessages] = useState<Message[]>(() => {
+        const saved = loadChatHistory();
+        return saved?.messages || [];
+    });
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [mode, setMode] = useState<ChatMode>('general');
+    const [mode, setMode] = useState<ChatMode>(() => {
+        const saved = loadChatHistory();
+        return saved?.mode || 'general';
+    });
     const chatEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [speaking, setSpeaking] = useState(false);
@@ -246,6 +283,13 @@ export default function ChatAgent() {
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    // 消息或模式变化时自动保存到 localStorage
+    useEffect(() => {
+        if (messages.length > 0) {
+            saveChatHistory(messages, mode);
+        }
+    }, [messages, mode]);
 
     const sendDebate = async (topic: string) => {
         const userMsg: Message = { role: 'user', content: `⚖️ 辩论主题：${topic}` };
@@ -346,7 +390,14 @@ export default function ChatAgent() {
                 <div className="header-right">
                     <ThemeSwitcher />
                     {messages.length > 0 && (
-                        <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
+                        <>
+                            <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
+                            <button className="icon-btn" title="清除历史" onClick={() => {
+                                clearChatHistory();
+                                setMessages([]);
+                                setMode('general');
+                            }}>🗑️</button>
+                        </>
                     )}
                     <a href="/" className="back-link">返回主页</a>
                 </div>
