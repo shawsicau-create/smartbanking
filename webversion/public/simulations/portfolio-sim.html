@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>投资组合优化器 - SmartBank Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+            background: #0a0e17;
+            color: #e2e8f0;
+            min-height: 100vh
+        }
+
+        .header {
+            padding: 16px 24px;
+            background: #111827;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .header h1 {
+            font-size: 18px
+        }
+
+        .header a {
+            color: #10b981;
+            text-decoration: none;
+            font-size: 13px
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        .assets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .asset {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .asset:hover {
+            border-color: #10b981
+        }
+
+        .asset.selected {
+            border-color: #10b981;
+            background: #065f46
+        }
+
+        .asset .name {
+            font-size: 14px;
+            font-weight: 600
+        }
+
+        .asset .ret {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 4px
+        }
+
+        .asset .risk {
+            font-size: 11px;
+            color: #94a3b8
+        }
+
+        .slider-area {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .slider-row label {
+            width: 100px;
+            font-size: 13px;
+            flex-shrink: 0
+        }
+
+        .slider-row input[type=range] {
+            flex: 1
+        }
+
+        .slider-row .pct {
+            width: 40px;
+            text-align: right;
+            font-size: 13px;
+            color: #10b981;
+            font-weight: 600
+        }
+
+        .total-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #111827;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px
+        }
+
+        .total-bar .warn {
+            color: #ef4444
+        }
+
+        .total-bar .ok {
+            color: #10b981
+        }
+
+        .result {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px
+        }
+
+        .result-card {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center
+        }
+
+        .result-card .val {
+            font-size: 24px;
+            font-weight: 700;
+            color: #10b981
+        }
+
+        .result-card .lbl {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #10b981;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%
+        }
+
+        .btn:hover {
+            background: #059669
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            margin-bottom: 20px
+        }
+
+        .info {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.8
+        }
+
+        .info h3 {
+            color: #10b981;
+            margin-bottom: 8px
+        }
+
+        @media(max-width:640px) {
+            .assets {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .result {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>📊 投资组合优化器</h1><a href="/">返回课程</a>
+    </div>
+    <div class="container">
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:16px">选择资产类别，调整配比，观察预期收益与风险变化</p>
+        <div class="assets" id="assets"></div>
+        <div class="slider-area" id="sliders"></div>
+        <div class="total-bar"><span>总配比：<span id="total-pct">0</span>%</span><span id="total-msg"></span></div>
+        <button class="btn" onclick="optimize()">计算最优组合 ⚡</button>
+        <div class="result" id="result" style="display:none">
+            <div class="result-card">
+                <div class="val" id="r-ret">-</div>
+                <div class="lbl">预期年化收益</div>
+            </div>
+            <div class="result-card">
+                <div class="val" id="r-risk">-</div>
+                <div class="lbl">波动率(风险)</div>
+            </div>
+            <div class="result-card">
+                <div class="val" id="r-sharpe">-</div>
+                <div class="lbl">夏普比率</div>
+            </div>
+            <div class="result-card">
+                <div class="val" id="r-var">-</div>
+                <div class="lbl">VaR(95%)</div>
+            </div>
+        </div>
+        <canvas id="chart"></canvas>
+        <div class="info">
+            <h3>💡 Markowitz均值-方差模型</h3>
+            <p>投资组合理论由Harry Markowitz于1952年提出，通过分散化投资降低非系统性风险。<br>
+                核心公式：组合收益 E(Rp) = Σ wi·E(Ri)，组合方差 σp² = Σ Σ wi·wj·σi·σj·ρij<br>
+                夏普比率 SR = (E(Rp) - Rf) / σp，衡量每单位风险的超额收益。</p>
+        </div>
+    </div>
+    <script>
+        const ASSETS = [
+            { id: 'stock', name: 'A股大盘', ret: 8.5, risk: 22, color: '#10b981' },
+            { id: 'bond', name: '国债', ret: 3.2, risk: 4, color: '#3b82f6' },
+            { id: 'money', name: '货币基金', ret: 2.1, risk: 0.5, color: '#f59e0b' },
+            { id: 'gold', name: '黄金', ret: 5.8, risk: 15, color: '#eab308' },
+            { id: 'reit', name: 'REITs', ret: 6.5, risk: 18, color: '#8b5cf6' },
+            { id: 'intl', name: '海外股票', ret: 7.2, risk: 20, color: '#ec4899' },
+        ];
+        const corrMat = [
+            [1.0, 0.15, 0.05, 0.02, 0.45, 0.6],
+            [0.15, 1.0, 0.3, 0.1, 0.2, 0.1],
+            [0.05, 0.3, 1.0, 0.05, 0.1, 0.05],
+            [0.02, 0.1, 0.05, 1.0, 0.1, 0.15],
+            [0.45, 0.2, 0.1, 0.1, 1.0, 0.35],
+            [0.6, 0.1, 0.05, 0.15, 0.35, 1.0],
+        ];
+        let selected = new Set(['stock', 'bond', 'money']);
+        let weights = { stock: 50, bond: 30, money: 20 };
+
+        function renderAssets() {
+            const el = $('assets'); el.innerHTML = '';
+            ASSETS.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'asset' + (selected.has(a.id) ? ' selected' : '');
+                div.innerHTML = `<div class="name">${a.name}</div><div class="ret">收益 ${a.ret}%</div><div class="risk">风险 ${a.risk}%</div>`;
+                div.onclick = () => { selected.has(a.id) ? selected.delete(a.id) : selected.add(a.id); if (!weights[a.id]) weights[a.id] = 0; renderAssets(); renderSliders(); };
+                el.appendChild(div);
+            });
+        }
+
+        function renderSliders() {
+            const el = $('sliders'); el.innerHTML = '';
+            const sel = ASSETS.filter(a => selected.has(a.id));
+            sel.forEach(a => {
+                weights[a.id] = weights[a.id] || Math.floor(100 / sel.length);
+                const row = document.createElement('div'); row.className = 'slider-row';
+                row.innerHTML = `<label>${a.name}</label><input type="range" min="0" max="100" value="${weights[a.id]}" data-id="${a.id}"><span class="pct">${weights[a.id]}%</span>`;
+                const inp = row.querySelector('input'); const pct = row.querySelector('.pct');
+                inp.oninput = function () { weights[a.id] = +this.value; pct.textContent = this.value + '%'; updateTotal(); };
+                el.appendChild(row);
+            });
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const sel = ASSETS.filter(a => selected.has(a.id));
+            const total = sel.reduce((s, a) => s + (weights[a.id] || 0), 0);
+            $('total-pct').textContent = total;
+            const msg = $('total-msg');
+            if (total === 100) { msg.textContent = '✓ 配比正确'; msg.className = 'ok'; }
+            else { msg.textContent = total > 100 ? '配比超出100%' : '配比不足100%'; msg.className = 'warn'; }
+        }
+
+        function optimize() {
+            const sel = ASSETS.filter(a => selected.has(a.id));
+            if (sel.length < 2) return alert('请至少选择2种资产');
+            const n = sel.length;
+            let w = new Array(n).fill(1 / n);
+            let bestSharpe = -Infinity, bestW = w.slice();
+            for (let iter = 0; iter < 10000; iter++) {
+                const trial = w.map(() => Math.random()); const sum = trial.reduce((a, b) => a + b);
+                const tw = trial.map(v => v / sum);
+                let Eret = 0, Var = 0;
+                for (let i = 0; i < n; i++) { Eret += tw[i] * sel[i].ret; }
+                for (let i = 0; i < n; i++)for (let j = 0; j < n; j++) {
+                    const ii = ASSETS.indexOf(sel[i]), jj = ASSETS.indexOf(sel[j]);
+                    Var += tw[i] * tw[j] * sel[i].risk * sel[j].risk * corrMat[ii][jj] / 10000;
+                }
+                const std = Math.sqrt(Var); const sr = (Eret - 2.5) / std;
+                if (sr > bestSharpe) { bestSharpe = sr; bestW = tw.slice(); }
+            }
+            selected.forEach(id => weights[id] = 0);
+            sel.forEach((a, i) => weights[a.id] = Math.round(bestW[i] * 100));
+            renderSliders();
+            calcResult(sel, bestW);
+        }
+
+        function calcResult(sel, w) {
+            const n = sel.length; let Eret = 0, Var = 0;
+            for (let i = 0; i < n; i++) { Eret += w[i] * sel[i].ret; }
+            for (let i = 0; i < n; i++)for (let j = 0; j < n; j++) {
+                const ii = ASSETS.indexOf(sel[i]), jj = ASSETS.indexOf(sel[j]);
+                Var += w[i] * w[j] * sel[i].risk * sel[j].risk * corrMat[ii][jj] / 10000;
+            }
+            const std = Math.sqrt(Var); const sharpe = (Eret - 2.5) / std;
+            const VaR_95 = Eret - 1.645 * std;
+            $('result').style.display = 'grid';
+            $('r-ret').textContent = Eret.toFixed(2) + '%';
+            $('r-risk').textContent = std.toFixed(2) + '%';
+            $('r-sharpe').textContent = sharpe.toFixed(2);
+            $('r-var').textContent = VaR_95.toFixed(2) + '%';
+            drawChart(sel, w);
+        }
+
+        function drawChart(sel, w) {
+            const c = $('chart'), ctx = c.getContext('2d');
+            c.width = c.offsetWidth * 2; c.height = 500; ctx.scale(2, 2);
+            const W = c.offsetWidth, H = 250;
+            ctx.fillStyle = '#1a2332'; ctx.fillRect(0, 0, W, H);
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#eab308', '#8b5cf6', '#ec4899'];
+            const cx = W / 2, cy = H / 2, r = Math.min(W, H) * 0.35;
+            let angle = -Math.PI / 2;
+            sel.forEach((a, i) => {
+                const slice = w[i] * Math.PI * 2;
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, angle, angle + slice); ctx.closePath();
+                ctx.fillStyle = colors[ASSETS.indexOf(a) % colors.length]; ctx.fill();
+                ctx.strokeStyle = '#0a0e17'; ctx.lineWidth = 2; ctx.stroke();
+                const mid = angle + slice / 2; const lx = cx + Math.cos(mid) * (r * 0.65); const ly = cy + Math.sin(mid) * (r * 0.65);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(a.name + ' ' + Math.round(w[i] * 100) + '%', lx, ly);
+                angle += slice;
+            });
+        }
+
+        const $ = id => document.getElementById(id);
+        renderAssets(); renderSliders();
+    </script>
+</body>
+
+</html>

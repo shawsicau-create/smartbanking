@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>风控压力测试 - SmartBank Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+            background: #0a0e17;
+            color: #e2e8f0;
+            min-height: 100vh
+        }
+
+        .header {
+            padding: 16px 24px;
+            background: #111827;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .header h1 {
+            font-size: 18px
+        }
+
+        .header a {
+            color: #10b981;
+            text-decoration: none;
+            font-size: 13px
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        .scenarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px
+        }
+
+        .scenario {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .scenario:hover {
+            border-color: #10b981
+        }
+
+        .scenario.active {
+            border-color: #10b981;
+            background: #065f46
+        }
+
+        .scenario h3 {
+            font-size: 14px;
+            margin-bottom: 6px
+        }
+
+        .scenario p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5
+        }
+
+        .scenario .severity {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 6px
+        }
+
+        .sev-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444
+        }
+
+        .sev-mid {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b
+        }
+
+        .sev-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981
+        }
+
+        .params {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px
+        }
+
+        .params h3 {
+            font-size: 14px;
+            color: #10b981;
+            margin-bottom: 12px
+        }
+
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px
+        }
+
+        .param-row label {
+            width: 140px;
+            font-size: 12px;
+            color: #94a3b8;
+            flex-shrink: 0
+        }
+
+        .param-row input[type=range] {
+            flex: 1
+        }
+
+        .param-row .val {
+            width: 60px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #10b981;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px
+        }
+
+        .btn:hover {
+            background: #059669
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .res {
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center
+        }
+
+        .res .val {
+            font-size: 20px;
+            font-weight: 700
+        }
+
+        .res .lbl {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+            background: #1a2332;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            margin-bottom: 16px
+        }
+
+        .report {
+            background: #111827;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.8
+        }
+
+        .report h3 {
+            color: #10b981;
+            margin-bottom: 8px
+        }
+
+        .report .pass {
+            color: #10b981;
+            font-weight: 600
+        }
+
+        .report .fail {
+            color: #ef4444;
+            font-weight: 600
+        }
+
+        @media(max-width:640px) {
+            .scenarios {
+                grid-template-columns: 1fr
+            }
+
+            .results {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🛡️ 风控压力测试</h1><a href="/">返回课程</a>
+    </div>
+    <div class="container">
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:16px">选择压力情景，调整参数，评估银行资本充足率在极端条件下的表现</p>
+        <div class="scenarios" id="scenarios"></div>
+        <div class="params">
+            <h3>⚙️ 银行参数设置</h3>
+            <div class="param-row"><label>初始资本(亿元)</label><input type="range" id="p-cap" min="500" max="3000"
+                    value="1000"><span class="val" id="v-cap">1000</span></div>
+            <div class="param-row"><label>总资产(亿元)</label><input type="range" id="p-asset" min="5000" max="30000"
+                    value="15000"><span class="val" id="v-asset">15000</span></div>
+            <div class="param-row"><label>初始不良率(%)</label><input type="range" id="p-npl" min="5" max="30"
+                    value="15"><span class="val" id="v-npl">1.5</span></div>
+            <div class="param-row"><label>贷款占比(%)</label><input type="range" id="p-loan" min="40" max="80"
+                    value="60"><span class="val" id="v-loan">60</span></div>
+        </div>
+        <button class="btn" onclick="runStress()">执行压力测试 ▶</button>
+        <div class="results" id="results" style="display:none">
+            <div class="res">
+                <div class="val" id="r-cr">-</div>
+                <div class="lbl">资本充足率</div>
+            </div>
+            <div class="res">
+                <div class="val" id="r-loss">-</div>
+                <div class="lbl">预计损失(亿)</div>
+            </div>
+            <div class="res">
+                <div class="val" id="r-surv">-</div>
+                <div class="lbl">资本剩余(亿)</div>
+            </div>
+            <div class="res">
+                <div class="val" id="r-verdict">-</div>
+                <div class="lbl">压力测试结论</div>
+            </div>
+        </div>
+        <canvas id="chart"></canvas>
+        <div class="report" id="report"></div>
+    </div>
+    <script>
+        const SCENARIOS = [
+            { id: 'rate_hike', name: '利率大幅上升', desc: '央行加息200BP，债券价格下跌，贷款违约率上升', impact: { nplAdd: 2.5, bondLoss: 8, loanLoss: 1.5 }, severity: 'high' },
+            { id: 'credit_crash', name: '信用违约潮', desc: '房地产企业集中违约，信贷资产质量恶化', impact: { nplAdd: 5, bondLoss: 3, loanLoss: 4 }, severity: 'high' },
+            { id: 'fx_crisis', name: '汇率危机', desc: '人民币大幅贬值，外币资产缩水，资本外流', impact: { nplAdd: 1.5, bondLoss: 5, loanLoss: 2 }, severity: 'high' },
+            { id: 'slowdown', name: '经济放缓', desc: 'GDP增速降至3%，企业盈利下降，坏账温和增加', impact: { nplAdd: 1.5, bondLoss: 2, loanLoss: 1 }, severity: 'mid' },
+            { id: 'liquidity', name: '流动性紧缩', desc: '市场流动性收紧，同业利率飙升，资产被迫折价出售', impact: { nplAdd: 0.8, bondLoss: 6, loanLoss: 0.5 }, severity: 'mid' },
+            { id: 'mild', name: '温和调整', desc: '经济小幅下行，信贷质量轻微恶化', impact: { nplAdd: 0.5, bondLoss: 1, loanLoss: 0.3 }, severity: 'low' },
+        ];
+        let active = 'credit_crash';
+
+        function render() {
+            const el = $('scenarios'); el.innerHTML = '';
+            SCENARIOS.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'scenario' + (active === s.id ? ' active' : '');
+                div.innerHTML = `<h3>${s.name}</h3><p>${s.desc}</p><span class="severity sev-${s.severity}">${s.severity === 'high' ? '严重' : s.severity === 'mid' ? '中等' : '温和'}</span>`;
+                div.onclick = () => { active = s.id; render(); };
+                el.appendChild(div);
+            });
+        }
+
+        ['cap', 'asset', 'npl', 'loan'].forEach(k => {
+            const inp = $('p-' + k); const val = $('v-' + k);
+            inp.oninput = function () {
+                if (k === 'npl') val.textContent = (this.value / 10).toFixed(1);
+                else val.textContent = this.value;
+            };
+        });
+
+        function runStress() {
+            const sc = SCENARIOS.find(s => s.id === active);
+            const cap = +$('p-cap').value, asset = +$('p-asset').value;
+            const baseNpl = +$('p-npl').value / 10, loanPct = +$('p-loan').value / 100;
+            const loan = asset * loanPct, bond = asset * (1 - loanPct) * 0.6;
+            const stressNpl = baseNpl + sc.impact.nplAdd;
+            const loanLoss = loan * sc.impact.loanLoss / 100;
+            const bondLoss = bond * sc.impact.bondLoss / 100;
+            const totalLoss = loanLoss + bondLoss + loan * (stressNpl - baseNpl) / 100;
+            const remaining = cap - totalLoss;
+            const cr = (remaining / asset) * 100;
+            const pass = cr >= 8;
+            $('results').style.display = 'grid';
+            $('r-cr').textContent = cr.toFixed(2) + '%';
+            $('r-cr').style.color = pass ? '#10b981' : '#ef4444';
+            $('r-loss').textContent = totalLoss.toFixed(0);
+            $('r-loss').style.color = '#ef4444';
+            $('r-surv').textContent = remaining.toFixed(0);
+            $('r-surv').style.color = remaining > 0 ? '#10b981' : '#ef4444';
+            $('r-verdict').textContent = pass ? '通过' : '未通过';
+            $('r-verdict').style.color = pass ? '#10b981' : '#ef4444';
+            $('report').innerHTML = `<h3>📋 压力测试报告</h3>
+<p><strong>情景：</strong>${sc.name} — ${sc.desc}</p>
+<p><strong>基础参数：</strong>资本${cap}亿，总资产${asset}亿，初始不良率${baseNpl}%，贷款占比${(loanPct * 100).toFixed(0)}%</p>
+<p><strong>压力后不良率：</strong>${stressNpl.toFixed(1)}%（上升${sc.impact.nplAdd}%）</p>
+<p><strong>预计损失：</strong>信贷损失${loanLoss.toFixed(0)}亿 + 债券损失${bondLoss.toFixed(0)}亿 + 新增不良拨备${(loan * (stressNpl - baseNpl) / 100).toFixed(0)}亿 = 合计${totalLoss.toFixed(0)}亿</p>
+<p><strong>压力后资本充足率：</strong>${cr.toFixed(2)}%（${pass ? '<span class="pass">高于8%监管红线，测试通过</span>' : '<span class="fail">低于8%监管红线，测试未通过</span>'}）</p>
+<p><strong>建议：</strong>${pass ? '资本缓冲充足，可适度扩大业务规模。' : '资本不足，建议补充资本金或压缩高风险资产。'}</p>`;
+            drawChart(cap, remaining, sc.name);
+        }
+
+        function drawChart(cap, remaining, label) {
+            const c = $('chart'), ctx = c.getContext('2d');
+            c.width = c.offsetWidth * 2; c.height = 500; ctx.scale(2, 2);
+            const W = c.offsetWidth, H = 250;
+            ctx.fillStyle = '#1a2332'; ctx.fillRect(0, 0, W, H);
+            const bars = [
+                { name: '压力前资本', val: cap, color: '#10b981' },
+                { name: '压力后资本', val: Math.max(0, remaining), color: remaining > 0 ? '#3b82f6' : '#ef4444' },
+            ];
+            const maxVal = Math.max(cap, Math.abs(remaining)) * 1.2;
+            const barW = 80, gap = 40, startX = (W - bars.length * (barW + gap) + gap) / 2;
+            bars.forEach((b, i) => {
+                const x = startX + i * (barW + gap);
+                const h = (b.val / maxVal) * (H - 50);
+                const y = H - 30 - h;
+                ctx.fillStyle = b.color;
+                ctx.fillRect(x, y, barW, h);
+                ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(b.val.toFixed(0) + '亿', x + barW / 2, y - 6);
+                ctx.fillStyle = '#94a3b8'; ctx.font = '11px sans-serif';
+                ctx.fillText(b.name, x + barW / 2, H - 10);
+            });
+            const y8 = H - 30 - (cap * 0.08 / asset_val() * 100 / maxVal) * (H - 50);
+            ctx.strokeStyle = 'rgba(239,68,68,0.4)'; ctx.setLineDash([4, 4]); ctx.beginPath();
+            ctx.moveTo(0, H - 30 - (8 / maxVal * 100 / max_val_ratio()) * (H - 50)); ctx.lineTo(W, H - 30 - (8 / maxVal * 100 / max_val_ratio()) * (H - 50)); ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function asset_val() { return +$('p-asset').value; }
+        function max_val_ratio() { return 1; }
+
+        const $ = id => document.getElementById(id);
+        render();
+    </script>
+</body>
+
+</html>

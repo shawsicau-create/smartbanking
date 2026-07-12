@@ -13,12 +13,41 @@ interface Message {
     loading?: boolean;
 }
 
+type ChatMode = 'general' | 'bmad-analyst' | 'bmad-pm' | 'bmad-architect' | 'bmad-dev' | 'bmad-qa' | 'debate';
+
+const MODES: { key: ChatMode; label: string; icon: string; desc: string }[] = [
+    { key: 'general', label: '通用', icon: '💬', desc: '金融问答与数据查询' },
+    { key: 'bmad-analyst', label: '分析师', icon: '📋', desc: '需求分析师' },
+    { key: 'bmad-pm', label: '产品', icon: '📊', desc: '产品经理' },
+    { key: 'bmad-architect', label: '架构', icon: '🏗️', desc: '架构师' },
+    { key: 'bmad-dev', label: '开发', icon: '💻', desc: '开发者' },
+    { key: 'bmad-qa', label: 'QA', icon: '🔍', desc: '质量保障' },
+    { key: 'debate', label: '辩论', icon: '⚔️', desc: '多空辩论' },
+];
+
 const SUGGESTIONS = [
     { icon: '📈', text: '查询贵州茅台最近5个交易日的收盘价' },
     { icon: '🌍', text: '对比中国和美国的GDP增长率' },
     { icon: '🏦', text: '查询上证指数今日行情' },
     { icon: '📚', text: '银行信贷审批的五级分类标准是什么' },
 ];
+
+function speak(text: string) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[\*\#\|\`\>\-]/g, '').slice(0, 500));
+    u.lang = 'zh-CN'; u.rate = 1;
+    window.speechSynthesis.speak(u);
+}
+
+function exportChat(messages: Message[]) {
+    const text = messages.map(m => `[${m.role === 'user' ? '用户' : '智能体'}]\n${m.content}`).join('\n\n---\n\n');
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'smartbank-chat-' + new Date().toISOString().slice(0, 10) + '.txt';
+    a.click();
+}
 
 const TOOL_LABELS: Record<string, string> = {
     query_stock: '查询A股个股行情',
@@ -113,16 +142,53 @@ export default function ChatAgent() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [mode, setMode] = useState<ChatMode>('general');
     const chatEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const [speaking, setSpeaking] = useState(false);
+
+    useEffect(() => {
+        const check = () => setSpeaking(window.speechSynthesis?.speaking || false);
+        const id = setInterval(check, 500);
+        return () => clearInterval(id);
+    }, []);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const sendDebate = async (topic: string) => {
+        const userMsg: Message = { role: 'user', content: `⚖️ 辩论主题：${topic}` };
+        const loadingMsg: Message = { role: 'assistant', content: '', loading: true };
+        setMessages((prev) => [...prev, userMsg, loadingMsg]);
+        setLoading(true);
+        try {
+            const resp = await fetch('/api/debate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic }),
+            });
+            if (!resp.ok) throw new Error('请求失败');
+            const data = await resp.json();
+            const content = `## ⚖️ 辩论：${data.topic}\n\n---\n\n### 🟢 多头观点\n${data.bull}\n\n---\n\n### 🔴 空头观点\n${data.bear}\n\n---\n\n### 📊 主持人综合裁决\n${data.moderator}`;
+            setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = { role: 'assistant', content };
+                return next;
+            });
+        } catch (err) {
+            setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = { role: 'assistant', content: `辩论请求失败：${err instanceof Error ? err.message : '未知错误'}` };
+                return next;
+            });
+        } finally { setLoading(false); inputRef.current?.focus(); }
+    };
+
     const send = async (text?: string) => {
         const msg = (text || input).trim();
         if (!msg || loading) return;
+        if (mode === 'debate') { setInput(''); sendDebate(msg); return; }
 
         setInput('');
         const userMsg: Message = { role: 'user', content: msg };
@@ -131,45 +197,29 @@ export default function ChatAgent() {
         setLoading(true);
 
         try {
-            const history = [...messages, userMsg].map((m) => ({
-                role: m.role,
-                content: m.content,
-            }));
-
+            const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
             const resp = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: history }),
+                body: JSON.stringify({ messages: history, mode }),
             });
-
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({ error: '请求失败' }));
                 throw new Error(err.error || `HTTP ${resp.status}`);
             }
-
             const data = await resp.json();
             setMessages((prev) => {
                 const next = [...prev];
-                next[next.length - 1] = {
-                    role: 'assistant',
-                    content: data.content || '（无响应内容）',
-                    toolCalls: data.toolCalls,
-                };
+                next[next.length - 1] = { role: 'assistant', content: data.content || '（无响应内容）', toolCalls: data.toolCalls };
                 return next;
             });
         } catch (err) {
             setMessages((prev) => {
                 const next = [...prev];
-                next[next.length - 1] = {
-                    role: 'assistant',
-                    content: `抱歉，发生了错误：${err instanceof Error ? err.message : '未知错误'}。请稍后重试。`,
-                };
+                next[next.length - 1] = { role: 'assistant', content: `抱歉，发生了错误：${err instanceof Error ? err.message : '未知错误'}。请稍后重试。` };
                 return next;
             });
-        } finally {
-            setLoading(false);
-            inputRef.current?.focus();
-        }
+        } finally { setLoading(false); inputRef.current?.focus(); }
     };
 
     const onSubmit = (e: FormEvent) => {
@@ -184,6 +234,8 @@ export default function ChatAgent() {
         }
     };
 
+    const currentMode = MODES.find(m => m.key === mode) || MODES[0];
+
     return (
         <div className="chat-container">
             {/* Header */}
@@ -192,11 +244,26 @@ export default function ChatAgent() {
                     <div className="logo-icon">SB</div>
                     <div>
                         <h1>SmartBank Agent</h1>
-                        <p className="subtitle">金融实验教学智能体 · 四川农业大学智慧银行实验室</p>
+                        <p className="subtitle">{currentMode.icon} {currentMode.label}模式 · 四川农业大学智慧银行实验室</p>
                     </div>
                 </div>
-                <a href={import.meta.env.BASE_URL} className="back-link">返回课程</a>
+                <div className="header-right">
+                    {messages.length > 0 && (
+                        <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
+                    )}
+                    <a href={import.meta.env.BASE_URL} className="back-link">返回课程</a>
+                </div>
             </header>
+
+            {/* Mode Selector */}
+            <div className="mode-bar">
+                {MODES.map(m => (
+                    <button key={m.key} className={`mode-btn ${mode === m.key ? 'active' : ''}`} onClick={() => setMode(m.key)} title={m.desc}>
+                        <span>{m.icon}</span>
+                        <span className="mode-label">{m.label}</span>
+                    </button>
+                ))}
+            </div>
 
             {/* Chat Area */}
             <main className="chat-main">
@@ -252,6 +319,9 @@ export default function ChatAgent() {
                                                 </div>
                                             )}
                                             {renderContent(msg.content)}
+                                            <div className="msg-actions">
+                                                <button className="msg-action-btn" title="朗读" onClick={() => speak(msg.content)}>🔊</button>
+                                            </div>
                                         </>
                                     )}
                                 </div>
@@ -264,16 +334,19 @@ export default function ChatAgent() {
 
             {/* Input */}
             <form className="chat-input" onSubmit={onSubmit}>
+                {speaking && (
+                    <button type="button" className="icon-btn" onClick={() => window.speechSynthesis.cancel()} title="停止朗读">⏹️</button>
+                )}
                 <textarea
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={onKeyDown}
-                    placeholder="输入金融问题，如：查询贵州茅台最近股价..."
+                    placeholder={mode === 'debate' ? '输入辩论主题，如：贵州茅台是否值得长期持有？' : '输入金融问题，如：查询贵州茅台最近股价...'}
                     rows={1}
                     disabled={loading}
                     name="message"
-                    aria-label="输入金融问题"
+                    aria-label={mode === 'debate' ? '输入辩论主题' : '输入金融问题'}
                 />
                 <button type="submit" disabled={loading || !input.trim()}>
                     {loading ? '...' : '发送'}

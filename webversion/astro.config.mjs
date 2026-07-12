@@ -83,6 +83,25 @@ export default defineConfig({
 					link: '/chat/',
 				},
 				{
+					label: '🎓 AI教学功能',
+					collapsed: false,
+					items: [
+						{ label: '💬 智能问答', link: '/chat/' },
+						{ label: '📝 金融测验', link: '/quiz/' },
+						{ label: '🎯 BMAD项目指导', link: '/pbl/' },
+						{ label: '✨ AI内容生成', link: '/generate/' },
+					],
+				},
+				{
+					label: '🎮 互动仿真',
+					collapsed: false,
+					items: [
+						{ label: '🏦 银行经营模拟器', link: '/simulations/bank-sim.html' },
+						{ label: '📊 投资组合优化器', link: '/simulations/portfolio-sim.html' },
+						{ label: '🛡️ 风控压力测试', link: '/simulations/risk-sim.html' },
+					],
+				},
+				{
 					label: '前言',
 					items: [{ slug: 'preface' }],
 				},
