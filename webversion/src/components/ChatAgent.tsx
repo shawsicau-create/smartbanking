@@ -58,82 +58,171 @@ const TOOL_LABELS: Record<string, string> = {
     query_macro_indicator: '查询宏观指标',
 };
 
+function renderInlineFormatting(text: string): string {
+    // 处理行内格式：粗体、行内代码、链接、行内数学
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+        .replace(/\$([^$]+)\$/g, '<span class="msg-math">$1</span>');
+}
+
 function renderContent(text: string) {
-    // Simple markdown: bold, code, tables (basic)
     const lines = text.split('\n');
-    const elements: JSX.Element[] = [];
-    let inTable = false;
-    let tableRows: string[][] = [];
+    const elements: React.ReactElement[] = [];
+    let i = 0;
 
-    for (let i = 0; i < lines.length; i++) {
+    while (i < lines.length) {
         const line = lines[i];
+        const trimmed = line.trim();
 
-        // Table detection
-        if (line.includes('|') && line.trim().startsWith('|')) {
-            const cells = line
-                .split('|')
-                .map((c) => c.trim())
-                .filter((c) => c && !c.match(/^[-:]+$/));
-            if (cells.length > 0) {
-                if (!inTable) inTable = true;
-                tableRows.push(cells);
-                continue;
+        // 代码块检测 (```language ... ```)
+        if (trimmed.startsWith('```')) {
+            const langMatch = trimmed.match(/^```(\w*)/);
+            const lang = langMatch ? langMatch[1] : '';
+            const codeLines: string[] = [];
+            i++;
+            while (i < lines.length && !lines[i].trim().startsWith('```')) {
+                codeLines.push(lines[i]);
+                i++;
             }
-        }
-
-        if (inTable && tableRows.length > 0) {
+            i++; // skip closing ```
             elements.push(
-                <table key={`table-${i}`} className="msg-table">
-                    <tbody>
-                        {tableRows.map((row, ri) => (
-                            <tr key={ri}>
-                                {row.map((cell, ci) =>
-                                    ri === 0 ? (
-                                        <th key={ci}>{cell}</th>
-                                    ) : (
-                                        <td key={ci}>{cell}</td>
-                                    )
-                                )}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div key={`code-${elements.length}`} className="msg-code-block">
+                    {lang && <div className="msg-code-lang">{lang}</div>}
+                    <pre><code>{codeLines.join('\n')}</code></pre>
+                </div>
             );
-            tableRows = [];
-            inTable = false;
+            continue;
         }
 
-        // Bold
-        const formatted = line
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/`(.*?)`/g, '<code>$1</code>');
+        // 表格检测
+        if (trimmed.includes('|') && trimmed.startsWith('|')) {
+            const tableRows: string[][] = [];
+            while (i < lines.length && lines[i].trim().includes('|') && lines[i].trim().startsWith('|')) {
+                const cells = lines[i]
+                    .split('|')
+                    .map((c) => c.trim())
+                    .filter((c) => c && !c.match(/^[-:]+$/));
+                if (cells.length > 0) {
+                    tableRows.push(cells);
+                }
+                i++;
+            }
+            if (tableRows.length > 0) {
+                elements.push(
+                    <table key={`table-${elements.length}`} className="msg-table">
+                        <tbody>
+                            {tableRows.map((row, ri) => (
+                                <tr key={ri}>
+                                    {row.map((cell, ci) =>
+                                        ri === 0 ? (
+                                            <th key={ci} dangerouslySetInnerHTML={{ __html: renderInlineFormatting(cell) }} />
+                                        ) : (
+                                            <td key={ci} dangerouslySetInnerHTML={{ __html: renderInlineFormatting(cell) }} />
+                                        )
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            }
+            continue;
+        }
 
+        // 标题检测 (h1-h6)
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (headingMatch) {
+            const level = headingMatch[1].length;
+            const headingText = headingMatch[2];
+            const className = `msg-h${level}`;
+            elements.push(
+                React.createElement(
+                    `h${level}`,
+                    {
+                        key: `heading-${elements.length}`,
+                        className,
+                        dangerouslySetInnerHTML: { __html: renderInlineFormatting(headingText) }
+                    }
+                )
+            );
+            i++;
+            continue;
+        }
+
+        // 分隔线检测 (--- 或 ***)
+        if (trimmed.match(/^[-*]{3,}$/)) {
+            elements.push(<hr key={`hr-${elements.length}`} className="msg-hr" />);
+            i++;
+            continue;
+        }
+
+        // 引用块检测 (> text)
+        if (trimmed.startsWith('> ')) {
+            const quoteLines: string[] = [];
+            while (i < lines.length && lines[i].trim().startsWith('> ')) {
+                quoteLines.push(lines[i].trim().substring(2));
+                i++;
+            }
+            elements.push(
+                <blockquote key={`quote-${elements.length}`} className="msg-blockquote">
+                    {quoteLines.map((ql, qi) => (
+                        <p key={qi} dangerouslySetInnerHTML={{ __html: renderInlineFormatting(ql) }} />
+                    ))}
+                </blockquote>
+            );
+            continue;
+        }
+
+        // 无序列表检测 (- item 或 * item)
+        if (trimmed.match(/^[-*]\s+/)) {
+            const listItems: string[] = [];
+            while (i < lines.length && lines[i].trim().match(/^[-*]\s+/)) {
+                listItems.push(lines[i].trim().replace(/^[-*]\s+/, ''));
+                i++;
+            }
+            elements.push(
+                <ul key={`ul-${elements.length}`} className="msg-list">
+                    {listItems.map((item, li) => (
+                        <li key={li} dangerouslySetInnerHTML={{ __html: renderInlineFormatting(item) }} />
+                    ))}
+                </ul>
+            );
+            continue;
+        }
+
+        // 有序列表检测 (1. item)
+        if (trimmed.match(/^\d+\.\s+/)) {
+            const listItems: string[] = [];
+            while (i < lines.length && lines[i].trim().match(/^\d+\.\s+/)) {
+                listItems.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
+                i++;
+            }
+            elements.push(
+                <ol key={`ol-${elements.length}`} className="msg-ordered-list">
+                    {listItems.map((item, li) => (
+                        <li key={li} dangerouslySetInnerHTML={{ __html: renderInlineFormatting(item) }} />
+                    ))}
+                </ol>
+            );
+            continue;
+        }
+
+        // 空行
+        if (trimmed === '') {
+            i++;
+            continue;
+        }
+
+        // 普通段落
         elements.push(
             <p
-                key={i}
-                dangerouslySetInnerHTML={{ __html: formatted || '&nbsp;' }}
+                key={`p-${elements.length}`}
+                dangerouslySetInnerHTML={{ __html: renderInlineFormatting(trimmed) || '&nbsp;' }}
             />
         );
-    }
-
-    if (tableRows.length > 0) {
-        elements.push(
-            <table key="table-end" className="msg-table">
-                <tbody>
-                    {tableRows.map((row, ri) => (
-                        <tr key={ri}>
-                            {row.map((cell, ci) =>
-                                ri === 0 ? (
-                                    <th key={ci}>{cell}</th>
-                                ) : (
-                                    <td key={ci}>{cell}</td>
-                                )
-                            )}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        );
+        i++;
     }
 
     return <div className="msg-content">{elements}</div>;

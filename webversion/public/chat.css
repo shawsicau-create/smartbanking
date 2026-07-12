@@ -457,6 +457,200 @@ body {
     color: var(--accent);
 }
 
+/* ── Enhanced Markdown Elements ───────── */
+
+/* Headings */
+.msg-content h1,
+.msg-content h2,
+.msg-content h3,
+.msg-content h4,
+.msg-content h5,
+.msg-content h6 {
+    margin: 16px 0 8px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+
+.msg-content h1:first-child,
+.msg-content h2:first-child,
+.msg-content h3:first-child {
+    margin-top: 0;
+}
+
+.msg-content h1 {
+    font-size: 1.5em;
+    background: linear-gradient(135deg, var(--accent), #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--accent-dim);
+}
+
+.msg-content h2 {
+    font-size: 1.3em;
+    color: var(--accent);
+}
+
+.msg-content h3 {
+    font-size: 1.15em;
+}
+
+.msg-content h4 {
+    font-size: 1.05em;
+    color: var(--text-secondary);
+}
+
+.msg-content h5,
+.msg-content h6 {
+    font-size: 1em;
+    color: var(--text-secondary);
+}
+
+/* Unordered List */
+.msg-content ul.msg-list,
+.msg-list {
+    margin: 8px 0;
+    padding-left: 24px;
+    list-style: none;
+}
+
+.msg-content ul.msg-list li,
+.msg-list li {
+    position: relative;
+    margin-bottom: 6px;
+    padding-left: 16px;
+    line-height: 1.6;
+}
+
+.msg-content ul.msg-list li::before,
+.msg-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* Ordered List */
+.msg-content ol.msg-ordered-list,
+.msg-ordered-list {
+    margin: 8px 0;
+    padding-left: 28px;
+    list-style: none;
+    counter-reset: list-counter;
+}
+
+.msg-content ol.msg-ordered-list li,
+.msg-ordered-list li {
+    position: relative;
+    margin-bottom: 6px;
+    padding-left: 20px;
+    line-height: 1.6;
+    counter-increment: list-counter;
+}
+
+.msg-content ol.msg-ordered-list li::before,
+.msg-ordered-list li::before {
+    content: counter(list-counter) '.';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* Code Block */
+.msg-code-block {
+    margin: 12px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+.msg-code-lang {
+    padding: 6px 14px;
+    background: #0f172a;
+    color: #94a3b8;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #334155;
+}
+
+.msg-code-block pre {
+    margin: 0;
+    padding: 14px;
+    overflow-x: auto;
+}
+
+.msg-code-block code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    line-height: 1.6;
+}
+
+/* Blockquote */
+.msg-content blockquote.msg-blockquote,
+.msg-blockquote {
+    margin: 10px 0;
+    padding: 12px 16px;
+    background: var(--accent-glow);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+}
+
+.msg-content blockquote.msg-blockquote p,
+.msg-blockquote p {
+    margin: 0 0 4px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.msg-content blockquote.msg-blockquote p:last-child,
+.msg-blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Horizontal Rule */
+.msg-content hr.msg-hr,
+.msg-hr {
+    margin: 16px 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+}
+
+/* Links */
+.msg-content a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent-dim);
+    transition: all 0.2s;
+}
+
+.msg-content a:hover {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+/* Inline Math */
+.msg-content .msg-math,
+.msg-math {
+    background: var(--accent-glow);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    color: var(--accent);
+}
+
 /* ── Table ───────────────────────────── */
 .msg-table {
     width: 100%;
