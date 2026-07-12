@@ -1,4 +1,4 @@
-# 智慧银行实验教程——AI驱动的金融科技实践
+# SmartBank Agent：基于MCP+Skill+BMAD三位一体的金融科技实验教学智能体
 
 > 四川农业大学经济学院 · 数字经济系 | 2026 春季学期
 
@@ -6,22 +6,30 @@
 
 ## 项目简介
 
-《智慧银行实验教程——AI驱动的金融科技实践》教学资料仓库。本教程以 AI 编程工具（Qoder 等）为核心实验平台，系统讲授 **MCP + Skill + CLI** 技术栈在银行业务场景中的应用，通过 **BMAD 方法论** 驱动从需求到部署的全流程项目实践。
+本项目是面向金融学专业本科生的 **AI 工具实践教学生态系统**，包含教材、在线课程网站、AI 智能体、技能库四大核心模块。采用"低代码、高集成"技术路线——学生不需要从零编写 AI 程序，而是通过配置 IDE、接入 MCP 协议、编写 Skill 的方式，像搭积木一样组装出面向金融业务的智能系统。
 
-全书共 **8 章**，分为基础模块、进阶模块和综合模块三个层次，支持 16/32/48/64 学时四种教学方案灵活组合。
+全书共 **8 章 253 页**，分为基础模块、进阶模块和综合模块三个层次，支持 16/32/48/64 学时四种教学方案灵活组合。
 
 ## 🌐 课程在线网站
 
-> **在线阅读（含交互式目录、公式渲染、表格、实验手册）：**
+> **https://smartbanking.pages.dev**
 >
-> | 访问地址 | 说明 |
-> |---|---|
-> | [https://smartbanking.pages.dev](https://smartbanking.pages.dev) | Cloudflare Pages 全球 CDN，含 AI 智能体 |
+> 含交互式文档、公式渲染、AI 智能体实时问答、金融数据查询
 
-- 网站由 **Astro + Starlight** 构建
-- 源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)
-- 通过 `wrangler pages deploy` 部署到 **Cloudflare Pages**
-- 每次 `git push` 后手动执行部署，约 1 分钟完成
+- 网站由 **Astro + Starlight** 构建，部署在 **Cloudflare Pages**（全球 CDN + Serverless Functions）
+- 源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)（公开仓库）
+- 智能体后端由 Cloudflare Workers 驱动，接入 MiMo LLM + Tushare + World Bank 数据源
+
+## 🤖 SmartBank Agent
+
+课程网站内置的金融实验教学智能体，具备以下能力：
+
+| 功能 | 说明 |
+|------|------|
+| 实时数据查询 | 通过 Tushare 查询 A 股行情、指数、宏观经济数据 |
+| 全球金融对比 | 通过 World Bank API 获取跨国金融包容性指标 |
+| 专业知识问答 | 基于教材内容的金融概念解释与案例分析 |
+| BMAD 项目指导 | 引导学生完成 CRM 系统 12 个递进式实验 |
 
 ## 📘 教程 PDF
 
@@ -39,46 +47,38 @@ xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 
 ```
 smartbanking/
-├── 智慧银行实验教程chapters/             # 教程主体（自包含目录，可直接编译）
+├── 智慧银行实验教程chapters/             # 教程主体（LaTeX 源文件，可直接编译）
 │   ├── 智慧银行实验教程.tex              # LaTeX 主文件
 │   ├── 智慧银行实验教程.pdf              # 编译输出 PDF（253页）
 │   ├── preface.tex                       # 前言（含教学路线图与能力矩阵）
-│   ├── ch01.tex                          # 第1章 绪论
-│   ├── ch02.tex                          # 第2章 环境搭建
-│   ├── ch03.tex                          # 第3章 MCP协议
-│   ├── ch04.tex                          # 第4章 Skill体系
-│   ├── ch13.tex                          # 第5章 CLI工具实战
-│   ├── ch07.tex                          # 第6章 金融数据分析与计量经济学
-│   ├── ch06_comprehensive.tex            # 第7章 BMAD方法论与综合项目实践
-│   ├── ch12.tex                          # 第8章 课程综合项目与创新实践
+│   ├── ch01.tex ~ ch12.tex              # 第1-8章 LaTeX 源文件
 │   ├── appendix.tex                      # 附录 A–I
 │   ├── references.bib                    # 参考文献
 │   └── MCP服务配置参考手册.md            # MCP 配置独立参考文档
 ├── 实验讲义/                              # 配套实验讲义与操作指南
 │   ├── BMAD-CRM系统开发实验手册.md        # 银行CRM系统12个完整实验
 │   ├── 实验详细步骤 BMAD方法论实战.txt    # BMAD安装到开发全流程
-│   ├── 实验详细步骤 CNB流水线自动部署到Cloudflare.md
+│   ├── 实验详细步骤 BMAD代码云端部署.txt  # Cloudflare 部署实操
 │   ├── 实验详细步骤 使用cnm同步项目库.txt # 环境准备与CNB同步指南
 │   ├── 本地大模型部署指南.md              # 本地 LLM 部署参考
 │   └── mcp.json                          # MCP 服务配置文件
 ├── webversion/                            # 在线网站源码（Astro + Starlight）
-│   ├── src/content/docs/                 # Markdown 内容源
+│   ├── src/                              # 内容源文件（MDX）与组件
+│   ├── public/                           # 静态资源 + _worker.js（智能体后端）
 │   ├── astro.config.mjs                  # Astro 配置（含 Starlight 侧边栏）
 │   ├── package.json
 │   └── dist/                             # 构建输出（用于 Cloudflare 部署）
-├── .agents/skills/                       # Qoder AI 技能配置
-│   ├── consulting-frameworks/            # 咨询框架技能
-│   ├── docx/                             # Word 文档处理技能
+├── .agents/skills/                       # Qoder AI 技能配置（课程内置）
 │   ├── finance-expert/                   # 金融专家技能
 │   ├── finance-news/                     # 金融新闻技能
-│   ├── humanizer-zh/                     # 中文人文化写作技能
 │   ├── mermaid-diagrams/                 # Mermaid 图表技能
 │   ├── openbb-finance/                   # OpenBB 金融数据技能
-│   └── xlsx/                             # Excel 处理技能
-├── qoder-skills-library/                 # 技能库（学术写作全流程）
-├── .cnb.yml                              # CNB 云原生流水线配置
+│   └── ...                               # 更多技能
+├── qoder-skills-library/                 # 技能库（20 分类，学术写作全流程）
+│   ├── 01-ideation/ ~ 20-messaging/     # 从选题到消息的完整技能矩阵
+│   └── README.md
 ├── .env.example                          # 环境变量模板
-├── .gitignore
+├── wrangler.toml                         # Cloudflare Workers 配置
 └── README.md
 ```
 
@@ -114,34 +114,20 @@ smartbanking/
 |    11    | 版本控制与 CNB 推送       | 版本管理   |
 |    12    | **Cloudflare Pages 部署**（前端） | 生产部署   |
 
-## 附录目录
-
-| 附录   | 主题                          |
-| ------ | ----------------------------- |
-| 附录 A | 完整环境配置手册              |
-| 附录 B | MCP 配置大全与故障排除         |
-| 附录 C | Stata 安装与联动配置           |
-| 附录 D | 环境准备与 CNB 项目同步详细步骤 |
-| 附录 E | CNB 与 GitHub 命令速查        |
-| 附录 F | 金融数据源汇总                |
-| 附录 G | LaTeX 论文排版模板            |
-| 附录 H | 评分标准与交付规范            |
-| 附录 I | 术语表                        |
-
 ## 技术栈
 
 | 类别        | 技术                                                                |
 | ----------- | ------------------------------------------------------------------- |
 | 文档排版    | LaTeX（XeLaTeX + ctexbook）                                          |
 | 教学网站    | Astro 6 + Starlight（Markdown 内容站 + Pagefind 全文搜索）          |
+| AI 智能体   | Cloudflare Workers + MiMo LLM（OpenAI 兼容格式）                   |
+| 金融数据源  | Tushare Pro（A 股）+ World Bank API（全球宏观）+ OECD              |
 | AI 教学工具 | Qoder / Trae CN / Cursor 等 AI IDE                                   |
 | 工具协议    | MCP（Model Context Protocol）                                       |
-| AI 技能     | Skill 体系（8 组专业技能）                                          |
-| CLI 工具    | CNB CLI / Skills CLI / Claude Code / Codex                              |
+| AI 技能     | Skill 体系（8 组专业技能 + 20 分类技能库）                          |
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）          |
 | 数据分析    | Stata / Python（pandas, statsmodels）                               |
-| 全栈开发    | React + Vite + Express + JWT                                        |
-| 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）                |
+| 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）              |
 | 版本控制    | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking)     |
 
 ## 快速开始
@@ -149,8 +135,8 @@ smartbanking/
 ### 1. 克隆仓库
 
 ```bash
-git clone https://cnb.cool/xiaosicau/smartbanking.git smartbanking-work
-cd smartbanking-work
+git clone https://cnb.cool/xiaosicau/smartbanking.git
+cd smartbanking
 ```
 
 ### 2. 编译 PDF 教程
@@ -163,8 +149,6 @@ xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 xelatex -interaction=nonstopmode "智慧银行实验教程.tex"
 ```
 
-编译完成后生成 `智慧银行实验教程.pdf`（253 页）。
-
 ### 3. 构建并本地预览在线网站
 
 ```bash
@@ -174,33 +158,15 @@ pnpm build           # 产物输出到 dist/
 pnpm preview         # 本地预览 http://localhost:4321
 ```
 
-### 4. 部署在线网站到 Cloudflare Pages
-
-#### 前置条件
-
-- 全局安装 Wrangler CLI：`npm install -g wrangler`
-- 登录 Cloudflare：`wrangler login`
-
-#### 一键部署
+### 4. 部署到 Cloudflare Pages
 
 ```bash
-cd webversion/
-pnpm build
-wrangler pages deploy dist --project-name=smartbanking
-```
-
-部署成功后会返回形如 `https://smartbanking.pages.dev` 的访问链接。
-
-### 5. 自动部署（CI/CD）
-
-推送代码后，使用 Wrangler CLI 手动部署：
-
-```bash
+# 前置条件：npm install -g wrangler && wrangler login
 cd webversion/ && pnpm build
 wrangler pages deploy dist --project-name=smartbanking
 ```
 
-### 6. 环境准备
+### 5. 环境准备
 
 详细开发环境搭建步骤参见教程**附录 D**（环境准备与 CNB 项目同步详细步骤），主要包括：
 
@@ -220,48 +186,11 @@ wrangler pages deploy dist --project-name=smartbanking
 | 标准版 |  48  | 第 1-8 章全部           | 独立金融科技实验课程      |
 | 完整版 |  64  | 第 1-8 章+附录深度实操  | 金融科技专业核心课程      |
 
-## 贡献指南
+## 教学特色
 
-欢迎贡献代码！请遵循以下步骤：
-
-### 1. Fork 项目
-
-```bash
-git clone https://cnb.cool/your-username/smartbanking.git
-cd smartbanking
-```
-
-### 2. 创建分支
-
-```bash
-git checkout -b feature/新功能名称
-```
-
-### 3. 提交更改
-
-```bash
-git add .
-git commit -m "feat: 添加新功能描述"
-```
-
-### 4. 推送并创建 PR
-
-```bash
-git push origin feature/新功能名称
-```
-
-前往 [CNB 仓库](https://cnb.cool/xiaosicau/smartbanking) 创建 Pull Request。
-
-### 提交信息规范
-
-使用语义化提交信息：
-
-- `feat:` 新功能
-- `fix:` 修复 bug
-- `docs:` 文档更新
-- `refactor:` 代码重构
-- `chore:` 构建/工具相关
-- `style:` 格式调整
+- **双线并行**：全书贯穿 AI 工具线（IDE → MCP → Skill → BMAD）和金融业务线（零售银行 → 公司银行 → 风控 → 数据分析）
+- **三层递进**：基础模块（认知）→ 进阶模块（应用）→ 综合模块（创造）
+- **理论实操并重**：每章包含理论讲解 + 分步操作指引，确保"学了就能用"
 
 ## 课程信息
 
@@ -274,10 +203,10 @@ git push origin feature/新功能名称
 
 ## 相关文档
 
-- [MCP 服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md) - MCP 服务配置
-- [BMAD-CRM 系统开发实验手册](实验讲义%20/BMAD-CRM系统开发实验手册.md) - 银行 CRM 完整开发指南
-- [本地大模型部署指南](实验讲义%20/本地大模型部署指南.md) - 离线 AI 模型部署
-- [Cloudflare 部署指南](docs/cloudflare-pages-deploy.md) - Cloudflare Pages 部署配置
+- [MCP 服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md)
+- [BMAD-CRM 系统开发实验手册](实验讲义%20/BMAD-CRM系统开发实验手册.md)
+- [本地大模型部署指南](实验讲义%20/本地大模型部署指南.md)
+- [Cloudflare 部署指南](docs/cloudflare-pages-deploy.md)
 
 ## 许可证
 
