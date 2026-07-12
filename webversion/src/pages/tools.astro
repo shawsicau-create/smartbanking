@@ -1,0 +1,23 @@
+---
+import ToolsPanel from '../components/ToolsPanel';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCP工具 & Skill能力 - SmartBank Agent</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/chat.css" />
+    <script>
+      (function(){
+        var t = localStorage.getItem('sb-theme') || 'terminal';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+  </head>
+  <body>
+    <ToolsPanel client:load />
+  </body>
+</html>

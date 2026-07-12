@@ -34,6 +34,7 @@ const QUICK_LINKS = [
     { icon: '🏦', title: '银行模拟', desc: '经营管理模拟器', link: '/simulations/bank-sim.html', accent: '#ef4444' },
     { icon: '📊', title: '投资组合', desc: '资产配置优化', link: '/simulations/portfolio-sim.html', accent: '#06b6d4' },
     { icon: '🛡️', title: '风控测试', desc: '压力测试仿真', link: '/simulations/risk-sim.html', accent: '#ec4899' },
+    { icon: '🔌', title: 'MCP工具', desc: '数据源 & Skill能力', link: '/tools/', accent: '#06b6d4' },
 ];
 
 const CHAPTERS = [
@@ -148,6 +149,7 @@ export default function IndexHero() {
                     <nav className="index-nav">
                         <ThemeSwitcher />
                         <a href="/chat/" className="index-nav-link index-nav-link--primary">进入智能体</a>
+                        <a href="/tools/" className="index-nav-link">工具</a>
                         <a href="/quiz/" className="index-nav-link">测验</a>
                         <a href="/pbl/" className="index-nav-link">项目</a>
                         <a href="/generate/" className="index-nav-link">生成</a>

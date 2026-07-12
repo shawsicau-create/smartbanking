@@ -10,6 +10,7 @@ const CORS = {
 
 const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
 const MIMO_MODEL = 'mimo-v2.5-pro';
+const AMAP_API_KEY = '63f93d2223f744affebade9ef7982732';
 
 // Tool call tag builders (avoid literal tags in source)
 const TC_OPEN = '<tool_call>';
@@ -28,7 +29,7 @@ const PROMPTS = {
             'bmad-dev': '\n你当前扮演 BMAD 方法论中的**开发者(Developer)**角色。帮助学生编写代码、调试问题、实现功能模块。',
             'bmad-qa': '\n你当前扮演 BMAD 方法论中的**质量保障(QA)**角色。帮助学生设计测试用例、代码审查、质量评估。',
         };
-        return '你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。\n你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。\n' + (bmad[mode] || '') + '\n\n当需要查询实时数据时，你必须在回复中使用以下格式调用工具：\n\n' + TC_OPEN + '\n' + fnTag('工具名') + '\n' + pmTag('参数名') + '参数值' + PM_CLOSE + '\n' + FN_CLOSE + '\n' + TC_CLOSE + '\n\n可用工具：\n1. query_stock - 查询A股个股日线行情（参数：ts_code如600519.SH，可选start_date/end_date为YYYYMMDD）\n2. query_stock_basic - 根据名称搜索股票代码（参数：name如"贵州茅台"）\n3. query_index - 查询指数行情（参数：ts_code如000001.SH）\n4. query_macro_gdp - 查询世界银行GDP数据（参数：country如CN/US）\n5. query_macro_indicator - 查询宏观指标（参数：country, indicator如FP.CPI.TOTL.ZG）\n\n规则：\n- 每次只调用一个工具，等待结果返回后再决定下一步\n- 常见股票代码：贵州茅台=600519.SH, 平安银行=000001.SZ, 上证指数=000001.SH\n- 数据展示时使用表格格式，分析要结合金融理论\n- 请用中文回答';
+        return '你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。\n你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。\n\n本智能体基于《智慧银行实验教程——AI驱动的金融科技实践》教材，采用MCP+Skill+BMAD三位一体架构：\n- MCP协议（Model Context Protocol）：通过JSON-RPC 2.0连接20+金融数据源\n- Skill体系：167个专业技能分20个分类，涵盖金融分析、文档生成、数据可视化等\n- BMAD方法论：Analyst→PM→Architect→Dev→QA五角色全流程项目指导\n' + (bmad[mode] || '') + '\n\n当需要查询实时数据时，你必须在回复中使用以下格式调用工具：\n\n' + TC_OPEN + '\n' + fnTag('工具名') + '\n' + pmTag('参数名') + '参数值' + PM_CLOSE + '\n' + FN_CLOSE + '\n' + TC_CLOSE + '\n\n【Tushare金融数据组】\n1. query_stock - 查询A股个股日线行情（参数：ts_code如600519.SH，可选start_date/end_date为YYYYMMDD）\n2. query_stock_basic - 根据名称搜索股票代码（参数：name如\"贵州茅台\"）\n3. query_stock_info - 查询股票基本信息（参数：ts_code或name）\n4. query_index - 查询指数行情（参数：ts_code如000001.SH）\n5. query_fund_flow - 查询沪深港通资金流向（参数：可选start_date/end_date）\n6. query_financial - 查询上市公司财务数据（参数：ts_code, type如income/balancesheet/cashflow）\n7. query_stock_basic_info - 查询个股基本信息含行业/市值（参数：ts_code）\n8. query_top_holders - 查询前十大股东（参数：ts_code, 可选quarter如20241231）\n9. query_trade_cal - 查询交易日历（参数：可选start_date/end_date/exchange）\n\n【世界银行宏观经济组】\n10. query_macro_gdp - 查询GDP数据（参数：country如CN/US/JP）\n11. query_macro_indicator - 查询宏观指标（参数：country, indicator如FP.CPI.TOTL.ZG）\n12. query_macro_compare - 多国指标对比（参数：countries如CN,US,JP, indicator）\n13. query_macro_findex - 查询金融账户拥有率等Findex数据（参数：country, indicator如FX.OWN.TOTL.ZS）\n\n【高德地图MCP组】\n14. search_bank_branch - 搜索银行网点（参数：city如成都, keywords如工商银行）\n15. search_nearby - 搜索附近金融机构（参数：location如104.06,30.67, radius, keywords）\n\n【图表可视化组】\n16. generate_chart - 生成金融图表（参数：type如line/bar/pie, title, data为JSON数组）\n\n【Skill知识库】本智能体还支持以下Skill能力（需要时主动介绍）：\n- 金融数据分析Skill：调用Tushare/iFinD/World Bank进行投研分析\n- 学术写作Skill：LaTeX论文排版、参考文献管理\n- 演示文稿Skill：PPT/PDF/海报自动生成\n- 可视化Skill：统计图表/因果图/网络图/思维导图\n- 文档处理Skill：Word/Excel/PDF自动化\n- 研究方法Skill：系统文献综述、计量经济学分析\n\n常见股票代码速查：贵州茅台=600519.SH, 平安银行=000001.SZ, 招商银行=600036.SH, 宁德时代=300750.SZ, 比亚迪=002594.SZ, 上证指数=000001.SH, 沪深300=000300.SH, 创业板指=399006.SZ\n\n规则：\n- 每次只调用一个工具，等待结果返回后再决定下一步\n- 数据展示时使用表格格式，分析要结合金融理论（如CAPM、有效市场假说、信息不对称理论等）\n- 涉及宏观数据时引用世界银行、OECD等权威来源\n- 涉及银行业务时结合《巴塞尔协议》等监管框架\n- 请用中文回答，专业术语附英文原文';
     },
     bull: '你是一位资深的**多头分析师**（看涨派）。当用户提出一个金融话题时，你需要：\n1. 从增长潜力、政策利好、竞争优势、估值合理性等角度分析\n2. 提供3-5个核心看多论据，每个论据配数据支撑\n3. 给出目标价或预期涨幅\n4. 风格：自信但不盲目，数据驱动\n请用中文回答，使用 Markdown 格式。',
     bear: '你是一位资深的**空头分析师**（看跌派）。当用户提出一个金融话题时，你需要：\n1. 从风险隐患、利空因素、估值泡沫、竞争压力等角度分析\n2. 提供3-5个核心看空论据，每个论据配数据支撑\n3. 给出风险预警和建议规避理由\n4. 风格：理性审慎，重视风险\n请用中文回答，使用 Markdown 格式。',
@@ -101,6 +102,93 @@ async function executeTool(name, args, env) {
             const resp = await fetch('https://api.worldbank.org/v2/country/' + args.country + '/indicator/' + ind + '?format=json&date=' + (endYear - 5) + ':' + endYear);
             const json = await resp.json();
             return { country: args.country, indicator: ind, data: (json[1] || []).map(r => ({ year: r.date, value: r.value })) };
+        }
+        // ── Tushare扩展工具 ──
+        case 'query_stock_info': {
+            const q = args.name || args.ts_code;
+            const data = await callTushare('stock_basic', { list_status: 'L' }, 'ts_code,name,industry,market,list_date', env);
+            const found = (data.data?.items || []).filter(item => String(item[0]) === q || String(item[1]).includes(q));
+            return { count: found.length, items: found.slice(0, 5) };
+        }
+        case 'query_fund_flow': {
+            const data = await callTushare('moneyflow_hsgt', { start_date: args.start_date || thirtyAgo, end_date: args.end_date || today }, 'trade_date,ggt_ss,ggt_sz,hgt,sgt,north_money,south_money', env);
+            return { count: data.data?.items?.length || 0, items: (data.data?.items || []).slice(0, 15) };
+        }
+        case 'query_financial': {
+            const typeMap = { income: 'income', balancesheet: 'balancesheet', cashflow: 'cashflow' };
+            const apiName = typeMap[args.type] || 'income';
+            const fieldMap = {
+                income: 'ts_code,ann_date,revenue,n_income,total_profit,operate_profit',
+                balancesheet: 'ts_code,ann_date,total_assets,total_liab,total_hldr_eqy_exc_min_int',
+                cashflow: 'ts_code,ann_date,n_cashflow_act,n_cashflow_inv_act,n_cash_flows_fnc_act',
+            };
+            const data = await callTushare(apiName, { ts_code: args.ts_code }, fieldMap[apiName], env);
+            return { count: data.data?.items?.length || 0, items: (data.data?.items || []).slice(0, 5) };
+        }
+        case 'query_stock_basic_info': {
+            const data = await callTushare('daily_basic', { ts_code: args.ts_code }, 'ts_code,trade_date,pe,pb,ps,total_mv,circ_mv,turnover_rate', env);
+            return { count: data.data?.items?.length || 0, items: (data.data?.items || []).slice(0, 5) };
+        }
+        case 'query_top_holders': {
+            const data = await callTushare('top10_holders', { ts_code: args.ts_code, ...(args.quarter ? { end_date: args.quarter } : {}) }, 'ts_code,ann_date,end_date,holder_name,hold_amount,hold_ratio', env);
+            return { count: data.data?.items?.length || 0, items: (data.data?.items || []).slice(0, 10) };
+        }
+        case 'query_trade_cal': {
+            const data = await callTushare('trade_cal', { start_date: args.start_date || '20250101', end_date: args.end_date || '20251231', exchange: args.exchange || 'SSE' }, 'exchange,cal_date,is_open', env);
+            const openDays = (data.data?.items || []).filter(item => item[2] === '1');
+            return { total: data.data?.items?.length || 0, trading_days: openDays.length, items: openDays.slice(0, 10) };
+        }
+        // ── 世界银行扩展工具 ──
+        case 'query_macro_compare': {
+            const countries = (args.countries || 'CN,US').split(',').map(s => s.trim());
+            const results = [];
+            for (const c of countries.slice(0, 5)) {
+                const resp = await fetch('https://api.worldbank.org/v2/country/' + c + '/indicator/' + args.indicator + '?format=json&date=2019:2024');
+                const json = await resp.json();
+                results.push({ country: c, data: (json[1] || []).map(r => ({ year: r.date, value: r.value, country_name: r.country?.value })) });
+            }
+            return { indicator: args.indicator, comparison: results };
+        }
+        case 'query_macro_findex': {
+            const endYear = new Date().getFullYear();
+            const ind = args.indicator || 'FX.OWN.TOTL.ZS';
+            const resp = await fetch('https://api.worldbank.org/v2/country/' + (args.country || 'CN') + '/indicator/' + ind + '?format=json&date=' + (endYear - 8) + ':' + endYear);
+            const json = await resp.json();
+            return { country: args.country, indicator: ind, data: (json[1] || []).map(r => ({ year: r.date, value: r.value })) };
+        }
+        // ── 高德地图工具 ──
+        case 'search_bank_branch': {
+            const resp = await fetch('https://restapi.amap.com/v3/place/text?key=' + AMAP_API_KEY + '&keywords=' + encodeURIComponent(args.keywords || '银行') + '&city=' + encodeURIComponent(args.city || '成都') + '&types=160100&offset=10&page=1');
+            const json = await resp.json();
+            return { count: json.count || 0, pois: (json.pois || []).map(p => ({ name: p.name, address: p.address, location: p.location, tel: p.tel })) };
+        }
+        case 'search_nearby': {
+            const resp = await fetch('https://restapi.amap.com/v3/place/around?key=' + AMAP_API_KEY + '&location=' + (args.location || '104.06,30.67') + '&keywords=' + encodeURIComponent(args.keywords || '银行') + '&radius=' + (args.radius || '2000') + '&offset=10');
+            const json = await resp.json();
+            return { count: json.count || 0, pois: (json.pois || []).map(p => ({ name: p.name, address: p.address, location: p.location, distance: p.distance })) };
+        }
+        // ── 图表生成工具 ──
+        case 'generate_chart': {
+            try {
+                const chartData = typeof args.data === 'string' ? JSON.parse(args.data) : args.data;
+                const chartConfig = {
+                    type: args.type || 'bar',
+                    title: args.title || '金融数据图表',
+                    data: chartData,
+                    width: args.width || 600,
+                    height: args.height || 400,
+                };
+                const chartResp = await fetch('https://mcp-server-chart.vercel.app/generate_' + (args.type || 'bar') + '_chart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chartConfig),
+                });
+                if (chartResp.ok) {
+                    const chartJson = await chartResp.json();
+                    return { chart_url: chartJson.url || chartJson.imageUrl, config: chartConfig };
+                }
+                return { config: chartConfig, note: '图表生成服务暂时不可用，请使用文字描述数据' };
+            } catch (e) { return { error: '图表生成失败: ' + e.message }; }
         }
         default: throw new Error('Unknown tool: ' + name);
     }

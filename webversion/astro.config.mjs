@@ -83,6 +83,10 @@ export default defineConfig({
 					link: '/',
 				},
 				{
+					label: '🔌 MCP工具 & Skill能力',
+					link: '/tools/',
+				},
+				{
 					label: '前言',
 					items: [{ slug: 'preface' }],
 				},
