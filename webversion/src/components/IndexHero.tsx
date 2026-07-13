@@ -131,7 +131,7 @@ export default function IndexHero() {
                         <a href="/pbl/" className="index-nav-link">项目</a>
                         <a href="/generate/" className="index-nav-link">教学内容设计</a>
                         <a href="/preface/" className="index-nav-link">课程文档</a>
-                        <a href="https://cnb.cool/xiaosicau/smartbanking" className="index-nav-link" target="_blank" rel="noopener">CNB</a>
+                        <a href="https://cnb.cool/xiaosicau/smartbanking" className="index-nav-link" target="_blank" rel="noopener">项目源代码</a>
                     </nav>
                 </div>
             </header>
