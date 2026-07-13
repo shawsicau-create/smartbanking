@@ -26,28 +26,6 @@ const SUGGESTIONS = [
     { icon: '📚', text: '银行信贷审批的五级分类标准是什么' },
 ];
 
-const QUICK_LINKS = [
-    { icon: '💬', title: '智能问答', desc: '实时金融数据查询', link: '/chat/', accent: '#10b981' },
-    { icon: '📝', title: '金融测验', desc: 'AI生成专业考题', link: '/quiz/', accent: '#3b82f6' },
-    { icon: '🎯', title: 'BMAD项目', desc: '全流程项目实战', link: '/pbl/', accent: '#8b5cf6' },
-    { icon: '✨', title: 'AI生成', desc: '教学内容自动生成', link: '/generate/', accent: '#f59e0b' },
-    { icon: '🏦', title: '银行模拟', desc: '经营管理模拟器', link: '/simulations/bank-sim.html', accent: '#ef4444' },
-    { icon: '📊', title: '投资组合', desc: '资产配置优化', link: '/simulations/portfolio-sim.html', accent: '#06b6d4' },
-    { icon: '🛡️', title: '风控测试', desc: '压力测试仿真', link: '/simulations/risk-sim.html', accent: '#ec4899' },
-    { icon: '🔌', title: 'MCP工具', desc: '数据源 & Skill能力', link: '/tools/', accent: '#06b6d4' },
-];
-
-const CHAPTERS = [
-    { num: 1, title: '绪论', desc: '银行数字化转型与AI范式', link: '/ch01/', icon: '🌐' },
-    { num: 2, title: '环境搭建', desc: 'AI IDE与开发协作基础', link: '/ch02/', icon: '⚙️' },
-    { num: 3, title: 'MCP协议', desc: '让AI连接金融世界', link: '/ch03/', icon: '🔌' },
-    { num: 4, title: 'Skill体系', desc: '赋予AI金融专业能力', link: '/ch04/', icon: '🧩' },
-    { num: 5, title: 'CLI工具实战', desc: 'AI辅助开发的命令行利器', link: '/ch05/', icon: '⌨️' },
-    { num: 6, title: '金融数据分析', desc: '计量经济学与实证方法', link: '/ch06/', icon: '📊' },
-    { num: 7, title: 'BMAD综合项目', desc: '综合项目全流程实践', link: '/ch07/', icon: '🏗️' },
-    { num: 8, title: '综合项目与创新', desc: '课程实践与竞赛指南', link: '/ch08/', icon: '🚀' },
-];
-
 function renderSimpleMarkdown(text: string) {
     const lines = text.split('\n');
     return lines.map((line, i) => {
@@ -64,7 +42,6 @@ export default function IndexHero() {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState<ChatMode>('general');
     const [showChat, setShowChat] = useState(false);
-    const [showCourses, setShowCourses] = useState(true);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -152,7 +129,7 @@ export default function IndexHero() {
                         <a href="/tools/" className="index-nav-link">工具</a>
                         <a href="/quiz/" className="index-nav-link">测验</a>
                         <a href="/pbl/" className="index-nav-link">项目</a>
-                        <a href="/generate/" className="index-nav-link">生成</a>
+                        <a href="/generate/" className="index-nav-link">教学内容设计</a>
                         <a href="/preface/" className="index-nav-link">课程文档</a>
                         <a href="https://cnb.cool/xiaosicau/smartbanking" className="index-nav-link" target="_blank" rel="noopener">CNB</a>
                     </nav>
@@ -162,13 +139,16 @@ export default function IndexHero() {
             {/* Hero Section */}
             <section className="index-hero">
                 <div className="index-hero-badge">
-                    <span className="badge-dot" /> 四川农业大学 · 数字经济系
+                    <span className="badge-dot" /> 四川农业大学 · 数字经济系 · 2026春季
                 </div>
                 <h1 className="index-hero-title">
                     <span className="title-gradient">SmartBank Agent</span>
                 </h1>
                 <p className="index-hero-subtitle">
-                    基于 MCP + Skill + BMAD 三位一体的金融科技实验教学智能体
+                    MCP + Skill + BMAD 三位一体的金融科技实验教学智能体
+                </p>
+                <p className="index-hero-meta">
+                    8章课程 · 6项交互工具 · 多角色智能体协作
                 </p>
 
                 {/* Mode Selector */}
@@ -248,81 +228,6 @@ export default function IndexHero() {
                     </a>
                 </section>
             )}
-
-            {/* Quick Access Grid */}
-            <section className="index-section">
-                <h2 className="index-section-title">探索功能</h2>
-                <div className="index-quick-grid">
-                    {QUICK_LINKS.map((link, i) => (
-                        <a key={i} href={link.link} className="index-quick-card" style={{ '--card-accent': link.accent } as React.CSSProperties}>
-                            <span className="index-quick-icon">{link.icon}</span>
-                            <div>
-                                <h3>{link.title}</h3>
-                                <p>{link.desc}</p>
-                            </div>
-                        </a>
-                    ))}
-                </div>
-            </section>
-
-            {/* Course Chapters (Collapsible) */}
-            <section className="index-section">
-                <button className="index-section-toggle" onClick={() => setShowCourses(!showCourses)}>
-                    <h2 className="index-section-title">课程章节</h2>
-                    <span className={`index-toggle-icon ${showCourses ? 'open' : ''}`}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
-                    </span>
-                </button>
-                {showCourses && (
-                    <div className="index-chapters-grid">
-                        {CHAPTERS.map(ch => (
-                            <a key={ch.num} href={ch.link} className="index-chapter-card">
-                                <span className="index-chapter-icon">{ch.icon}</span>
-                                <div className="index-chapter-info">
-                                    <h4>第{ch.num}章 {ch.title}</h4>
-                                    <p>{ch.desc}</p>
-                                </div>
-                            </a>
-                        ))}
-                        <a href="/preface/" className="index-chapter-card">
-                            <span className="index-chapter-icon">📖</span>
-                            <div className="index-chapter-info">
-                                <h4>前言</h4>
-                                <p>编者前言与教学路线图</p>
-                            </div>
-                        </a>
-                        <a href="/appendix/" className="index-chapter-card">
-                            <span className="index-chapter-icon">📎</span>
-                            <div className="index-chapter-info">
-                                <h4>附录</h4>
-                                <p>环境配置速查与模板库</p>
-                            </div>
-                        </a>
-                    </div>
-                )}
-            </section>
-
-            {/* Teaching Features */}
-            <section className="index-section">
-                <h2 className="index-section-title">教学特色</h2>
-                <div className="index-features-grid">
-                    <div className="index-feature-card">
-                        <span className="index-feature-icon">🔀</span>
-                        <h3>双线并行</h3>
-                        <p>AI工具线 + 金融业务线有机融合，每一章都是工具与场景的结合</p>
-                    </div>
-                    <div className="index-feature-card">
-                        <span className="index-feature-icon">📈</span>
-                        <h3>三层递进</h3>
-                        <p>基础模块 → 进阶模块 → 综合模块，形成认知→应用→创造的递进路径</p>
-                    </div>
-                    <div className="index-feature-card">
-                        <span className="index-feature-icon">⚡</span>
-                        <h3>低代码高集成</h3>
-                        <p>配置IDE、接入MCP、编写Skill，像搭积木一样组装智能系统</p>
-                    </div>
-                </div>
-            </section>
 
             {/* Footer */}
             <footer className="index-footer">
