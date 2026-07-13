@@ -4,9 +4,53 @@
 
 const CORS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
+
+// ─── JWT 工具函数 ─────────────────────────────────────────────────
+function base64UrlEncode(data) {
+    return btoa(data).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function base64UrlDecode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    return atob(str);
+}
+async function createJWT(payload, secret) {
+    const header = { alg: 'HS256', typ: 'JWT' };
+    const now = Math.floor(Date.now() / 1000);
+    const tokenPayload = { ...payload, iat: now, exp: now + 7 * 24 * 3600 };
+    const headerB64 = base64UrlEncode(JSON.stringify(header));
+    const payloadB64 = base64UrlEncode(JSON.stringify(tokenPayload));
+    const message = headerB64 + '.' + payloadB64;
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+    const signatureB64 = base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+    return message + '.' + signatureB64;
+}
+async function verifyJWT(token, secret) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const [headerB64, payloadB64, signatureB64] = parts;
+        const message = headerB64 + '.' + payloadB64;
+        const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+        const signature = Uint8Array.from(base64UrlDecode(signatureB64), c => c.charCodeAt(0));
+        const isValid = await crypto.subtle.verify('HMAC', key, signature, new TextEncoder().encode(message));
+        if (!isValid) return null;
+        const payload = JSON.parse(base64UrlDecode(payloadB64));
+        if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+        return payload;
+    } catch { return null; }
+}
+async function getUserId(request, secret) {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) return null;
+    const token = authHeader.substring(7);
+    const payload = await verifyJWT(token, secret);
+    return payload?.sub || null;
+}
 
 const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
 const MIMO_MODEL = 'mimo-v2.5-pro';

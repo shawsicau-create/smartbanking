@@ -38,14 +38,14 @@ const QUICK_LINKS = [
 ];
 
 const CHAPTERS = [
-    { num: 1, title: '绪论', desc: 'AI驱动的银行数字化转型', link: '/ch01/', icon: '🌐' },
-    { num: 2, title: '环境搭建', desc: 'IDE安装与MCP配置', link: '/ch02/', icon: '⚙️' },
-    { num: 3, title: 'MCP协议', desc: '架构原理与服务器开发', link: '/ch03/', icon: '🔌' },
-    { num: 4, title: 'Skill体系', desc: 'Skill编写规范与金融实例', link: '/ch04/', icon: '🧩' },
-    { num: 5, title: 'CLI实战', desc: 'CNB/Skills CLI工具', link: '/ch05/', icon: '⌨️' },
-    { num: 6, title: '金融数据分析', desc: '面板回归、因果推断', link: '/ch06/', icon: '📊' },
-    { num: 7, title: 'BMAD综合项目', desc: 'CRM系统12个实验', link: '/ch07/', icon: '🏗️' },
-    { num: 8, title: '综合创新', desc: '项目选题与竞赛指南', link: '/ch08/', icon: '🚀' },
+    { num: 1, title: '绪论', desc: '银行数字化转型与AI范式', link: '/ch01/', icon: '🌐' },
+    { num: 2, title: '环境搭建', desc: 'AI IDE与开发协作基础', link: '/ch02/', icon: '⚙️' },
+    { num: 3, title: 'MCP协议', desc: '让AI连接金融世界', link: '/ch03/', icon: '🔌' },
+    { num: 4, title: 'Skill体系', desc: '赋予AI金融专业能力', link: '/ch04/', icon: '🧩' },
+    { num: 5, title: 'CLI工具实战', desc: 'AI辅助开发的命令行利器', link: '/ch05/', icon: '⌨️' },
+    { num: 6, title: '金融数据分析', desc: '计量经济学与实证方法', link: '/ch06/', icon: '📊' },
+    { num: 7, title: 'BMAD综合项目', desc: '综合项目全流程实践', link: '/ch07/', icon: '🏗️' },
+    { num: 8, title: '综合项目与创新', desc: '课程实践与竞赛指南', link: '/ch08/', icon: '🚀' },
 ];
 
 function renderSimpleMarkdown(text: string) {

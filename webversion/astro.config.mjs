@@ -102,6 +102,10 @@ export default defineConfig({
 					link: '/',
 				},
 				{
+					label: '🤖 使用智能体',
+					link: '/chat/',
+				},
+				{
 					label: '🔌 MCP工具 & Skill能力',
 					link: '/tools/',
 				},
