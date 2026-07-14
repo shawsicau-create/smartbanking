@@ -1,6 +1,8 @@
 // Cloudflare Pages Function: /api/chat
 // 使用 MiMo API 作为 LLM 后端
 
+import { search, extract, batchSearch } from './search';
+
 interface Env {
     MIMO_API_KEY: string;
     TUSHARE_TOKEN: string;
@@ -11,15 +13,91 @@ const MIMO_MODEL = 'mimo-v2.5-pro';
 
 const SYSTEM_PROMPT = `你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。
 你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。
+
 你可以调用以下金融工具获取实时数据：
 - query_stock: 查询A股个股行情
 - query_stock_basic: 根据名称模糊搜索股票代码
 - query_index: 查询指数行情
 - query_macro_gdp: 查询世界银行GDP数据
 - query_macro_indicator: 查询世界银行宏观指标
+
+你还可以调用以下搜索工具获取最新信息：
+- web_search: 实时网页搜索，获取最新新闻、市场动态、行业信息
+- web_extract: 提取指定网页的详细内容
+- batch_search: 批量搜索多个关键词，用于对比分析
+
+搜索工具使用场景：
+1. 用户询问最新新闻、市场动态、政策变化
+2. 需要获取2025年8月之后的最新信息
+3. 用户明确要求搜索、查找、查一下
+4. 需要实时数据（股价、天气、比赛结果等）
+
 请用中文回答，数据展示时使用表格格式，分析要结合金融理论。`;
 
 const tools = [
+    {
+        type: 'function',
+        function: {
+            name: 'web_search',
+            description: '使用AnySearch进行实时网页搜索，获取最新信息。适用于查询新闻、市场动态、行业信息等。',
+            parameters: {
+                type: 'object',
+                properties: {
+                    query: {
+                        type: 'string',
+                        description: '搜索关键词，如"贵州茅台最新财报"、"央行降息最新消息"',
+                    },
+                    max_results: {
+                        type: 'number',
+                        description: '最大返回结果数，默认为5',
+                    },
+                },
+                required: ['query'],
+            },
+        },
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'web_extract',
+            description: '提取指定网页的详细内容，返回Markdown格式。适用于获取文章、报告、公告的完整内容。',
+            parameters: {
+                type: 'object',
+                properties: {
+                    url: {
+                        type: 'string',
+                        description: '要提取内容的网页URL',
+                    },
+                },
+                required: ['url'],
+            },
+        },
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'batch_search',
+            description: '批量搜索多个关键词，用于对比分析多个主题。',
+            parameters: {
+                type: 'object',
+                properties: {
+                    queries: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                query: { type: 'string', description: '搜索关键词' },
+                                max_results: { type: 'number', description: '最大返回结果数' },
+                            },
+                            required: ['query'],
+                        },
+                        description: '搜索查询数组',
+                    },
+                },
+                required: ['queries'],
+            },
+        },
+    },
     {
         type: 'function',
         function: {
@@ -197,6 +275,31 @@ function thirtyDaysAgo(): string {
 
 async function executeTool(name: string, args: Record<string, string>, env: Env): Promise<unknown> {
     switch (name) {
+        case 'web_search': {
+            const query = args.query;
+            const maxResults = parseInt(args.max_results || '5', 10);
+            const result = await search(query, maxResults);
+            return result;
+        }
+        case 'web_extract': {
+            const url = args.url;
+            const result = await extract(url);
+            return result;
+        }
+        case 'batch_search': {
+            // 解析queries参数，需要处理JSON字符串
+            let queries: Array<{ query: string; max_results?: number }> = [];
+            try {
+                // args.queries可能是JSON字符串
+                const queriesStr = args.queries || '[]';
+                queries = JSON.parse(queriesStr);
+            } catch {
+                // 如果解析失败，尝试从args中构造
+                queries = [{ query: args.query || '', max_results: parseInt(args.max_results || '5', 10) }];
+            }
+            const result = await batchSearch(queries);
+            return result;
+        }
         case 'query_stock': {
             const data = await callTushare(
                 'daily',

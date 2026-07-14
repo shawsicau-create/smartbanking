@@ -48,8 +48,10 @@ const MODES: { key: ChatMode; label: string; icon: string; desc: string }[] = [
 
 const SUGGESTIONS = [
     { icon: '📈', text: '查询贵州茅台最近5个交易日的收盘价' },
+    { icon: '🔍', text: '搜索最新金融科技行业新闻' },
     { icon: '🌍', text: '对比中国和美国的GDP增长率' },
     { icon: '🏦', text: '查询上证指数今日行情' },
+    { icon: '📰', text: '搜索央行最新货币政策动态' },
     { icon: '📚', text: '银行信贷审批的五级分类标准是什么' },
 ];
 
@@ -187,6 +189,9 @@ async function deleteCloudHistory(token: string, id: number): Promise<boolean> {
 }
 
 const TOOL_LABELS: Record<string, string> = {
+    web_search: '实时网页搜索',
+    web_extract: '提取网页内容',
+    batch_search: '批量搜索',
     query_stock: '查询A股个股行情',
     query_stock_basic: '搜索股票代码',
     query_index: '查询指数行情',
