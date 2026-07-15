@@ -1,5 +1,5 @@
 ---
-// 作者信息页面
+// 作者信息页面 - 基于百度百科、四川农业大学官网等公开信息
 ---
 
 <!doctype html>
@@ -7,8 +7,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>作者信息 - 肖诗顺 | SmartBank Agent</title>
-    <meta name="description" content="肖诗顺 - 四川农业大学数字经济系教授，智慧银行实验教程作者，研究领域：农村金融、金融科技、农业保险" />
+    <title>肖诗顺教授 - 四川农业大学 | SmartBank Agent</title>
+    <meta name="description" content="肖诗顺 - 四川农业大学经济学院金融系教授，农业经济管理博士，研究方向：农村金融、银行管理、农业保险" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/chat.css" />
     <script>
@@ -30,151 +30,48 @@
         margin-bottom: 2rem;
       }
       .author-avatar {
-        width: 120px;
-        height: 120px;
+        width: 150px;
+        height: 150px;
         border-radius: 50%;
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         margin: 0 auto 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3rem;
+        font-size: 4rem;
         color: white;
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
       }
       .author-name {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
         color: var(--text-primary, #1f2937);
       }
       .author-title {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         color: var(--text-secondary, #6b7280);
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
       }
       .author-affiliation {
-        font-size: 0.95rem;
+        font-size: 1rem;
         color: var(--text-tertiary, #9ca3af);
+        margin-bottom: 1rem;
       }
-      .search-section {
+      .author-bio {
+        max-width: 800px;
+        margin: 1.5rem auto;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--text-secondary, #4b5563);
+        text-align: left;
+        padding: 1.5rem;
         background: var(--bg-secondary, #f9fafb);
         border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
       }
-      .search-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-primary, #1f2937);
-      }
-      .search-box {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-      }
-      .search-input {
-        flex: 1;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color, #d1d5db);
-        border-radius: 8px;
-        font-size: 1rem;
-        background: var(--bg-primary, white);
-        color: var(--text-primary, #1f2937);
-      }
-      .search-btn {
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s;
-      }
-      .search-btn:hover {
-        opacity: 0.9;
-      }
-      .search-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .results-section {
-        margin-top: 2rem;
-      }
-      .result-category {
-        margin-bottom: 2rem;
-      }
-      .category-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #10b981;
-        display: inline-block;
-      }
-      .result-item {
-        background: var(--bg-primary, white);
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        transition: box-shadow 0.2s;
-      }
-      .result-item:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      }
-      .item-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 0.5rem;
-      }
-      .item-meta {
-        font-size: 0.875rem;
-        color: var(--text-secondary, #6b7280);
-        margin-bottom: 0.5rem;
-      }
-      .item-desc {
-        font-size: 0.9rem;
-        color: var(--text-tertiary, #9ca3af);
-        line-height: 1.6;
-      }
-      .item-link {
-        display: inline-block;
-        margin-top: 0.75rem;
-        color: #10b981;
-        text-decoration: none;
-        font-size: 0.875rem;
-        font-weight: 500;
-      }
-      .item-link:hover {
-        text-decoration: underline;
-      }
-      .loading {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-secondary, #6b7280);
-      }
-      .loading-spinner {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        border: 3px solid #e5e7eb;
-        border-top-color: #10b981;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 0.5rem;
-        vertical-align: middle;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      .author-info-grid {
+      .info-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
       }
@@ -183,38 +80,195 @@
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 12px;
         padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
       .info-card-title {
         font-size: 0.875rem;
         font-weight: 600;
-        color: var(--text-secondary, #6b7280);
+        color: #10b981;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
-      .info-card-value {
-        font-size: 1rem;
+      .info-card-content {
+        font-size: 0.95rem;
         color: var(--text-primary, #1f2937);
-        line-height: 1.6;
+        line-height: 1.7;
+      }
+      .section {
+        margin-bottom: 3rem;
+      }
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid #10b981;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .publication-list {
+        list-style: none;
+        padding: 0;
+      }
+      .publication-item {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        background: var(--bg-primary, white);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 8px;
+        transition: box-shadow 0.2s;
+      }
+      .publication-item:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      }
+      .pub-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+      }
+      .pub-meta {
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+        margin-bottom: 0.25rem;
+      }
+      .pub-journal {
+        color: #10b981;
+        font-weight: 500;
+      }
+      .award-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        background: var(--bg-primary, white);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 8px;
+      }
+      .award-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+      .award-content {
+        flex: 1;
+      }
+      .award-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.25rem;
+      }
+      .award-year {
+        font-size: 0.8rem;
+        color: var(--text-tertiary, #9ca3af);
+      }
+      .timeline {
+        position: relative;
+        padding-left: 2rem;
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #10b981;
+      }
+      .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+        padding-left: 1.5rem;
+      }
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 0.5rem;
+        width: 12px;
+        height: 12px;
+        background: #10b981;
+        border-radius: 50%;
+        border: 2px solid white;
+      }
+      .timeline-date {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #10b981;
+        margin-bottom: 0.25rem;
+      }
+      .timeline-content {
+        font-size: 0.95rem;
+        color: var(--text-primary, #1f2937);
       }
       .back-link {
         display: inline-flex;
         align-items: center;
+        gap: 0.5rem;
         color: #10b981;
         text-decoration: none;
         font-size: 0.9rem;
         margin-bottom: 2rem;
+        transition: opacity 0.2s;
       }
       .back-link:hover {
-        text-decoration: underline;
+        opacity: 0.8;
       }
-      .error-message {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 8px;
-        padding: 1rem;
-        color: #dc2626;
-        margin-top: 1rem;
+      .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        padding: 1.5rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 12px;
+        margin-bottom: 2rem;
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #10b981;
+      }
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+        margin-top: 0.25rem;
+      }
+      @media (max-width: 768px) {
+        .author-page {
+          padding: 1rem;
+        }
+        .author-name {
+          font-size: 1.75rem;
+        }
+        .stats-bar {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -223,169 +277,284 @@
       <a href="/" class="back-link">← 返回首页</a>
       
       <div class="author-header">
-        <div class="author-avatar">肖</div>
+        <div class="author-avatar">XS</div>
         <h1 class="author-name">肖诗顺</h1>
-        <p class="author-title">教授 · 硕士生导师</p>
+        <p class="author-title">博士 教授</p>
         <p class="author-affiliation">四川农业大学 经济学院 数字经济系</p>
-      </div>
-
-      <div class="author-info-grid">
-        <div class="info-card">
-          <div class="info-card-title">研究领域</div>
-          <div class="info-card-value">
-            农村金融、金融科技、农业保险、数字素养、金融教育
+        
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-number">30+</div>
+            <div class="stat-label">年教龄</div>
           </div>
-        </div>
-        <div class="info-card">
-          <div class="info-card-title">主要成就</div>
-          <div class="info-card-value">
-            《智慧银行实验教程》作者<br/>
-            四川省人工智能应用能力大赛获奖<br/>
-            多项国家级、省级科研课题主持人
+          <div class="stat-item">
+            <div class="stat-number">44</div>
+            <div class="stat-label">发表论文</div>
           </div>
-        </div>
-        <div class="info-card">
-          <div class="info-card-title">联系方式</div>
-          <div class="info-card-value">
-            单位：四川农业大学经济学院<br/>
-            地址：四川省雅安市<br/>
-            邮箱：见个人主页
+          <div class="stat-item">
+            <div class="stat-number">11</div>
+            <div class="stat-label">出版著作</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">6</div>
+            <div class="stat-label">科研获奖</div>
           </div>
         </div>
       </div>
 
-      <div class="search-section">
-        <h2 class="search-title">📚 搜索学术成果</h2>
-        <p style="color: var(--text-secondary, #6b7280); margin-bottom: 1rem;">
-          搜索肖诗顺教授的学术论文、著作、课题等信息
-        </p>
-        <div class="search-box">
-          <input 
-            type="text" 
-            class="search-input" 
-            id="searchInput"
-            placeholder="输入关键词，如：农村金融、农业保险、金融科技..."
-            value="肖诗顺"
-          />
-          <button class="search-btn" id="searchBtn" onclick="searchAuthor()">
-            搜索
-          </button>
+      <div class="author-bio">
+        肖诗顺，男，汉族，1971年9月生于贵州遵义。1993年获西北农业大学农学学士学位，1996年获四川农业大学农学硕士学位，2008年获西南大学农业经济管理专业博士学位。现任四川农业大学经济学院数字经济系教授，曾兼任多家农商银行/城商银行/国有企业的董监事。主要研究方向为银行管理、农村金融、农业保险。主持多项省级科研课题，参与国家自然科学基金项目，获四川省科学技术进步奖二等奖、四川省教学成果一等奖等多项荣誉。
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">🎓 研究方向</div>
+          <div class="info-card-content">
+            农村金融与风险管理<br/>
+            银行管理与信贷分析<br/>
+            农业保险与社会保障<br/>
+            金融科技与数字金融
+          </div>
         </div>
-        <div id="results" class="results-section"></div>
+        <div class="info-card">
+          <div class="info-card-title">📚 教学课程</div>
+          <div class="info-card-content">
+            <strong>本科生：</strong>智慧银行（实验）<br/>
+            <strong>研究生：</strong>金融理论与政策、中小商业银行管理实务<br/>
+            <strong>国际生（全英文）：</strong>经典文献导读、国际金融
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">📍 联系方式</div>
+          <div class="info-card-content">
+            地址：成都市温江区惠民路211号<br/>
+            单位：四川农业大学经济学院 数字经济系<br/>
+            邮箱：xiaosicau@qq.com<br/>
+            邮编：611130
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">📖 出版著作</h2>
+        <ul class="publication-list">
+          <li class="publication-item">
+            <div class="pub-title">《物流与供应链管理》</div>
+            <div class="pub-meta">胡俊华、肖诗顺、吴春涛 主编 · 上海财经大学出版社 · 2024年 · 普通高等教育"十四五"规划教材</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《金融学》</div>
+            <div class="pub-meta">主编 · 中国农业出版社 · 2019年12月 · ISBN: 978-7-109-25727-6 · 普通高等教育农业农村部规划教材</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《税法》</div>
+            <div class="pub-meta">副主编 · 电子科技大学出版社 · 2018年6月</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《解密中国金融体系》(Demystifying China's Financial System)</div>
+            <div class="pub-meta">英文专著 · 西南财经大学出版社 · 2016年</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《商业银行经营管理》</div>
+            <div class="pub-meta">主编 · 中国邮电出版社 · 2016年8月</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《贫困地区农村合作医疗保险的需求与制度创新——以贵州为例》</div>
+            <div class="pub-meta">独著 · 电子科技大学出版社 · 2012年12月</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《金融学》</div>
+            <div class="pub-meta">主编 · 原子能出版社 · 2012年12月</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《金融学》</div>
+            <div class="pub-meta">撰写第七章 · 西南财经大学出版社 · 2009年9月</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">《农产品市场及管理》</div>
+            <div class="pub-meta">主编 · 四川大学出版社 · 2001年3月</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">📄 学术论文（知网收录44篇）</h2>
+        <ul class="publication-list">
+          <li class="publication-item">
+            <div class="pub-title">韩静静,王浩源,赵吉,肖诗顺.气候变化对我国主产区水稻产量的影响及其机制分析</div>
+            <div class="pub-meta"><span class="pub-journal">南方农业</span> · 2024年 · 被引8 · 下载689</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">唐彬,姜三富,肖诗顺.产业振兴背景下花椒保险保障机制探究</div>
+            <div class="pub-meta"><span class="pub-journal">中国保险</span> · 2021年 · 下载265</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">李凤至,杨明东,肖诗顺.金融素养对地震灾后农房重建信贷违约的影响——基于雅安4.20地震的实证研究</div>
+            <div class="pub-meta"><span class="pub-journal">农村金融研究</span> · 2020年 · 被引4 · 下载139</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,郎慧,曹茂竹.保护性耕作生态服务价值补偿的农户意愿及筹资模式研究——以四川省为例</div>
+            <div class="pub-meta"><span class="pub-journal">东北农业大学学报(社会科学版)</span> · 2019年 · 被引3 · 下载294</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">郎慧,肖诗顺.金融素养、社会资本对家庭创业选择的影响研究</div>
+            <div class="pub-meta"><span class="pub-journal">中国西部</span> · 2019年 · 被引10 · 下载261</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张剑,周小强,肖诗顺.从背井离乡到创新创业——兼论互联网使用对创业的作用</div>
+            <div class="pub-meta"><span class="pub-journal">重庆大学学报(社会科学版)</span> · 2019年 · 被引53 · 下载1846 · CSSCI</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">郎慧,肖诗顺,王艳.四川省农业碳排放与经济增长的脱钩效应分析</div>
+            <div class="pub-meta"><span class="pub-journal">山东农业大学学报(社会科学版)</span> · 2019年 · 被引28 · 下载758</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,李凤至,滕勇.现阶段农村商业银行不良贷款防控对策——以四川省为例</div>
+            <div class="pub-meta"><span class="pub-journal">中国西部</span> · 2018年 · 下载166</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">刘珍,肖诗顺.四川省村镇银行的调查与思考</div>
+            <div class="pub-meta"><span class="pub-journal">农村金融研究</span> · 2016年 · 被引5 · 下载377</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">刘珍,肖诗顺.四川省村镇银行调查与思考</div>
+            <div class="pub-meta"><span class="pub-journal">区域金融研究</span> · 2015年 · 被引1 · 下载88</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">詹利娟,王梦晨,肖诗顺.农业大户利用农产品期货市场的思考</div>
+            <div class="pub-meta"><span class="pub-journal">新疆农垦经济</span> · 2015年 · 被引2 · 下载180</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张彼西,肖诗顺.提升还是下降？论村镇银行支农绩效</div>
+            <div class="pub-meta"><span class="pub-journal">金融发展研究</span> · 2015年 · 被引11 · 下载288</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">何英,肖诗顺.中国农业资本积累的问题及成因分析</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2014年 · 被引3 · 下载180</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">卢婷,肖诗顺.四川省金融结构和产业结构关系的实证分析</div>
+            <div class="pub-meta"><span class="pub-journal">当代经济</span> · 2013年 · 被引7 · 下载126</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,胡琴.农村妇女小额担保贷款现状及国际经验借鉴</div>
+            <div class="pub-meta"><span class="pub-journal">西南金融</span> · 2013年 · 被引16 · 下载474 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺.促进村镇银行良性循环</div>
+            <div class="pub-meta"><span class="pub-journal">农村金融时报</span> · 2013年 · 下载37</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">胡琴,肖诗顺.农村信贷需求与供给的研究方法综述</div>
+            <div class="pub-meta"><span class="pub-journal">商业经济</span> · 2013年 · 被引9 · 下载548</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,张林.贫困村互助资金的扶贫模式与效果分析——基于四川省的调研</div>
+            <div class="pub-meta"><span class="pub-journal">西南金融</span> · 2013年 · 被引21 · 下载696 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,陈莉.阿坝州新型工业化与城镇化的协同发展研究</div>
+            <div class="pub-meta"><span class="pub-journal">商业经济</span> · 2012年 · 被引7 · 下载214</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,陈莉.西部地区地方农业院校金融学本科专业建设面临的挑战及其对策</div>
+            <div class="pub-meta"><span class="pub-journal">商业经济</span> · 2012年 · 被引1 · 下载89</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">王映,肖诗顺.关于对农行乡镇网点排队现象的思考——以渠县支行乡镇网点为例</div>
+            <div class="pub-meta"><span class="pub-journal">中国集体经济</span> · 2012年 · 下载90</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">王琼,肖诗顺.村镇银行难以大规模建立原因分析</div>
+            <div class="pub-meta"><span class="pub-journal">合作经济与科技</span> · 2012年 · 下载300</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">史智才,肖诗顺.基于小概率事件的方法论</div>
+            <div class="pub-meta"><span class="pub-journal">统计与决策</span> · 2012年 · 被引17 · 下载979 · 北大核心 · CSSCI</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张林,肖诗顺,陈丘.技术进步对我国农村能源效率的影响分析</div>
+            <div class="pub-meta"><span class="pub-journal">四川农业大学学报</span> · 2011年 · 被引12 · 下载271</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张林,肖诗顺.西部欠发达地区农村资金配置效率评价及影响因素分析</div>
+            <div class="pub-meta"><span class="pub-journal">第十三届中国科协年会论文集</span> · 2011年 · 被引4 · 下载191</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张林,肖诗顺.中小企业融资难的银企博弈分析</div>
+            <div class="pub-meta"><span class="pub-journal">商业经济</span> · 2011年 · 被引12 · 下载782</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张婷,肖诗顺,高锋.基于C-A-P模型的村镇银行市场定位研究</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2011年 · 被引23 · 下载563</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">王琼,肖诗顺.新农村建设时期供销社与农村金融机构合作问题研究</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2011年 · 被引1 · 下载167</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">张微娜,肖诗顺.基于金融功能观的农村金融体系研究</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2010年 · 被引7 · 下载180</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">季玲玲,肖诗顺.从人民币升值压力看中美贸易关系</div>
+            <div class="pub-meta"><span class="pub-journal">商业文化</span> · 2010年 · 被引1 · 下载260</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,高锋.农村金融机构农户贷款模式研究——基于农村土地产权的视角</div>
+            <div class="pub-meta"><span class="pub-journal">农业经济问题</span> · 2010年 · 被引231 · 下载2457 · 北大核心 · CSSCI</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">李媛娟,王皓,肖诗顺.启动农村消费是扩大内需的关键</div>
+            <div class="pub-meta"><span class="pub-journal">农业经济</span> · 2009年 · 被引6 · 下载308 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">蔡秀,肖诗顺.基于社会资本的农户借贷行为研究</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2009年 · 被引33 · 下载473</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">高锋,肖诗顺.服务质量评价理论研究综述</div>
+            <div class="pub-meta"><span class="pub-journal">商业时代</span> · 2009年 · 被引196 · 下载5110 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">高锋,周雪梅,肖诗顺.农村土地承包经营权抵押担保制度探讨</div>
+            <div class="pub-meta"><span class="pub-journal">西南金融</span> · 2009年 · 被引52 · 下载892 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺,蒋远胜.高等农业院校商业银行管理课程双语教学的尝试</div>
+            <div class="pub-meta"><span class="pub-journal">中国科教创新导刊</span> · 2008年 · 下载59</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">冯素萍,肖诗顺.基于商业性可持续发展视角的农村信用社农户小额信贷定价问题探讨</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济与科技</span> · 2008年 · 被引9 · 下载448</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">肖诗顺.基于期权合约的我国超市生鲜农产品供应链管理探讨</div>
+            <div class="pub-meta"><span class="pub-journal">生态经济</span> · 2007年 · 被引26 · 下载950 · 北大核心 · CSSCI</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">蒋远胜,宋青锋,肖诗顺,吴平.四川省农民收入现状和增加农民收入的途径——基于一个抽样调查样本的实证分析</div>
+            <div class="pub-meta"><span class="pub-journal">农村经济</span> · 2005年 · 被引11 · 下载535 · 北大核心</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">蒋远胜,肖诗顺,宋青锋.家庭风险分担机制对农村医疗保险需求的影响——对四川省的初步调查报告</div>
+            <div class="pub-meta"><span class="pub-journal">人口与经济</span> · 2003年 · 被引88 · 下载1342 · 北大核心 · CSSCI</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">谭静,肖诗顺.现代企业中会计所得与应税所得的差异及其协调</div>
+            <div class="pub-meta"><span class="pub-journal">黑龙江财专学报</span> · 1998年 · 下载69</div>
+          </li>
+          <li class="publication-item">
+            <div class="pub-title">刘冰,肖诗顺,蒋道德,雍国玮,李亚林.国外土地金融制度对我国农地制度改革的启示</div>
+            <div class="pub-meta"><span class="pub-journal">四川师范学院学报(自然科学版)</span> · 1996年 · 被引30 · 下载873</div>
+          </li>
+        </ul>
+      </div>
+
+      <div style="text-align: center; padding: 2rem; color: var(--text-tertiary, #9ca3af); font-size: 0.875rem;">
+        信息来源：百度百科、四川农业大学官网、四川农业大学经济学院官网<br/>
+        更新时间：2026年7月
       </div>
     </div>
-
-    <script>
-      const API_BASE = window.location.origin;
-      
-      async function searchAuthor() {
-        const query = document.getElementById('searchInput').value.trim();
-        if (!query) return;
-        
-        const btn = document.getElementById('searchBtn');
-        const resultsDiv = document.getElementById('results');
-        
-        btn.disabled = true;
-        btn.textContent = '搜索中...';
-        resultsDiv.innerHTML = '<div class="loading"><span class="loading-spinner"></span>正在搜索学术资源...</div>';
-        
-        try {
-          const response = await fetch(`${API_BASE}/api/author`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query })
-          });
-          
-          if (!response.ok) throw new Error('搜索失败');
-          
-          const data = await response.json();
-          displayResults(data);
-        } catch (error) {
-          resultsDiv.innerHTML = `
-            <div class="error-message">
-              搜索出错：${error.message}。请稍后重试。
-            </div>
-          `;
-        } finally {
-          btn.disabled = false;
-          btn.textContent = '搜索';
-        }
-      }
-      
-      function displayResults(data) {
-        const resultsDiv = document.getElementById('results');
-        
-        if (!data || (!data.papers?.length && !data.books?.length && !data.projects?.length)) {
-          resultsDiv.innerHTML = '<p style="color: var(--text-secondary, #6b7280);">未找到相关结果，请尝试其他关键词。</p>';
-          return;
-        }
-        
-        let html = '';
-        
-        if (data.papers?.length) {
-          html += `
-            <div class="result-category">
-              <h3 class="category-title">📄 学术论文 (${data.papers.length})</h3>
-              ${data.papers.map(paper => `
-                <div class="result-item">
-                  <div class="item-title">${paper.title}</div>
-                  <div class="item-meta">${paper.authors} · ${paper.journal} · ${paper.year}</div>
-                  ${paper.abstract ? `<div class="item-desc">${paper.abstract}</div>` : ''}
-                  ${paper.url ? `<a href="${paper.url}" target="_blank" class="item-link">查看详情 →</a>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          `;
-        }
-        
-        if (data.books?.length) {
-          html += `
-            <div class="result-category">
-              <h3 class="category-title">📚 学术著作 (${data.books.length})</h3>
-              ${data.books.map(book => `
-                <div class="result-item">
-                  <div class="item-title">${book.title}</div>
-                  <div class="item-meta">${book.publisher} · ${book.year}</div>
-                  ${book.description ? `<div class="item-desc">${book.description}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          `;
-        }
-        
-        if (data.projects?.length) {
-          html += `
-            <div class="result-category">
-              <h3 class="category-title">🔬 科研项目 (${data.projects.length})</h3>
-              ${data.projects.map(project => `
-                <div class="result-item">
-                  <div class="item-title">${project.title}</div>
-                  <div class="item-meta">${project.funding} · ${project.year}</div>
-                  ${project.description ? `<div class="item-desc">${project.description}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          `;
-        }
-        
-        if (data.summary) {
-          html += `
-            <div class="result-category">
-              <h3 class="category-title">📊 搜索总结</h3>
-              <div class="result-item">
-                <div class="item-desc">${data.summary}</div>
-              </div>
-            </div>
-          `;
-        }
-        
-        resultsDiv.innerHTML = html;
-      }
-      
-      // 回车搜索
-      document.getElementById('searchInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') searchAuthor();
-      });
-    </script>
   </body>
 </html>
