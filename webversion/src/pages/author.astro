@@ -1,0 +1,391 @@
+---
+// 作者信息页面
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作者信息 - 肖诗顺 | SmartBank Agent</title>
+    <meta name="description" content="肖诗顺 - 四川农业大学数字经济系教授，智慧银行实验教程作者，研究领域：农村金融、金融科技、农业保险" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/chat.css" />
+    <script>
+      (function(){
+        var t = localStorage.getItem('sb-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+    <style>
+      .author-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .author-header {
+        text-align: center;
+        padding: 3rem 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        margin-bottom: 2rem;
+      }
+      .author-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+      }
+      .author-name {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary, #1f2937);
+      }
+      .author-title {
+        font-size: 1.1rem;
+        color: var(--text-secondary, #6b7280);
+        margin-bottom: 1rem;
+      }
+      .author-affiliation {
+        font-size: 0.95rem;
+        color: var(--text-tertiary, #9ca3af);
+      }
+      .search-section {
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+      .search-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary, #1f2937);
+      }
+      .search-box {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .search-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color, #d1d5db);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: var(--bg-primary, white);
+        color: var(--text-primary, #1f2937);
+      }
+      .search-btn {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .search-btn:hover {
+        opacity: 0.9;
+      }
+      .search-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .results-section {
+        margin-top: 2rem;
+      }
+      .result-category {
+        margin-bottom: 2rem;
+      }
+      .category-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #10b981;
+        display: inline-block;
+      }
+      .result-item {
+        background: var(--bg-primary, white);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: box-shadow 0.2s;
+      }
+      .result-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      .item-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.5rem;
+      }
+      .item-meta {
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+        margin-bottom: 0.5rem;
+      }
+      .item-desc {
+        font-size: 0.9rem;
+        color: var(--text-tertiary, #9ca3af);
+        line-height: 1.6;
+      }
+      .item-link {
+        display: inline-block;
+        margin-top: 0.75rem;
+        color: #10b981;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      .item-link:hover {
+        text-decoration: underline;
+      }
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary, #6b7280);
+      }
+      .loading-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #e5e7eb;
+        border-top-color: #10b981;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .author-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .info-card {
+        background: var(--bg-primary, white);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        padding: 1.5rem;
+      }
+      .info-card-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+      }
+      .info-card-value {
+        font-size: 1rem;
+        color: var(--text-primary, #1f2937);
+        line-height: 1.6;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: #10b981;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 1rem;
+        color: #dc2626;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="author-page">
+      <a href="/" class="back-link">← 返回首页</a>
+      
+      <div class="author-header">
+        <div class="author-avatar">肖</div>
+        <h1 class="author-name">肖诗顺</h1>
+        <p class="author-title">教授 · 硕士生导师</p>
+        <p class="author-affiliation">四川农业大学 经济学院 数字经济系</p>
+      </div>
+
+      <div class="author-info-grid">
+        <div class="info-card">
+          <div class="info-card-title">研究领域</div>
+          <div class="info-card-value">
+            农村金融、金融科技、农业保险、数字素养、金融教育
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">主要成就</div>
+          <div class="info-card-value">
+            《智慧银行实验教程》作者<br/>
+            四川省人工智能应用能力大赛获奖<br/>
+            多项国家级、省级科研课题主持人
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">联系方式</div>
+          <div class="info-card-value">
+            单位：四川农业大学经济学院<br/>
+            地址：四川省雅安市<br/>
+            邮箱：见个人主页
+          </div>
+        </div>
+      </div>
+
+      <div class="search-section">
+        <h2 class="search-title">📚 搜索学术成果</h2>
+        <p style="color: var(--text-secondary, #6b7280); margin-bottom: 1rem;">
+          搜索肖诗顺教授的学术论文、著作、课题等信息
+        </p>
+        <div class="search-box">
+          <input 
+            type="text" 
+            class="search-input" 
+            id="searchInput"
+            placeholder="输入关键词，如：农村金融、农业保险、金融科技..."
+            value="肖诗顺"
+          />
+          <button class="search-btn" id="searchBtn" onclick="searchAuthor()">
+            搜索
+          </button>
+        </div>
+        <div id="results" class="results-section"></div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = window.location.origin;
+      
+      async function searchAuthor() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) return;
+        
+        const btn = document.getElementById('searchBtn');
+        const resultsDiv = document.getElementById('results');
+        
+        btn.disabled = true;
+        btn.textContent = '搜索中...';
+        resultsDiv.innerHTML = '<div class="loading"><span class="loading-spinner"></span>正在搜索学术资源...</div>';
+        
+        try {
+          const response = await fetch(`${API_BASE}/api/author`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+          });
+          
+          if (!response.ok) throw new Error('搜索失败');
+          
+          const data = await response.json();
+          displayResults(data);
+        } catch (error) {
+          resultsDiv.innerHTML = `
+            <div class="error-message">
+              搜索出错：${error.message}。请稍后重试。
+            </div>
+          `;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '搜索';
+        }
+      }
+      
+      function displayResults(data) {
+        const resultsDiv = document.getElementById('results');
+        
+        if (!data || (!data.papers?.length && !data.books?.length && !data.projects?.length)) {
+          resultsDiv.innerHTML = '<p style="color: var(--text-secondary, #6b7280);">未找到相关结果，请尝试其他关键词。</p>';
+          return;
+        }
+        
+        let html = '';
+        
+        if (data.papers?.length) {
+          html += `
+            <div class="result-category">
+              <h3 class="category-title">📄 学术论文 (${data.papers.length})</h3>
+              ${data.papers.map(paper => `
+                <div class="result-item">
+                  <div class="item-title">${paper.title}</div>
+                  <div class="item-meta">${paper.authors} · ${paper.journal} · ${paper.year}</div>
+                  ${paper.abstract ? `<div class="item-desc">${paper.abstract}</div>` : ''}
+                  ${paper.url ? `<a href="${paper.url}" target="_blank" class="item-link">查看详情 →</a>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        
+        if (data.books?.length) {
+          html += `
+            <div class="result-category">
+              <h3 class="category-title">📚 学术著作 (${data.books.length})</h3>
+              ${data.books.map(book => `
+                <div class="result-item">
+                  <div class="item-title">${book.title}</div>
+                  <div class="item-meta">${book.publisher} · ${book.year}</div>
+                  ${book.description ? `<div class="item-desc">${book.description}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        
+        if (data.projects?.length) {
+          html += `
+            <div class="result-category">
+              <h3 class="category-title">🔬 科研项目 (${data.projects.length})</h3>
+              ${data.projects.map(project => `
+                <div class="result-item">
+                  <div class="item-title">${project.title}</div>
+                  <div class="item-meta">${project.funding} · ${project.year}</div>
+                  ${project.description ? `<div class="item-desc">${project.description}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        
+        if (data.summary) {
+          html += `
+            <div class="result-category">
+              <h3 class="category-title">📊 搜索总结</h3>
+              <div class="result-item">
+                <div class="item-desc">${data.summary}</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        resultsDiv.innerHTML = html;
+      }
+      
+      // 回车搜索
+      document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchAuthor();
+      });
+    </script>
+  </body>
+</html>

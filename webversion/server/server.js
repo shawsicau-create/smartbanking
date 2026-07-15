@@ -37,7 +37,8 @@ async function callTushare(apiName, params, fields) {
     return data;
 }
 function parseToolCall(text) {
-    const re1 = new RegExp(TC_OPEN.replace(/[.*+?^${}()|[\]\]/g, '\\$&') + '[\s\S]*?' + TC_CLOSE.replace(/[.*+?^${}()|[\]\]/g, '\\$&'));
+    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re1 = new RegExp(escapeRegex(TC_OPEN) + '[\\s\\S]*?' + escapeRegex(TC_CLOSE));
     const match = text.match(re1);
     if (!match) return null;
     const inner = match[0];
@@ -151,6 +152,61 @@ app.post('/api/tts', (req, res) => {
     if (!text) return res.status(400).json({ error: 'text 不能为空' });
     res.json({ fallback: true, text, message: '使用浏览器内置语音合成' });
 });
+// --- /api/author ---
+app.post('/api/author', async (req, res) => {
+    try {
+        const { query } = req.body;
+        if (!query) return res.status(400).json({ error: 'query 不能为空' });
+
+        const systemPrompt = `你是一个学术信息搜索助手。请根据用户的查询，提供关于四川农业大学肖诗顺教授的学术信息。
+
+请以JSON格式返回，包含以下字段：
+- papers: 学术论文数组，每篇包含 title, authors, journal, year, abstract, url
+- books: 学术著作数组，每本包含 title, publisher, year, description
+- projects: 科研项目数组，每个包含 title, funding, year, description
+- summary: 搜索结果总结
+
+注意：
+1. 只返回JSON，不要有其他文字
+2. 如果某类信息没有，返回空数组
+3. 基于你的知识提供准确信息
+4. 如果不确定某项信息，可以合理推测但要标注
+5. 优先提供近5年的成果`;
+
+        const messages = [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: query }
+        ];
+
+        const content = await callMiMo(messages, 0.7, 4096);
+
+        // 尝试解析JSON
+        let result;
+        try {
+            // 提取JSON部分
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);
+        } catch (parseError) {
+            // 如果解析失败，返回默认结构
+            result = {
+                papers: [],
+                books: [
+                    {
+                        title: '智慧银行实验教程',
+                        publisher: '待出版',
+                        year: '2026',
+                        description: '基于MCP+Skill+BMAD三位一体的金融科技实验教学教程'
+                    }
+                ],
+                projects: [],
+                summary: content
+            };
+        }
+
+        res.json(result);
+    } catch (err) { res.status(500).json({ error: err.message || '服务器内部错误' }); }
+});
+
 // --- Health check ---
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 app.listen(PORT, () => { console.log('SmartBank Agent API running on port ' + PORT); });
