@@ -16,6 +16,15 @@
 >
 > 含交互式文档、公式渲染、AI 智能体实时问答、金融数据查询
 
+### 备用访问地址
+
+| 平台 | 地址 | 说明 |
+|------|------|------|
+| Cloudflare Pages（主站） | https://smartbanking.pages.dev | 全球 CDN，推荐访问 |
+| 阿里云 SWAS（备份站） | http://8.137.175.215 | 国内服务器，API 后端独立部署 |
+| CNB 仓库 | https://cnb.cool/xiaosicau/smartbanking | 源码托管（公开仓库） |
+| GitHub 仓库 | https://github.com/shawsicau-create/smartbanking | 镜像备份 |
+
 - 网站由 **Astro + Starlight** 构建，部署在 **Cloudflare Pages**（全球 CDN + Serverless Functions）
 - 源码托管在 [CNB（xiaosicau/smartbanking）](https://cnb.cool/xiaosicau/smartbanking)（公开仓库）
 - 智能体后端由 Cloudflare Workers 驱动，接入 MiMo LLM + Tushare + World Bank 数据源
@@ -127,7 +136,7 @@ smartbanking/
 | AI 技能     | Skill 体系（8 组专业技能 + 20 分类技能库）                          |
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）          |
 | 数据分析    | Stata / Python（pandas, statsmodels）                               |
-| 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）              |
+| 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）+ **阿里云 SWAS**（国内备份站） |
 | 版本控制    | Git + [CNB 云开发平台](https://cnb.cool/xiaosicau/smartbanking)     |
 
 ## 快速开始
@@ -200,6 +209,7 @@ wrangler pages deploy dist --project-name=smartbanking
 - **CNB 仓库**: https://cnb.cool/xiaosicau/smartbanking
 - **GitHub 仓库**: https://github.com/shawsicau-create/smartbanking
 - **在线网站**: https://smartbanking.pages.dev
+- **备用站点**: http://8.137.175.215（阿里云 SWAS）
 
 ## 相关文档
 

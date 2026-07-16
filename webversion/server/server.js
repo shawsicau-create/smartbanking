@@ -326,7 +326,7 @@ async function executeTool(name, args) {
 const PROMPTS = {
     chat: (mode) => {
         const bmad = { 'bmad-analyst': '\n你当前扮演 BMAD 方法论中的**需求分析师(Analyst)**角色。', 'bmad-pm': '\n你当前扮演 BMAD 方法论中的**产品经理(PM)**角色。', 'bmad-architect': '\n你当前扮演 BMAD 方法论中的**架构师(Architect)**角色。', 'bmad-dev': '\n你当前扮演 BMAD 方法论中的**开发者(Developer)**角色。', 'bmad-qa': '\n你当前扮演 BMAD 方法论中的**质量保障(QA)**角色。' };
-        return '你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。\n你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。\n\n本智能体基于《智慧银行实验教程》教材，采用MCP+Skill+BMAD三位一体架构。\n\n你可以调用以下工具获取实时数据和信息：\n- 股票行情、指数、财务数据（A股/全球）\n- 宏观经济指标（GDP、CPI等）\n- 基金、债券数据\n- 实时网页搜索和内容提取\n- 银行网点查询\n- 同花顺专业金融数据\n- 世界银行/FAO农业数据\n\n请用中文回答，数据展示时使用表格格式，分析要结合金融理论。' + (bmad[mode] || '');
+        return `你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。\n你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。\n\n本智能体基于《智慧银行实验教程》教材，采用MCP+Skill+BMAD三位一体架构。\n\n## 联网检索优先原则\n当用户询问以下类型问题时，**必须优先使用web_search工具**获取最新信息：\n1. **实时市场行情**：今日大盘走势、某股票最新价格、今日涨跌\n2. **最新财经新闻**：今日财经要闻、最新政策、市场动态\n3. **时事热点**：最新事件、当前形势、实时数据\n4. **任何需要"今天"、"最新"、"现在"等时效性信息的问题**\n\n搜索策略：\n- 先用web_search搜索关键词获取最新信息\n- 如需详细了解某个搜索结果，再用web_extract提取网页内容\n- 综合多个搜索结果给出完整回答\n\n## 可用工具\n- **web_search**: 实时网页搜索（获取最新新闻、市场动态）\n- **web_extract**: 提取网页详细内容\n- **batch_search**: 批量搜索多个关键词\n- **query_stock/query_index**: 查询A股历史行情\n- **query_macro_***: 宏观经济指标\n- **search_bank_branch**: 银行网点查询\n\n## 回答规范\n1. 使用中文回答\n2. 数据展示使用表格格式\n3. 分析结合金融理论\n4. 涉及实时信息时，必须先搜索再回答，不要凭记忆编造数据\n5. 引用数据时注明来源（如"根据今日搜索结果..."）\n${bmad[mode] || ''}`;
     },
     bull: '你是一位资深的**多头分析师**（看涨派）。从增长潜力、政策利好等角度分析，提供3-5个核心看多论据，每个论据配数据支撑。请用中文回答，Markdown格式。',
     bear: '你是一位资深的**空头分析师**（看跌派）。从风险隐患、利空因素等角度分析，提供3-5个核心看空论据。请用中文回答，Markdown格式。',
@@ -400,7 +400,25 @@ app.post('/api/chat', async (req, res) => {
                 }
             } else {
                 // 没有tool_calls，返回结果
-                const content = assistantMsg.content || '';
+                let content = assistantMsg.content || '';
+                // 防护：如果模型返回原始 <tool_call> 标签而非结构化tool_calls，解析并执行
+                if (content.includes('<tool_call>') && content.includes('<function=')) {
+                    const toolMatch = content.match(/<function=([^>]+)>([\s\S]*?)<\/function>/);
+                    if (toolMatch) {
+                        const toolName = toolMatch[1];
+                        const paramMatches = [...toolMatch[2].matchAll(/<parameter=([^>]+)>([^<]*)<\/parameter>/g)];
+                        const args = {};
+                        for (const pm of paramMatches) { args[pm[1]] = pm[2].trim(); }
+                        let result;
+                        try { result = await executeTool(toolName, args); } catch (err) { result = { error: err.message }; }
+                        toolCallResults.push({ name: toolName, args, result });
+                        // 把工具结果反馈给模型获取最终回答
+                        chatMessages.push({ role: 'assistant', content });
+                        chatMessages.push({ role: 'user', content: '工具执行结果：\n' + JSON.stringify(result, null, 2) + '\n\n请根据以上工具返回的数据，用中文给出完整回答。' });
+                        const retryMsg = await callMiMo(chatMessages, 0.7, 2048);
+                        content = retryMsg.content || content;
+                    }
+                }
                 return res.json({ content, toolCalls: toolCallResults });
             }
         }
