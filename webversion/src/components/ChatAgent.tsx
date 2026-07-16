@@ -615,7 +615,7 @@ export default function ChatAgent() {
             const resp = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: history, mode }),
+                body: JSON.stringify({ messages: history, mode, model: currentModel }),
             });
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({ error: '请求失败' }));

@@ -6,10 +6,26 @@ import { search, extract, batchSearch } from './search';
 interface Env {
     MIMO_API_KEY: string;
     TUSHARE_TOKEN: string;
+    BAILIAN_API_KEY?: string;
 }
 
-const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
-const MIMO_MODEL = 'mimo-v2.5-pro';
+// 多模型配置
+const MODEL_CONFIGS: Record<string, { url: string; model: string; name: string; getKey: (env: Env) => string }> = {
+    mimo: {
+        url: 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions',
+        model: 'mimo-v2.5-pro',
+        name: 'MiMo',
+        getKey: (env) => env.MIMO_API_KEY,
+    },
+    bailian: {
+        url: 'https://ws-paxy280v9746pda1.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',
+        model: 'qwen-plus',
+        name: '百炼',
+        getKey: (env) => env.BAILIAN_API_KEY || '',
+    },
+};
+
+const DEFAULT_MODEL = 'mimo';
 
 const SYSTEM_PROMPT = `你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。
 你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。
@@ -228,9 +244,13 @@ interface ToolCallResult {
     result: unknown;
 }
 
-async function callLLM(messages: ChatMessage[], useTools: boolean, env: Env) {
+async function callLLM(messages: ChatMessage[], useTools: boolean, env: Env, modelId: string = DEFAULT_MODEL) {
+    const config = MODEL_CONFIGS[modelId] || MODEL_CONFIGS[DEFAULT_MODEL];
+    const apiKey = config.getKey(env);
+    if (!apiKey) throw new Error(`${config.name} API Key 未配置`);
+
     const body: Record<string, unknown> = {
-        model: MIMO_MODEL,
+        model: config.model,
         messages,
         temperature: 0.7,
         max_tokens: 2048,
@@ -239,17 +259,17 @@ async function callLLM(messages: ChatMessage[], useTools: boolean, env: Env) {
         body.tools = tools;
         body.tool_choice = 'auto';
     }
-    const resp = await fetch(MIMO_API_URL, {
+    const resp = await fetch(config.url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${env.MIMO_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(body),
     });
     if (!resp.ok) {
         const text = await resp.text();
-        throw new Error(`MiMo API error ${resp.status}: ${text}`);
+        throw new Error(`${config.name} API error ${resp.status}: ${text}`);
     }
     return resp.json();
 }
@@ -404,7 +424,8 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     };
 
     try {
-        const { messages } = (await request.json()) as { messages: Array<{ role: string; content: string }> };
+        const { messages, model: requestModel } = (await request.json()) as { messages: Array<{ role: string; content: string }>; model?: string };
+        const modelId = requestModel && MODEL_CONFIGS[requestModel] ? requestModel : DEFAULT_MODEL;
 
         if (!messages?.length) {
             return new Response(JSON.stringify({ error: 'messages 不能为空' }), {
@@ -418,7 +439,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
             ...messages,
         ];
 
-        const data = await callLLM(chatMessages, true, env);
+        const data = await callLLM(chatMessages, true, env, modelId);
         const assistantMsg = data.choices?.[0]?.message;
 
         if (!assistantMsg) {
@@ -455,7 +476,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
                 });
             }
 
-            const finalData = await callLLM(chatMessages, false, env);
+            const finalData = await callLLM(chatMessages, false, env, modelId);
             const finalContent = finalData.choices?.[0]?.message?.content || '';
 
             return new Response(

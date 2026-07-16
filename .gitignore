@@ -39,6 +39,11 @@ test_ch04.pdf
 .idea/
 *.swp
 *.swo
+.qoder/
+
+# 含 API 密钥的敏感文件（不同步）
+阿里免费智能体.csv
+*apiKey*.csv
 
 # 临时文件
 *.tmp

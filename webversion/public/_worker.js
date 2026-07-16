@@ -54,6 +54,8 @@ async function getUserId(request, secret) {
 
 const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
 const MIMO_MODEL = 'mimo-v2.5-pro';
+const BAILIAN_API_URL = 'https://ws-paxy280v9746pda1.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions';
+const BAILIAN_MODEL = 'qwen-plus';
 const AMAP_API_KEY = '63f93d2223f744affebade9ef7982732';
 
 // Tool call tag builders (avoid literal tags in source)
@@ -83,16 +85,20 @@ const PROMPTS = {
     generateContent: (moduleTitle, topics) => '你是一位金融教育专家。请为模块"' + moduleTitle + '"生成详细教学内容。\n覆盖知识点：' + topics + '\n要求：每知识点200-300字+案例+思考题，Markdown格式，通俗易懂。',
 };
 
-async function callMiMo(messages, env, temperature, maxTokens) {
-    const resp = await fetch(MIMO_API_URL, {
+async function callMiMo(messages, env, temperature, maxTokens, modelId) {
+    const isBailian = modelId === 'bailian' && env.BAILIAN_API_KEY;
+    const apiUrl = isBailian ? BAILIAN_API_URL : MIMO_API_URL;
+    const modelName = isBailian ? BAILIAN_MODEL : MIMO_MODEL;
+    const apiKey = isBailian ? env.BAILIAN_API_KEY : env.MIMO_API_KEY;
+    const resp = await fetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + env.MIMO_API_KEY },
-        body: JSON.stringify({ model: MIMO_MODEL, messages, temperature: temperature || 0.7, max_tokens: maxTokens || 2048 }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({ model: modelName, messages, temperature: temperature || 0.7, max_tokens: maxTokens || 2048 }),
     });
-    if (!resp.ok) throw new Error('MiMo API error: ' + resp.status);
+    if (!resp.ok) throw new Error((isBailian ? '百炼' : 'MiMo') + ' API error: ' + resp.status);
     const data = await resp.json();
     const c = data.choices?.[0]?.message?.content || '';
-    if (!c) throw new Error('MiMo 未返回有效响应');
+    if (!c) throw new Error('AI 未返回有效响应');
     return c;
 }
 
@@ -242,12 +248,65 @@ function jsonResponse(data, status) {
     return new Response(JSON.stringify(data), { status: status || 200, headers: { 'Content-Type': 'application/json', ...CORS } });
 }
 
+// ─── /api/models ────────────────────────────────────────────────────────────
+function handleModelsRequest(request, env) {
+    const method = request.method;
+    if (method === 'GET') {
+        return jsonResponse({
+            current: 'mimo',
+            models: [
+                { id: 'mimo', name: 'MiMo', enabled: !!env.MIMO_API_KEY, priority: 1, current: true },
+                { id: 'bailian', name: '百炼', enabled: !!env.BAILIAN_API_KEY, priority: 2, current: false },
+            ]
+        });
+    }
+    if (method === 'POST') {
+        return request.json().then(({ model }) => {
+            if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
+            return jsonResponse({ success: true, current: model, name: model === 'bailian' ? '百炼' : 'MiMo' });
+        }).catch(() => jsonResponse({ error: '请求格式错误' }, 400));
+    }
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+}
+
+// ─── /api/models/switch ─────────────────────────────────────────────────────
+async function handleModelSwitch(request, env) {
+    const { model } = await request.json();
+    if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
+    const name = model === 'bailian' ? '百炼' : 'MiMo';
+    return jsonResponse({ success: true, current: model, name });
+}
+
+// ─── /api/models/test ──────────────────────────────────────────────────────
+async function handleModelTest(request, env) {
+    const { model } = await request.json();
+    const modelId = model || 'mimo';
+    const start = Date.now();
+    try {
+        const testMsg = [{ role: 'user', content: '你好' }];
+        const isBailian = modelId === 'bailian' && env.BAILIAN_API_KEY;
+        const apiUrl = isBailian ? BAILIAN_API_URL : MIMO_API_URL;
+        const modelName = isBailian ? BAILIAN_MODEL : MIMO_MODEL;
+        const apiKey = isBailian ? env.BAILIAN_API_KEY : env.MIMO_API_KEY;
+        const resp = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+            body: JSON.stringify({ model: modelName, messages: testMsg, max_tokens: 10 }),
+        });
+        const latency = Date.now() - start;
+        if (resp.ok) return jsonResponse({ success: true, model: isBailian ? '百炼' : 'MiMo', latency: latency + 'ms' });
+        return jsonResponse({ success: false, model: isBailian ? '百炼' : 'MiMo', error: 'HTTP ' + resp.status });
+    } catch (e) {
+        return jsonResponse({ success: false, model: modelId === 'bailian' ? '百炼' : 'MiMo', error: e.message });
+    }
+}
+
 // ─── /api/chat ───────────────────────────────────────────────────────────────
 async function handleChatRequest(request, env) {
-    const { messages, mode } = await request.json();
+    const { messages, mode, model } = await request.json();
     if (!messages?.length) return jsonResponse({ error: 'messages 不能为空' }, 400);
     const chatMessages = [{ role: 'system', content: PROMPTS.chat(mode) }, ...messages];
-    let assistantContent = await callMiMo(chatMessages, env);
+    let assistantContent = await callMiMo(chatMessages, env, undefined, undefined, model);
     const toolCallResults = [];
     let maxRounds = 5;
     while (maxRounds-- > 0) {
@@ -318,6 +377,9 @@ export default {
         if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
         const routes = {
             '/api/chat': handleChatRequest,
+            '/api/models': handleModelsRequest,
+            '/api/models/switch': handleModelSwitch,
+            '/api/models/test': handleModelTest,
             '/api/debate': handleDebateRequest,
             '/api/quiz': handleQuizRequest,
             '/api/generate': handleGenerateRequest,
@@ -325,7 +387,7 @@ export default {
         };
         const handler = routes[url.pathname];
         if (handler) {
-            if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
+            if (!url.pathname.startsWith('/api/models') && request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
             try { return await handler(request, env); }
             catch (err) { return jsonResponse({ error: err.message || '服务器内部错误' }, 500); }
         }
