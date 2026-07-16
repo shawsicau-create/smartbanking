@@ -7,14 +7,110 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// ============ 多模型配置 ============
+const MODELS = {
+    // 主模型：MiMo
+    mimo: {
+        name: 'MiMo',
+        url: 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions',
+        model: 'mimo-v2.5-pro',
+        apiKey: process.env.MIMO_API_KEY || '',
+        priority: 1,
+        enabled: true,
+    },
+    // 备用模型：阿里云百炼
+    bailian: {
+        name: '百炼',
+        url: 'https://ws-paxy280v9746pda1.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',
+        model: 'qwen-plus', // 通义千问Plus，免费额度充足
+        apiKey: process.env.BAILIAN_API_KEY || 'sk-ws-H.EDEHRDX.vvmk.MEQCIGxw5mNl3o2DVNagD6IB3fUnB8YCUnufInGow25n2gXoAiAC3kxWLXei4H59y9orkhBzR2_YluaVpmYQa5sC-2lGgg',
+        priority: 2,
+        enabled: true,
+    },
+    // 本地模型（可选）
+    local: {
+        name: '本地模型',
+        url: 'http://127.0.0.1:8000/v1/chat/completions',
+        model: 'default',
+        apiKey: '',
+        priority: 3,
+        enabled: false, // 默认禁用
+    },
+};
+
+// 当前使用的模型
+let currentModel = 'mimo';
+
+// ============ 模型调用函数 ============
+async function callLLM(messages, temperature = 0.7, maxTokens = 2048, tools = null) {
+    const modelConfig = MODELS[currentModel];
+    if (!modelConfig || !modelConfig.enabled) {
+        throw new Error(`模型 ${currentModel} 未启用`);
+    }
+
+    const body = {
+        model: modelConfig.model,
+        messages,
+        temperature,
+        max_tokens: maxTokens,
+    };
+    if (tools) {
+        body.tools = tools;
+        body.tool_choice = 'auto';
+    }
+
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    if (modelConfig.apiKey) {
+        headers['Authorization'] = `Bearer ${modelConfig.apiKey}`;
+    }
+
+    const resp = await fetch(modelConfig.url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(60000),
+    });
+
+    if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`${modelConfig.name} API error ${resp.status}: ${text}`);
+    }
+
+    const data = await resp.json();
+    return data.choices?.[0]?.message;
+}
+
+// 带故障转移的调用
+async function callLLMWithFallback(messages, temperature = 0.7, maxTokens = 2048, tools = null) {
+    const modelOrder = ['mimo', 'bailian', 'local'];
+
+    for (const modelName of modelOrder) {
+        const model = MODELS[modelName];
+        if (!model.enabled) continue;
+
+        try {
+            console.log(`尝试使用模型: ${model.name}`);
+            currentModel = modelName;
+            const result = await callLLM(messages, temperature, maxTokens, tools);
+            console.log(`模型 ${model.name} 调用成功`);
+            return result;
+        } catch (err) {
+            console.error(`模型 ${model.name} 调用失败:`, err.message);
+            continue;
+        }
+    }
+
+    throw new Error('所有模型均调用失败');
+}
+
 // ============ 配置 ============
-const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
-const MIMO_MODEL = 'mimo-v2.5-pro';
 const AMAP_API_KEY = '63f93d2223f744affebade9ef7982732';
+const TUSHARE_TOKEN = process.env.TUSHARE_TOKEN || '99882e4e66b875e8d7776fed9e84e14a949447d9cde3d2fbeac443ba';
 
 // 同花顺 Authorization Token
-const HEXIN_AUTH = 'eyJraWQiOiJtY3AtYXBpIiwidWlkIjoiODE2MDUzMDE2IiwiYWxnIjoiUlNBLU9BRVAtMjU2IiwiZW5jIjoiQTI1NkdDTSJ9.KtqPG6B9QChrXsWD2Fwc_o6ESx7onPclJLV3Ae2P2ywdxle3qBZekY3s7UdjEfIzey8SK8_-rYzrTwIxjBQPTKwdPCZJiPJyXTU30f3thyzeyJzFIHLkl9CYRCmL3tJO-XaAyZPhobaA1YJxf1dwjele_qVMkNuwlyh-OQkgvhhe2LKoB-qC00IfkFjSfnk8Haj6GguQbgZxmpHmtjwqikHKDExGqHwyuD0NAI2xE7KCUhEU2_R9jlgtam8KFrP1EKLopgXoi1vLnPAKOuWIjpBbf3ssiq8skvEOo-1tCKXbBkAl3KA2gINfiAUQiGQkHYelk8K7OLGXFM26tE6BSw.PCIeejE9EP506onn.KcJz5gKDLa4dUcb9_kRypPwcUg19p9xQCXtD3YT0minWofhcPilz3zHXHJfdcLo77arm1GrqwWxDeOoLsd_1fotHRpKairs8x_92SR6Xr6GrplCQ5OmSRG0rWEq78RhgBxaPZ3mHx4BZsaX-QWcwdJYs5gIFdDYS1jIfz8TZnAUQexzh9BvGIolYKcC-acqV0LclsSeG2XzM7OdHocKjAhtXJFgbuqf-6STc_UlyTswqiDF91lmE1Mc2Tz51EE9KClLL-oRlhq1Y8sAMhHr4bMrobjNrI1YqwaSIZBStHA94GYlfKsXowUyOz4Wb65qETn_eIo5LDyJEmJzGLvdrFWzKdzplqDmGJsTcWXLE0J2ppRNo-MM_DmNKgUcQmWwu4NMw5_ujCUPIbx_NnchwcClnKLQDfTMAOGOxUdqA-3XNACkHF4143E9MZAcbpVNEoCbAeA.m70gN5uS8LDeAf3LrwS_zg';
-const TUSHARE_TOKEN = process.env.TUSHARE_TOKEN || '99882e4e66b875e8d7776fed9e84e14a949447d9cde3d2fbeac443ba';
+const HEXIN_AUTH = process.env.HEXIN_AUTH || '';
 
 // ============ 内存存储（对话历史） ============
 const chatHistoryStore = new Map(); // session_id -> [{id, title, mode, messages, created_at, updated_at}]
@@ -228,22 +324,6 @@ async function faostatMcp(toolName, args) {
 }
 
 // ============ 原有函数 ============
-async function callMiMo(messages, temperature, maxTokens, tools = null) {
-    const body = { model: MIMO_MODEL, messages, temperature: temperature || 0.7, max_tokens: maxTokens || 2048 };
-    if (tools) {
-        body.tools = tools;
-        body.tool_choice = 'auto';
-    }
-    const resp = await fetch(MIMO_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.MIMO_API_KEY },
-        body: JSON.stringify(body),
-    });
-    if (!resp.ok) throw new Error('MiMo API error: ' + resp.status);
-    const data = await resp.json();
-    return data.choices?.[0]?.message || { content: '' };
-}
-
 async function callTushare(apiName, params, fields) {
     const resp = await fetch('https://api.tushare.pro', {
         method: 'POST',
@@ -385,7 +465,7 @@ app.post('/api/chat', async (req, res) => {
         const toolCallResults = [];
         let maxRounds = 5;
         while (maxRounds-- > 0) {
-            const assistantMsg = await callMiMo(chatMessages, 0.7, 2048, TOOLS);
+            const assistantMsg = await callLLMWithFallback(chatMessages, 0.7, 2048, TOOLS);
             if (!assistantMsg) break;
             // 检查是否有tool_calls
             if (assistantMsg.tool_calls?.length) {
@@ -415,7 +495,7 @@ app.post('/api/chat', async (req, res) => {
                         // 把工具结果反馈给模型获取最终回答
                         chatMessages.push({ role: 'assistant', content });
                         chatMessages.push({ role: 'user', content: '工具执行结果：\n' + JSON.stringify(result, null, 2) + '\n\n请根据以上工具返回的数据，用中文给出完整回答。' });
-                        const retryMsg = await callMiMo(chatMessages, 0.7, 2048);
+                        const retryMsg = await callLLMWithFallback(chatMessages, 0.7, 2048);
                         content = retryMsg.content || content;
                     }
                 }
@@ -423,7 +503,7 @@ app.post('/api/chat', async (req, res) => {
             }
         }
         // 超过最大轮次，获取最终回复
-        const finalMsg = await callMiMo(chatMessages, 0.7, 2048);
+        const finalMsg = await callLLMWithFallback(chatMessages, 0.7, 2048);
         res.json({ content: finalMsg.content || '', toolCalls: toolCallResults });
     } catch (err) { res.status(500).json({ error: err.message || '服务器内部错误' }); }
 });
@@ -433,9 +513,9 @@ app.post('/api/debate', async (req, res) => {
     try {
         const { topic } = req.body;
         if (!topic) return res.status(400).json({ error: 'topic 不能为空' });
-        const bullMsg = await callMiMo([{ role: 'system', content: PROMPTS.bull }, { role: 'user', content: topic }], 0.8);
-        const bearMsg = await callMiMo([{ role: 'system', content: PROMPTS.bear }, { role: 'user', content: topic }], 0.8);
-        const modMsg = await callMiMo([{ role: 'system', content: PROMPTS.moderator }, { role: 'user', content: '话题：' + topic + '\n\n多头观点：\n' + (bullMsg.content || '') + '\n\n空头观点：\n' + (bearMsg.content || '') }], 0.5);
+        const bullMsg = await callLLMWithFallback([{ role: 'system', content: PROMPTS.bull }, { role: 'user', content: topic }], 0.8);
+        const bearMsg = await callLLMWithFallback([{ role: 'system', content: PROMPTS.bear }, { role: 'user', content: topic }], 0.8);
+        const modMsg = await callLLMWithFallback([{ role: 'system', content: PROMPTS.moderator }, { role: 'user', content: '话题：' + topic + '\n\n多头观点：\n' + (bullMsg.content || '') + '\n\n空头观点：\n' + (bearMsg.content || '') }], 0.5);
         res.json({ topic, bull: bullMsg.content || '', bear: bearMsg.content || '', moderator: modMsg.content || '' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -446,7 +526,7 @@ app.post('/api/quiz', async (req, res) => {
         const { topic, difficulty = '基础', count = 5 } = req.body;
         if (!topic) return res.status(400).json({ error: 'topic 不能为空' });
         const prompt = '请生成' + count + '道关于' + topic + '的选择题，难度' + difficulty + '。每题4个选项(A/B/C/D)，一个正确答案。JSON格式返回。';
-        const msg = await callMiMo([{ role: 'system', content: prompt }, { role: 'user', content: '请生成题目。' }], 0.7, 4096);
+        const msg = await callLLMWithFallback([{ role: 'system', content: prompt }, { role: 'user', content: '请生成题目。' }], 0.7, 4096);
         const content = msg.content || '';
         try { const jm = content.match(/\{[\s\S]*\}/); res.json(JSON.parse(jm ? jm[0] : content)); } catch { res.status(500).json({ error: '测验生成失败', raw: content }); }
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -458,7 +538,7 @@ app.post('/api/generate', async (req, res) => {
         const { topic } = req.body;
         if (!topic) return res.status(400).json({ error: 'topic 不能为空' });
         const outlinePrompt = '请为' + topic + '设计结构化教学大纲，3-5个模块，JSON格式返回。';
-        const ocMsg = await callMiMo([{ role: 'system', content: outlinePrompt }, { role: 'user', content: '请设计教学大纲。' }], 0.7, 4096);
+        const ocMsg = await callLLMWithFallback([{ role: 'system', content: outlinePrompt }, { role: 'user', content: '请设计教学大纲。' }], 0.7, 4096);
         const oc = ocMsg.content || '';
         let outline;
         try { outline = JSON.parse((oc.match(/\{[\s\S]*\}/) || [oc])[0]); } catch { return res.status(500).json({ error: '大纲生成失败', raw: oc }); }
@@ -466,7 +546,7 @@ app.post('/api/generate', async (req, res) => {
         for (const mod of (outline.modules || []).slice(0, 5)) {
             const topics = mod.topics?.map(t => t.title).join('、') || mod.title;
             const contentPrompt = '请为模块' + mod.title + '生成详细教学内容。覆盖：' + topics + '。Markdown格式。';
-            const cMsg = await callMiMo([{ role: 'system', content: contentPrompt }, { role: 'user', content: '请生成教学内容。' }], 0.7, 4096);
+            const cMsg = await callLLMWithFallback([{ role: 'system', content: contentPrompt }, { role: 'user', content: '请生成教学内容。' }], 0.7, 4096);
             contents.push({ moduleId: mod.id, title: mod.title, difficulty: mod.difficulty, content: cMsg.content || '' });
         }
         res.json({ outline, contents });
@@ -506,7 +586,7 @@ app.post('/api/author', async (req, res) => {
             { role: 'user', content: query }
         ];
 
-        const content = await callMiMo(messages, 0.7, 4096);
+        const content = await callLLMWithFallback(messages, 0.7, 4096);
 
         // 尝试解析JSON
         let result;
@@ -584,5 +664,63 @@ app.delete('/api/history', (req, res) => {
 });
 
 // --- Health check ---
-app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString(), tools_count: TOOLS.length }));
-app.listen(PORT, () => { console.log('SmartBank Agent API running on port ' + PORT + ' with ' + TOOLS.length + ' tools'); });
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString(), tools_count: TOOLS.length, current_model: currentModel, models: Object.keys(MODELS).filter(k => MODELS[k].enabled) }));
+
+// --- 模型管理 API ---
+// GET /api/models - 获取可用模型列表
+app.get('/api/models', (req, res) => {
+    const models = Object.entries(MODELS).map(([key, model]) => ({
+        id: key,
+        name: model.name,
+        enabled: model.enabled,
+        priority: model.priority,
+        current: key === currentModel,
+    }));
+    res.json({ current: currentModel, models });
+});
+
+// POST /api/models/switch - 切换模型
+app.post('/api/models/switch', (req, res) => {
+    const { model } = req.body;
+    if (!model || !MODELS[model]) {
+        return res.status(400).json({ error: '无效的模型ID', available: Object.keys(MODELS) });
+    }
+    if (!MODELS[model].enabled) {
+        return res.status(400).json({ error: `模型 ${MODELS[model].name} 未启用` });
+    }
+    currentModel = model;
+    res.json({ success: true, current: model, name: MODELS[model].name });
+});
+
+// POST /api/models/test - 测试模型连接
+app.post('/api/models/test', async (req, res) => {
+    const { model } = req.body;
+    const modelName = model || currentModel;
+    const modelConfig = MODELS[modelName];
+
+    if (!modelConfig) {
+        return res.status(400).json({ error: '无效的模型ID' });
+    }
+
+    try {
+        const startTime = Date.now();
+        const oldModel = currentModel;
+        currentModel = modelName;
+        const result = await callLLMWithFallback([
+            { role: 'user', content: '你好，请回复OK' }
+        ], 0.7, 100);
+        const latency = Date.now() - startTime;
+        currentModel = oldModel;
+
+        res.json({
+            success: true,
+            model: modelConfig.name,
+            latency: `${latency}ms`,
+            response: result.content?.substring(0, 50),
+        });
+    } catch (err) {
+        res.json({ success: false, model: modelConfig.name, error: err.message });
+    }
+});
+
+app.listen(PORT, () => { console.log('SmartBank Agent API running on port ' + PORT + ' with ' + TOOLS.length + ' tools, default model: ' + MODELS[currentModel].name); });
