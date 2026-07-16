@@ -387,12 +387,18 @@ body {
 /* ── Mode Bar ────────────────────────── */
 .mode-bar {
     display: flex;
-    gap: 4px;
+    align-items: center;
     padding: 6px 20px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    overflow-x: auto;
     flex-shrink: 0;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    flex: 1;
 }
 
 .mode-btn {

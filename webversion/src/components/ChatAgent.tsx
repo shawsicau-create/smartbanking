@@ -36,6 +36,15 @@ interface ChatHistory {
     updated_at: string;
 }
 
+// 模型接口
+interface ModelInfo {
+    id: string;
+    name: string;
+    enabled: boolean;
+    priority: number;
+    current: boolean;
+}
+
 const MODES: { key: ChatMode; label: string; icon: string; desc: string }[] = [
     { key: 'general', label: '通用问答', icon: '💬', desc: '金融问答与数据查询' },
     { key: 'bmad-analyst', label: '分析师', icon: '📋', desc: '需求分析专家' },
@@ -377,6 +386,12 @@ export default function ChatAgent() {
     const [cloudHistories, setCloudHistories] = useState<ChatHistory[]>([]);
     const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
 
+    // 模型选择状态
+    const [models, setModels] = useState<ModelInfo[]>([]);
+    const [currentModel, setCurrentModel] = useState<string>('mimo');
+    const [showModelSelector, setShowModelSelector] = useState(false);
+    const [modelTesting, setModelTesting] = useState(false);
+
     // 初始化时从 localStorage 加载历史记录
     const [messages, setMessages] = useState<Message[]>(() => {
         const saved = loadChatHistory();
@@ -410,7 +425,61 @@ export default function ChatAgent() {
             }
         };
         initAuth();
+        // 加载可用模型列表
+        fetchModels();
     }, [token]);
+
+    // 获取可用模型列表
+    const fetchModels = async () => {
+        try {
+            const resp = await fetch('/api/models');
+            if (resp.ok) {
+                const data = await resp.json();
+                setModels(data.models || []);
+                setCurrentModel(data.current || 'mimo');
+            }
+        } catch (err) {
+            console.warn('获取模型列表失败:', err);
+        }
+    };
+
+    // 切换模型
+    const switchModel = async (modelId: string) => {
+        try {
+            const resp = await fetch('/api/models/switch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: modelId }),
+            });
+            if (resp.ok) {
+                setCurrentModel(modelId);
+                setShowModelSelector(false);
+            }
+        } catch (err) {
+            console.error('切换模型失败:', err);
+        }
+    };
+
+    // 测试模型连接
+    const testModel = async (modelId: string) => {
+        setModelTesting(true);
+        try {
+            const resp = await fetch('/api/models/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: modelId }),
+            });
+            const data = await resp.json();
+            alert(data.success
+                ? `${data.model} 连接成功！延迟: ${data.latency}`
+                : `${data.model} 连接失败: ${data.error}`
+            );
+        } catch (err) {
+            alert('测试失败: ' + (err instanceof Error ? err.message : '未知错误'));
+        } finally {
+            setModelTesting(false);
+        }
+    };
 
     // 监听 OAuth 回调消息
     useEffect(() => {
@@ -665,14 +734,61 @@ export default function ChatAgent() {
                 </div>
             )}
 
-            {/* Mode Selector */}
+            {/* Mode Selector & Model Selector */}
             <div className="mode-bar">
-                {MODES.map(m => (
-                    <button key={m.key} className={`mode-btn ${mode === m.key ? 'active' : ''}`} onClick={() => setMode(m.key)} title={m.desc}>
-                        <span>{m.icon}</span>
-                        <span className="mode-label">{m.label}</span>
+                <div className="mode-buttons">
+                    {MODES.map(m => (
+                        <button key={m.key} className={`mode-btn ${mode === m.key ? 'active' : ''}`} onClick={() => setMode(m.key)} title={m.desc}>
+                            <span>{m.icon}</span>
+                            <span className="mode-label">{m.label}</span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Model Selector */}
+                <div className="model-selector-container">
+                    <button
+                        className="model-selector-btn"
+                        onClick={() => setShowModelSelector(!showModelSelector)}
+                        title="选择AI模型"
+                    >
+                        <span className="model-icon">🤖</span>
+                        <span className="model-name">{models.find(m => m.id === currentModel)?.name || 'MiMo'}</span>
+                        <span className="model-arrow">▼</span>
                     </button>
-                ))}
+
+                    {showModelSelector && (
+                        <div className="model-dropdown">
+                            <div className="model-dropdown-header">选择AI模型</div>
+                            {models.filter(m => m.enabled).map(m => (
+                                <div
+                                    key={m.id}
+                                    className={`model-option ${m.id === currentModel ? 'active' : ''}`}
+                                >
+                                    <div className="model-option-info" onClick={() => switchModel(m.id)}>
+                                        <span className="model-option-name">{m.name}</span>
+                                        <span className="model-option-desc">
+                                            {m.id === 'mimo' && '小米MiMo · 创意能力强'}
+                                            {m.id === 'bailian' && '通义千问 · 响应速度快'}
+                                            {m.id === 'local' && '本地推理 · 无需联网'}
+                                        </span>
+                                    </div>
+                                    <button
+                                        className="model-test-btn"
+                                        onClick={(e) => { e.stopPropagation(); testModel(m.id); }}
+                                        disabled={modelTesting}
+                                        title="测试连接"
+                                    >
+                                        {modelTesting ? '⏳' : '🔗'}
+                                    </button>
+                                </div>
+                            ))}
+                            <div className="model-dropdown-footer">
+                                <span className="model-hint">切换模型后自动生效</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Chat Area */}
@@ -696,7 +812,7 @@ export default function ChatAgent() {
                                 </button>
                             ))}
                         </div>
-                        <p className="powered-by">Powered by MiMo · MCP · Tushare · World Bank</p>
+                        <p className="powered-by">Powered by {models.find(m => m.id === currentModel)?.name || 'AI'} · MCP · Tushare · World Bank</p>
                     </div>
                 ) : (
                     <div className="messages">
