@@ -27,6 +27,13 @@ const MODELS = [
         priority: 2,
         current: false,
     },
+    {
+        id: 'paieas',
+        name: 'PAI-EAS微调模型',
+        enabled: true,
+        priority: 3,
+        current: false,
+    },
 ];
 
 // GET /api/models - 返回模型列表

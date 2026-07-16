@@ -27,13 +27,22 @@ const MODELS = {
         priority: 2,
         enabled: true,
     },
+    // PAI-EAS微调模型
+    paieas: {
+        name: 'PAI-EAS微调模型',
+        url: 'https://2038424-proxy-8000.dsw-gateway-cn-hangzhou.data.aliyun.com/v1/chat/completions',
+        model: 'smartbank-merged',
+        apiKey: 'omlx-paieas-key',
+        priority: 3,
+        enabled: true,
+    },
     // 本地模型（可选）
     local: {
         name: '本地模型',
         url: 'http://127.0.0.1:8000/v1/chat/completions',
         model: 'default',
         apiKey: '',
-        priority: 3,
+        priority: 4,
         enabled: false, // 默认禁用
     },
 };
@@ -84,7 +93,7 @@ async function callLLM(messages, temperature = 0.7, maxTokens = 2048, tools = nu
 
 // 带故障转移的调用
 async function callLLMWithFallback(messages, temperature = 0.7, maxTokens = 2048, tools = null) {
-    const modelOrder = ['mimo', 'bailian', 'local'];
+    const modelOrder = ['mimo', 'bailian', 'paieas', 'local'];
 
     for (const modelName of modelOrder) {
         const model = MODELS[modelName];

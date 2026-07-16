@@ -771,6 +771,7 @@ export default function ChatAgent() {
                                             {m.id === 'mimo' && '小米MiMo · 创意能力强'}
                                             {m.id === 'bailian' && '通义千问 · 响应速度快'}
                                             {m.id === 'local' && '本地推理 · 无需联网'}
+                                            {m.id === 'paieas' && 'PAI-EAS · 课程微调模型'}
                                         </span>
                                     </div>
                                     <button

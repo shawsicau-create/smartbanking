@@ -59,6 +59,9 @@ const BAILIAN_MODEL = 'qwen-plus';
 const LOCAL_API_URL = 'http://127.0.0.1:8000/v1/chat/completions';
 const LOCAL_MODEL = 'Qwen2.5-7B-Instruct-4bit';
 const LOCAL_API_KEY = 'omlx-local-key';
+const PAIEAS_API_URL = 'https://2038424-proxy-8000.dsw-gateway-cn-hangzhou.data.aliyun.com/v1/chat/completions';
+const PAIEAS_MODEL = 'smartbank-merged';
+const PAIEAS_API_KEY = 'omlx-paieas-key';
 const AMAP_API_KEY = '63f93d2223f744affebade9ef7982732';
 
 // Tool call tag builders (avoid literal tags in source)
@@ -95,6 +98,11 @@ async function callMiMo(messages, env, temperature, maxTokens, modelId) {
         modelName = LOCAL_MODEL;
         apiKey = LOCAL_API_KEY;
         modelLabel = '本地模型';
+    } else if (modelId === 'paieas') {
+        apiUrl = PAIEAS_API_URL;
+        modelName = PAIEAS_MODEL;
+        apiKey = PAIEAS_API_KEY;
+        modelLabel = 'PAI-EAS微调模型';
     } else if (modelId === 'bailian' && env.BAILIAN_API_KEY) {
         apiUrl = BAILIAN_API_URL;
         modelName = BAILIAN_MODEL;

@@ -1,0 +1,35 @@
+{
+    "name": "smartbank-fintech-assistant",
+    "description": "智慧银行实验教程AI助教 - 金融科技领域专精模型",
+    "base_model": "Qwen2.5-7B-Instruct",
+    "system_prompt": "你是《智慧银行实验教程——AI驱动的金融科技实践》课程配套的AI助教，精通以下领域：\n\n1. 银行业数字化转型：金融科技四阶段（电子化→网络化→移动化→智能化）、AI在银行业的五大应用（智能客服/风控/营销/运营/合规）\n2. AI开发工具链：AI IDE（TRAE/Qoder/Cursor）、MCP协议、Skill体系（167个/20分类）、CLI工具\n3. 金融数据分析：面板数据回归、因果推断（DID/RDD/IV）、IMF/WB/OECD数据获取、Stata/R/Python三环境协同\n4. BMAD方法论：AI驱动的敏捷开发五阶段（脑暴→建模→架构→开发→验证）\n5. 课程实践项目：银行CRM系统、智能客服、金融数据分析报告等\n\n回答风格：专业但易懂，结构化输出，注重实操步骤，融入金融领域知识。",
+    "training_config": {
+        "method": "LoRA",
+        "rank": 64,
+        "alpha": 128,
+        "dropout": 0.05,
+        "learning_rate": 2e-4,
+        "epochs": 3,
+        "batch_size": 4,
+        "gradient_accumulation_steps": 4,
+        "warmup_ratio": 0.1,
+        "max_seq_length": 2048,
+        "target_modules": [
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj"
+        ]
+    },
+    "categories": {
+        "ch01_fintech_basics": "金融科技基础（6条）：四阶段模型、AI应用矩阵、Agent范式、中国银行业现状、LLM能力边界、监管科技",
+        "ch02_dev_environment": "开发环境（4条）：本地大模型部署、AI IDE选型、全栈环境搭建、多平台部署",
+        "ch03_mcp_protocol": "MCP协议（5条）：协议原理、三层架构、金融MCP工具、Qoder配置、与Function Calling对比",
+        "ch04_skill_system": "Skill体系（5条）：167个Skill总览、MCP/Skill/CLI三者关系、学术研究Skill映射、银行业务Skill映射、Skill编写规范",
+        "ch05_econometrics": "计量经济学（5条）：6节点流水线、Skill化改写法、面板数据回归、IMF FSI分析、三工具选择",
+        "ch06_bmad_method": "BMAD方法论（5条）：核心理念、五阶段详解、银行CRM开发实战、AI IDE四模式、项目选题原则"
+    }
+}
