@@ -14,25 +14,31 @@ const MIMO_MODEL = 'mimo-v2.5-pro';
 const SYSTEM_PROMPT = `你是 SmartBank Agent，由四川农业大学智慧银行实验室开发的金融实验教学智能体。
 你的职责是帮助学生理解金融概念、分析市场数据、完成金融实验任务。
 
-你可以调用以下金融工具获取实时数据：
-- query_stock: 查询A股个股行情
-- query_stock_basic: 根据名称模糊搜索股票代码
-- query_index: 查询指数行情
-- query_macro_gdp: 查询世界银行GDP数据
-- query_macro_indicator: 查询世界银行宏观指标
+## 联网检索优先原则
+当用户询问以下类型问题时，**必须优先使用web_search工具**获取最新信息：
+1. **实时市场行情**：今日大盘走势、某股票最新价格、今日涨跌
+2. **最新财经新闻**：今日财经要闻、最新政策、市场动态
+3. **时事热点**：最新事件、当前形势、实时数据
+4. **任何需要"今天"、"最新"、"现在"等时效性信息的问题**
 
-你还可以调用以下搜索工具获取最新信息：
-- web_search: 实时网页搜索，获取最新新闻、市场动态、行业信息
-- web_extract: 提取指定网页的详细内容
-- batch_search: 批量搜索多个关键词，用于对比分析
+搜索策略：
+- 先用web_search搜索关键词获取最新信息
+- 如需详细了解某个搜索结果，再用web_extract提取网页内容
+- 综合多个搜索结果给出完整回答
 
-搜索工具使用场景：
-1. 用户询问最新新闻、市场动态、政策变化
-2. 需要获取2025年8月之后的最新信息
-3. 用户明确要求搜索、查找、查一下
-4. 需要实时数据（股价、天气、比赛结果等）
+## 可用工具
+- **web_search**: 实时网页搜索（获取最新新闻、市场动态）
+- **web_extract**: 提取网页详细内容
+- **batch_search**: 批量搜索多个关键词
+- **query_stock/query_index**: 查询A股历史行情
+- **query_macro_***: 宏观经济指标
 
-请用中文回答，数据展示时使用表格格式，分析要结合金融理论。`;
+## 回答规范
+1. 使用中文回答
+2. 数据展示使用表格格式
+3. 分析结合金融理论
+4. 涉及实时信息时，必须先搜索再回答，不要凭记忆编造数据
+5. 引用数据时注明来源（如"根据今日搜索结果..."）`;
 
 const tools = [
     {
@@ -458,8 +464,28 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
             );
         }
 
+        // 防护：如果模型返回原始 <tool_call> 标签而非结构化tool_calls，解析并执行
+        let content = assistantMsg.content || '';
+        if (content.includes('<tool_call>') && content.includes('<function=')) {
+            const toolMatch = content.match(/<function=([^>]+)>([\s\S]*?)<\/function>/);
+            if (toolMatch) {
+                const toolName = toolMatch[1];
+                const paramMatches = [...toolMatch[2].matchAll(/<parameter=([^>]+)>([^<]*)<\/parameter>/g)];
+                const parsedArgs: Record<string, string> = {};
+                for (const pm of paramMatches) { parsedArgs[pm[1]] = pm[2].trim(); }
+                let result: unknown;
+                try { result = await executeTool(toolName, parsedArgs, env); } catch (err) { result = { error: err instanceof Error ? err.message : '工具执行失败' }; }
+                toolCallResults.push({ name: toolName, args: parsedArgs, result });
+                // 把工具结果反馈给模型获取最终回答
+                chatMessages.push({ role: 'assistant', content });
+                chatMessages.push({ role: 'user', content: '工具执行结果：\n' + JSON.stringify(result, null, 2) + '\n\n请根据以上工具返回的数据，用中文给出完整回答。' });
+                const retryData = await callLLM(chatMessages, false, env);
+                content = retryData.choices?.[0]?.message?.content || content;
+            }
+        }
+
         return new Response(
-            JSON.stringify({ content: assistantMsg.content || '' }),
+            JSON.stringify({ content, toolCalls: toolCallResults }),
             { headers: { 'Content-Type': 'application/json', ...corsHeaders } },
         );
     } catch (err) {
