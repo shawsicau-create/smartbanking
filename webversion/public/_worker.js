@@ -56,6 +56,9 @@ const MIMO_API_URL = 'https://token-plan-cn.xiaomimimo.com/v1/chat/completions';
 const MIMO_MODEL = 'mimo-v2.5-pro';
 const BAILIAN_API_URL = 'https://ws-paxy280v9746pda1.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions';
 const BAILIAN_MODEL = 'qwen-plus';
+const LOCAL_API_URL = 'http://127.0.0.1:8000/v1/chat/completions';
+const LOCAL_MODEL = 'Qwen2.5-7B-Instruct-4bit';
+const LOCAL_API_KEY = 'omlx-local-key';
 const AMAP_API_KEY = '63f93d2223f744affebade9ef7982732';
 
 // Tool call tag builders (avoid literal tags in source)
@@ -86,16 +89,29 @@ const PROMPTS = {
 };
 
 async function callMiMo(messages, env, temperature, maxTokens, modelId) {
-    const isBailian = modelId === 'bailian' && env.BAILIAN_API_KEY;
-    const apiUrl = isBailian ? BAILIAN_API_URL : MIMO_API_URL;
-    const modelName = isBailian ? BAILIAN_MODEL : MIMO_MODEL;
-    const apiKey = isBailian ? env.BAILIAN_API_KEY : env.MIMO_API_KEY;
+    let apiUrl, modelName, apiKey, modelLabel;
+    if (modelId === 'local') {
+        apiUrl = LOCAL_API_URL;
+        modelName = LOCAL_MODEL;
+        apiKey = LOCAL_API_KEY;
+        modelLabel = '本地模型';
+    } else if (modelId === 'bailian' && env.BAILIAN_API_KEY) {
+        apiUrl = BAILIAN_API_URL;
+        modelName = BAILIAN_MODEL;
+        apiKey = env.BAILIAN_API_KEY;
+        modelLabel = '百炼';
+    } else {
+        apiUrl = MIMO_API_URL;
+        modelName = MIMO_MODEL;
+        apiKey = env.MIMO_API_KEY;
+        modelLabel = 'MiMo';
+    }
     const resp = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
         body: JSON.stringify({ model: modelName, messages, temperature: temperature || 0.7, max_tokens: maxTokens || 2048 }),
     });
-    if (!resp.ok) throw new Error((isBailian ? '百炼' : 'MiMo') + ' API error: ' + resp.status);
+    if (!resp.ok) throw new Error(modelLabel + ' API error: ' + resp.status);
     const data = await resp.json();
     const c = data.choices?.[0]?.message?.content || '';
     if (!c) throw new Error('AI 未返回有效响应');
@@ -257,13 +273,15 @@ function handleModelsRequest(request, env) {
             models: [
                 { id: 'mimo', name: 'MiMo', enabled: !!env.MIMO_API_KEY, priority: 1, current: true },
                 { id: 'bailian', name: '百炼', enabled: !!env.BAILIAN_API_KEY, priority: 2, current: false },
+                { id: 'local', name: '本地模型', enabled: true, priority: 3, current: false },
             ]
         });
     }
     if (method === 'POST') {
         return request.json().then(({ model }) => {
             if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
-            return jsonResponse({ success: true, current: model, name: model === 'bailian' ? '百炼' : 'MiMo' });
+            const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+            return jsonResponse({ success: true, current: model, name: nameMap[model] || model });
         }).catch(() => jsonResponse({ error: '请求格式错误' }, 400));
     }
     return jsonResponse({ error: 'Method not allowed' }, 405);
@@ -273,8 +291,8 @@ function handleModelsRequest(request, env) {
 async function handleModelSwitch(request, env) {
     const { model } = await request.json();
     if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
-    const name = model === 'bailian' ? '百炼' : 'MiMo';
-    return jsonResponse({ success: true, current: model, name });
+    const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+    return jsonResponse({ success: true, current: model, name: nameMap[model] || model });
 }
 
 // ─── /api/models/test ──────────────────────────────────────────────────────
@@ -284,20 +302,34 @@ async function handleModelTest(request, env) {
     const start = Date.now();
     try {
         const testMsg = [{ role: 'user', content: '你好' }];
-        const isBailian = modelId === 'bailian' && env.BAILIAN_API_KEY;
-        const apiUrl = isBailian ? BAILIAN_API_URL : MIMO_API_URL;
-        const modelName = isBailian ? BAILIAN_MODEL : MIMO_MODEL;
-        const apiKey = isBailian ? env.BAILIAN_API_KEY : env.MIMO_API_KEY;
+        let apiUrl, modelName, apiKey, modelLabel;
+        if (modelId === 'local') {
+            apiUrl = LOCAL_API_URL;
+            modelName = LOCAL_MODEL;
+            apiKey = LOCAL_API_KEY;
+            modelLabel = '本地模型';
+        } else if (modelId === 'bailian' && env.BAILIAN_API_KEY) {
+            apiUrl = BAILIAN_API_URL;
+            modelName = BAILIAN_MODEL;
+            apiKey = env.BAILIAN_API_KEY;
+            modelLabel = '百炼';
+        } else {
+            apiUrl = MIMO_API_URL;
+            modelName = MIMO_MODEL;
+            apiKey = env.MIMO_API_KEY;
+            modelLabel = 'MiMo';
+        }
         const resp = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
             body: JSON.stringify({ model: modelName, messages: testMsg, max_tokens: 10 }),
         });
         const latency = Date.now() - start;
-        if (resp.ok) return jsonResponse({ success: true, model: isBailian ? '百炼' : 'MiMo', latency: latency + 'ms' });
-        return jsonResponse({ success: false, model: isBailian ? '百炼' : 'MiMo', error: 'HTTP ' + resp.status });
+        if (resp.ok) return jsonResponse({ success: true, model: modelLabel, latency: latency + 'ms' });
+        return jsonResponse({ success: false, model: modelLabel, error: 'HTTP ' + resp.status });
     } catch (e) {
-        return jsonResponse({ success: false, model: modelId === 'bailian' ? '百炼' : 'MiMo', error: e.message });
+        const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+        return jsonResponse({ success: false, model: nameMap[modelId] || modelId, error: e.message });
     }
 }
 
