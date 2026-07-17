@@ -37,7 +37,18 @@ CREATE TABLE IF NOT EXISTS credit_logs (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Magic Link 登录令牌表
+CREATE TABLE IF NOT EXISTS magic_tokens (
+    token TEXT PRIMARY KEY,                 -- UUID 格式的登录令牌
+    email TEXT NOT NULL,                    -- 关联的邮箱
+    expires_at DATETIME NOT NULL,           -- 过期时间
+    used INTEGER DEFAULT 0,                 -- 是否已使用
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 创建索引
 CREATE INDEX IF NOT EXISTS idx_chat_history_user_id ON chat_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_credit_logs_user_id ON credit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_users_daily_reset ON users(daily_reset_date);
+CREATE INDEX IF NOT EXISTS idx_magic_tokens_email ON magic_tokens(email);
+CREATE INDEX IF NOT EXISTS idx_magic_tokens_expires ON magic_tokens(expires_at);

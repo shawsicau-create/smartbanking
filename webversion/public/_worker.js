@@ -281,14 +281,15 @@ function handleModelsRequest(request, env) {
             models: [
                 { id: 'mimo', name: 'MiMo', enabled: !!env.MIMO_API_KEY, priority: 1, current: true },
                 { id: 'bailian', name: '百炼', enabled: !!env.BAILIAN_API_KEY, priority: 2, current: false },
-                { id: 'local', name: '本地模型', enabled: true, priority: 3, current: false },
+                { id: 'paieas', name: 'PAI-EAS微调模型', enabled: true, priority: 3, current: false },
+                { id: 'local', name: '本地模型', enabled: true, priority: 4, current: false },
             ]
         });
     }
     if (method === 'POST') {
         return request.json().then(({ model }) => {
             if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
-            const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+            const nameMap = { mimo: 'MiMo', bailian: '百炼', paieas: 'PAI-EAS微调模型', local: '本地模型' };
             return jsonResponse({ success: true, current: model, name: nameMap[model] || model });
         }).catch(() => jsonResponse({ error: '请求格式错误' }, 400));
     }
@@ -299,7 +300,7 @@ function handleModelsRequest(request, env) {
 async function handleModelSwitch(request, env) {
     const { model } = await request.json();
     if (!model) return jsonResponse({ error: '缺少model参数' }, 400);
-    const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+    const nameMap = { mimo: 'MiMo', bailian: '百炼', paieas: 'PAI-EAS微调模型', local: '本地模型' };
     return jsonResponse({ success: true, current: model, name: nameMap[model] || model });
 }
 
@@ -316,6 +317,11 @@ async function handleModelTest(request, env) {
             modelName = LOCAL_MODEL;
             apiKey = LOCAL_API_KEY;
             modelLabel = '本地模型';
+        } else if (modelId === 'paieas') {
+            apiUrl = PAIEAS_API_URL;
+            modelName = PAIEAS_MODEL;
+            apiKey = PAIEAS_API_KEY;
+            modelLabel = 'PAI-EAS微调模型';
         } else if (modelId === 'bailian' && env.BAILIAN_API_KEY) {
             apiUrl = BAILIAN_API_URL;
             modelName = BAILIAN_MODEL;
@@ -336,7 +342,7 @@ async function handleModelTest(request, env) {
         if (resp.ok) return jsonResponse({ success: true, model: modelLabel, latency: latency + 'ms' });
         return jsonResponse({ success: false, model: modelLabel, error: 'HTTP ' + resp.status });
     } catch (e) {
-        const nameMap = { mimo: 'MiMo', bailian: '百炼', local: '本地模型' };
+        const nameMap = { mimo: 'MiMo', bailian: '百炼', paieas: 'PAI-EAS微调模型', local: '本地模型' };
         return jsonResponse({ success: false, model: nameMap[modelId] || modelId, error: e.message });
     }
 }
