@@ -10,26 +10,10 @@ import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 //
-// 多平台部署支持：同一份代码可同时产出 EdgeOne / Vercel / GitHub Pages 三套产物。
-// 区分依据是构建时环境变量：
-//   GITHUB_PAGES === 'true'   → 走 GitHub Pages（项目页：base='/仓库名/'）
-//   否则                       → 走 EdgeOne / Vercel（根路径部署）
-//
-// 在 GitHub Actions 中：
-//   - GITHUB_PAGES 由 workflow 显式设置
-//   - GITHUB_REPOSITORY 由 runner 自动提供（格式：owner/repo）
-//   - GITHUB_REPOSITORY_OWNER 由 runner 自动提供
-// 多平台部署：GitHub Pages / Cloudflare Pages / EdgeOne
-const isGitHubPages = process.env.GITHUB_PAGES === 'true';
-const isCloudflarePages = process.env.CLOUDFLARE_PAGES === 'true';
-const ghOwner = process.env.GITHUB_REPOSITORY_OWNER || 'xiaosicau';
-const ghRepoName = (process.env.GITHUB_REPOSITORY || `${ghOwner}/smartbanking`).split('/')[1];
-const siteUrl = isGitHubPages
-	? `https://${ghOwner}.github.io`
-	: isCloudflarePages
-		? 'https://smartbanking.pages.dev'
-		: 'https://smartbanking.edgeone.app';
-const basePath = isGitHubPages ? `/${ghRepoName}/` : '/';
+// 部署平台：Cloudflare Pages
+// 站点地址：https://smartbanking.pages.dev
+const siteUrl = 'https://smartbanking.pages.dev';
+const basePath = '/';
 
 export default defineConfig({
 	site: siteUrl,
@@ -60,7 +44,7 @@ export default defineConfig({
 						provider: {
 							'@type': 'Organization',
 							name: '智能银行实验室',
-							url: 'https://smartbanking.edgeone.app',
+							url: 'https://smartbanking.pages.dev',
 						},
 						inLanguage: 'zh-CN',
 						isAccessibleForFree: true,
