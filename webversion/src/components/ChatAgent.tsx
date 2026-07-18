@@ -448,87 +448,102 @@ export default function ChatAgent() {
                 throw new Error(err.error || `HTTP ${resp.status}`);
             }
 
-            // 处理流式响应
-            const reader = resp.body?.getReader();
-            if (!reader) {
-                throw new Error('无法读取响应流');
-            }
+            const contentType = resp.headers.get('content-type') || '';
 
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let fullContent = '';
-            let toolCalls: ToolCall[] | undefined;
+            // 兼容模式：如果返回的是普通JSON（非SSE流），直接解析
+            if (contentType.includes('application/json')) {
+                const data = await resp.json();
+                const content = data.content || '（无响应内容）';
+                const toolCalls = data.toolCalls;
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+                setMessages((prev) => {
+                    const next = [...prev];
+                    next[next.length - 1] = { role: 'assistant', content, toolCalls };
+                    return next;
+                });
+            } else {
+                // 处理SSE流式响应
+                const reader = resp.body?.getReader();
+                if (!reader) {
+                    throw new Error('无法读取响应流');
+                }
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let fullContent = '';
+                let toolCalls: ToolCall[] | undefined;
 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6).trim();
-                        if (!data) continue;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                        try {
-                            const parsed = JSON.parse(data);
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
 
-                            // 处理状态事件
-                            if (parsed.type === 'status' && showThinking) {
-                                setThinkingStatus(parsed.message || '');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6).trim();
+                            if (!data) continue;
+
+                            try {
+                                const parsed = JSON.parse(data);
+
+                                // 处理状态事件
+                                if (parsed.type === 'status' && showThinking) {
+                                    setThinkingStatus(parsed.message || '');
+                                }
+
+                                // 处理内容块
+                                if (parsed.type === 'chunk' && parsed.content) {
+                                    fullContent += parsed.content;
+                                    setMessages((prev) => {
+                                        const next = [...prev];
+                                        next[next.length - 1] = {
+                                            role: 'assistant',
+                                            content: fullContent,
+                                            loading: true
+                                        };
+                                        return next;
+                                    });
+                                }
+
+                                // 处理工具调用结果
+                                if (parsed.type === 'toolCalls') {
+                                    toolCalls = parsed.toolCalls;
+                                }
+
+                                // 处理完成事件
+                                if (parsed.type === 'done') {
+                                    fullContent = parsed.content || fullContent;
+                                    toolCalls = parsed.toolCalls || toolCalls;
+                                }
+
+                                // 处理错误事件
+                                if (parsed.type === 'error') {
+                                    throw new Error(parsed.error || '流式响应错误');
+                                }
+                            } catch (e) {
+                                if (e instanceof Error && e.message.includes('流式响应错误')) {
+                                    throw e;
+                                }
+                                // 忽略JSON解析错误
                             }
-
-                            // 处理内容块
-                            if (parsed.type === 'chunk' && parsed.content) {
-                                fullContent += parsed.content;
-                                setMessages((prev) => {
-                                    const next = [...prev];
-                                    next[next.length - 1] = {
-                                        role: 'assistant',
-                                        content: fullContent,
-                                        loading: true
-                                    };
-                                    return next;
-                                });
-                            }
-
-                            // 处理工具调用结果
-                            if (parsed.type === 'toolCalls') {
-                                toolCalls = parsed.toolCalls;
-                            }
-
-                            // 处理完成事件
-                            if (parsed.type === 'done') {
-                                fullContent = parsed.content || fullContent;
-                                toolCalls = parsed.toolCalls || toolCalls;
-                            }
-
-                            // 处理错误事件
-                            if (parsed.type === 'error') {
-                                throw new Error(parsed.error || '流式响应错误');
-                            }
-                        } catch (e) {
-                            if (e instanceof Error && e.message.includes('流式响应错误')) {
-                                throw e;
-                            }
-                            // 忽略JSON解析错误
                         }
                     }
                 }
-            }
 
-            // 更新最终消息
-            setMessages((prev) => {
-                const next = [...prev];
-                next[next.length - 1] = {
-                    role: 'assistant',
-                    content: fullContent || '（无响应内容）',
-                    toolCalls
-                };
-                return next;
-            });
+                // 更新最终消息
+                setMessages((prev) => {
+                    const next = [...prev];
+                    next[next.length - 1] = {
+                        role: 'assistant',
+                        content: fullContent || '（无响应内容）',
+                        toolCalls
+                    };
+                    return next;
+                });
+            }
         } catch (err) {
             setMessages((prev) => {
                 const next = [...prev];
