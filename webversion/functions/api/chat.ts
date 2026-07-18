@@ -244,6 +244,17 @@ interface ToolCallResult {
     result: unknown;
 }
 
+const TOOL_STATUS_LABELS: Record<string, string> = {
+    web_search: '搜索网络',
+    web_extract: '提取网页内容',
+    batch_search: '批量搜索',
+    query_stock: '查询股票数据',
+    query_stock_basic: '搜索股票信息',
+    query_index: '查询指数数据',
+    query_macro_gdp: '查询GDP数据',
+    query_macro_indicator: '查询宏观指标',
+};
+
 async function callLLM(messages: ChatMessage[], useTools: boolean, env: Env, modelId: string = DEFAULT_MODEL) {
     const config = MODEL_CONFIGS[modelId] || MODEL_CONFIGS[DEFAULT_MODEL];
     const apiKey = config.getKey(env);
@@ -272,6 +283,109 @@ async function callLLM(messages: ChatMessage[], useTools: boolean, env: Env, mod
         throw new Error(`${config.name} API error ${resp.status}: ${text}`);
     }
     return resp.json();
+}
+
+// 流式调用LLM
+async function callLLMStream(
+    messages: ChatMessage[],
+    useTools: boolean,
+    env: Env,
+    modelId: string = DEFAULT_MODEL,
+    onChunk: (chunk: string) => void
+): Promise<{ content: string; tool_calls?: Array<{ id: string; type: string; function: { name: string; arguments: string } }> }> {
+    const config = MODEL_CONFIGS[modelId] || MODEL_CONFIGS[DEFAULT_MODEL];
+    const apiKey = config.getKey(env);
+    if (!apiKey) throw new Error(`${config.name} API Key 未配置`);
+
+    const body: Record<string, unknown> = {
+        model: config.model,
+        messages,
+        temperature: 0.7,
+        max_tokens: 2048,
+        stream: true,
+    };
+    if (useTools) {
+        body.tools = tools;
+        body.tool_choice = 'auto';
+    }
+
+    const resp = await fetch(config.url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`${config.name} API error ${resp.status}: ${text}`);
+    }
+
+    // 处理流式响应
+    const reader = resp.body?.getReader();
+    if (!reader) {
+        throw new Error('无法读取响应流');
+    }
+
+    const decoder = new TextDecoder();
+    let fullContent = '';
+    let buffer = '';
+    let toolCalls: Array<{ id: string; type: string; function: { name: string; arguments: string } }> | undefined;
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+            if (line.startsWith('data: ')) {
+                const data = line.slice(6).trim();
+                if (data === '[DONE]') {
+                    continue;
+                }
+                try {
+                    const parsed = JSON.parse(data);
+                    const delta = parsed.choices?.[0]?.delta;
+
+                    if (delta?.content) {
+                        fullContent += delta.content;
+                        onChunk(delta.content);
+                    }
+
+                    // 处理工具调用
+                    if (delta?.tool_calls) {
+                        if (!toolCalls) {
+                            toolCalls = [];
+                        }
+                        for (const tc of delta.tool_calls) {
+                            const existing = toolCalls.find(t => t.id === tc.id);
+                            if (existing) {
+                                existing.function.arguments += tc.function?.arguments || '';
+                            } else if (tc.id) {
+                                toolCalls.push({
+                                    id: tc.id,
+                                    type: tc.type || 'function',
+                                    function: {
+                                        name: tc.function?.name || '',
+                                        arguments: tc.function?.arguments || '',
+                                    },
+                                });
+                            }
+                        }
+                    }
+                } catch {
+                    // 忽略解析错误
+                }
+            }
+        }
+    }
+
+    return { content: fullContent, tool_calls: toolCalls };
 }
 
 async function callTushare(apiName: string, params: Record<string, string>, fields: string, env: Env) {
@@ -424,8 +538,13 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     };
 
     try {
-        const { messages, model: requestModel } = (await request.json()) as { messages: Array<{ role: string; content: string }>; model?: string };
+        const { messages, model: requestModel, stream: requestStream } = (await request.json()) as {
+            messages: Array<{ role: string; content: string }>;
+            model?: string;
+            stream?: boolean;
+        };
         const modelId = requestModel && MODEL_CONFIGS[requestModel] ? requestModel : DEFAULT_MODEL;
+        const useStream = requestStream !== false; // 默认使用流式
 
         if (!messages?.length) {
             return new Response(JSON.stringify({ error: 'messages 不能为空' }), {
@@ -439,6 +558,115 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
             ...messages,
         ];
 
+        // 流式响应处理
+        if (useStream) {
+            const encoder = new TextEncoder();
+            const stream = new ReadableStream({
+                async start(controller) {
+                    // 发送事件的辅助函数
+                    const sendEvent = (type: string, data: Record<string, unknown>) => {
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type, ...data })}\n\n`));
+                    };
+
+                    try {
+                        // 发送思考状态
+                        sendEvent('status', { status: 'thinking', message: '正在思考...' });
+
+                        // 调用LLM流式接口
+                        const result = await callLLMStream(
+                            chatMessages,
+                            true,
+                            env,
+                            modelId,
+                            (chunk) => {
+                                // 每收到一个chunk就发送给客户端
+                                sendEvent('chunk', { content: chunk });
+                            }
+                        );
+
+                        const assistantMsg = result;
+
+                        // 如果有工具调用
+                        if (assistantMsg.tool_calls?.length) {
+                            chatMessages.push({
+                                role: 'assistant',
+                                content: assistantMsg.content,
+                                tool_calls: assistantMsg.tool_calls,
+                            });
+
+                            const toolCallResults: ToolCallResult[] = [];
+
+                            for (const tc of assistantMsg.tool_calls) {
+                                let args: Record<string, string> = {};
+                                try {
+                                    args = JSON.parse(tc.function.arguments);
+                                } catch { /* keep empty */ }
+
+                                // 发送工具调用状态
+                                const toolLabel = TOOL_STATUS_LABELS[tc.function.name] || tc.function.name;
+                                sendEvent('status', { status: 'tool_call', tool: tc.function.name, message: `正在${toolLabel}...` });
+
+                                let result: unknown;
+                                try {
+                                    result = await executeTool(tc.function.name, args, env);
+                                } catch (err) {
+                                    result = { error: err instanceof Error ? err.message : '工具执行失败' };
+                                }
+
+                                toolCallResults.push({ name: tc.function.name, args, result });
+
+                                chatMessages.push({
+                                    role: 'tool',
+                                    tool_call_id: tc.id,
+                                    content: JSON.stringify(result),
+                                });
+                            }
+
+                            // 发送生成状态
+                            sendEvent('status', { status: 'generating', message: '正在生成回答...' });
+
+                            // 获取最终回答（流式）
+                            let finalContent = '';
+                            await callLLMStream(
+                                chatMessages,
+                                false,
+                                env,
+                                modelId,
+                                (chunk) => {
+                                    finalContent += chunk;
+                                    sendEvent('chunk', { content: chunk });
+                                }
+                            );
+
+                            // 发送工具调用结果
+                            sendEvent('toolCalls', { toolCalls: toolCallResults });
+
+                            // 发送完成事件
+                            sendEvent('done', { content: finalContent, toolCalls: toolCallResults });
+                        } else {
+                            // 没有工具调用，直接完成
+                            sendEvent('done', { content: assistantMsg.content, toolCalls: [] });
+                        }
+                    } catch (err) {
+                        const message = err instanceof Error ? err.message : '服务器内部错误';
+                        sendEvent('error', { error: message });
+                    } finally {
+                        controller.close();
+                    }
+                },
+            });
+
+            return new Response(stream, {
+                headers: {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                    ...corsHeaders,
+                },
+            });
+        }
+
+        // 非流式响应（向后兼容）
         const data = await callLLM(chatMessages, true, env, modelId);
         const assistantMsg = data.choices?.[0]?.message;
 

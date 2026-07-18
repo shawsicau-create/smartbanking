@@ -16,26 +16,6 @@ interface Message {
 
 type ChatMode = 'general' | 'bmad-analyst' | 'bmad-pm' | 'bmad-architect' | 'bmad-dev' | 'bmad-qa' | 'debate';
 
-// 用户信息接口
-interface User {
-    id: string;
-    username: string;
-    avatar_url: string;
-    email?: string;
-    role: string;
-    credits: number;
-    daily_used: number;
-}
-
-// 对话历史接口
-interface ChatHistory {
-    id: number;
-    title: string;
-    mode: string;
-    created_at: string;
-    updated_at: string;
-}
-
 // 模型接口
 interface ModelInfo {
     id: string;
@@ -109,92 +89,6 @@ function loadChatHistory(): { messages: Message[]; mode: ChatMode } | null {
 
 function clearChatHistory() {
     localStorage.removeItem(STORAGE_KEY);
-}
-
-// ── 用户认证管理 ───────────────────────────────────────────
-const TOKEN_KEY = 'smartbank-token';
-
-function getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    try {
-        return localStorage.getItem(TOKEN_KEY);
-    } catch {
-        return null;
-    }
-}
-
-function setAuthToken(token: string) {
-    try {
-        localStorage.setItem(TOKEN_KEY, token);
-    } catch (e) {
-        console.warn('保存 token 失败:', e);
-    }
-}
-
-function removeAuthToken() {
-    try {
-        localStorage.removeItem(TOKEN_KEY);
-    } catch (e) {
-        console.warn('移除 token 失败:', e);
-    }
-}
-
-// 验证 token 并获取用户信息
-async function fetchUserInfo(token: string): Promise<User | null> {
-    try {
-        const resp = await fetch('/api/auth/verify', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!resp.ok) return null;
-        const data = await resp.json();
-        return data.user;
-    } catch {
-        return null;
-    }
-}
-
-// 云端对话历史 API
-async function fetchCloudHistories(token: string): Promise<ChatHistory[]> {
-    try {
-        const resp = await fetch('/api/history', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!resp.ok) return [];
-        const data = await resp.json();
-        return data.histories || [];
-    } catch {
-        return [];
-    }
-}
-
-async function saveCloudHistory(token: string, id: number | null, title: string, mode: string, messages: Message[]): Promise<number | null> {
-    try {
-        const resp = await fetch('/api/history', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ id, title, mode, messages }),
-        });
-        if (!resp.ok) return null;
-        const data = await resp.json();
-        return data.id;
-    } catch {
-        return null;
-    }
-}
-
-async function deleteCloudHistory(token: string, id: number): Promise<boolean> {
-    try {
-        const resp = await fetch(`/api/history?id=${id}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return resp.ok;
-    } catch {
-        return false;
-    }
 }
 
 const TOOL_LABELS: Record<string, string> = {
@@ -379,19 +273,6 @@ function renderContent(text: string) {
 }
 
 export default function ChatAgent() {
-    // 用户登录状态
-    const [user, setUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string | null>(() => getAuthToken());
-    const [showHistory, setShowHistory] = useState(false);
-    const [cloudHistories, setCloudHistories] = useState<ChatHistory[]>([]);
-    const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
-
-    // Magic Link 登录状态
-    const [showLoginModal, setShowLoginModal] = useState(false);
-    const [loginEmail, setLoginEmail] = useState('');
-    const [loginLoading, setLoginLoading] = useState(false);
-    const [loginMessage, setLoginMessage] = useState('');
-
     // 模型选择状态
     const [models, setModels] = useState<ModelInfo[]>([]);
     const [currentModel, setCurrentModel] = useState<string>('mimo');
@@ -413,27 +294,20 @@ export default function ChatAgent() {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [speaking, setSpeaking] = useState(false);
 
-    // 初始化时验证登录状态
+    // 思考过程状态
+    const [thinkingStatus, setThinkingStatus] = useState<string>('');
+    const [showThinking, setShowThinking] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem('smartbank-show-thinking') !== 'false';
+        } catch {
+            return true;
+        }
+    });
+
+    // 初始化时加载模型列表
     useEffect(() => {
-        const initAuth = async () => {
-            if (token) {
-                const userInfo = await fetchUserInfo(token);
-                if (userInfo) {
-                    setUser(userInfo);
-                    // 加载云端历史列表
-                    const histories = await fetchCloudHistories(token);
-                    setCloudHistories(histories);
-                } else {
-                    // token 无效，清除
-                    removeAuthToken();
-                    setToken(null);
-                }
-            }
-        };
-        initAuth();
-        // 加载可用模型列表
         fetchModels();
-    }, [token]);
+    }, []);
 
     // 获取可用模型列表
     const fetchModels = async () => {
@@ -487,31 +361,6 @@ export default function ChatAgent() {
         }
     };
 
-    // 监听 Magic Link 登录回调消息
-    useEffect(() => {
-        const handler = (e: MessageEvent) => {
-            if (e.data?.type === 'magic-link-login' && e.data.token) {
-                setAuthToken(e.data.token);
-                setToken(e.data.token);
-                setShowLoginModal(false);
-            }
-        };
-        window.addEventListener('message', handler);
-        return () => window.removeEventListener('message', handler);
-    }, []);
-
-    // 检查 URL 参数（如果是直接跳转登录）
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        const token = url.searchParams.get('token');
-        if (token) {
-            setAuthToken(token);
-            setToken(token);
-            // 清除 URL 参数
-            window.history.replaceState({}, '', '/');
-        }
-    }, []);
-
     useEffect(() => {
         const check = () => setSpeaking(window.speechSynthesis?.speaking || false);
         const id = setInterval(check, 500);
@@ -522,104 +371,28 @@ export default function ChatAgent() {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // 消息或模式变化时自动保存
+    // 消息或模式变化时自动保存到本地
     useEffect(() => {
         if (messages.length > 0) {
-            if (user && token) {
-                // 登录用户：保存到云端
-                const title = messages[0]?.content?.slice(0, 50) || '新对话';
-                saveCloudHistory(token, currentHistoryId, title, mode, messages).then(id => {
-                    if (id && !currentHistoryId) setCurrentHistoryId(id);
-                });
-            } else {
-                // 未登录用户：保存到本地
-                saveChatHistory(messages, mode);
-            }
+            saveChatHistory(messages, mode);
         }
-    }, [messages, mode, user, token, currentHistoryId]);
-
-    // 打开登录模态框
-    const handleLogin = () => {
-        setShowLoginModal(true);
-        setLoginMessage('');
-    };
-
-    // 发送 Magic Link
-    const handleSendMagicLink = async () => {
-        if (!loginEmail || !loginEmail.includes('@')) {
-            setLoginMessage('请输入有效的邮箱地址');
-            return;
-        }
-        setLoginLoading(true);
-        setLoginMessage('');
-        try {
-            const resp = await fetch('/api/auth/magic-link', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: loginEmail }),
-            });
-            const data = await resp.json();
-            if (data.success) {
-                setLoginMessage(data.message);
-                // 开发模式：显示链接
-                if (data.debug?.loginUrl) {
-                    console.log('开发模式 - 登录链接:', data.debug.loginUrl);
-                }
-            } else {
-                setLoginMessage(data.error || '发送失败');
-            }
-        } catch (err) {
-            setLoginMessage('发送失败，请稍后重试');
-        } finally {
-            setLoginLoading(false);
-        }
-    };
-
-    // 登出
-    const handleLogout = () => {
-        removeAuthToken();
-        setToken(null);
-        setUser(null);
-        setCurrentHistoryId(null);
-    };
-
-    // 加载云端对话
-    const loadCloudChat = async (history: ChatHistory) => {
-        if (!token) return;
-        try {
-            const resp = await fetch(`/api/history?id=${history.id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (resp.ok) {
-                const data = await resp.json();
-                setMessages(data.messages || []);
-                setMode((history.mode as ChatMode) || 'general');
-                setCurrentHistoryId(history.id);
-                setShowHistory(false);
-            }
-        } catch (err) {
-            console.error('加载对话失败:', err);
-        }
-    };
-
-    // 删除云端对话
-    const handleDeleteHistory = async (id: number) => {
-        if (!token) return;
-        const success = await deleteCloudHistory(token, id);
-        if (success) {
-            setCloudHistories(prev => prev.filter(h => h.id !== id));
-            if (currentHistoryId === id) {
-                setCurrentHistoryId(null);
-                setMessages([]);
-            }
-        }
-    };
+    }, [messages, mode]);
 
     // 新建对话
     const handleNewChat = () => {
         setMessages([]);
         setMode('general');
-        setCurrentHistoryId(null);
+    };
+
+    // 切换思考过程显示
+    const toggleThinking = () => {
+        const newValue = !showThinking;
+        setShowThinking(newValue);
+        try {
+            localStorage.setItem('smartbank-show-thinking', String(newValue));
+        } catch {
+            // 忽略localStorage错误
+        }
     };
 
     const sendDebate = async (topic: string) => {
@@ -660,22 +433,100 @@ export default function ChatAgent() {
         const loadingMsg: Message = { role: 'assistant', content: '', loading: true };
         setMessages((prev) => [...prev, userMsg, loadingMsg]);
         setLoading(true);
+        setThinkingStatus('正在思考...');
 
         try {
             const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
             const resp = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: history, mode, model: currentModel }),
+                body: JSON.stringify({ messages: history, mode, model: currentModel, stream: true }),
             });
+
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({ error: '请求失败' }));
                 throw new Error(err.error || `HTTP ${resp.status}`);
             }
-            const data = await resp.json();
+
+            // 处理流式响应
+            const reader = resp.body?.getReader();
+            if (!reader) {
+                throw new Error('无法读取响应流');
+            }
+
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let fullContent = '';
+            let toolCalls: ToolCall[] | undefined;
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6).trim();
+                        if (!data) continue;
+
+                        try {
+                            const parsed = JSON.parse(data);
+
+                            // 处理状态事件
+                            if (parsed.type === 'status' && showThinking) {
+                                setThinkingStatus(parsed.message || '');
+                            }
+
+                            // 处理内容块
+                            if (parsed.type === 'chunk' && parsed.content) {
+                                fullContent += parsed.content;
+                                setMessages((prev) => {
+                                    const next = [...prev];
+                                    next[next.length - 1] = {
+                                        role: 'assistant',
+                                        content: fullContent,
+                                        loading: true
+                                    };
+                                    return next;
+                                });
+                            }
+
+                            // 处理工具调用结果
+                            if (parsed.type === 'toolCalls') {
+                                toolCalls = parsed.toolCalls;
+                            }
+
+                            // 处理完成事件
+                            if (parsed.type === 'done') {
+                                fullContent = parsed.content || fullContent;
+                                toolCalls = parsed.toolCalls || toolCalls;
+                            }
+
+                            // 处理错误事件
+                            if (parsed.type === 'error') {
+                                throw new Error(parsed.error || '流式响应错误');
+                            }
+                        } catch (e) {
+                            if (e instanceof Error && e.message.includes('流式响应错误')) {
+                                throw e;
+                            }
+                            // 忽略JSON解析错误
+                        }
+                    }
+                }
+            }
+
+            // 更新最终消息
             setMessages((prev) => {
                 const next = [...prev];
-                next[next.length - 1] = { role: 'assistant', content: data.content || '（无响应内容）', toolCalls: data.toolCalls };
+                next[next.length - 1] = {
+                    role: 'assistant',
+                    content: fullContent || '（无响应内容）',
+                    toolCalls
+                };
                 return next;
             });
         } catch (err) {
@@ -684,7 +535,11 @@ export default function ChatAgent() {
                 next[next.length - 1] = { role: 'assistant', content: `抱歉，发生了错误：${err instanceof Error ? err.message : '未知错误'}。请稍后重试。` };
                 return next;
             });
-        } finally { setLoading(false); inputRef.current?.focus(); }
+        } finally {
+            setLoading(false);
+            setThinkingStatus('');
+            inputRef.current?.focus();
+        }
     };
 
     const onSubmit = (e: FormEvent) => {
@@ -721,67 +576,20 @@ export default function ChatAgent() {
                 <div className="header-right">
                     <ThemeSwitcher />
 
-                    {/* 用户登录/信息 */}
-                    {user ? (
-                        <div className="user-info">
-                            <button className="icon-btn" title="历史记录" onClick={() => setShowHistory(!showHistory)}>
-                                📋
-                            </button>
-                            <button className="icon-btn" title="新建对话" onClick={handleNewChat}>
-                                ➕
-                            </button>
-                            <img src={user.avatar_url} alt={user.username} className="user-avatar" />
-                            <span className="user-name">{user.username}</span>
-                            <span className="user-credits" title="剩余积分">💰 {user.credits}</span>
-                            <button className="icon-btn logout-btn" title="登出" onClick={handleLogout}>🚪</button>
-                        </div>
-                    ) : (
-                        <button className="login-btn" onClick={handleLogin} title="邮箱登录">
-                            <span>📧</span>
-                            <span>登录</span>
-                        </button>
-                    )}
-
                     {messages.length > 0 && (
                         <>
+                            <button className="icon-btn" title="新建对话" onClick={handleNewChat}>➕</button>
                             <button className="icon-btn" title="导出对话" onClick={() => exportChat(messages)}>📥</button>
-                            {!user && (
-                                <button className="icon-btn" title="清除历史" onClick={() => {
-                                    clearChatHistory();
-                                    setMessages([]);
-                                    setMode('general');
-                                }}>🗑️</button>
-                            )}
+                            <button className="icon-btn" title="清除历史" onClick={() => {
+                                clearChatHistory();
+                                setMessages([]);
+                                setMode('general');
+                            }}>🗑️</button>
                         </>
                     )}
                     <a href="/" className="back-link">返回主页</a>
                 </div>
             </header>
-
-            {/* 历史记录面板 */}
-            {showHistory && user && (
-                <div className="history-panel">
-                    <div className="history-header">
-                        <h3>历史记录</h3>
-                        <button className="icon-btn" onClick={() => setShowHistory(false)}>✕</button>
-                    </div>
-                    <div className="history-list">
-                        {cloudHistories.length === 0 ? (
-                            <p className="history-empty">暂无历史记录</p>
-                        ) : (
-                            cloudHistories.map(h => (
-                                <div key={h.id} className="history-item" onClick={() => loadCloudChat(h)}>
-                                    <div className="history-item-info">
-                                        <span className="history-title">{h.title}</span>
-                                        <span className="history-time">{new Date(h.updated_at).toLocaleDateString()}</span>
-                                    </div>
-                                    <button className="history-delete" onClick={(e) => { e.stopPropagation(); handleDeleteHistory(h.id); }}>🗑️</button>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-            )}
 
             {/* Mode Selector & Model Selector */}
             <div className="mode-bar">
@@ -838,6 +646,21 @@ export default function ChatAgent() {
                             </div>
                         </div>
                     )}
+                </div>
+
+                {/* 思考过程开关 */}
+                <div className="thinking-toggle-container">
+                    <button
+                        className={`thinking-toggle-btn ${showThinking ? 'active' : ''}`}
+                        onClick={toggleThinking}
+                        title={showThinking ? '隐藏思考过程' : '显示思考过程'}
+                    >
+                        <span className="thinking-icon">🧠</span>
+                        <span className="thinking-label">思考过程</span>
+                        <span className={`thinking-switch ${showThinking ? 'on' : 'off'}`}>
+                            {showThinking ? 'ON' : 'OFF'}
+                        </span>
+                    </button>
                 </div>
             </div>
 
@@ -904,6 +727,20 @@ export default function ChatAgent() {
                                 </div>
                             </div>
                         ))}
+                        {/* 思考状态显示 */}
+                        {loading && showThinking && thinkingStatus && (
+                            <div className="thinking-status">
+                                <div className="thinking-status-avatar">🧠</div>
+                                <div className="thinking-status-content">
+                                    <div className="thinking-status-indicator">
+                                        <span className="thinking-dot"></span>
+                                        <span className="thinking-dot"></span>
+                                        <span className="thinking-dot"></span>
+                                    </div>
+                                    <span className="thinking-status-text">{thinkingStatus}</span>
+                                </div>
+                            </div>
+                        )}
                         <div ref={chatEndRef} />
                     </div>
                 )}
@@ -939,38 +776,7 @@ export default function ChatAgent() {
                 </button>
             </form>
 
-            {/* Magic Link 登录模态框 */}
-            {showLoginModal && (
-                <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
-                        <h2>📧 邮箱登录</h2>
-                        <p>输入您的邮箱地址，我们将发送登录链接到您的邮箱</p>
-                        <div className="login-form">
-                            <input
-                                type="email"
-                                placeholder="请输入邮箱地址"
-                                value={loginEmail}
-                                onChange={(e) => setLoginEmail(e.target.value)}
-                                disabled={loginLoading}
-                                autoFocus
-                            />
-                            <button
-                                onClick={handleSendMagicLink}
-                                disabled={loginLoading}
-                                className="send-link-btn"
-                            >
-                                {loginLoading ? '发送中...' : '发送登录链接'}
-                            </button>
-                        </div>
-                        {loginMessage && (
-                            <p className={`login-message ${loginMessage.includes('成功') ? 'success' : 'error'}`}>
-                                {loginMessage}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 }
