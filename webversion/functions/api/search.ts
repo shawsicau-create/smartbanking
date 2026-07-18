@@ -37,6 +37,11 @@ const PROXY_LIST_URL = 'https://cdn.jsdelivr.net/gh/parserpp/ip_ports/proxyinfo.
 const PROBE_TIMEOUT = 5000; // 5秒
 const REQUEST_TIMEOUT = 15000; // 15秒
 
+// SearXNG 私有实例配置（阿里云服务器）
+const SEARXNG_API = 'http://8.137.175.215:8888/search';
+const SEARXNG_TIMEOUT = 8000; // 8秒超时
+const DOUBAO_MAX_QUERY_LEN = 100; // 统一query长度检查
+
 // 代理池缓存
 let cachedProxies: string[] | null = null;
 let cacheTimestamp = 0;
@@ -269,24 +274,136 @@ function normalizeResults(raw: unknown): Array<{ title: string; url: string; sni
 }
 
 /**
- * 主搜索函数
+ * SearXNG 搜索（私有实例，无需API Key）
+ */
+async function searxngSearch(
+    query: string,
+    maxResults: number = 10
+): Promise<SearchResult> {
+    const params = new URLSearchParams({
+        q: query,
+        format: 'json',
+        categories: 'general',
+        language: 'zh-CN',
+        pageno: '1',
+    });
+
+    const resp = await fetch(`${SEARXNG_API}?${params}`, {
+        signal: AbortSignal.timeout(SEARXNG_TIMEOUT),
+    });
+
+    if (!resp.ok) {
+        throw new Error(`SearXNG HTTP ${resp.status}`);
+    }
+
+    const raw = await resp.json() as {
+        results?: Array<{
+            title: string;
+            url: string;
+            content: string;
+        }>;
+    };
+
+    // 转换为标准格式
+    const results = (raw.results || [])
+        .slice(0, maxResults)
+        .map(item => ({
+            title: item.title || '',
+            url: item.url || '',
+            snippet: item.content || '',
+        }))
+        .filter(item => item.url);
+
+    return {
+        query,
+        results,
+        error: null,
+        via: 'searxng',
+    };
+}
+
+/**
+ * 带重试的函数包装
+ */
+async function withRetry<T>(
+    fn: () => Promise<T>,
+    retries: number = 1,
+    delay: number = 300
+): Promise<T> {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            if (i === retries) throw err;
+            await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+        }
+    }
+    throw new Error('unreachable');
+}
+
+/**
+ * 获取引擎调用顺序（智能路由）
+ * - 短query (≤100字符) → SearXNG优先（速度快、免费）
+ * - 长query (>100字符) → AnySearch优先（支持长query）
+ */
+function getEngineOrder(query: string): Array<() => Promise<SearchResult>> {
+    const engines: Array<() => Promise<SearchResult>> = [];
+
+    if (query.length <= DOUBAO_MAX_QUERY_LEN) {
+        // 短query：SearXNG → AnySearch
+        engines.push(
+            () => searxngSearch(query, 10),
+            () => doSearchRequest(query, 10, null)
+        );
+    } else {
+        // 长query：AnySearch → SearXNG
+        engines.push(
+            () => doSearchRequest(query, 10, null),
+            () => searxngSearch(query, 10)
+        );
+    }
+
+    return engines;
+}
+
+/**
+ * 带降级的搜索（核心逻辑）
+ */
+async function searchWithFallback(
+    query: string,
+    maxResults: number
+): Promise<SearchResult> {
+    const engines = getEngineOrder(query);
+    let lastError: Error | null = null;
+
+    for (const engineFn of engines) {
+        try {
+            const result = await withRetry(engineFn, 1, 300);
+            if (result.results.length > 0) return result;
+            // 结果为空也算失败
+            lastError = new Error('返回结果为空');
+        } catch (err) {
+            lastError = err instanceof Error ? err : new Error(String(err));
+            console.error(`[搜索降级] ${lastError.message}`);
+            // 继续尝试下一个引擎
+        }
+    }
+
+    // 全部失败
+    return {
+        query,
+        results: [],
+        error: `所有搜索引擎均失败: ${lastError?.message}`,
+        via: null,
+    };
+}
+
+/**
+ * 主搜索函数（双引擎版本）
  */
 export async function search(query: string, maxResults: number = 10): Promise<SearchResult> {
     try {
-        const allProxies = await loadProxies();
-        const proxy = await findFirstLiveProxy(allProxies);
-
-        // 优先使用代理，失败则直连
-        if (proxy) {
-            try {
-                return await doSearchRequest(query, maxResults, proxy);
-            } catch (error) {
-                console.error(`[代理请求失败] ${proxy}: ${error}`);
-            }
-        }
-
-        // 直连兜底
-        return await doSearchRequest(query, maxResults, null);
+        return await searchWithFallback(query, maxResults);
     } catch (error) {
         return {
             query,
