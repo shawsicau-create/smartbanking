@@ -1,0 +1,582 @@
+{
+    "_meta": {
+        "description": "《智慧银行实验教程》13个skill的压力测试集",
+        "purpose": "验证每个skill的description能否正确触发/正确拒绝",
+        "usage": "对每个test case，把prompt喂给agent，检查是否调用了expected_skill且未调用should_not_trigger",
+        "total_cases": 52,
+        "skills_tested": 13
+    },
+    "test_cases": [
+        {
+            "id": "T001",
+            "skill": "meta-mcp-skill-bmad-trinity",
+            "type": "positive",
+            "prompt": "我想给银行的信贷审批业务做一个AI系统，MCP、Skill、BMAD这三者该怎么分工配合？",
+            "expected_skill": "meta-mcp-skill-bmad-trinity",
+            "should_not_trigger": [
+                "meta-mcp-three-layer-architecture",
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "明确提到三者分工+垂直业务应用，是三位一体框架的核心触发场景"
+        },
+        {
+            "id": "T002",
+            "skill": "meta-mcp-skill-bmad-trinity",
+            "type": "positive",
+            "prompt": "为什么我的AI agent做事总是碎片化，没有整体感？",
+            "expected_skill": "meta-mcp-skill-bmad-trinity",
+            "should_not_trigger": [],
+            "rationale": "碎片化=缺方法层(BMAD)，是三位一体的典型诊断信号"
+        },
+        {
+            "id": "T003",
+            "skill": "meta-mcp-skill-bmad-trinity",
+            "type": "negative",
+            "prompt": "MCP的JSON-RPC消息格式是怎样的？",
+            "expected_skill": "meta-mcp-three-layer-architecture",
+            "should_not_trigger": [
+                "meta-mcp-skill-bmad-trinity"
+            ],
+            "rationale": "问的是MCP技术细节，不是三层分工，应路由到MCP架构skill"
+        },
+        {
+            "id": "T004",
+            "skill": "meta-bmad-five-phases",
+            "type": "positive",
+            "prompt": "我有一个想法，想用AI在两周内做一个银行CRM系统的MVP，从需求到代码该走什么流程？",
+            "expected_skill": "meta-bmad-five-phases",
+            "should_not_trigger": [
+                "meta-mcp-skill-bmad-trinity"
+            ],
+            "rationale": "明确要做项目+端到端流程，是BMAD五阶段的触发场景"
+        },
+        {
+            "id": "T005",
+            "skill": "meta-bmad-five-phases",
+            "type": "positive",
+            "prompt": "BMAD方法论的B-M-A-D-V五个阶段分别做什么？",
+            "expected_skill": "meta-bmad-five-phases",
+            "should_not_trigger": [],
+            "rationale": "直接提到BMAD和五阶段"
+        },
+        {
+            "id": "T006",
+            "skill": "meta-bmad-five-phases",
+            "type": "negative",
+            "prompt": "传统Scrum的sprint计划会议该怎么开？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "meta-bmad-five-phases"
+            ],
+            "rationale": "问的是传统敏捷不是BMAD，明确不应触发"
+        },
+        {
+            "id": "T007",
+            "skill": "meta-ai-collaboration-four-modes",
+            "type": "positive",
+            "prompt": "我想批量处理100个Excel文件，该用IDE模式还是Builder模式？",
+            "expected_skill": "meta-ai-collaboration-four-modes",
+            "should_not_trigger": [],
+            "rationale": "明确在四模式间做选择"
+        },
+        {
+            "id": "T008",
+            "skill": "meta-ai-collaboration-four-modes",
+            "type": "positive",
+            "prompt": "我的AI agent跑着跑着就跑偏了，是不是自主性设太高了？",
+            "expected_skill": "meta-ai-collaboration-four-modes",
+            "should_not_trigger": [],
+            "rationale": "自主性问题是四模式的核心诊断点"
+        },
+        {
+            "id": "T009",
+            "skill": "meta-ai-collaboration-four-modes",
+            "type": "negative",
+            "prompt": "Cursor编辑器怎么安装Python扩展？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "meta-ai-collaboration-four-modes"
+            ],
+            "rationale": "问的是工具操作，不是模式选择"
+        },
+        {
+            "id": "T010",
+            "skill": "meta-rteii-prompt-principles",
+            "type": "positive",
+            "prompt": "我写的提示词AI总是跑题，输出格式也乱，怎么改？",
+            "expected_skill": "meta-rteii-prompt-principles",
+            "should_not_trigger": [],
+            "rationale": "典型的RTEII诊断场景（跑题=缺T，格式乱=缺I）"
+        },
+        {
+            "id": "T011",
+            "skill": "meta-rteii-prompt-principles",
+            "type": "positive",
+            "prompt": "帮我把这句指令改成专业prompt：'分析下这个公司的财务状况'",
+            "expected_skill": "meta-rteii-prompt-principles",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "改单个prompt用RTEII，不是Skill化"
+        },
+        {
+            "id": "T012",
+            "skill": "meta-rteii-prompt-principles",
+            "type": "negative",
+            "prompt": "大模型为什么会幻觉？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "meta-rteii-prompt-principles"
+            ],
+            "rationale": "问AI原理，不是提示词诊断"
+        },
+        {
+            "id": "T013",
+            "skill": "meta-mcp-three-layer-architecture",
+            "type": "positive",
+            "prompt": "MCP的Host、Client、Server三层分别是什么角色？JSON-RPC的生命周期怎么走？",
+            "expected_skill": "meta-mcp-three-layer-architecture",
+            "should_not_trigger": [
+                "meta-mcp-skill-bmad-trinity"
+            ],
+            "rationale": "直接问MCP架构细节"
+        },
+        {
+            "id": "T014",
+            "skill": "meta-mcp-three-layer-architecture",
+            "type": "positive",
+            "prompt": "为什么说MCP比传统REST API更适合AI agent调用？",
+            "expected_skill": "meta-mcp-three-layer-architecture",
+            "should_not_trigger": [],
+            "rationale": "MCP vs API的对比是该skill的核心内容"
+        },
+        {
+            "id": "T015",
+            "skill": "meta-mcp-three-layer-architecture",
+            "type": "negative",
+            "prompt": "我的AI项目该用MCP还是Skill还是BMAD？",
+            "expected_skill": "meta-mcp-skill-bmad-trinity",
+            "should_not_trigger": [
+                "meta-mcp-three-layer-architecture"
+            ],
+            "rationale": "问三者分工=三位一体，不是MCP细节"
+        },
+        {
+            "id": "T016",
+            "skill": "flow-ai-collaboration-loop",
+            "type": "positive",
+            "prompt": "AI给我生成的Python代码报错了，我跟它来回改了5次还没修好，怎么办？",
+            "expected_skill": "flow-ai-collaboration-loop",
+            "should_not_trigger": [
+                "meta-rteii-prompt-principles"
+            ],
+            "rationale": "典型的调试闭环卡壳场景"
+        },
+        {
+            "id": "T017",
+            "skill": "flow-ai-collaboration-loop",
+            "type": "positive",
+            "prompt": "和AI协作做事的节奏该怎么把握？什么时候该停？",
+            "expected_skill": "flow-ai-collaboration-loop",
+            "should_not_trigger": [],
+            "rationale": "问协作节奏=四步闭环"
+        },
+        {
+            "id": "T018",
+            "skill": "flow-ai-collaboration-loop",
+            "type": "negative",
+            "prompt": "我这个Python KeyError是什么原因？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "flow-ai-collaboration-loop"
+            ],
+            "rationale": "具体bug问题，不是协作流程"
+        },
+        {
+            "id": "T019",
+            "skill": "flow-six-node-skill-pipeline",
+            "type": "positive",
+            "prompt": "我要做一篇关于货币政策传导机制的实证论文，从数据到论文的完整流程该怎么走？",
+            "expected_skill": "flow-six-node-skill-pipeline",
+            "should_not_trigger": [
+                "decision-project-topic-four-principles"
+            ],
+            "rationale": "问实证流程=6节点流水线（注意：不是选题，是流程）"
+        },
+        {
+            "id": "T020",
+            "skill": "flow-six-node-skill-pipeline",
+            "type": "positive",
+            "prompt": "做金融实证研究时，文献、数据、清洗、回归、画图、写论文这几步该怎么组织成Skill？",
+            "expected_skill": "flow-six-node-skill-pipeline",
+            "should_not_trigger": [],
+            "rationale": "直接提到6节点"
+        },
+        {
+            "id": "T021",
+            "skill": "flow-six-node-skill-pipeline",
+            "type": "negative",
+            "prompt": "我的实证回归结果不显著，该怎么办？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "flow-six-node-skill-pipeline"
+            ],
+            "rationale": "具体统计问题，不是流程组织"
+        },
+        {
+            "id": "T022",
+            "skill": "flow-skill-prompt-rewrite",
+            "type": "positive",
+            "prompt": "我有一段常用的Stata回归代码，想把它封装成一个可复用的Skill，该怎么改写？",
+            "expected_skill": "flow-skill-prompt-rewrite",
+            "should_not_trigger": [
+                "meta-rteii-prompt-principles"
+            ],
+            "rationale": "明确要Skill化，不是改单个prompt"
+        },
+        {
+            "id": "T023",
+            "skill": "flow-skill-prompt-rewrite",
+            "type": "positive",
+            "prompt": "Skill化提示词的10条改写规范是什么？",
+            "expected_skill": "flow-skill-prompt-rewrite",
+            "should_not_trigger": [],
+            "rationale": "直接问10条规范"
+        },
+        {
+            "id": "T024",
+            "skill": "flow-skill-prompt-rewrite",
+            "type": "negative",
+            "prompt": "帮我写个能分析财报的提示词",
+            "expected_skill": "meta-rteii-prompt-principles",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "写单个prompt用RTEII，不是Skill化"
+        },
+        {
+            "id": "T025",
+            "skill": "framework-fintech-four-stages",
+            "type": "positive",
+            "prompt": "银行数字化转型现在到了哪个阶段？FinTech 4.0和前面的区别是什么？",
+            "expected_skill": "framework-fintech-four-stages",
+            "should_not_trigger": [
+                "framework-finance-ai-application-matrix"
+            ],
+            "rationale": "问阶段=四阶段框架"
+        },
+        {
+            "id": "T026",
+            "skill": "framework-fintech-four-stages",
+            "type": "positive",
+            "prompt": "怎么判断一项金融科技技术是量变还是质变？",
+            "expected_skill": "framework-fintech-four-stages",
+            "should_not_trigger": [],
+            "rationale": "量变vs质变是该框架的核心论断"
+        },
+        {
+            "id": "T027",
+            "skill": "framework-fintech-four-stages",
+            "type": "negative",
+            "prompt": "银行做AI应用该从哪个维度切入？",
+            "expected_skill": "framework-finance-ai-application-matrix",
+            "should_not_trigger": [
+                "framework-fintech-four-stages"
+            ],
+            "rationale": "问应用维度=5维矩阵，不是阶段"
+        },
+        {
+            "id": "T028",
+            "skill": "decision-ai-literacy-four-dimensions",
+            "type": "positive",
+            "prompt": "我是金融专业的学生，想评估自己的AI能力水平，该从哪些维度看？",
+            "expected_skill": "decision-ai-literacy-four-dimensions",
+            "should_not_trigger": [],
+            "rationale": "问能力评估=四维度"
+        },
+        {
+            "id": "T029",
+            "skill": "decision-ai-literacy-four-dimensions",
+            "type": "positive",
+            "prompt": "金融人学AI该重点学什么？和程序员比我们的优势在哪？",
+            "expected_skill": "decision-ai-literacy-four-dimensions",
+            "should_not_trigger": [],
+            "rationale": "问差异化优势=四维度的核心论断"
+        },
+        {
+            "id": "T030",
+            "skill": "decision-ai-literacy-four-dimensions",
+            "type": "negative",
+            "prompt": "AI会不会取代金融分析师？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "decision-ai-literacy-four-dimensions"
+            ],
+            "rationale": "情绪/职业焦虑问题，不是能力评估"
+        },
+        {
+            "id": "T031",
+            "skill": "decision-project-topic-four-principles",
+            "type": "positive",
+            "prompt": "我的毕业论文选题是'中国银行业数字化转型研究'，这个题目行不行？",
+            "expected_skill": "decision-project-topic-four-principles",
+            "should_not_trigger": [],
+            "rationale": "问选题是否可行=F-N-F-T"
+        },
+        {
+            "id": "T032",
+            "skill": "decision-project-topic-four-principles",
+            "type": "positive",
+            "prompt": "我有三个候选论文题目，不知道选哪个好",
+            "expected_skill": "decision-project-topic-four-principles",
+            "should_not_trigger": [],
+            "rationale": "多题选择=四原则筛选"
+        },
+        {
+            "id": "T033",
+            "skill": "decision-project-topic-four-principles",
+            "type": "negative",
+            "prompt": "我的论文研究方法该怎么设计？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "decision-project-topic-four-principles"
+            ],
+            "rationale": "已过选题阶段，问方法设计"
+        },
+        {
+            "id": "T034",
+            "skill": "framework-finance-ai-application-matrix",
+            "type": "positive",
+            "prompt": "我们是一家农商行，想上AI，该从哪些应用方向切入？",
+            "expected_skill": "framework-finance-ai-application-matrix",
+            "should_not_trigger": [
+                "framework-fintech-four-stages"
+            ],
+            "rationale": "问AI应用方向=5维矩阵"
+        },
+        {
+            "id": "T035",
+            "skill": "framework-finance-ai-application-matrix",
+            "type": "positive",
+            "prompt": "AI在金融业的应用全景是怎样的？有哪些维度？",
+            "expected_skill": "framework-finance-ai-application-matrix",
+            "should_not_trigger": [],
+            "rationale": "问全景=5维矩阵"
+        },
+        {
+            "id": "T036",
+            "skill": "framework-finance-ai-application-matrix",
+            "type": "negative",
+            "prompt": "智能风控系统具体怎么搭建？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "framework-finance-ai-application-matrix"
+            ],
+            "rationale": "问单维度深入，不是全景矩阵"
+        },
+        {
+            "id": "T037",
+            "skill": "framework-knowledge-engineering-evolution",
+            "type": "positive",
+            "prompt": "为什么用Markdown写Skill，而不是用规则引擎或者训练一个模型？",
+            "expected_skill": "framework-knowledge-engineering-evolution",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "问范式选择=三范式对比"
+        },
+        {
+            "id": "T038",
+            "skill": "framework-knowledge-engineering-evolution",
+            "type": "positive",
+            "prompt": "我们银行积累了大量风控规则，想AI化，该怎么演进？",
+            "expected_skill": "framework-knowledge-engineering-evolution",
+            "should_not_trigger": [],
+            "rationale": "范式迁移问题"
+        },
+        {
+            "id": "T039",
+            "skill": "framework-knowledge-engineering-evolution",
+            "type": "negative",
+            "prompt": "怎么写一个好的Skill？",
+            "expected_skill": "flow-skill-prompt-rewrite",
+            "should_not_trigger": [
+                "framework-knowledge-engineering-evolution"
+            ],
+            "rationale": "问写法=Skill化规范，不是范式对比"
+        },
+        {
+            "id": "T040",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "MCP怎么配置？",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "meta-mcp-skill-bmad-trinity",
+                "meta-mcp-three-layer-architecture"
+            ],
+            "rationale": "问具体配置=工具教程，两个MCP相关skill都不应触发（或触发配置类skill）"
+        },
+        {
+            "id": "T041",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "提示词和Skill有什么区别？",
+            "expected_skill": "meta-rteii-prompt-principles",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "概念辨析，优先用RTEII解释提示词，Skill化是后续升级"
+        },
+        {
+            "id": "T042",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "做金融研究必须用AI吗？",
+            "expected_skill": "decision-project-topic-four-principles",
+            "should_not_trigger": [],
+            "rationale": "本质是问T（技术适配）原则"
+        },
+        {
+            "id": "T043",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "帮我分析下招行2023年的财报",
+            "expected_skill": null,
+            "should_not_trigger": [
+                "framework-finance-ai-application-matrix",
+                "framework-fintech-four-stages"
+            ],
+            "rationale": "具体分析任务，不是框架诊断。可能触发数据分析类skill，但不应触发这13个框架skill"
+        },
+        {
+            "id": "T044",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "BMAD的Mary和John分别是什么角色？",
+            "expected_skill": "meta-bmad-five-phases",
+            "should_not_trigger": [
+                "meta-mcp-skill-bmad-trinity"
+            ],
+            "rationale": "问BMAD角色=五阶段skill（注意：角色名本身在verified.md里被淘汰，但解释角色属于五阶段内容）"
+        },
+        {
+            "id": "T045",
+            "skill": "边界-混淆测试",
+            "type": "edge",
+            "prompt": "6节点流水线的'清洗'节点该用什么工具？",
+            "expected_skill": "flow-six-node-skill-pipeline",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "问流水线节点=6节点skill，即使问具体工具也应在流水线context下回答"
+        },
+        {
+            "id": "T046",
+            "skill": "综合-多skill协作",
+            "type": "integration",
+            "prompt": "我是金融硕士，想用AI做毕业论文，但不知道从哪开始",
+            "expected_skill": "decision-ai-literacy-four-dimensions",
+            "should_not_trigger": [],
+            "rationale": "综合场景，但起点是自评能力→再做选题。优先触发四维度自评",
+            "next_skill_chain": [
+                "decision-project-topic-four-principles",
+                "flow-six-node-skill-pipeline"
+            ]
+        },
+        {
+            "id": "T047",
+            "skill": "综合-多skill协作",
+            "type": "integration",
+            "prompt": "我们城商行要做一个智能客服系统，从规划到上线",
+            "expected_skill": "framework-finance-ai-application-matrix",
+            "should_not_trigger": [],
+            "rationale": "综合场景，起点是定位应用方向→再走BMAD开发",
+            "next_skill_chain": [
+                "meta-mcp-skill-bmad-trinity",
+                "meta-bmad-five-phases"
+            ]
+        },
+        {
+            "id": "T048",
+            "skill": "综合-多skill协作",
+            "type": "integration",
+            "prompt": "我把一段Python脚本改成了Skill化提示词，但AI执行结果不稳定",
+            "expected_skill": "meta-rteii-prompt-principles",
+            "should_not_trigger": [
+                "flow-skill-prompt-rewrite"
+            ],
+            "rationale": "已Skill化但不稳定=RTEII诊断（通常是E或I缺失）",
+            "next_skill_chain": [
+                "flow-ai-collaboration-loop"
+            ]
+        },
+        {
+            "id": "T049",
+            "skill": "综合-多skill协作",
+            "type": "integration",
+            "prompt": "用BMAD做项目时，每个阶段该用什么AI协作模式？",
+            "expected_skill": "meta-bmad-five-phases",
+            "should_not_trigger": [
+                "meta-ai-collaboration-four-modes"
+            ],
+            "rationale": "虽然涉及四模式，但主入口是BMAD（五阶段里有模式切换说明）",
+            "cross_reference": "meta-ai-collaboration-four-modes"
+        },
+        {
+            "id": "T050",
+            "skill": "综合-多skill协作",
+            "type": "integration",
+            "prompt": "金融科技4.0阶段，中小银行该怎么用AI做差异化竞争？",
+            "expected_skill": "framework-fintech-four-stages",
+            "should_not_trigger": [],
+            "rationale": "综合场景，起点是阶段定位→再切入应用矩阵",
+            "next_skill_chain": [
+                "framework-finance-ai-application-matrix"
+            ]
+        },
+        {
+            "id": "T051",
+            "skill": "压力-模糊表述",
+            "type": "stress",
+            "prompt": "AI",
+            "expected_skill": null,
+            "should_not_trigger": [],
+            "rationale": "极简输入，任何skill都不应触发，应让用户具体化"
+        },
+        {
+            "id": "T052",
+            "skill": "压力-模糊表述",
+            "type": "stress",
+            "prompt": "银行怎么搞AI",
+            "expected_skill": "framework-finance-ai-application-matrix",
+            "should_not_trigger": [],
+            "rationale": "口语化但意图清晰=问银行AI应用方向，触发矩阵。测试模糊表述的容错性"
+        }
+    ],
+    "test_summary": {
+        "by_type": {
+            "positive": 26,
+            "negative": 13,
+            "edge": 6,
+            "integration": 5,
+            "stress": 2
+        },
+        "by_skill": {
+            "meta-mcp-skill-bmad-trinity": 3,
+            "meta-bmad-five-phases": 3,
+            "meta-ai-collaboration-four-modes": 3,
+            "meta-rteii-prompt-principles": 3,
+            "meta-mcp-three-layer-architecture": 3,
+            "flow-ai-collaboration-loop": 3,
+            "flow-six-node-skill-pipeline": 3,
+            "flow-skill-prompt-rewrite": 3,
+            "framework-fintech-four-stages": 3,
+            "decision-ai-literacy-four-dimensions": 3,
+            "decision-project-topic-four-principles": 3,
+            "framework-finance-ai-application-matrix": 3,
+            "framework-knowledge-engineering-evolution": 3
+        },
+        "pass_criteria": "每个positive case触发expected_skill的准确率应≥85%；每个negative case不触发should_not_trigger的准确率应≥95%"
+    }
+}
