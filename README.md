@@ -86,6 +86,15 @@ smartbanking/
 ├── qoder-skills-library/                 # 技能库（20 分类，学术写作全流程）
 │   ├── 01-ideation/ ~ 20-messaging/     # 从选题到消息的完整技能矩阵
 │   └── README.md
+├── smart-banking-tutorial/               # 教材蒸馏产物：13 个可执行 AI Skill
+│   ├── INDEX.md                          # 13 个 Skill 导航索引（学习路径 + 场景）
+│   ├── GLOSSARY.md                       # 核心术语表
+│   ├── DIGEST.md                         # 蒸馏总览与阅读建议
+│   ├── BOOK_OVERVIEW.md / verified.md   # 原书概览与三重验证记录
+│   ├── test-prompts.json                 # 52 个压力测试用例
+│   ├── meta-*/                           # 元方法类 Skill（5 个）
+│   ├── flow-*/                           # 流程类 Skill（3 个）
+│   └── framework-*/ decision-*/         # 决策与批判类 Skill（5 个）
 ├── .env.example                          # 环境变量模板
 ├── wrangler.toml                         # Cloudflare Workers 配置
 └── README.md
@@ -133,7 +142,7 @@ smartbanking/
 | 金融数据源  | Tushare Pro（A 股）+ World Bank API（全球宏观）+ OECD              |
 | AI 教学工具 | Qoder / Trae CN / Cursor 等 AI IDE                                   |
 | 工具协议    | MCP（Model Context Protocol）                                       |
-| AI 技能     | Skill 体系（8 组专业技能 + 20 分类技能库）                          |
+| AI 技能     | Skill 体系（8 组专业技能 + 20 分类技能库 + 13 个教材蒸馏 Skill）    |
 | 项目方法论  | BMAD（Breakthrough Method of Agile AI-Driven Development）          |
 | 数据分析    | Stata / Python（pandas, statsmodels）                               |
 | 部署平台    | **Cloudflare Pages**（全球 CDN + Serverless Functions）+ **阿里云 SWAS**（国内备份站） |
@@ -211,12 +220,25 @@ wrangler pages deploy dist --project-name=smartbanking
 - **在线网站**: https://smartbanking.pages.dev
 - **备用站点**: http://8.137.175.215（阿里云 SWAS）
 
+## 教材蒸馏 Skill 库（smart-banking-tutorial/）
+
+运用 RIA++ 方法论将《智慧银行实验教程》全书提炼为 **13 个可执行 AI Skill**，覆盖"AI+金融"的底层架构、执行流程与决策框架，均通过三重验证（跨域引用 / 预测力 / 独创性）。
+
+| 类别 | 数量 | 代表 Skill |
+|------|:----:|-----------|
+| 元方法类（Meta） | 5 | MCP+Skill+BMAD 三位一体、BMAD 五阶段、AI 协作四模式、RTEII 提示词五原则、MCP 三层架构 |
+| 流程类（Flow） | 3 | AI 协作闭环、金融实证 6 节点流水线、Skill 化提示词改写 |
+| 决策与批判类 | 5 | 金融科技四阶段、AI 素养四维度、选题 F-N-F-T 四原则、金融 AI 应用矩阵、知识工程三范式 |
+
+配套 `INDEX.md`（导航与场景推荐）、`GLOSSARY.md`（术语表）、`DIGEST.md`（阅读建议）、`test-prompts.json`（52 个压力测试用例）。详见 [smart-banking-tutorial/INDEX.md](smart-banking-tutorial/INDEX.md)。
+
 ## 相关文档
 
 - [MCP 服务配置参考手册](智慧银行实验教程chapters/MCP服务配置参考手册.md)
 - [BMAD-CRM 系统开发实验手册](实验讲义%20/BMAD-CRM系统开发实验手册.md)
 - [本地大模型部署指南](实验讲义%20/本地大模型部署指南.md)
 - [Cloudflare 部署指南](docs/cloudflare-pages-deploy.md)
+- [教材蒸馏 Skill 库导航](smart-banking-tutorial/INDEX.md)
 
 ## 许可证
 
